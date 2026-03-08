@@ -54,10 +54,7 @@
         
         .badge { position: absolute; top: 5px; left: 55%; background: #ff3b30; color: white; border-radius: 10px; padding: 2px 7px; font-size: 11px; font-weight: bold; }
 
-        .gold-book {
-            color: var(--gold);
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
+        .gold-book { color: var(--gold); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
 
         .balance-card {
             background: linear-gradient(135deg, #FF8C00 0%, #E65100 100%);
@@ -83,6 +80,15 @@
         /* Стили блока ИИ Подбора */
         .ai-block { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 0.5px solid rgba(128,128,128,0.2); margin-bottom: 20px; text-align: center; }
         .ai-result-box { margin-top: 15px; padding: 10px; border-radius: 10px; background: var(--secondary); font-size: 14px; font-weight: bold; display: none; }
+        
+        .palette-settings { text-align: left; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 10px; margin-bottom: 10px; font-size: 12px; }
+        .palette-settings label { display: block; margin-bottom: 5px; cursor: pointer; }
+
+        .ai-row { display: flex; align-items: center; background: var(--bg); padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 0.5px solid rgba(128,128,128,0.2); }
+        .ai-row-color { width: 45px; height: 45px; border-radius: 10px; margin-right: 15px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); }
+        .ai-row-info { flex-grow: 1; text-align: left; }
+        .ai-row-marker { font-weight: 800; font-size: 16px; color: var(--accent); }
+        .ai-row-rgb { font-size: 10px; color: var(--gray); font-weight: normal; }
     </style>
 </head>
 <body>
@@ -110,11 +116,18 @@
         <div class="header">Маркеры</div>
         
         <div class="category-title" style="margin-top: 0;">ColoringWithAI - Подбор по фото</div>
-       <div class="ai-block">
-            <p style="margin: 0 0 10px 0; font-size: 13px; color: var(--gray);">Выберите по одному фото для каждого цвета. Можно выбрать сразу несколько файлов!</p>
+        <div class="ai-block">
+            <p style="margin: 0 0 10px 0; font-size: 13px; color: var(--gray);">Выберите палитры, которые у вас есть:</p>
+            <div class="palette-settings">
+                <label><input type="checkbox" class="set-check" value="gn120" checked> GuangNa 120</label>
+                <label><input type="checkbox" class="set-check" value="gn168"> GuangNa 168</label>
+                <label><input type="checkbox" class="set-check" value="gn240"> GuangNa 240</label>
+                <label><input type="checkbox" class="set-check" value="gn360"> GuangNa 360</label>
+            </div>
+            
             <input type="file" id="photoInput" multiple accept="image/*" style="display: none;" onchange="uploadPhoto()">
             <button class="buy-btn" style="border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px;" onclick="document.getElementById('photoInput').click()">
-                <i class="fas fa-camera"></i> Выбрать фото цветов
+                <i class="fas fa-camera"></i> Сфотографировать цвета
             </button>
             <div id="aiResult" class="ai-result-box"></div>
         </div>
@@ -221,6 +234,27 @@
 
         let markersData = [], cart = [], markersLoaded = false;
 
+        // БАЗА ДАННЫХ ЦВЕТОВ МАРКЕРОВ (RGB)
+        // Сюда нужно внести все цвета из PDF палитр. Пока добавлены примеры для теста.
+        const MARKER_DATABASE = {
+            "gn120": [
+                {n: "10", rgb: [255, 230, 200]},
+                {n: "25", rgb: [255, 100, 100]},
+                {n: "44", rgb: [50, 150, 50]},
+                {n: "120", rgb: [20, 20, 20]}
+            ],
+            "gn168": [
+                {n: "168", rgb: [200, 50, 150]},
+                {n: "102", rgb: [100, 200, 255]}
+            ],
+            "gn240": [
+                {n: "215", rgb: [180, 100, 50]}
+            ],
+            "gn360": [
+                {n: "355", rgb: [100, 50, 200]}
+            ]
+        };
+
         const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 3", "Vitraux tome 2", "Trompe L'oeil Babies", "Trompe L'oeil Grand Bloc", "Stitch Au numero", "Sous L'Ocean", "Saisons", "Romantasy", "Princesses tome 1", "Princesses tome 2", "Princes&Heros", "Portraits De Famille", "Pokemon", "Pixar", "Petites Princesses", "Petites Betes", "Mondes Fantastiques", "Mickey, Donald&Co", "Mechants", "Marsupilami", "Love Stories", "Looney Tunes tome 3", "Lilo Et Stitch", "Les Grands Classiques Special Debutants tome 1", "Les Grands Classiques Special Debutants tome 2", "Les Grands Classiques Au numero", "La Petite Sirene", "Les Schtroumpfs tome 1", "Les Schtroumpfs tome 2", "L'age Glace", "Hiver", "Heros&Mechants La Battle", "Grands Classiques Grand Bloc", "Les Grands Classiques Coliector", "Girl Power", "Fees, Sorciers Et Magiciens", "Famille", "Escapades Merveilleuses Douce France", "Chiots&Chiens", "Chevaux", "Bisounours tome 1", "Best Of Pixar", "Best Of Les Grands Classiques", "La Belle Et La Bete", "Bestiaire", "Best Of Heroines"];
 
         function renderBooks(list = bookNames) {
@@ -244,32 +278,57 @@
             renderBooks(bookNames.filter(name => name.toLowerCase().includes(query)));
         }
 
+        /* --- ЛОГИКА ПОИСКА БЛИЖАЙШЕГО ЦВЕТА --- */
+        function getClosestMarker(targetRgb) {
+            // Собираем все доступные маркеры из выбранных палитр
+            let availableMarkers = [];
+            document.querySelectorAll('.set-check:checked').forEach(cb => {
+                const setName = cb.value;
+                if (MARKER_DATABASE[setName]) {
+                    availableMarkers = availableMarkers.concat(MARKER_DATABASE[setName]);
+                }
+            });
 
-        /* --- ЛОГИКА COLORING WITH AI (ВАРИАНТ Б: МНОЖЕСТВЕННАЯ ЗАГРУЗКА) --- */
+            if (availableMarkers.length === 0) return "Выберите палитру";
+
+            let closest = null;
+            let minDistance = Infinity;
+
+            availableMarkers.forEach(marker => {
+                // Формула Евклидова расстояния в цветовом пространстве
+                const d = Math.sqrt(
+                    Math.pow(targetRgb[0] - marker.rgb[0], 2) +
+                    Math.pow(targetRgb[1] - marker.rgb[1], 2) +
+                    Math.pow(targetRgb[2] - marker.rgb[2], 2)
+                );
+                if (d < minDistance) {
+                    minDistance = d;
+                    closest = marker.n;
+                }
+            });
+            return closest;
+        }
+
+        /* --- ЛОГИКА COLORING WITH AI (СТОЛБИК + МАРКЕРЫ) --- */
         async function uploadPhoto() {
             const fileInput = document.getElementById('photoInput');
             const resultBox = document.getElementById('aiResult');
             
             if (!fileInput.files.length) return;
-            
             const files = Array.from(fileInput.files);
             
             resultBox.style.display = 'block';
             tg.HapticFeedback.impactOccurred('medium');
 
-            let palette = [];
-            let errors = 0;
+            let finalHtml = `<div style="margin-bottom: 12px; font-size: 14px; font-weight: 800; text-align: left;">📋 Подобрано для раскрашивания:</div>`;
 
-            // Поочередно отправляем каждый файл на сервер
             for (let i = 0; i < files.length; i++) {
-                // Обновляем статус прогресса для пользователя
                 resultBox.innerHTML = `<span style="color:var(--gray)"><i class="fas fa-spinner fa-spin"></i> Обработка: ${i + 1} из ${files.length}...</span>`;
                 
                 const formData = new FormData();
                 formData.append('file', files[i]);
 
                 try {
-                    // Таймаут 10 секунд на одно фото
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 10000); 
 
@@ -280,54 +339,32 @@
                     });
                     
                     clearTimeout(timeoutId);
-
-                    if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
-                    
                     const data = await response.json();
                     
                     if (data.status === 'success' && data.palette.length > 0) {
-                        const colorData = data.palette[0];
-                        palette.push({
-                            index: palette.length + 1,
-                            rgb: colorData.rgb
-                        });
-                    } else {
-                        errors++;
+                        const detectedRgb = data.palette[0].rgb;
+                        const markerNum = getClosestMarker(detectedRgb);
+                        
+                        const bgRgb = `rgb(${detectedRgb[0]},${detectedRgb[1]},${detectedRgb[2]})`;
+                        
+                        // Добавляем строку в результат (СТОЛБИКОМ)
+                        finalHtml += `
+                            <div class="ai-row">
+                                <div class="ai-row-color" style="background:${bgRgb}"></div>
+                                <div class="ai-row-info">
+                                    <div class="ai-row-marker">Маркер №${markerNum}</div>
+                                    <div class="ai-row-rgb">RGB: ${detectedRgb.join(', ')}</div>
+                                </div>
+                                <button onclick="addToCart('Маркер', '${markerNum}', ${markerNum}, 99, 60)" class="btn-qty-sm">🛒</button>
+                            </div>`;
                     }
-                } catch (error) {
-                    console.error(`Ошибка файла ${i + 1}:`, error);
-                    errors++;
-                }
+                } catch (e) { console.error(e); }
             }
 
-            // Вывод финальной палитры после завершения всех загрузок
-            if (palette.length > 0) {
-                let html = `<div style="margin-bottom: 10px; font-size: 14px; font-weight: 600;">🎨 Собрано цветов: ${palette.length}</div>`;
-                
-                if (errors > 0) {
-                    html += `<div style="color:#ff3b30; font-size: 11px; margin-bottom: 8px;">Не удалось обработать: ${errors} фото</div>`;
-                }
-                
-                html += `<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(35px, 1fr)); gap: 6px; justify-items: center;">`;
-                
-                palette.forEach(item => {
-                    const rgb = `rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]})`;
-                    html += `<div style="background:${rgb}; width:35px; height:35px; border-radius:8px; border:1px solid rgba(0,0,0,0.1);" title="№${item.index}"></div>`;
-                });
-                
-                html += '</div>';
-                resultBox.innerHTML = html;
-                tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                resultBox.innerHTML = `<span style="color:#ff3b30">❌ Не удалось распознать цвета.</span>`;
-                tg.HapticFeedback.notificationOccurred('error');
-            }
-            
-            // Очищаем input, чтобы можно было загрузить те же файлы снова если нужно
+            resultBox.innerHTML = finalHtml;
+            tg.HapticFeedback.notificationOccurred('success');
             fileInput.value = "";
         }
-        /* --- КОНЕЦ ЛОГИКИ ИИ --- */
-
 
         async function loadMarkers() {
             const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
@@ -408,12 +445,7 @@
             const list = document.getElementById('cartList');
             if (cart.length === 0) { list.innerHTML = '<div style="text-align:center; padding:50px; color:var(--gray)">Корзина пуста</div>'; return; }
             const totalSum = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            
-            let bonus = 0;
-            if (totalSum >= 3000 && totalSum < 5000) bonus = 20;
-            else if (totalSum >= 5000 && totalSum < 7500) bonus = 30;
-            else if (totalSum >= 7500 && totalSum < 10000) bonus = 40;
-            else if (totalSum >= 10000) bonus = 50;
+            let bonus = (totalSum >= 3000) ? (totalSum >= 10000 ? 50 : (totalSum >= 7500 ? 40 : (totalSum >= 5000 ? 30 : 20))) : 0;
 
             list.innerHTML = cart.map((item, index) => `
                 <div class="row-item">
@@ -443,70 +475,28 @@
 
         function checkout() {
             if (cart.length === 0) return;
-            let markersCount = 0;
-            cart.forEach(item => { if (item.type === 'Маркер') markersCount += item.qty; });
-            if (markersCount > 0 && markersCount < 3) {
-                tg.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук.");
-                return;
-            }
-            let totalSum = 0, hasPreorder = false;
-            let details = `🛍 **ДЕТАЛИ ЗАКАЗА:**\n`;
+            let markersCount = cart.filter(i => i.type === 'Маркер').reduce((s, i) => s + i.qty, 0);
+            if (markersCount > 0 && markersCount < 3) { tg.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук."); return; }
+            
+            let totalSum = 0, details = `🛍 **ДЕТАЛИ ЗАКАЗА:**\n`;
             cart.forEach(item => {
-                const sum = item.price * item.qty; 
-                totalSum += sum;
-                if (item.type === 'Раскраска') hasPreorder = true;
-                details += `▪️ ${item.type} ${item.type === 'Маркер' ? '№' : '"'}${item.name}${item.type === 'Маркер' ? '' : '"'}\n   - ${item.qty} шт. x ${item.price} = ${sum} руб.\n`;
+                const sum = item.price * item.qty; totalSum += sum;
+                details += `▪️ ${item.type} ${item.type === 'Маркер' ? '№' : '"'}${item.name}${item.type === 'Маркер' ? '' : '"'} - ${item.qty} шт.\n`;
             });
-
-            let bonusToEarn = 0;
-            if (totalSum >= 3000 && totalSum < 5000) bonusToEarn = 20;
-            else if (totalSum >= 5000 && totalSum < 7500) bonusToEarn = 30;
-            else if (totalSum >= 7500 && totalSum < 10000) bonusToEarn = 40;
-            else if (totalSum >= 10000) bonusToEarn = 50;
-            
-            details += `\n💰 **ИТОГО: ${totalSum} руб.**`;
-            details += `\n📖 **БОНУС К НАЧИСЛЕНИЮ: ${bonusToEarn}**`;
-            details += `\n👤 **ТЕКУЩИЙ БАЛАНС ЮЗЕРА: ${document.getElementById('userBalance').innerText}**`;
-            
-            if (hasPreorder) {
-                tg.showConfirm("В вашем заказе есть раскраски (ПОД ЗАКАЗ). Оформить?", (c) => { 
-                    if(c) { tg.sendData(JSON.stringify({ details: details })); tg.close(); }
-                });
-            } else { 
-                tg.sendData(JSON.stringify({ details: details })); tg.close(); 
-            }
+            tg.sendData(JSON.stringify({ details: details + `\n💰 ИТОГО: ${totalSum} руб.` }));
+            tg.close();
         }
 
         function toggleRewards() {
-            const rewardsSection = document.getElementById('rewards-section');
-            const loyaltyInfo = document.getElementById('loyalty-info');
-            if (rewardsSection.style.display === 'block') {
-                rewardsSection.style.display = 'none';
-                loyaltyInfo.style.display = 'block';
-            } else {
-                rewardsSection.style.display = 'block';
-                loyaltyInfo.style.display = 'none';
-            }
-            tg.HapticFeedback.impactOccurred('medium');
+            const rs = document.getElementById('rewards-section'), li = document.getElementById('loyalty-info');
+            const isReward = rs.style.display === 'block';
+            rs.style.display = isReward ? 'none' : 'block';
+            li.style.display = isReward ? 'block' : 'none';
         }
 
         function buyReward(name, price) {
-            const currentBalance = parseInt(document.getElementById('userBalance').innerText);
-            if (currentBalance < price) {
-                tg.showAlert("❌ Недостаточно ашетиков для этого товара!");
-                return;
-            }
-            tg.showConfirm(`Вы действительно хотите обменять ${price} ашетиков на "${name}"?`, (confirm) => {
-                if (confirm) {
-                    tg.sendData(JSON.stringify({
-                        action: 'buy_reward',
-                        reward: name,
-                        price: price,
-                        user_id: document.getElementById('userIdDisplay').innerText
-                    }));
-                    tg.close();
-                }
-            });
+            if (parseInt(document.getElementById('userBalance').innerText) < price) { tg.showAlert("❌ Недостаточно ашетиков!"); return; }
+            tg.showConfirm(`Обменять на "${name}"?`, (c) => { if(c) { tg.sendData(JSON.stringify({action:'buy_reward', reward:name, price:price})); tg.close(); }});
         }
 
         function tab(id) {
@@ -522,27 +512,24 @@
         function startBook(v, m) { currentVol = v; maxPages = m; currentPage = 1; document.getElementById('viewer').style.display = 'block'; updatePage(); }
         function closeBook() { document.getElementById('viewer').style.display = 'none'; }
         function updatePage() {
-            const img = document.getElementById('current-page'), counter = document.getElementById('page-counter'), formats = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG'];
-            let fIndex = 0;
-            function tryLoad() { img.src = `otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; }
-            img.onerror = () => { fIndex++; if (fIndex < formats.length) tryLoad(); };
-            tryLoad(); counter.innerText = `${currentPage} / ${maxPages}`;
+            const img = document.getElementById('current-page'), counter = document.getElementById('page-counter'), formats = ['.jpg', '.png', '.jpeg'];
+            let f = 0;
+            function load() { img.src = `otveti/t${currentVol}/${currentPage}${formats[f]}`; }
+            img.onerror = () => { f++; if(f < formats.length) load(); }; load();
+            counter.innerText = `${currentPage} / ${maxPages}`;
         }
-
-        function handleTouchStart(e) { touchStartX = e.touches[0].screenX; touchStartY = e.touches[0].screenY; }
+        function handleTouchStart(e) { touchStartX = e.touches[0].screenX; }
         function handleTouchEnd(e) {
-            let dx = touchStartX - e.changedTouches[0].screenX, dy = touchStartY - e.changedTouches[0].screenY;
-            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+            let dx = touchStartX - e.changedTouches[0].screenX;
+            if (Math.abs(dx) > 40) {
                 if (dx > 0 && currentPage < maxPages) { currentPage++; updatePage(); }
                 else if (dx < 0 && currentPage > 1) { currentPage--; updatePage(); }
             }
         }
-        function filterMarkers() { renderMarkers(markersData); }
-
         window.onload = () => {
-            const params = new URLSearchParams(window.location.search);
-            document.getElementById('userBalance').innerText = params.get('balance') || 0;
-            document.getElementById('userIdDisplay').innerText = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
+            const p = new URLSearchParams(window.location.search);
+            document.getElementById('userBalance').innerText = p.get('balance') || 0;
+            document.getElementById('userIdDisplay').innerText = p.get('id') || "---";
         }
         renderBooks();
     </script>

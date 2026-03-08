@@ -311,60 +311,64 @@
 
         /* --- ЛОГИКА COLORING WITH AI (СТОЛБИК + МАРКЕРЫ) --- */
         async function uploadPhoto() {
-            const fileInput = document.getElementById('photoInput');
-            const resultBox = document.getElementById('aiResult');
-            
-            if (!fileInput.files.length) return;
-            const files = Array.from(fileInput.files);
-            
-            resultBox.style.display = 'block';
-            tg.HapticFeedback.impactOccurred('medium');
+    const fileInput = document.getElementById('photoInput');
+    const resultBox = document.getElementById('aiResult');
+    
+    if (!fileInput.files.length) return;
+    const files = Array.from(fileInput.files);
+    
+    resultBox.style.display = 'block';
+    tg.HapticFeedback.impactOccurred('medium');
 
-            let finalHtml = `<div style="margin-bottom: 12px; font-size: 14px; font-weight: 800; text-align: left;">📋 Подобрано для раскрашивания:</div>`;
+    let finalHtml = `<div style="margin-bottom: 12px; font-size: 16px; font-weight: 800; text-align: left; color: var(--accent);">📊 Результаты подбора:</div>`;
 
-            for (let i = 0; i < files.length; i++) {
-                resultBox.innerHTML = `<span style="color:var(--gray)"><i class="fas fa-spinner fa-spin"></i> Обработка: ${i + 1} из ${files.length}...</span>`;
+    for (let i = 0; i < files.length; i++) {
+        resultBox.innerHTML = `<span style="color:var(--gray)"><i class="fas fa-spinner fa-spin"></i> Обрабатываю фото ${i + 1} из ${files.length}...</span>`;
+        
+        const formData = new FormData();
+        formData.append('file', files[i]);
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); 
+
+            const response = await fetch('https://hlhbot-hachettelittleheroes.amvera.io/analyze', {
+                method: 'POST',
+                body: formData,
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            const data = await response.json();
+            
+            if (data.status === 'success' && data.palette.length > 0) {
+                // Добавляем заголовок номера фото
+                finalHtml += `<div style="text-align: left; padding: 10px 5px 5px; font-size: 13px; font-weight: bold; color: var(--gray);">Фото №${i + 1}</div>`;
                 
-                const formData = new FormData();
-                formData.append('file', files[i]);
-
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 10000); 
-
-                    const response = await fetch('https://hlhbot-hachettelittleheroes.amvera.io/analyze', {
-                        method: 'POST',
-                        body: formData,
-                        signal: controller.signal
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    const data = await response.json();
-                    
-                    if (data.status === 'success' && data.palette.length > 0) {
-                        const detectedRgb = data.palette[0].rgb;
-                        const markerNum = getClosestMarker(detectedRgb);
-                        
-                        const bgRgb = `rgb(${detectedRgb[0]},${detectedRgb[1]},${detectedRgb[2]})`;
-                        
-                        // Добавляем строку в результат (СТОЛБИКОМ)
-                        finalHtml += `
-                            <div class="ai-row">
-                                <div class="ai-row-color" style="background:${bgRgb}"></div>
-                                <div class="ai-row-info">
-                                    <div class="ai-row-marker">Маркер №${markerNum}</div>
-                                    <div class="ai-row-rgb">RGB: ${detectedRgb.join(', ')}</div>
-                                </div>
-                                <button onclick="addToCart('Маркер', '${markerNum}', ${markerNum}, 99, 60)" class="btn-qty-sm">🛒</button>
-                            </div>`;
-                    }
-                } catch (e) { console.error(e); }
+                const detectedRgb = data.palette[0].rgb;
+                const markerNum = getClosestMarker(detectedRgb);
+                const bgRgb = `rgb(${detectedRgb[0]},${detectedRgb[1]},${detectedRgb[2]})`;
+                
+                // Выводим строку БЕЗ кнопки корзины
+                finalHtml += `
+                    <div class="ai-row">
+                        <div class="ai-row-color" style="background:${bgRgb}"></div>
+                        <div class="ai-row-info">
+                            <div class="ai-row-marker">Маркер №${markerNum}</div>
+                            <div class="ai-row-rgb">RGB: ${detectedRgb.join(', ')}</div>
+                        </div>
+                    </div>`;
             }
-
-            resultBox.innerHTML = finalHtml;
-            tg.HapticFeedback.notificationOccurred('success');
-            fileInput.value = "";
+        } catch (e) { 
+            console.error(e);
+            finalHtml += `<div style="color:red; font-size:12px; padding:5px;">Ошибка загрузки фото №${i+1}</div>`;
         }
+    }
+
+    resultBox.innerHTML = finalHtml;
+    tg.HapticFeedback.notificationOccurred('success');
+    fileInput.value = ""; // Очищаем поле, чтобы можно было загрузить те же фото снова
+}
 
         async function loadMarkers() {
             const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();

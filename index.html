@@ -348,62 +348,71 @@
             }).join('');
         }
 
-        function filterBooks() {
-            const query = document.getElementById('bookSearch').value.toLowerCase();
-            renderBooks(bookNames.filter(name => name.toLowerCase().includes(query)));
-        }
-
         /* --- ЛОГИКА ПОИСКА БЛИЖАЙШЕГО ЦВЕТА С ПОРОГОМ --- */
-        /* --- СТРОГАЯ ЛОГИКА ПОИСКА С ВЕСОВЫМИ КОЭФФИЦИЕНТАМИ --- */
-function getClosestMarker(targetRgb) {
-    const activePalettes = Array.from(document.querySelectorAll('.set-check:checked')).map(cb => cb.value);
-    
-    // СТРОГИЙ ПОРОГ: 
-    // 30 - почти идеальное совпадение
-    // 45 - допустимое совпадение
-    // 60+ - уже заметная разница
-    const COLOR_THRESHOLD = 40; 
+        function getClosestMarker(targetRgb) {
+            const activePalettes = Array.from(document.querySelectorAll('.set-check:checked')).map(cb => cb.value);
+            
+            // СТРОГИЙ ПОРОГ
+            const COLOR_THRESHOLD = 40; 
 
-    const availableMarkers = markerDB.filter(m => 
-        activePalettes.includes(m.palette) && userInventory[m.n] !== false
-    );
+            const availableMarkers = markerDB.filter(m => 
+                activePalettes.includes(m.palette) && userInventory[m.n] !== false
+            );
 
-    if (availableMarkers.length === 0) return { n: "Нет доступных", found: false };
+            if (availableMarkers.length === 0) return { n: "Нет доступных", found: false };
 
-    let closest = null;
-    let minDistance = Infinity;
+            let closest = null;
+            let minDistance = Infinity;
 
-    availableMarkers.forEach(marker => {
-        const r1 = targetRgb[0], g1 = targetRgb[1], b1 = targetRgb[2];
-        const r2 = marker.r, g2 = marker.g, b2 = marker.b;
+            availableMarkers.forEach(marker => {
+                const r1 = targetRgb[0], g1 = targetRgb[1], b1 = targetRgb[2];
+                const r2 = marker.r, g2 = marker.g, b2 = marker.b;
 
-        // Среднее значение красного для корректировки весов (алгоритм redmean)
-        const rMean = (r1 + r2) / 2;
-        const dr = r1 - r2;
-        const dg = g1 - g2;
-        const db = b1 - b2;
+                // Среднее значение красного для корректировки весов (алгоритм redmean)
+                const rMean = (r1 + r2) / 2;
+                const dr = r1 - r2;
+                const dg = g1 - g2;
+                const db = b1 - b2;
 
-        // Взвешенное расстояние, учитывающее особенности человеческого зрения
-        const d = Math.sqrt(
-            (2 + rMean / 256) * dr * dr +
-            4 * dg * dg +
-            (2 + (255 - rMean) / 256) * db * db
-        );
+                // Взвешенное расстояние, учитывающее особенности человеческого зрения
+                const d = Math.sqrt(
+                    (2 + rMean / 256) * dr * dr +
+                    4 * dg * dg +
+                    (2 + (255 - rMean) / 256) * db * db
+                );
 
-        if (d < minDistance) {
-            minDistance = d;
-            closest = marker;
+                if (d < minDistance) {
+                    minDistance = d;
+                    closest = marker;
+                }
+            });
+
+            // Если даже лучший вариант слишком далеко от оригинала
+            if (minDistance > COLOR_THRESHOLD) {
+                return { n: "Подходящих нет", found: false, dist: minDistance };
+            }
+
+            return { ...closest, found: true, dist: minDistance };
         }
-    });
 
-    // Если даже лучший вариант слишком далеко от оригинала
-    if (minDistance > COLOR_THRESHOLD) {
-        return { n: "Подходящих нет", found: false, dist: minDistance };
-    }
-
-    return { ...closest, found: true, dist: minDistance };
-}
-
+        // Функция для удобного копирования RGB в буфер обмена
+        function copyRgb(rgbStr, element) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(rgbStr).then(() => {
+                    const originalHtml = element.innerHTML;
+                    element.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
+                    element.style.color = '#34c759';
+                    setTimeout(() => {
+                        element.innerHTML = originalHtml;
+                        element.style.color = 'var(--accent)';
+                    }, 1500);
+                    tg.HapticFeedback.impactOccurred('light');
+                });
+            } else {
+                // Запасной вариант, если буфер недоступен
+                tg.showAlert(`RGB для копирования: ${rgbStr}`);
+            }
+        }
 
         async function uploadPhoto() {
             const fileInput = document.getElementById('photoInput');
@@ -432,32 +441,43 @@ function getClosestMarker(targetRgb) {
                     const data = await response.json();
                     
                     if (data.status === 'success' && data.palette.length > 0) {
-                        finalHtml += `<div style="text-align: left; padding: 10px 5px 5px; font-size: 13px; font-weight: bold; color: var(--gray);">Фото №${i + 1}</div>`;
+                        finalHtml += `<div style="text-align: left; padding: 10px 5px 5px; font-size: 13px; font-weight: bold; color: var(--gray);">Фото №${i + 1} (Определено цветов: ${data.palette.length})</div>`;
                         
-                        const detectedRgb = data.palette[0].rgb;
-                        const result = getClosestMarker(detectedRgb);
-                        const bgRgbPhoto = `rgb(${detectedRgb[0]},${detectedRgb[1]},${detectedRgb[2]})`;
-                        
-                        let markerInfoHtml = "";
-                        if (result.found) {
-                            const bgRgbMarker = `rgb(${result.r},${result.g},${result.b})`;
-                            markerInfoHtml = `
-                                <div class="ai-row-marker">
-                                    <span class="ai-marker-preview" style="background:${bgRgbMarker}"></span>
-                                    Маркер №${result.n}
-                                </div>
-                                <div class="ai-row-rgb">RGB: ${detectedRgb.join(', ')}</div>`;
-                        } else {
-                            markerInfoHtml = `<div class="ai-row-marker" style="color:var(--gray)">${result.n}</div>`;
-                        }
+                        // ПЕРЕБИРАЕМ ВСЕ НАЙДЕННЫЕ ЦВЕТА
+                        data.palette.forEach(pal => {
+                            const detectedRgb = pal.rgb;
+                            const result = getClosestMarker(detectedRgb);
+                            const bgRgbPhoto = `rgb(${detectedRgb[0]},${detectedRgb[1]},${detectedRgb[2]})`;
+                            
+                            let markerInfoHtml = "";
+                            if (result.found) {
+                                const bgRgbMarker = `rgb(${result.r},${result.g},${result.b})`;
+                                markerInfoHtml = `
+                                    <div class="ai-row-marker">
+                                        <span class="ai-marker-preview" style="background:${bgRgbMarker}"></span>
+                                        Маркер №${result.n}
+                                    </div>`;
+                            } else {
+                                markerInfoHtml = `<div class="ai-row-marker" style="color:var(--gray)">${result.n}</div>`;
+                            }
 
-                        finalHtml += `
-                            <div class="ai-row">
-                                <div class="ai-row-color" style="background:${bgRgbPhoto}"></div>
-                                <div class="ai-row-info">
-                                    ${markerInfoHtml}
-                                </div>
-                            </div>`;
+                            // Добавляем вывод чистого RGB для таблицы с кнопкой копирования
+                            markerInfoHtml += `
+                                <div class="ai-row-rgb" style="margin-top: 5px; font-size: 12px; color: var(--text);">
+                                    Определен RGB: <b>${detectedRgb[0]}, ${detectedRgb[1]}, ${detectedRgb[2]}</b> 
+                                    <span onclick="copyRgb('${detectedRgb[0]}, ${detectedRgb[1]}, ${detectedRgb[2]}', this)" style="color: var(--accent); margin-left: 10px; cursor: pointer; text-decoration: underline; font-weight:bold;">
+                                        <i class="far fa-copy"></i> Копировать
+                                    </span>
+                                </div>`;
+
+                            finalHtml += `
+                                <div class="ai-row">
+                                    <div class="ai-row-color" style="background:${bgRgbPhoto}"></div>
+                                    <div class="ai-row-info">
+                                        ${markerInfoHtml}
+                                    </div>
+                                </div>`;
+                        });
                     }
                 } catch (e) { 
                     finalHtml += `<div style="color:red; font-size:12px; padding:5px;">Ошибка фото №${i+1}</div>`;

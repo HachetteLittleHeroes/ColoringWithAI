@@ -90,11 +90,36 @@
         .ai-row-marker { font-weight: 800; font-size: 16px; color: var(--accent); }
         .ai-row-rgb { font-size: 10px; color: var(--gray); font-weight: normal; }
 
-        /* НОВЫЕ СТИЛИ ДЛЯ ИНВЕНТАРЯ */
+        /* ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ ИНВЕНТАРЯ */
         .marker-manager { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; overflow-y: auto; padding-bottom: 80px; }
         .marker-grid-small { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; }
-        .marker-toggle { background: var(--secondary); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 8px; text-align: center; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .marker-toggle.inactive { opacity: 0.3; background: #eee; text-decoration: line-through; }
+        
+        .marker-toggle { 
+            background: var(--secondary); 
+            border: 1px solid rgba(128,128,128,0.3); 
+            border-radius: 8px; padding: 10px 5px; 
+            text-align: center; font-size: 13px; 
+            font-weight: 800; cursor: pointer;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .marker-toggle.inactive { 
+            opacity: 0.4; 
+            background: rgba(128,128,128,0.1); 
+            text-decoration: line-through;
+            border: 1px dashed var(--gray);
+            color: var(--gray);
+        }
+
+        .ai-marker-preview {
+            display: inline-block;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+            border: 1px solid rgba(0,0,0,0.1);
+            vertical-align: middle;
+        }
+
         .manage-btn { font-size: 11px; color: var(--accent); background: none; border: none; text-decoration: underline; padding: 0; margin-left: 10px; cursor: pointer; }
     </style>
 </head>
@@ -247,7 +272,6 @@
 
         let markersData = [], cart = [], markersLoaded = false;
         
-        // --- ДАННЫЕ ИЗ ГУГЛ ТАБЛИЦЫ ---
         let markerDB = [];
         let userInventory = JSON.parse(localStorage.getItem('userInventory')) || {}; 
         const sheetsUrl = 'https://script.google.com/macros/s/AKfycbyFkOhFVb3MFFpav0EZbBiuAVsbwGNWdWGkfsqJN8732131KCeH7mcejAUrkeQNOOuj/exec';
@@ -329,16 +353,16 @@
             renderBooks(bookNames.filter(name => name.toLowerCase().includes(query)));
         }
 
-        /* --- ЛОГИКА ПОИСКА БЛИЖАЙШЕГО ЦВЕТА (ОБНОВЛЕННАЯ) --- */
+        /* --- ЛОГИКА ПОИСКА БЛИЖАЙШЕГО ЦВЕТА С ПОРОГОМ --- */
         function getClosestMarker(targetRgb) {
             const activePalettes = Array.from(document.querySelectorAll('.set-check:checked')).map(cb => cb.value);
-            
-            // Фильтруем: только выбранные палитры И только те, что НЕ выключены в инвентаре
+            const COLOR_THRESHOLD = 65; 
+
             const availableMarkers = markerDB.filter(m => 
                 activePalettes.includes(m.palette) && userInventory[m.n] !== false
             );
 
-            if (availableMarkers.length === 0) return "Нет доступных";
+            if (availableMarkers.length === 0) return { n: "Нет доступных", found: false };
 
             let closest = null;
             let minDistance = Infinity;
@@ -351,10 +375,15 @@
                 );
                 if (d < minDistance) {
                     minDistance = d;
-                    closest = marker.n;
+                    closest = marker;
                 }
             });
-            return closest;
+
+            if (minDistance > COLOR_THRESHOLD) {
+                return { n: "Подходящих нет", found: false };
+            }
+
+            return { ...closest, found: true };
         }
 
         async function uploadPhoto() {
@@ -387,15 +416,27 @@
                         finalHtml += `<div style="text-align: left; padding: 10px 5px 5px; font-size: 13px; font-weight: bold; color: var(--gray);">Фото №${i + 1}</div>`;
                         
                         const detectedRgb = data.palette[0].rgb;
-                        const markerNum = getClosestMarker(detectedRgb);
-                        const bgRgb = `rgb(${detectedRgb[0]},${detectedRgb[1]},${detectedRgb[2]})`;
+                        const result = getClosestMarker(detectedRgb);
+                        const bgRgbPhoto = `rgb(${detectedRgb[0]},${detectedRgb[1]},${detectedRgb[2]})`;
                         
+                        let markerInfoHtml = "";
+                        if (result.found) {
+                            const bgRgbMarker = `rgb(${result.r},${result.g},${result.b})`;
+                            markerInfoHtml = `
+                                <div class="ai-row-marker">
+                                    <span class="ai-marker-preview" style="background:${bgRgbMarker}"></span>
+                                    Маркер №${result.n}
+                                </div>
+                                <div class="ai-row-rgb">RGB: ${detectedRgb.join(', ')}</div>`;
+                        } else {
+                            markerInfoHtml = `<div class="ai-row-marker" style="color:var(--gray)">${result.n}</div>`;
+                        }
+
                         finalHtml += `
                             <div class="ai-row">
-                                <div class="ai-row-color" style="background:${bgRgb}"></div>
+                                <div class="ai-row-color" style="background:${bgRgbPhoto}"></div>
                                 <div class="ai-row-info">
-                                    <div class="ai-row-marker">Маркер №${markerNum}</div>
-                                    <div class="ai-row-rgb">RGB: ${detectedRgb.join(', ')}</div>
+                                    ${markerInfoHtml}
                                 </div>
                             </div>`;
                     }
@@ -549,7 +590,7 @@
             document.getElementById('btn-' + id).classList.add('active');
             if (id === 'shop') {
                 loadMarkers();
-                loadColorDatabase(); // Загружаем палитры из гугл таблицы
+                loadColorDatabase();
             }
             if (id === 'cart') renderCart();
         }
@@ -576,7 +617,7 @@
             const p = new URLSearchParams(window.location.search);
             document.getElementById('userBalance').innerText = p.get('balance') || 0;
             document.getElementById('userIdDisplay').innerText = p.get('id') || "---";
-            loadColorDatabase(); // Предзагрузка базы при старте
+            loadColorDatabase();
         }
         renderBooks();
     </script>

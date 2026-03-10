@@ -13,103 +13,28 @@
             --tg-theme-text-color: #000000;
             --tg-theme-hint-color: #999999;
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color);
-            color: var(--tg-theme-text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
+        body { font-family: -apple-system, sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 400px; }
-
-        h2 { text-align: center; margin-bottom: 20px; }
-
-        .card {
-            background: rgba(121, 121, 121, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .btn {
-            background-color: var(--tg-theme-button-color);
-            color: var(--tg-theme-button-text-color);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            width: 100%;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
+        .card { background: rgba(121, 121, 121, 0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; text-align: center; }
+        .btn { background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; padding: 12px 20px; border-radius: 10px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .btn-admin { background-color: #e67e22; margin-top: 20px; display: none; }
-
         input[type="file"] { display: none; }
-
-        .preview-img {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .result-item {
-            display: flex;
-            align-items: center;
-            background: var(--tg-theme-bg-color);
-            border: 1px solid var(--tg-theme-hint-color);
-            padding: 10px;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
-        .color-box {
-            width: 40px;
-            height: 40px;
-            border-radius: 5px;
-            margin-right: 15px;
-        }
-
-        .admin-panel {
-            display: none;
-            border: 2px dashed #e67e22;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 15px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 8px;
-            border: 1px solid var(--tg-theme-hint-color);
-            box-sizing: border-box;
-        }
-
-        #status {
-            font-size: 14px;
-            margin-top: 10px;
-            color: var(--tg-theme-hint-color);
-        }
+        .preview-img { max-width: 100%; border-radius: 10px; margin-top: 15px; display: none; }
+        .result-item { display: flex; align-items: center; background: var(--tg-theme-bg-color); border: 1px solid var(--tg-theme-hint-color); padding: 10px; border-radius: 10px; margin-top: 10px; }
+        .color-box { width: 40px; height: 40px; border-radius: 5px; margin-right: 15px; }
+        .admin-panel { display: none; border: 2px dashed #e67e22; padding: 15px; margin-top: 20px; border-radius: 15px; }
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid var(--tg-theme-hint-color); box-sizing: border-box; }
+        #status { font-size: 14px; margin-top: 10px; color: var(--tg-theme-hint-color); text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>AI Marker Detector</h2>
+    <h2 style="text-align: center;">AI Marker Detector</h2>
 
     <div id="search-section" class="card">
-        <p>Сфотографируйте выкраску маркера для распознавания</p>
-        <button class="btn" onclick="document.getElementById('fileInput').click()">📸 Сделать фото</button>
+        <p>Сфотографируйте выкраску маркера</p>
+        <button class="btn" onclick="document.getElementById('fileInput').click()">📸 Распознать маркер</button>
         <input type="file" id="fileInput" accept="image/*" onchange="processImage(this, 'analyze')">
         <img id="preview" class="preview-img">
         <div id="results"></div>
@@ -119,21 +44,15 @@
 
     <div id="admin-panel" class="admin-panel">
         <h3>Обучение модели</h3>
-        <label>Бренд:</label>
         <select id="adminBrand">
             <option value="GuangNa">GuangNa</option>
             <option value="Languo">Languo</option>
             <option value="Zibeef">Zibeef</option>
-            <option value="Other">Другой</option>
         </select>
-        
-        <label>Номер маркера:</label>
-        <input type="text" id="adminMarkerId" placeholder="Например: 611">
-        
+        <input type="text" id="adminMarkerId" placeholder="Номер (напр. 611)">
         <button class="btn" style="background-color: #27ae60;" onclick="document.getElementById('adminFileInput').click()">📸 Снять эталон</button>
         <input type="file" id="adminFileInput" accept="image/*" onchange="processImage(this, 'train')">
-        
-        <p id="adminStatus"></p>
+        <p id="adminStatus" style="font-size: 12px; margin-top: 5px;"></p>
     </div>
 
     <div id="status"></div>
@@ -143,13 +62,15 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // !!! ВСТАВЬ СВОЙ ID СЮДА !!!
-    const ADMIN_ID = 8659553599; // Замени на свой реальный ID из логов
-    const SERVER_URL = "https://hlhbot-hachettelittleheroes.amvera.io"; // Твой адрес Amvera
+    // Твой верифицированный ID
+    const MY_ID = 496779756; 
+    const SERVER_URL = "https://hlhbot-hachettelittleheroes.amvera.io"; 
 
-    // Проверка прав админа
-    if (tg.initDataUnsafe.user && tg.initDataUnsafe.user.id === ADMIN_ID) {
+    // Проверка прав при запуске
+    if (tg.initDataUnsafe.user && tg.initDataUnsafe.user.id === MY_ID) {
         document.getElementById('adminBtn').style.display = 'block';
+    } else {
+        console.log("Доступ к админке ограничен для ID:", tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "Unknown");
     }
 
     function toggleAdminPanel() {
@@ -159,83 +80,53 @@
 
     async function processImage(input, mode) {
         if (!input.files || !input.files[0]) return;
-        
         const file = input.files[0];
-        const preview = mode === 'train' ? null : document.getElementById('preview');
         const status = document.getElementById(mode === 'train' ? 'adminStatus' : 'status');
-        
-        if (preview) {
-            preview.src = URL.createObjectURL(file);
-            preview.style.display = 'block';
-        }
-
-        status.innerText = "⏳ Обработка ИИ...";
+        status.innerText = "⏳ ИИ думает...";
 
         const formData = new FormData();
         formData.append('file', file);
 
         let endpoint = `${SERVER_URL}/analyze`;
-        
         if (mode === 'train') {
-            const brand = document.getElementById('adminBrand').value;
-            const markerId = document.getElementById('adminMarkerId').value;
-            
-            if (!markerId) {
-                alert("Введите номер маркера!");
-                return;
-            }
-            
-            formData.append('brand', brand);
-            formData.append('marker_id', markerId);
-            formData.append('admin_id', tg.initDataUnsafe.user.id);
+            formData.append('brand', document.getElementById('adminBrand').value);
+            formData.append('marker_id', document.getElementById('adminMarkerId').value);
+            formData.append('admin_id', MY_ID);
             endpoint = `${SERVER_URL}/train_marker`;
         }
 
         try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                body: formData
-            });
-
+            const response = await fetch(endpoint, { method: 'POST', body: formData });
             const result = await response.json();
 
             if (mode === 'analyze') {
                 displayResults(result);
             } else {
-                status.innerText = result.message || "Готово!";
+                status.innerText = result.message;
                 if (result.status === 'success') alert(result.message);
             }
-        } catch (error) {
-            console.error(error);
-            status.innerText = "❌ Ошибка связи с ИИ";
+        } catch (e) {
+            status.innerText = "❌ Ошибка сервера";
         }
     }
 
     function displayResults(data) {
-        const resultsDiv = document.getElementById('results');
-        const status = document.getElementById('status');
-        resultsDiv.innerHTML = "";
-        status.innerText = "";
+        const resDiv = document.getElementById('results');
+        resDiv.innerHTML = "";
+        document.getElementById('status').innerText = "";
 
         if (data.status === "success" && data.palette) {
             data.palette.forEach(item => {
-                const html = `
+                resDiv.innerHTML += `
                     <div class="result-item">
-                        <div class="color-box" style="background-color: rgb(${item.rgb[0]}, ${item.rgb[1]}, ${item.rgb[2]})"></div>
-                        <div>
-                            <strong>Маркер: №${item.marker}</strong><br>
-                            <small>Точность: ${item.confidence}%</small>
-                            ${item.alt_marker ? `<br><small>Или: ${item.alt_marker}</small>` : ''}
-                        </div>
-                    </div>
-                `;
-                resultsDiv.innerHTML += html;
+                        <div class="color-box" style="background-color: rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]})"></div>
+                        <div><strong>№${item.marker}</strong><br><small>Уверенность: ${item.confidence}%</small></div>
+                    </div>`;
             });
         } else {
-            status.innerText = "Маркер не найден в базе";
+            document.getElementById('status').innerText = "Маркер не узнан.";
         }
     }
 </script>
-
 </body>
 </html>

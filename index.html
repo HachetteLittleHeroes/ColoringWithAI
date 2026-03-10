@@ -77,7 +77,6 @@
         
         input[type="text"], input[type="number"] { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--secondary); color: var(--text); margin-bottom: 15px; box-sizing: border-box; outline: none; }
         
-        /* Стили блока ИИ Подбора */
         .ai-block { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 0.5px solid rgba(128,128,128,0.2); margin-bottom: 20px; text-align: center; }
         .ai-result-box { margin-top: 15px; padding: 10px; border-radius: 10px; background: var(--secondary); font-size: 14px; font-weight: bold; display: none; }
         
@@ -90,7 +89,6 @@
         .ai-row-marker { font-weight: 800; font-size: 16px; color: var(--accent); }
         .ai-row-rgb { font-size: 10px; color: var(--gray); font-weight: normal; }
 
-        /* ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ ИНВЕНТАРЯ */
         .marker-manager { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; overflow-y: auto; padding-bottom: 80px; }
         .marker-grid-small { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; }
         
@@ -149,6 +147,15 @@
         
         <div class="category-title" style="margin-top: 0;">ColoringWithAI - Подбор по фото</div>
         <div class="ai-block">
+            
+            <div class="row-item" style="background: rgba(241, 196, 15, 0.1); border: 1px solid var(--gold); cursor: pointer; margin-bottom: 15px;" onclick="openCalibrationManager()">
+                <div class="item-info">
+                    <b style="color: var(--text);"><i class="fas fa-sliders-h" style="color: var(--gold);"></i> Калибровка ИИ</b>
+                    <div style="font-size:11px; color:var(--gray);">Настройте сканер под вашу камеру (10 шагов)</div>
+                </div>
+                <div class="item-controls"><i class="fas fa-chevron-right" style="color: var(--gold);"></i></div>
+            </div>
+
             <p style="margin: 0 0 10px 0; font-size: 13px; color: var(--gray);">Выберите палитры и наличие:</p>
             <div id="paletteSettings" class="palette-settings">
                 <small style="color:var(--gray)">Загрузка базы цветов...</small>
@@ -244,6 +251,26 @@
         <div id="markerGrid" class="marker-grid-small"></div>
     </div>
 
+    <div id="calibrationManager" class="marker-manager" style="z-index: 3000;">
+        <div class="header" style="display:flex; justify-content: space-between; align-items: center; padding: 20px 15px;">
+            <span>Калибровка</span>
+            <button class="buy-btn" style="width:auto; border-radius:10px; padding: 8px 15px; background:var(--secondary); color:var(--text);" onclick="closeCalibration()">Отмена</button>
+        </div>
+        <div style="padding: 15px; text-align: center;">
+            <p style="color: var(--gray); font-size: 14px;">Сделайте фото выкраски маркера. Если после отправки фото окно закроется, просто откройте его снова — прогресс сохранен.</p>
+            
+            <div style="font-size: 60px; font-weight: 800; color: var(--accent); margin: 30px 0;" id="calibMarkerNum">611</div>
+            <div style="font-size: 16px; color: var(--gray); margin-bottom: 30px; font-weight: bold;" id="calibStepText">Шаг 1 из 10</div>
+            
+            <input type="file" id="calibInput" accept="image/*" capture="camera" style="display:none" onchange="handleCalibrationPhoto(event)">
+            <button class="buy-btn" style="border-radius: 12px; padding: 15px; font-size: 16px;" id="calibBtn">
+                <i class="fas fa-camera"></i> Сделать фото
+            </button>
+            
+            <button class="manage-btn" style="margin-top: 20px; color: #ff3b30;" onclick="resetCalibration()">Сбросить прогресс</button>
+        </div>
+    </div>
+
     <div id="viewer">
         <div class="viewer-header">
             <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="closeBook()">Назад</button>
@@ -271,10 +298,103 @@
         tg.expand();
 
         let markersData = [], cart = [], markersLoaded = false;
-        
         let markerDB = [];
         let userInventory = JSON.parse(localStorage.getItem('userInventory')) || {}; 
         const sheetsUrl = 'https://script.google.com/macros/s/AKfycbyFkOhFVb3MFFpav0EZbBiuAVsbwGNWdWGkfsqJN8732131KCeH7mcejAUrkeQNOOuj/exec';
+
+        /* --- ЛОГИКА КАЛИБРОВКИ (NEW) --- */
+        const calibMarkers = ["611", "600", "605", "615", "601", "740", "666", "628", "776", "804"];
+        let currentCalibStep = parseInt(localStorage.getItem('calibStep')) || 0;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Если калибровка была прервана закрытием окна - продолжаем
+            if(currentCalibStep > 0 && currentCalibStep <= 10) {
+                tab('shop');
+                openCalibrationManager();
+            }
+        });
+
+        function openCalibrationManager() {
+            document.getElementById('calibrationManager').style.display = 'block';
+            updateCalibrationUI();
+        }
+
+        function closeCalibration() {
+            document.getElementById('calibrationManager').style.display = 'none';
+        }
+
+        function resetCalibration() {
+            currentCalibStep = 0;
+            localStorage.removeItem('calibStep');
+            updateCalibrationUI();
+        }
+
+        function updateCalibrationUI() {
+            const btn = document.getElementById('calibBtn');
+            const fileInput = document.getElementById('calibInput');
+            
+            if (currentCalibStep < 10) {
+                document.getElementById('calibMarkerNum').innerText = calibMarkers[currentCalibStep];
+                document.getElementById('calibStepText').innerText = `Шаг ${currentCalibStep + 1} из 10`;
+                btn.innerHTML = '<i class="fas fa-camera"></i> Сделать фото';
+                btn.onclick = () => fileInput.click();
+                fileInput.value = ''; // сброс инпута
+            } else {
+                // Шаг 11 (Завершение)
+                document.getElementById('calibMarkerNum').innerText = "✅";
+                document.getElementById('calibStepText').innerText = "Все фото собраны";
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Завершить';
+                btn.onclick = () => {
+                    localStorage.removeItem('calibStep');
+                    tg.sendData(JSON.stringify({status: "completed"}));
+                    closeCalibration();
+                };
+            }
+        }
+
+        function handleCalibrationPhoto(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            tg.HapticFeedback.impactOccurred('medium');
+            const btn = document.getElementById('calibBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
+            btn.disabled = true;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    // Уменьшаем фото для быстрой и надежной отправки через tg.sendData
+                    canvas.width = 150; 
+                    canvas.height = 150;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, 150, 150);
+                    
+                    const base64data = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
+                    
+                    // Сохраняем шаг ПЕРЕД отправкой, так как sendData может закрыть Mini App
+                    currentCalibStep++;
+                    localStorage.setItem('calibStep', currentCalibStep);
+                    
+                    // Отправляем фото боту в python-скрипт
+                    tg.sendData(JSON.stringify({
+                        type: "calibration_photo",
+                        image: base64data
+                    }));
+
+                    // Если окно не закрылось (например на ПК), обновляем интерфейс
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        updateCalibrationUI();
+                    }, 600);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        /* --- КОНЕЦ ЛОГИКИ КАЛИБРОВКИ --- */
 
         async function loadColorDatabase() {
             try {
@@ -348,16 +468,10 @@
             }).join('');
         }
 
-        /* --- ЛОГИКА ПОИСКА БЛИЖАЙШЕГО ЦВЕТА С ПОРОГОМ --- */
         function getClosestMarker(targetRgb) {
             const activePalettes = Array.from(document.querySelectorAll('.set-check:checked')).map(cb => cb.value);
-            
-            // СТРОГИЙ ПОРОГ
             const COLOR_THRESHOLD = 40; 
-
-            const availableMarkers = markerDB.filter(m => 
-                activePalettes.includes(m.palette) && userInventory[m.n] !== false
-            );
+            const availableMarkers = markerDB.filter(m => activePalettes.includes(m.palette) && userInventory[m.n] !== false);
 
             if (availableMarkers.length === 0) return { n: "Нет доступных", found: false };
 
@@ -367,49 +481,27 @@
             availableMarkers.forEach(marker => {
                 const r1 = targetRgb[0], g1 = targetRgb[1], b1 = targetRgb[2];
                 const r2 = marker.r, g2 = marker.g, b2 = marker.b;
-
-                // Среднее значение красного для корректировки весов (алгоритм redmean)
                 const rMean = (r1 + r2) / 2;
-                const dr = r1 - r2;
-                const dg = g1 - g2;
-                const db = b1 - b2;
+                const dr = r1 - r2, dg = g1 - g2, db = b1 - b2;
+                const d = Math.sqrt((2 + rMean / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rMean) / 256) * db * db);
 
-                // Взвешенное расстояние, учитывающее особенности человеческого зрения
-                const d = Math.sqrt(
-                    (2 + rMean / 256) * dr * dr +
-                    4 * dg * dg +
-                    (2 + (255 - rMean) / 256) * db * db
-                );
-
-                if (d < minDistance) {
-                    minDistance = d;
-                    closest = marker;
-                }
+                if (d < minDistance) { minDistance = d; closest = marker; }
             });
 
-            // Если даже лучший вариант слишком далеко от оригинала
-            if (minDistance > COLOR_THRESHOLD) {
-                return { n: "Подходящих нет", found: false, dist: minDistance };
-            }
-
+            if (minDistance > COLOR_THRESHOLD) return { n: "Подходящих нет", found: false, dist: minDistance };
             return { ...closest, found: true, dist: minDistance };
         }
 
-        // Функция для удобного копирования RGB в буфер обмена
         function copyRgb(rgbStr, element) {
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(rgbStr).then(() => {
                     const originalHtml = element.innerHTML;
                     element.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
                     element.style.color = '#34c759';
-                    setTimeout(() => {
-                        element.innerHTML = originalHtml;
-                        element.style.color = 'var(--accent)';
-                    }, 1500);
+                    setTimeout(() => { element.innerHTML = originalHtml; element.style.color = 'var(--accent)'; }, 1500);
                     tg.HapticFeedback.impactOccurred('light');
                 });
             } else {
-                // Запасной вариант, если буфер недоступен
                 tg.showAlert(`RGB для копирования: ${rgbStr}`);
             }
         }
@@ -443,7 +535,6 @@
                     if (data.status === 'success' && data.palette.length > 0) {
                         finalHtml += `<div style="text-align: left; padding: 10px 5px 5px; font-size: 13px; font-weight: bold; color: var(--gray);">Фото №${i + 1} (Определено цветов: ${data.palette.length})</div>`;
                         
-                        // ПЕРЕБИРАЕМ ВСЕ НАЙДЕННЫЕ ЦВЕТА
                         data.palette.forEach(pal => {
                             const detectedRgb = pal.rgb;
                             const result = getClosestMarker(detectedRgb);
@@ -461,7 +552,6 @@
                                 markerInfoHtml = `<div class="ai-row-marker" style="color:var(--gray)">${result.n}</div>`;
                             }
 
-                            // Добавляем вывод чистого RGB для таблицы с кнопкой копирования
                             markerInfoHtml += `
                                 <div class="ai-row-rgb" style="margin-top: 5px; font-size: 12px; color: var(--text);">
                                     Определен RGB: <b>${detectedRgb[0]}, ${detectedRgb[1]}, ${detectedRgb[2]}</b> 

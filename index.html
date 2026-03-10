@@ -257,14 +257,24 @@
             <button class="buy-btn" style="width:auto; border-radius:10px; padding: 8px 15px; background:var(--secondary); color:var(--text);" onclick="closeCalibration()">Отмена</button>
         </div>
         <div style="padding: 15px; text-align: center;">
-            <p style="color: var(--gray); font-size: 14px;">Сделайте фото выкраски маркера. Если после отправки фото окно закроется, просто откройте его снова — прогресс сохранен.</p>
+            <p style="color: var(--gray); font-size: 14px;">Загрузите фото монотонной выкраски маркера. Если после отправки окно закроется, просто откройте его снова — прогресс сохранен.</p>
             
+            <select id="calibSetName" style="width:100%; padding:14px; margin-top: 10px; margin-bottom:15px; border-radius:12px; border:none; background:var(--secondary); color:var(--text); font-size: 16px; font-weight: bold; outline:none;" onchange="resetCalibration()">
+                <option value="GuangNa 360">GuangNa 360</option>
+                <option value="GuangNa 240">GuangNa 240</option>
+                <option value="GuangNa 168">GuangNa 168</option>
+                <option value="GuangNa 120">GuangNa 120</option>
+                <option value="Tooli-Art">Tooli-Art</option>
+                <option value="Grasp 168">Grasp 168</option>
+                <option value="Zibeef 240">Zibeef 240</option>
+            </select>
+
             <div style="font-size: 60px; font-weight: 800; color: var(--accent); margin: 30px 0;" id="calibMarkerNum">611</div>
             <div style="font-size: 16px; color: var(--gray); margin-bottom: 30px; font-weight: bold;" id="calibStepText">Шаг 1 из 10</div>
             
-            <input type="file" id="calibInput" accept="image/*" capture="camera" style="display:none" onchange="handleCalibrationPhoto(event)">
+            <input type="file" id="calibInput" accept="image/*" style="display:none" onchange="handleCalibrationPhoto(event)">
             <button class="buy-btn" style="border-radius: 12px; padding: 15px; font-size: 16px;" id="calibBtn">
-                <i class="fas fa-camera"></i> Сделать фото
+                <i class="fas fa-upload"></i> Загрузить выкраску
             </button>
             
             <button class="manage-btn" style="margin-top: 20px; color: #ff3b30;" onclick="resetCalibration()">Сбросить прогресс</button>
@@ -307,6 +317,12 @@
         let currentCalibStep = parseInt(localStorage.getItem('calibStep')) || 0;
 
         document.addEventListener("DOMContentLoaded", () => {
+            // Восстанавливаем выбранный набор, если калибровка в процессе
+            const savedSet = localStorage.getItem('calibSetName');
+            if (savedSet) {
+                document.getElementById('calibSetName').value = savedSet;
+            }
+
             // Если калибровка была прервана закрытием окна - продолжаем
             if(currentCalibStep > 0 && currentCalibStep <= 10) {
                 tab('shop');
@@ -326,17 +342,23 @@
         function resetCalibration() {
             currentCalibStep = 0;
             localStorage.removeItem('calibStep');
+            localStorage.removeItem('calibSetName');
+            document.getElementById('calibSetName').disabled = false;
             updateCalibrationUI();
         }
 
         function updateCalibrationUI() {
             const btn = document.getElementById('calibBtn');
             const fileInput = document.getElementById('calibInput');
+            const setSelect = document.getElementById('calibSetName');
+            
+            // Блокируем выбор набора, если пользователь уже начал загружать выкраски
+            setSelect.disabled = currentCalibStep > 0;
             
             if (currentCalibStep < 10) {
                 document.getElementById('calibMarkerNum').innerText = calibMarkers[currentCalibStep];
                 document.getElementById('calibStepText').innerText = `Шаг ${currentCalibStep + 1} из 10`;
-                btn.innerHTML = '<i class="fas fa-camera"></i> Сделать фото';
+                btn.innerHTML = '<i class="fas fa-upload"></i> Загрузить выкраску';
                 btn.onclick = () => fileInput.click();
                 fileInput.value = ''; // сброс инпута
             } else {
@@ -345,8 +367,11 @@
                 document.getElementById('calibStepText').innerText = "Все фото собраны";
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> Завершить';
                 btn.onclick = () => {
+                    const setName = setSelect.value;
                     localStorage.removeItem('calibStep');
-                    tg.sendData(JSON.stringify({status: "completed"}));
+                    localStorage.removeItem('calibSetName');
+                    setSelect.disabled = false;
+                    tg.sendData(JSON.stringify({status: "completed", set_name: setName}));
                     closeCalibration();
                 };
             }
@@ -373,14 +398,17 @@
                     ctx.drawImage(img, 0, 0, 150, 150);
                     
                     const base64data = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
+                    const setName = document.getElementById('calibSetName').value;
                     
                     // Сохраняем шаг ПЕРЕД отправкой, так как sendData может закрыть Mini App
                     currentCalibStep++;
                     localStorage.setItem('calibStep', currentCalibStep);
+                    localStorage.setItem('calibSetName', setName);
                     
-                    // Отправляем фото боту в python-скрипт
+                    // Отправляем фото боту в python-скрипт вместе с именем набора
                     tg.sendData(JSON.stringify({
                         type: "calibration_photo",
+                        set_name: setName,
                         image: base64data
                     }));
 

@@ -16,19 +16,22 @@
         body { font-family: -apple-system, sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 400px; }
         .card { background: rgba(121, 121, 121, 0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; text-align: center; }
-        .btn { background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; padding: 12px 20px; border-radius: 10px; width: 100%; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: opacity 0.2s; }
+        .btn { background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; padding: 12px 20px; border-radius: 10px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: opacity 0.2s; }
         .btn:active { opacity: 0.7; }
         .btn-admin { background-color: #e67e22; margin-top: 20px; display: none; }
         input[type="file"] { display: none; }
         .preview-img { max-width: 100%; border-radius: 10px; margin-top: 15px; display: none; }
         .result-item { display: flex; flex-direction: column; background: var(--tg-theme-bg-color); border: 1px solid var(--tg-theme-hint-color); padding: 15px; border-radius: 10px; margin-top: 10px; width: 100%; box-sizing: border-box; }
-        .color-box { width: 40px; height: 40px; border-radius: 5px; margin-right: 15px; }
+        .color-box { width: 40px; height: 40px; border-radius: 5px; margin-right: 15px; border: 1px solid #ccc; }
         .admin-panel { display: none; border: 2px dashed #e67e22; padding: 15px; margin-top: 20px; border-radius: 15px; width: 100%; box-sizing: border-box;}
-        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid var(--tg-theme-hint-color); box-sizing: border-box; }
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid var(--tg-theme-hint-color); box-sizing: border-box; font-size: 16px; }
         #status { font-size: 14px; margin-top: 10px; color: var(--tg-theme-hint-color); text-align: center; }
-        .feedback-btns { display: flex; gap: 10px; margin-top: 10px; width: 100%; }
-        .correction-form { display: none; margin-top: 10px; border-top: 1px solid #eee; pt: 10px; }
-        .pending-card { background: #f9f9f9; border: 1px solid #ddd; padding: 10px; margin-top: 10px; border-radius: 8px; font-size: 13px; }
+        .feedback-btns { display: flex; gap: 10px; margin-top: 15px; width: 100%; }
+        
+        /* Стили для Карантина */
+        .pending-card { background: #ffffff; border: 2px solid #ddd; padding: 20px; margin-top: 15px; border-radius: 12px; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .pending-title { font-size: 22px; font-weight: bold; color: #e67e22; margin-bottom: 10px; text-align: center;}
+        .color-preview { width: 100%; height: 80px; border-radius: 8px; margin: 10px 0; border: 2px solid #333; }
     </style>
 </head>
 <body>
@@ -47,7 +50,7 @@
     <button id="adminBtn" class="btn btn-admin" onclick="toggleAdminPanel()">⚙️ Панель обучения ИИ</button>
 
     <div id="admin-panel" class="admin-panel">
-        <h3>Обучение модели</h3>
+        <h3>Обучение модели (Эталон)</h3>
         <select id="adminBrandMain">
             <option value="GuangNa">GuangNa</option>
             <option value="Languo">Languo</option>
@@ -57,10 +60,10 @@
         <button class="btn" style="background-color: #27ae60;" onclick="document.getElementById('adminFileInput').click()">📸 Снять эталон</button>
         <input type="file" id="adminFileInput" accept="image/*" onchange="processImage(this, 'train')">
         
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
+        <hr style="margin: 25px 0; border: 0; border-top: 2px solid #eee;">
         
-        <h4>Очередь правок (Карантин)</h4>
-        <button class="btn" style="background-color: #8e44ad;" onclick="loadPending()">🔄 Обновить список правок</button>
+        <h3 style="text-align: center;">Очередь правок (Карантин)</h3>
+        <button class="btn" style="background-color: #8e44ad;" onclick="loadPending()">🔄 Проверить новые правки</button>
         <div id="admin-pending-list"></div>
         
         <p id="adminStatus" style="font-size: 12px; margin-top: 5px;"></p>
@@ -89,7 +92,7 @@
     async function processImage(input, mode) {
         if (!input.files || !input.files[0]) return;
         const file = input.files[0];
-        lastProcessedFile = file; // Сохраняем для дообучения
+        lastProcessedFile = file; // Сохраняем фото для отправки фидбека
         
         const status = document.getElementById(mode === 'train' ? 'adminStatus' : 'status');
         status.innerText = "⏳ ИИ думает...";
@@ -122,36 +125,58 @@
         document.getElementById('status').innerText = "";
 
         if (data.status === "success" && data.palette) {
-            data.palette.forEach((item, index) => {
+            data.palette.forEach((item) => {
+                // Создаем безопасный ID для HTML элементов
+                const safeId = item.marker.replace(/\s+/g, '-');
+                
                 resDiv.innerHTML += `
                     <div class="result-item">
                         <div style="display:flex; align-items:center;">
                             <div class="color-box" style="background-color: rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]})"></div>
-                            <div><strong>№${item.marker}</strong><br><small>Уверенность: ${item.confidence}%</small></div>
+                            <div style="font-size: 18px;"><strong>${item.marker}</strong><br><small style="color:#7f8c8d;">Уверенность: ${item.confidence}%</small></div>
                         </div>
                         <div class="feedback-btns">
-                            <button class="btn" style="background:#27ae60; flex:1;" onclick="submitFeedback(true, '${item.marker}')">Это он</button>
-                            <button class="btn" style="background:#e74c3c; flex:1;" onclick="document.getElementById('corr-form').style.display='block'">Ошибка</button>
+                            <button class="btn" style="background:#27ae60; flex:1;" onclick="submitFeedback(true, '${item.marker}')">✅ Это он</button>
+                            <button class="btn" style="background:#e74c3c; flex:1;" onclick="document.getElementById('corr-form-${safeId}').style.display='block'">❌ Ошибка</button>
                         </div>
-                        <div id="corr-form" class="correction-form">
-                            <input type="text" id="correctId" placeholder="Введите верный номер">
-                            <button class="btn" style="background:#34495e;" onclick="submitFeedback(false, '${item.marker}')">Отправить правку</button>
+                        <div id="corr-form-${safeId}" style="display:none; margin-top:15px; border-top: 1px solid #eee; padding-top: 10px;">
+                            <p style="margin: 0 0 5px 0; font-size: 14px;">Укажите правильный маркер:</p>
+                            <select id="corrBrand-${safeId}">
+                                <option value="GuangNa">GuangNa</option>
+                                <option value="Languo">Languo</option>
+                                <option value="Zibeef">Zibeef</option>
+                            </select>
+                            <input type="text" id="correctId-${safeId}" placeholder="Номер (напр. 640)">
+                            <button class="btn" style="background:#34495e;" onclick="submitFeedback(false, '${item.marker}')">Отправить в базу</button>
                         </div>
                     </div>`;
             });
         } else { document.getElementById('status').innerText = "Маркер не узнан."; }
     }
 
-    async function submitFeedback(isCorrect, predictedId) {
+    async function submitFeedback(isCorrect, predictedFullId) {
         if (!lastProcessedFile) return;
         
-        const correctId = isCorrect ? predictedId : document.getElementById('correctId').value;
-        if (!correctId) return alert("Введите номер маркера");
+        let brand = "";
+        let markerId = "";
+        const safeId = predictedFullId.replace(/\s+/g, '-');
+
+        if (isCorrect) {
+            // Если юзер подтвердил, аккуратно разделяем "GuangNa 640" на "GuangNa" и "640"
+            const parts = predictedFullId.split(' ');
+            brand = parts[0];
+            markerId = parts.slice(1).join(' '); // на случай если номер состоит из нескольких слов
+        } else {
+            // Если юзер исправляет, берем данные из его формы
+            brand = document.getElementById(`corrBrand-${safeId}`).value;
+            markerId = document.getElementById(`correctId-${safeId}`).value;
+            if (!markerId) return alert("Введите номер маркера!");
+        }
 
         const formData = new FormData();
         formData.append('file', lastProcessedFile);
-        formData.append('marker_id', correctId);
-        formData.append('brand', "GuangNa"); // Можно добавить выбор бренда в форму
+        formData.append('brand', brand);
+        formData.append('marker_id', markerId);
         
         document.getElementById('status').innerText = "⏳ Отправка отзыва...";
         
@@ -159,39 +184,44 @@
             const response = await fetch(`${SERVER_URL}/submit_correction`, { method: 'POST', body: formData });
             const res = await response.json();
             alert(res.message);
-            document.getElementById('results').innerHTML = "";
-        } catch (e) { alert("Ошибка отправки"); }
+            document.getElementById('results').innerHTML = ""; // Очищаем после отправки
+            document.getElementById('status').innerText = "";
+        } catch (e) { alert("Ошибка отправки соединения с сервером"); }
     }
 
-    // ФУНКЦИИ АДМИНА ДЛЯ КАРАНТИНА
+    // --- ФУНКЦИИ АДМИНА ДЛЯ КАРАНТИНА ---
     async function loadPending() {
         const list = document.getElementById('admin-pending-list');
         list.innerText = "Загрузка...";
         try {
             const response = await fetch(`${SERVER_URL}/get_pending?admin_id=${MY_ID}`);
             const data = await response.json();
-            list.innerHTML = data.length === 0 ? "Очередь пуста" : "";
+            list.innerHTML = data.length === 0 ? "<p style='text-align:center;'>Очередь пуста. Все проверено! 🎉</p>" : "";
+            
             data.forEach((item, idx) => {
                 list.innerHTML += `
                     <div class="pending-card">
-                        <b>${item.brand} ${item.marker_id}</b>
-                        <div style="display:flex; align-items:center; margin:5px 0;">
-                            Цвет юзера: <div style="width:30px; height:15px; background:rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]}); margin-left:10px; border-radius:3px;"></div>
-                        </div>
-                        <div style="display:flex; gap:5px;">
-                            <button class="btn" style="background:#2ecc71; padding:5px; flex:1;" onclick="moderate(${idx}, 'approve')">Одобрить</button>
-                            <button class="btn" style="background:#e74c3c; padding:5px; flex:1;" onclick="moderate(${idx}, 'reject')">Удалить</button>
+                        <div class="pending-title">${item.brand} №${item.marker_id}</div>
+                        <div style="text-align: center; color: #555;">Цвет с фото пользователя:</div>
+                        <div class="color-preview" style="background: rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]});"></div>
+                        <div style="display:flex; gap:10px; margin-top:15px;">
+                            <button class="btn" style="background:#2ecc71; padding:12px; flex:1;" onclick="moderate(${idx}, 'approve')">✅ Принять</button>
+                            <button class="btn" style="background:#e74c3c; padding:12px; flex:1;" onclick="moderate(${idx}, 'reject')">🗑 Удалить</button>
                         </div>
                     </div>`;
             });
-        } catch (e) { list.innerText = "Ошибка загрузки"; }
+        } catch (e) { list.innerText = "Ошибка загрузки списка"; }
     }
 
     async function moderate(index, action) {
-        const response = await fetch(`${SERVER_URL}/moderate?admin_id=${MY_ID}&index=${index}&action=${action}`, {method: 'POST'});
-        const res = await response.json();
-        alert(res.message);
-        loadPending();
+        try {
+            const response = await fetch(`${SERVER_URL}/moderate?admin_id=${MY_ID}&index=${index}&action=${action}`, {method: 'POST'});
+            const res = await response.json();
+            alert(res.message);
+            loadPending(); // Перезагружаем список после действия
+        } catch (e) {
+            alert("Ошибка при модерации");
+        }
     }
 </script>
 </body>

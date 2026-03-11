@@ -260,10 +260,17 @@
         <div id="viewer-content" style="height: 85vh; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none;" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
             <img src="" id="current-page" style="max-width: 100%; max-height: 100%; object-fit: contain;">
         </div>
-    </div>
-
-      <nav class="nav">
-        </nav>
+    </ <nav class="nav">
+        <button id="btn-answers" class="nav-btn active" onclick="tab('answers')"><span class="nav-icon">📚</span>Ответы</button>
+        <button id="btn-palettes" class="nav-btn" onclick="tab('palettes')"><span class="nav-icon">🎨</span>Палитры</button>
+        <button id="btn-shop" class="nav-btn" onclick="tab('shop')"><span class="nav-icon">🖍️</span>Маркеры</button>
+        
+        <button id="btn-cart" class="nav-btn" onclick="tab('cart')">
+            <span class="nav-icon">🛒</span>Корзина
+            <span id="cartBadge" class="badge" style="display:none">0</span>
+        </button> <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><span class="nav-icon">🤖</span>ИИ</button>
+        <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Профиль</button>
+    </nav>
 
     <div id="inventoryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; padding:20px; align-items:center; justify-content:center;">
         <div class="card" style="background:var(--bg); padding:20px; border-radius:16px; width:100%; max-height:80vh; position:relative; overflow:hidden; display:flex; flex-direction:column;">
@@ -272,7 +279,9 @@
                 <span onclick="document.getElementById('inventoryModal').style.display='none'" style="font-size:24px; cursor:pointer;">✖</span>
             </div>
             <p style="font-size:12px; color:var(--gray); margin-top:0;">Отметьте те маркеры, которые у вас уже есть.</p>
-            <div id="inventoryList" style="display:flex; flex-wrap:wrap; gap:10px; overflow-y:auto; padding-bottom:20px;"></div>
+            
+            <div id="inventoryList" style="display:flex; flex-wrap:wrap; gap:10px; overflow-y:auto; padding-bottom:20px;">
+    </div>
         </div>
     </div>
 

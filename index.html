@@ -183,6 +183,27 @@
         <div class="header">ИИ Палитра ✨</div>
         <div class="card" style="padding: 20px; text-align: center; border:none; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
             <p style="font-size:14px; margin-top:0;">Загрузи фото чистой выкраски (без теней), и нейросеть определит номер!</p>
+
+            <div style="margin-bottom: 20px; text-align: left; background: var(--secondary); padding: 15px; border-radius: 12px;">
+                <label style="display: block; font-size: 13px; margin-bottom: 5px; font-weight: bold;">Бренд для поиска:</label>
+                <select id="aiSearchBrand" style="width: 100%; padding: 10px; border-radius: 8px; border: none; margin-bottom: 15px; background: var(--bg); color: var(--text);">
+                    <option value="All">Все бренды (Глобальный поиск)</option>
+                    <option value="GuangNa">GuangNa</option>
+                    <option value="Languo">Languo</option>
+                    <option value="Zibeef">Zibeef</option>
+                    <option value="Tooli-Art">Tooli-Art</option>
+                    <option value="InfiArt">InfiArt</option>
+                    <option value="Grasp">Grasp</option>
+                </select>
+                
+                <label style="display: flex; align-items: center; font-size: 14px; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="aiUseInventoryOnly" style="width: 18px; height: 18px; accent-color: var(--accent);">
+                    Искать только в моих маркерах
+                </label>
+                
+                <button class="buy-btn" style="padding: 10px; font-size: 13px; margin-top: 15px; background: var(--bg); border: 1px solid var(--accent); color: var(--text);" onclick="openInventoryModal()">🎒 Мой цифровой инвентарь</button>
+            </div>
+
             <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
             <button class="buy-btn" style="border-radius:12px; padding:15px;" onclick="document.getElementById('aiInput').click()">📷 Загрузить фото маркера</button>
             
@@ -492,6 +513,46 @@
                 else if (dx < 0 && currentPage > 1) { currentPage--; updatePage(); }
             }
         }
+
+        function openInventoryModal() {
+            if(aiDB.length === 0) { tg.showAlert("База ИИ пуста, инвентарь пока недоступен."); return; }
+            
+            // Собираем уникальные маркеры (без учета 25 ИИ-вариаций)
+            let uniqueMarkers = [];
+            let seen = new Set();
+            aiDB.forEach(item => {
+                let mId = `${item.brand}_${item.marker}`;
+                if(!seen.has(mId)) { seen.add(mId); uniqueMarkers.push(item); }
+            });
+            
+            let html = "";
+            // Сортируем по бренду и номеру для красоты
+            uniqueMarkers.sort((a,b) => a.brand.localeCompare(b.brand) || a.marker.localeCompare(b.marker)).forEach(item => {
+                let mId = `${item.brand}_${item.marker}`;
+                let isChecked = userInventory.includes(mId) ? "checked" : "";
+                html += `
+                <label style="background:var(--secondary); padding:10px; border-radius:8px; display:flex; align-items:center; gap:8px; width:calc(50% - 5px); box-sizing:border-box;">
+                    <input type="checkbox" onchange="toggleInventory('${item.brand}', '${item.marker}', this.checked)" ${isChecked} style="width:16px; height:16px; accent-color:var(--accent);">
+                    <span style="font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.brand} ${item.marker}</span>
+                </label>`;
+            });
+            
+            document.getElementById('inventoryList').innerHTML = html;
+            document.getElementById('inventoryModal').style.display = "flex";
+        }
+
+        async function toggleInventory(brand, marker, isAdded) {
+            let mId = `${brand}_${marker}`;
+            if(isAdded && !userInventory.includes(mId)) userInventory.push(mId);
+            if(!isAdded) userInventory = userInventory.filter(id => id !== mId);
+            
+            let userId = document.getElementById('userIdDisplay').innerText;
+            // Отправляем тихо на сервер в фоне
+            fetch(`${API_URL}/inventory`, {
+                method: 'POST', body: JSON.stringify({ user_id: userId, marker_id: mId, action: isAdded ? "add" : "remove" })
+            }).catch(e => console.error("Ошибка сохранения инвентаря", e));
+        }
+
         function filterMarkers() { renderMarkers(markersData); }
 
         const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io/api";
@@ -499,17 +560,27 @@
         let currentRGB = [];
         let currentImageB64 = "";
 
+          let userInventory = []; // Хранит ID маркеров, например: ["GuangNa_120", "Zibeef_5"]
+
         async function initAI() {
             try {
                 let res = await fetch(`${API_URL}/ai_db`);
                 aiDB = await res.json();
-            } catch(e) { console.error("Ошибка загрузки БД ИИ", e); }
+                
+                // Подгружаем инвентарь
+                let userId = document.getElementById('userIdDisplay').innerText;
+                if(userId && userId !== "---") {
+                    let invRes = await fetch(`${API_URL}/inventory?user_id=${userId}`);
+                    userInventory = await invRes.json();
+                }
+            } catch(e) { console.error("Ошибка загрузки БД ИИ или инвентаря", e); }
             
             if (document.getElementById('userIdDisplay').innerText == "496779756") {
                 document.getElementById('aiAdminPanel').style.display = "block";
                 loadQuarantine();
             }
         }
+
 
         function processAI(event) {
             const file = event.target.files[0];
@@ -541,11 +612,32 @@
             reader.readAsDataURL(file);
         }
 
-        function predictColor() {
-            if(aiDB.length === 0) { tg.showAlert("База ИИ пуста. Админ должен обучить первые цвета!"); return; }
+               function predictColor() {
+            if(aiDB.length === 0) { tg.showAlert("База ИИ пуста."); return; }
+            
+            let searchBrand = document.getElementById('aiSearchBrand').value;
+            let useInventory = document.getElementById('aiUseInventoryOnly').checked;
+            
+            // ФИЛЬТРАЦИЯ БАЗЫ ПЕРЕД ПОИСКОМ
+            let filteredDB = aiDB.filter(item => {
+                // 1. Фильтр по бренду
+                if (searchBrand !== "All" && item.brand !== searchBrand) return false;
+                
+                // 2. Фильтр по инвентарю
+                if (useInventory && !userInventory.includes(`${item.brand}_${item.marker}`)) return false;
+                
+                return true;
+            });
+
+            if(filteredDB.length === 0) {
+                tg.showAlert("По вашим фильтрам (Бренд / Инвентарь) маркеров не найдено. Попробуйте отключить фильтры.");
+                return;
+            }
+
             let bestMatch = null, minDist = Infinity;
             
-            aiDB.forEach(item => {
+            // Ищем совпадение только в ОТФИЛЬТРОВАННОЙ базе
+            filteredDB.forEach(item => {
                 let dist = Math.sqrt(Math.pow(item.rgb[0]-currentRGB[0], 2) + Math.pow(item.rgb[1]-currentRGB[1], 2) + Math.pow(item.rgb[2]-currentRGB[2], 2));
                 if(dist < minDist) { minDist = dist; bestMatch = item; }
             });
@@ -559,6 +651,7 @@
             document.getElementById('aiFeedbackBlock').style.display = "block";
             document.getElementById('aiCorrectionBlock').style.display = "none";
         }
+
 
         function aiFeedback(isCorrect) {
             if(isCorrect) {
@@ -637,6 +730,20 @@
 initAI( ) ;
         }
         renderBooks();
+
+    <div id="inventoryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; padding:20px; display:flex; align-items:center; justify-content:center;">
+        <div class="card" style="background:var(--bg); padding:20px; border-radius:16px; width:100%; max-height:80vh; position:relative; overflow:hidden; display:flex; flex-direction:column;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="margin:0;">🎒 Мои маркеры</h3>
+                <span onclick="document.getElementById('inventoryModal').style.display='none'" style="font-size:24px; cursor:pointer;">✖</span>
+            </div>
+            <p style="font-size:12px; color:var(--gray); margin-top:0;">Отметьте те маркеры, которые у вас уже есть.</p>
+            
+            <div id="inventoryList" style="display:flex; flex-wrap:wrap; gap:10px; overflow-y:auto; padding-bottom:20px;">
+                </div>
+        </div>
+    </div>
+
     </script>
 </body>
 </html>

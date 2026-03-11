@@ -48,9 +48,9 @@
         .category-title { margin: 20px 0 10px; font-size: 14px; color: var(--gray); text-transform: uppercase; font-weight: bold; }
 
         .nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: var(--bg); display: flex; border-top: 0.5px solid rgba(128,128,128,0.3); z-index: 999; }
-        .nav-btn { position: relative; flex: 1; border: none; background: none; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: var(--gray); }
+        .nav-btn { position: relative; flex: 1; border: none; background: none; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: var(--gray); }
         .nav-btn.active { color: var(--accent); }
-        .nav-icon { font-size: 22px; margin-bottom: 4px; }
+        .nav-icon { font-size: 20px; margin-bottom: 4px; }
         
         .badge { position: absolute; top: 5px; left: 55%; background: #ff3b30; color: white; border-radius: 10px; padding: 2px 7px; font-size: 11px; font-weight: bold; }
 
@@ -79,6 +79,47 @@
         .viewer-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); border-bottom: 0.5px solid rgba(128,128,128,0.2); }
         
         input { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--secondary); color: var(--text); margin-bottom: 15px; box-sizing: border-box; outline: none; }
+
+        /* Стили для новых кнопок брендов */
+        .brand-button {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 0.5px solid rgba(128,128,128,0.2);
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        .brand-counter {
+            font-size: 14px;
+            color: var(--accent);
+            background: rgba(0, 122, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 10px;
+        }
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding-bottom: 20px;
+        }
+        .inventory-item {
+            background: var(--secondary);
+            padding: 12px 5px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+        .inventory-item.owned {
+            border-color: var(--accent);
+            background: rgba(0, 122, 255, 0.05);
+        }
     </style>
 </head>
 <body>
@@ -116,6 +157,31 @@
         <div class="header">Корзина</div>
         <div id="cartList"></div>
         <button id="mainOrderBtn" class="buy-btn" style="border-radius: 15px; padding: 18px; margin-top:20px; display: none;" onclick="checkout()">Оформить заказ</button>
+    </div>
+
+    <div id="mymarkers" class="page">
+        <div class="header">Мои маркеры</div>
+        
+        <div id="brandsMainView">
+            <div id="brandsGridContainer">
+                </div>
+        </div>
+
+        <div id="brandDetailView" style="display:none;">
+            <div style="display:flex; align-items:center; margin-bottom:15px;">
+                <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px; background:var(--secondary); color:var(--text);" onclick="closeBrandView()">← Назад</button>
+                <h3 id="currentBrandTitle" style="margin:0 0 0 15px;"></h3>
+            </div>
+            
+            <input type="text" id="brandSearchInput" placeholder="Поиск номера в бренде..." oninput="filterBrandInventory()">
+            
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <button class="buy-btn" style="font-size:12px; border-radius:10px; padding:10px;" onclick="massToggle(true)">Добавить весь бренд</button>
+                <button class="buy-btn" style="font-size:12px; border-radius:10px; padding:10px; background:#ff3b30;" onclick="massToggle(false)">Убрать весь бренд</button>
+            </div>
+            
+            <div id="brandInventoryList" class="inventory-grid"></div>
+        </div>
     </div>
 
     <div id="profile" class="page">
@@ -200,7 +266,7 @@
                     Искать только в моих маркерах
                 </label>
                 
-                <button class="buy-btn" style="padding: 10px; font-size: 13px; margin-top: 15px; background: var(--bg); border: 1px solid var(--accent); color: var(--text);" onclick="openInventoryModal()">🎒 Мой цифровой инвентарь</button>
+                <button class="buy-btn" style="padding: 10px; font-size: 13px; margin-top: 15px; background: var(--bg); border: 1px solid var(--accent); color: var(--text);" onclick="tab('mymarkers')">🎒 Мой цифровой инвентарь</button>
             </div>
 
             <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
@@ -259,31 +325,20 @@
         <div id="viewer-content" style="height: 85vh; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none;" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
             <img src="" id="current-page" style="max-width: 100%; max-height: 100%; object-fit: contain;">
         </div>
-    </div> <nav class="nav">
+    </div> 
+
+    <nav class="nav">
         <button id="btn-answers" class="nav-btn active" onclick="tab('answers')"><span class="nav-icon">📚</span>Ответы</button>
+        <button id="btn-mymarkers" class="nav-btn" onclick="tab('mymarkers')"><span class="nav-icon">🎒</span>Мои</button>
         <button id="btn-palettes" class="nav-btn" onclick="tab('palettes')"><span class="nav-icon">🎨</span>Палитры</button>
-        <button id="btn-shop" class="nav-btn" onclick="tab('shop')"><span class="nav-icon">🖍️</span>Маркеры</button>
-        
+        <button id="btn-shop" class="nav-btn" onclick="tab('shop')"><span class="nav-icon">🖍️</span>Марк</button>
         <button id="btn-cart" class="nav-btn" onclick="tab('cart')">
-            <span class="nav-icon">🛒</span>Корзина
+            <span class="nav-icon">🛒</span>Корз
             <span id="cartBadge" class="badge" style="display:none">0</span>
         </button> 
         <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><span class="nav-icon">🤖</span>ИИ</button>
-        <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Профиль</button>
+        <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Проф</button>
     </nav>
-
-    <div id="inventoryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; padding:20px; align-items:center; justify-content:center;">
-        <div class="card" style="background:var(--bg); padding:20px; border-radius:16px; width:100%; max-height:80vh; position:relative; overflow:hidden; display:flex; flex-direction:column;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="margin:0;">🎒 Мои маркеры</h3>
-                <span onclick="document.getElementById('inventoryModal').style.display='none'" style="font-size:24px; cursor:pointer;">✖</span>
-            </div>
-            <p style="font-size:12px; color:var(--gray); margin-top:0;">Отметьте те маркеры, которые у вас уже есть.</p>
-            
-            <div id="inventoryList" style="display:flex; flex-wrap:wrap; gap:10px; overflow-y:auto; padding-bottom:20px;">
-            </div>
-        </div>
-    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -291,6 +346,16 @@
         tg.expand();
 
         let markersData = [], cart = [], markersLoaded = false;
+        
+        // Список брендов и их общее количество маркеров (база)
+        const markerBrandsList = [
+            { name: 'GuangNa', total: 360 },
+            { name: 'Languo', total: 168 },
+            { name: 'Zibeef', total: 240 },
+            { name: 'Grasp', total: 168 },
+            { name: 'InfiArt', total: 120 },
+            { name: 'Tooli-Art', total: 150 }
+        ];
 
         const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 3", "Vitraux tome 2", "Trompe L'oeil Babies", "Trompe L'oeil Grand Bloc", "Stitch Au numero", "Sous L'Ocean", "Saisons", "Romantasy", "Princesses tome 1", "Princesses tome 2", "Princes&Heros", "Portraits De Famille", "Pokemon", "Pixar", "Petites Princesses", "Petites Betes", "Mondes Fantastiques", "Mickey, Donald&Co", "Mechants", "Marsupilami", "Love Stories", "Looney Tunes tome 3", "Lilo Et Stitch", "Les Grands Classiques Special Debutants tome 1", "Les Grands Classiques Special Debutants tome 2", "Les Grands Classiques Au numero", "La Petite Sirene", "Les Schtroumpfs tome 1", "Les Schtroumpfs tome 2", "L'age Glace", "Hiver", "Heros&Mechants La Battle", "Grands Classiques Grand Bloc", "Les Grands Classiques Coliector", "Girl Power", "Fees, Sorciers Et Magiciens", "Famille", "Escapades Merveilleuses Douce France", "Chiots&Chiens", "Chevaux", "Bisounours tome 1", "Best Of Pixar", "Best Of Les Grands Classiques", "La Belle Et La Bete", "Bestiaire", "Best Of Heroines"];
 
@@ -347,6 +412,7 @@
 
         function renderMarkers(data) {
             const list = document.getElementById('markersList');
+            if(!list) return;
             const q = document.getElementById('markerSearch').value.toLowerCase();
             const filtered = data.filter(m => m.number.includes(q)).sort((a, b) => a.number - b.number);
             list.innerHTML = filtered.map(m => {
@@ -496,13 +562,116 @@
             });
         }
 
+        // --- ЛОГИКА ВКЛАДКИ МОИ МАРКЕРЫ (ИНВЕНТАРЬ) ---
+        let currentViewingBrand = null;
+
+        function renderBrandsList() {
+            const container = document.getElementById('brandsGridContainer');
+            container.innerHTML = markerBrandsList.map(brand => {
+                const ownedCount = userInventory.filter(id => id.startsWith(brand.name + "_")).length;
+                return `
+                <div class="brand-button" onclick="openBrandView('${brand.name}')">
+                    <span>${brand.name}</span>
+                    <span class="brand-counter">${ownedCount} / ${brand.total}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function openBrandView(brandName) {
+            currentViewingBrand = markerBrandsList.find(b => b.name === brandName);
+            document.getElementById('brandsMainView').style.display = 'none';
+            document.getElementById('brandDetailView').style.display = 'block';
+            document.getElementById('currentBrandTitle').innerText = brandName;
+            document.getElementById('brandSearchInput').value = '';
+            renderBrandInventory();
+        }
+
+        function closeBrandView() {
+            currentViewingBrand = null;
+            document.getElementById('brandsMainView').style.display = 'block';
+            document.getElementById('brandDetailView').style.display = 'none';
+            renderBrandsList();
+        }
+
+        function renderBrandInventory() {
+            if (!currentViewingBrand) return;
+            const container = document.getElementById('brandInventoryList');
+            const query = document.getElementById('brandSearchInput').value.toLowerCase();
+            
+            // Фильтруем базу ИИ по выбранному бренду
+            let brandMarkers = aiDB.filter(m => m.brand === currentViewingBrand.name);
+            
+            // Если в базе ИИ пусто для бренда, создаем заглушку из чисел до total (для удобства юзера)
+            if (brandMarkers.length === 0) {
+                for (let i = 1; i <= currentViewingBrand.total; i++) {
+                    brandMarkers.push({ brand: currentViewingBrand.name, marker: i.toString() });
+                }
+            }
+
+            // Убираем дубликаты
+            let unique = [];
+            let seen = new Set();
+            brandMarkers.forEach(m => {
+                if(!seen.has(m.marker)) { seen.add(m.marker); unique.push(m); }
+            });
+
+            const filtered = unique.filter(m => m.marker.toLowerCase().includes(query))
+                                   .sort((a,b) => parseInt(a.marker) - parseInt(b.marker));
+
+            container.innerHTML = filtered.map(m => {
+                const mId = `${m.brand}_${m.marker}`;
+                const isOwned = userInventory.includes(mId);
+                return `
+                <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${m.brand}', '${m.marker}', ${!isOwned})">
+                    ${m.marker}
+                </div>`;
+            }).join('');
+        }
+
+        function filterBrandInventory() { renderBrandInventory(); }
+
+        async function massToggle(isAdded) {
+            if (!currentViewingBrand) return;
+            
+            tg.showConfirm(isAdded ? "Добавить все маркеры этого бренда?" : "Убрать все маркеры этого бренда?", async (confirm) => {
+                if (confirm) {
+                    // Генерируем список всех номеров для бренда
+                    let allIds = [];
+                    for (let i = 1; i <= currentViewingBrand.total; i++) {
+                        allIds.push(`${currentViewingBrand.name}_${i}`);
+                    }
+
+                    if (isAdded) {
+                        userInventory = Array.from(new Set([...userInventory, ...allIds]));
+                    } else {
+                        userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+                    }
+
+                    // Сохраняем массово на сервер
+                    let userId = document.getElementById('userIdDisplay').innerText;
+                    await fetch(`${API_URL}/inventory_mass`, {
+                        method: 'POST', 
+                        body: JSON.stringify({ user_id: userId, brand: currentViewingBrand.name, action: isAdded ? "add_all" : "remove_all" })
+                    });
+
+                    renderBrandInventory();
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            });
+        }
+
         function tab(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.getElementById('btn-' + id).classList.add('active');
+            
             if (id === 'shop') loadMarkers();
             if (id === 'cart') renderCart();
+            if (id === 'mymarkers') {
+                closeBrandView();
+                renderBrandsList();
+            }
         }
 
         let currentVol, currentPage, maxPages, touchStartX, touchStartY;
@@ -525,40 +694,15 @@
             }
         }
 
-        function openInventoryModal() {
-            if(aiDB.length === 0) { tg.showAlert("База ИИ пуста, инвентарь пока недоступен."); return; }
-            
-            // Собираем уникальные маркеры (без учета 25 ИИ-вариаций)
-            let uniqueMarkers = [];
-            let seen = new Set();
-            aiDB.forEach(item => {
-                let mId = `${item.brand}_${item.marker}`;
-                if(!seen.has(mId)) { seen.add(mId); uniqueMarkers.push(item); }
-            });
-            
-            let html = "";
-            // Сортируем по бренду и номеру для красоты
-            uniqueMarkers.sort((a,b) => a.brand.localeCompare(b.brand) || a.marker.localeCompare(b.marker)).forEach(item => {
-                let mId = `${item.brand}_${item.marker}`;
-                let isChecked = userInventory.includes(mId) ? "checked" : "";
-                html += `
-                <label style="background:var(--secondary); padding:10px; border-radius:8px; display:flex; align-items:center; gap:8px; width:calc(50% - 5px); box-sizing:border-box;">
-                    <input type="checkbox" onchange="toggleInventory('${item.brand}', '${item.marker}', this.checked)" ${isChecked} style="width:16px; height:16px; accent-color:var(--accent);">
-                    <span style="font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.brand} ${item.marker}</span>
-                </label>`;
-            });
-            
-            document.getElementById('inventoryList').innerHTML = html;
-            document.getElementById('inventoryModal').style.display = "flex";
-        }
-
         async function toggleInventory(brand, marker, isAdded) {
             let mId = `${brand}_${marker}`;
             if(isAdded && !userInventory.includes(mId)) userInventory.push(mId);
             if(!isAdded) userInventory = userInventory.filter(id => id !== mId);
             
+            renderBrandInventory();
+            tg.HapticFeedback.impactOccurred('light');
+
             let userId = document.getElementById('userIdDisplay').innerText;
-            // Отправляем тихо на сервер в фоне
             fetch(`${API_URL}/inventory`, {
                 method: 'POST', body: JSON.stringify({ user_id: userId, marker_id: mId, action: isAdded ? "add" : "remove" })
             }).catch(e => console.error("Ошибка сохранения инвентаря", e));
@@ -570,15 +714,13 @@
         let aiDB = [];
         let currentRGB = [];
         let currentImageB64 = "";
-
-        let userInventory = []; // Хранит ID маркеров, например: ["GuangNa_120", "Zibeef_5"]
+        let userInventory = [];
 
         async function initAI() {
             try {
                 let res = await fetch(`${API_URL}/ai_db`);
                 aiDB = await res.json();
                 
-                // Подгружаем инвентарь
                 let userId = document.getElementById('userIdDisplay').innerText;
                 if(userId && userId !== "---") {
                     let invRes = await fetch(`${API_URL}/inventory?user_id=${userId}`);
@@ -592,7 +734,6 @@
             }
         }
 
-
         function processAI(event) {
             const file = event.target.files[0];
             if(!file) return;
@@ -602,20 +743,16 @@
                 img.onload = function() {
                     const canvas = document.getElementById('aiCanvas');
                     const ctx = canvas.getContext('2d');
-                    // Ресайзим для скорости
                     const scale = Math.min(300 / img.width, 300 / img.height);
                     canvas.width = img.width * scale; canvas.height = img.height * scale;
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     canvas.style.display = "block";
                     currentImageB64 = canvas.toDataURL('image/jpeg', 0.5);
-                    
-                    // Берем центр 50x50 пикселей
                     const sx = Math.max(0, (canvas.width/2)-25), sy = Math.max(0, (canvas.height/2)-25);
                     const imgData = ctx.getImageData(sx, sy, 50, 50).data;
                     let r=0, g=0, b=0, count=0;
                     for(let i=0; i<imgData.length; i+=4) { r+=imgData[i]; g+=imgData[i+1]; b+=imgData[i+2]; count++; }
                     currentRGB = [Math.round(r/count), Math.round(g/count), Math.round(b/count)];
-                    
                     predictColor();
                 };
                 img.src = e.target.result;
@@ -625,29 +762,21 @@
 
         function predictColor() {
             if(aiDB.length === 0) { tg.showAlert("База ИИ пуста."); return; }
-            
             let searchBrand = document.getElementById('aiSearchBrand').value;
             let useInventory = document.getElementById('aiUseInventoryOnly').checked;
             
-            // ФИЛЬТРАЦИЯ БАЗЫ ПЕРЕД ПОИСКОМ
             let filteredDB = aiDB.filter(item => {
-                // 1. Фильтр по бренду
                 if (searchBrand !== "All" && item.brand !== searchBrand) return false;
-                
-                // 2. Фильтр по инвентарю
                 if (useInventory && !userInventory.includes(`${item.brand}_${item.marker}`)) return false;
-                
                 return true;
             });
 
             if(filteredDB.length === 0) {
-                tg.showAlert("По вашим фильтрам (Бренд / Инвентарь) маркеров не найдено. Попробуйте отключить фильтры.");
+                tg.showAlert("Ничего не найдено по фильтрам.");
                 return;
             }
 
             let bestMatch = null, minDist = Infinity;
-            
-            // Ищем совпадение только в ОТФИЛЬТРОВАННОЙ базе
             filteredDB.forEach(item => {
                 let dist = Math.sqrt(Math.pow(item.rgb[0]-currentRGB[0], 2) + Math.pow(item.rgb[1]-currentRGB[1], 2) + Math.pow(item.rgb[2]-currentRGB[2], 2));
                 if(dist < minDist) { minDist = dist; bestMatch = item; }
@@ -657,16 +786,14 @@
             document.getElementById('aiResBrand').innerText = bestMatch.brand;
             document.getElementById('aiResNum').innerText = bestMatch.marker;
             document.getElementById('aiConf').innerText = conf;
-            
             document.getElementById('aiResultArea').style.display = "block";
             document.getElementById('aiFeedbackBlock').style.display = "block";
             document.getElementById('aiCorrectionBlock').style.display = "none";
         }
 
-
         function aiFeedback(isCorrect) {
             if(isCorrect) {
-                tg.showAlert("Супер! Спасибо за использование ИИ.");
+                tg.showAlert("Супер!");
                 document.getElementById('aiResultArea').style.display = "none";
             } else {
                 document.getElementById('aiFeedbackBlock').style.display = "none";
@@ -678,20 +805,17 @@
             const brand = document.getElementById('aiBrandSelect').value;
             const num = document.getElementById('aiCorrectNum').value.trim();
             if(!num) { tg.showAlert("Введите номер!"); return; }
-            
             await fetch(`${API_URL}/quarantine`, {
                 method: 'POST', body: JSON.stringify({ brand: brand, correct_marker: num, rgb: currentRGB, image: currentImageB64 })
             });
-            tg.showAlert("Отправлено в карантин. Админ проверит ваши данные!");
+            tg.showAlert("Отправлено в карантин.");
             document.getElementById('aiResultArea').style.display = "none";
         }
 
-        // --- АДМИН ФУНКЦИИ ---
         function trainAI(event) {
             const brand = document.getElementById('adminTrainBrand').value;
             const num = document.getElementById('adminTrainNum').value.trim();
-            if(!num) { tg.showAlert("Укажите номер маркера!"); return; }
-            
+            if(!num) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
@@ -700,12 +824,10 @@
                     canvas.width = img.width; canvas.height = img.height; ctx.drawImage(img,0,0);
                     const imgData = ctx.getImageData(0,0, canvas.width, canvas.height).data;
                     let r=0,g=0,b=0,c=0; for(let i=0; i<imgData.length; i+=4){ r+=imgData[i]; g+=imgData[i+1]; b+=imgData[i+2]; c++; }
-                    
                     await fetch(`${API_URL}/train`, {
                         method: 'POST', body: JSON.stringify({ brand: brand, marker: num, rgb: [Math.round(r/c), Math.round(g/c), Math.round(b/c)] })
                     });
-                    tg.showAlert(`✅ Обучено: ${brand} ${num} (25 вариаций сохранено)`);
-                    initAI(); // Перезагружаем БД
+                    initAI();
                 }; img.src = e.target.result;
             }; reader.readAsDataURL(event.target.files[0]);
         }
@@ -713,24 +835,16 @@
         async function loadQuarantine() {
             let res = await fetch(`${API_URL}/quarantine_list`);
             let data = await res.json();
-            let html = data.length === 0 ? "<p style='color:var(--gray);'>Пусто.</p>" : "";
+            let html = data.length === 0 ? "<p>Пусто.</p>" : "";
             data.forEach(q => {
-                html += `
-                <div class="row-item" style="flex-direction:column; align-items:flex-start; margin-bottom:15px;">
-                    <img src="${q.image}" style="width:100px; border-radius:8px; margin-bottom:10px;">
-                    <p style="margin:0;"><b>Предложено:</b> ${q.brand} ${q.correct_marker}</p>
-                    <div style="display:flex; gap:10px; width:100%; margin-top:10px;">
-                        <button class="buy-btn" style="background:#34c759; padding:8px;" onclick="resolveQ(${q.id}, 'approve')">Одобрить</button>
-                        <button class="buy-btn" style="background:#ff3b30; padding:8px;" onclick="resolveQ(${q.id}, 'reject')">В мусор</button>
-                    </div>
-                </div>`;
+                html += `<div class="row-item"><img src="${q.image}" style="width:50px;"> ${q.brand} ${q.correct_marker} 
+                <button onclick="resolveQ(${q.id}, 'approve')">OK</button></div>`;
             });
             document.getElementById('adminQuarantineList').innerHTML = html;
         }
 
         async function resolveQ(id, action) {
             await fetch(`${API_URL}/quarantine_resolve`, { method: 'POST', body: JSON.stringify({ id: id, action: action }) });
-            tg.showAlert(action === 'approve' ? "✅ Добавлено в базу (25 вариаций)!" : "🗑 Удалено");
             initAI(); loadQuarantine();
         }
 
@@ -738,7 +852,6 @@
             const params = new URLSearchParams(window.location.search);
             document.getElementById('userBalance').innerText = params.get('balance') || 0;
             document.getElementById('userIdDisplay').innerText = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
-            
             initAI();
             renderBooks();
         };

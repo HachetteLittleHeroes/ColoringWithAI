@@ -3,226 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hachette Little Heroes - AI Marker</title>
+    <title>AI Marker Scanner - ColoringWithAI</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --tg-theme-button-color: #2481cc;
+            --tg-theme-bg-color: #f4f4f9;
+            --tg-theme-secondary-bg-color: #ffffff;
+            --tg-theme-button-color: #3390ec;
             --tg-theme-button-text-color: #ffffff;
-            --tg-theme-bg-color: #ffffff;
+            --tg-theme-hint-color: #707579;
             --tg-theme-text-color: #000000;
-            --tg-theme-hint-color: #999999;
         }
-        body { font-family: -apple-system, sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 400px; }
-        .card { background: rgba(121, 121, 121, 0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; text-align: center; }
-        .btn { background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; padding: 12px 20px; border-radius: 10px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: opacity 0.2s; }
-        .btn:active { opacity: 0.7; }
-        .btn-admin { background-color: #e67e22; margin-top: 20px; display: none; }
-        input[type="file"] { display: none; }
-        .preview-img { max-width: 100%; border-radius: 10px; margin-top: 15px; display: none; }
-        .result-item { display: flex; flex-direction: column; background: var(--tg-theme-bg-color); border: 1px solid var(--tg-theme-hint-color); padding: 15px; border-radius: 10px; margin-top: 10px; width: 100%; box-sizing: border-box; }
-        .color-box { width: 40px; height: 40px; border-radius: 5px; margin-right: 15px; border: 1px solid #ccc; }
-        .admin-panel { display: none; border: 2px dashed #e67e22; padding: 15px; margin-top: 20px; border-radius: 15px; width: 100%; box-sizing: border-box;}
-        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid var(--tg-theme-hint-color); box-sizing: border-box; font-size: 16px; }
-        #status { font-size: 14px; margin-top: 10px; color: var(--tg-theme-hint-color); text-align: center; }
-        .feedback-btns { display: flex; gap: 10px; margin-top: 15px; width: 100%; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container { width: 100%; max-width: 480px; }
+
+        .card {
+            background: var(--tg-theme-secondary-bg-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        h2 { margin-top: 0; font-size: 22px; color: var(--tg-theme-button-color); }
+        p { font-size: 14px; line-height: 1.5; color: var(--tg-theme-hint-color); }
+
+        .btn {
+            background-color: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: transform 0.1s ease, opacity 0.2s;
+        }
+
+        .btn:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-secondary { background-color: #e74c3c; }
+        .btn-outline { background: transparent; color: var(--tg-theme-button-color); border: 2px solid var(--tg-theme-button-color); }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #dfe1e5;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .result-item {
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            padding-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .color-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .confidence {
+            display: inline-block;
+            background: #27ae60;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        #status { font-weight: 500; color: var(--tg-theme-button-color); min-height: 20px; margin: 10px 0; }
+
+        .admin-box { border: 2px dashed #f39c12; margin-top: 30px; background: #fffaf0; }
         
-        /* Стили для Карантина */
-        .pending-card { background: #ffffff; border: 2px solid #ddd; padding: 20px; margin-top: 15px; border-radius: 12px; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .pending-title { font-size: 22px; font-weight: bold; color: #e67e22; margin-bottom: 10px; text-align: center;}
-        .color-preview { width: 100%; height: 80px; border-radius: 8px; margin: 10px 0; border: 2px solid #333; }
+        .pending-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 12px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        input[type="file"] { display: none; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 style="text-align: center;">AI Marker Detector</h2>
-
-    <div id="search-section" class="card">
-        <p>Сфотографируйте выкраску маркера</p>
-        <button class="btn" onclick="document.getElementById('fileInput').click()">📸 Распознать маркер</button>
-        <input type="file" id="fileInput" accept="image/*" onchange="processImage(this, 'analyze')">
-        <img id="preview" class="preview-img">
+    <div class="card" id="scanner-main">
+        <h2>🎨 AI Color Scanner</h2>
+        <p>Наведите камеру на маркер так, чтобы цвет был в центре кадра</p>
+        
+        <button class="btn" onclick="document.getElementById('userFile').click()">📸 Сделать снимок</button>
+        <input type="file" id="userFile" accept="image/*" capture="camera" onchange="uploadFile(this, 'analyze')">
+        
+        <div id="status"></div>
         <div id="results"></div>
     </div>
 
-    <button id="adminBtn" class="btn btn-admin" onclick="toggleAdminPanel()">⚙️ Панель обучения ИИ</button>
-
-    <div id="admin-panel" class="admin-panel">
-        <h3>Обучение модели (Эталон)</h3>
-        <select id="adminBrandMain">
-            <option value="GuangNa">GuangNa</option>
-            <option value="Languo">Languo</option>
-            <option value="Zibeef">Zibeef</option>
-        </select>
-        <input type="text" id="adminMarkerId" placeholder="Номер (напр. 611)">
-        <button class="btn" style="background-color: #27ae60;" onclick="document.getElementById('adminFileInput').click()">📸 Снять эталон</button>
-        <input type="file" id="adminFileInput" accept="image/*" onchange="processImage(this, 'train')">
-        
-        <hr style="margin: 25px 0; border: 0; border-top: 2px solid #eee;">
-        
-        <h3 style="text-align: center;">Очередь правок (Карантин)</h3>
-        <button class="btn" style="background-color: #8e44ad;" onclick="loadPending()">🔄 Проверить новые правки</button>
-        <div id="admin-pending-list"></div>
-        
-        <p id="adminStatus" style="font-size: 12px; margin-top: 5px;"></p>
+    <div id="correction-block" class="card hidden">
+        <h3>✏️ Исправить результат</h3>
+        <p>Если ИИ ошибся, введите верные данные маркера:</p>
+        <input type="text" id="corr-brand" placeholder="Бренд (напр. GuangNa)">
+        <input type="text" id="corr-id" placeholder="Номер/ID цвета (напр. 605)">
+        <button class="btn" onclick="sendCorrection()">Отправить админу</button>
+        <button class="btn btn-outline" onclick="closeCorrection()">Назад</button>
     </div>
 
-    <div id="status"></div>
+    <div id="admin-panel" class="card admin-box hidden">
+        <h3 style="color: #d35400;">⚙️ Админ-центр</h3>
+        
+        <div style="text-align: left;">
+            <p><b>Обучить новый эталон:</b></p>
+            <input type="text" id="train-brand" placeholder="Бренд" value="GuangNa">
+            <input type="text" id="train-id" placeholder="ID цвета">
+            <button class="btn" style="background: #f39c12;" onclick="document.getElementById('adminFile').click()">📸 Снять эталон</button>
+            <input type="file" id="adminFile" accept="image/*" onchange="uploadFile(this, 'train')">
+        </div>
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #f39c12;">
+
+        <div style="text-align: left;">
+            <p><b>Правки от пользователей:</b></p>
+            <button class="btn btn-outline" onclick="fetchPending()">🔄 Проверить карантин</button>
+            <div id="pending-list"></div>
+        </div>
+    </div>
 </div>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
+    tg.ready();
 
-    const MY_ID = 496779756; 
+    // Твои настройки
     const SERVER_URL = "https://hlhbot-hachettelittleheroes.amvera.io"; 
-    let lastProcessedFile = null;
+    const ADMIN_ID = 496779756;
+    let currentPhoto = null; // Храним фото для правки
 
-    if (tg.initDataUnsafe.user && tg.initDataUnsafe.user.id === MY_ID) {
-        document.getElementById('adminBtn').style.display = 'block';
+    // Проверка прав администратора
+    if (tg.initDataUnsafe.user && tg.initDataUnsafe.user.id === ADMIN_ID) {
+        document.getElementById('admin-panel').classList.remove('hidden');
     }
 
-    function toggleAdminPanel() {
-        const panel = document.getElementById('admin-panel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-    }
-
-    async function processImage(input, mode) {
-        if (!input.files || !input.files[0]) return;
+    // Основная функция загрузки
+    async function uploadFile(input, mode) {
+        if (!input.files[0]) return;
         const file = input.files[0];
-        lastProcessedFile = file; // Сохраняем фото для отправки фидбека
+        currentPhoto = file;
         
-        const status = document.getElementById(mode === 'train' ? 'adminStatus' : 'status');
-        status.innerText = "⏳ ИИ думает...";
-
+        const status = document.getElementById('status');
+        status.innerText = "⏳ Анализирую цвет...";
+        
         const formData = new FormData();
         formData.append('file', file);
 
-        let endpoint = `${SERVER_URL}/analyze`;
+        let url = `${SERVER_URL}/analyze`;
+        
         if (mode === 'train') {
-            formData.append('brand', document.getElementById('adminBrandMain').value);
-            formData.append('marker_id', document.getElementById('adminMarkerId').value);
-            formData.append('admin_id', MY_ID);
-            endpoint = `${SERVER_URL}/train_marker`;
+            url = `${SERVER_URL}/train_marker`;
+            formData.append('brand', document.getElementById('train-brand').value);
+            formData.append('marker_id', document.getElementById('train-id').value);
+            formData.append('admin_id', ADMIN_ID);
         }
 
         try {
-            const response = await fetch(endpoint, { method: 'POST', body: formData });
-            const result = await response.json();
-            if (mode === 'analyze') displayResults(result);
-            else {
-                status.innerText = result.message;
-                if (result.status === 'success') alert(result.message);
+            const response = await fetch(url, { method: 'POST', body: formData });
+            const data = await response.json();
+            
+            if (mode === 'analyze') {
+                showResults(data);
+            } else {
+                alert(data.message || "Успешно!");
             }
-        } catch (e) { status.innerText = "❌ Ошибка сервера"; }
+            status.innerText = "";
+        } catch (err) {
+            status.innerText = "❌ Ошибка соединения с Amvera";
+            console.error(err);
+        }
     }
 
-    function displayResults(data) {
+    // Отображение результатов
+    function showResults(data) {
         const resDiv = document.getElementById('results');
         resDiv.innerHTML = "";
-        document.getElementById('status').innerText = "";
-
+        
         if (data.status === "success" && data.palette) {
-            data.palette.forEach((item) => {
-                // Создаем безопасный ID для HTML элементов
-                const safeId = item.marker.replace(/\s+/g, '-');
-                
+            data.palette.forEach(item => {
                 resDiv.innerHTML += `
                     <div class="result-item">
-                        <div style="display:flex; align-items:center;">
-                            <div class="color-box" style="background-color: rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]})"></div>
-                            <div style="font-size: 18px;"><strong>${item.marker}</strong><br><small style="color:#7f8c8d;">Уверенность: ${item.confidence}%</small></div>
+                        <div class="confidence">Точность: ${item.confidence}%</div>
+                        <div class="color-preview" style="background: rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]})"></div>
+                        <div style="font-size: 22px; font-weight: 800; margin-bottom: 12px;">${item.marker}</div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn" style="background: #27ae60;" onclick="tg.close()">✅ Верно</button>
+                            <button class="btn btn-secondary" onclick="openCorrection()">❌ Ошибка</button>
                         </div>
-                        <div class="feedback-btns">
-                            <button class="btn" style="background:#27ae60; flex:1;" onclick="submitFeedback(true, '${item.marker}')">✅ Это он</button>
-                            <button class="btn" style="background:#e74c3c; flex:1;" onclick="document.getElementById('corr-form-${safeId}').style.display='block'">❌ Ошибка</button>
-                        </div>
-                        <div id="corr-form-${safeId}" style="display:none; margin-top:15px; border-top: 1px solid #eee; padding-top: 10px;">
-                            <p style="margin: 0 0 5px 0; font-size: 14px;">Укажите правильный маркер:</p>
-                            <select id="corrBrand-${safeId}">
-                                <option value="GuangNa">GuangNa</option>
-                                <option value="Languo">Languo</option>
-                                <option value="Zibeef">Zibeef</option>
-                            </select>
-                            <input type="text" id="correctId-${safeId}" placeholder="Номер (напр. 640)">
-                            <button class="btn" style="background:#34495e;" onclick="submitFeedback(false, '${item.marker}')">Отправить в базу</button>
-                        </div>
-                    </div>`;
+                    </div>
+                `;
             });
-        } else { document.getElementById('status').innerText = "Маркер не узнан."; }
+        } else {
+            resDiv.innerHTML = `<p style="color: red;">Маркер не найден в базе данных.</p>`;
+        }
     }
 
-    async function submitFeedback(isCorrect, predictedFullId) {
-        if (!lastProcessedFile) return;
-        
-        let brand = "";
-        let markerId = "";
-        const safeId = predictedFullId.replace(/\s+/g, '-');
+    // Логика правок
+    function openCorrection() {
+        document.getElementById('scanner-main').classList.add('hidden');
+        document.getElementById('correction-block').classList.remove('hidden');
+    }
 
-        if (isCorrect) {
-            // Если юзер подтвердил, аккуратно разделяем "GuangNa 640" на "GuangNa" и "640"
-            const parts = predictedFullId.split(' ');
-            brand = parts[0];
-            markerId = parts.slice(1).join(' '); // на случай если номер состоит из нескольких слов
-        } else {
-            // Если юзер исправляет, берем данные из его формы
-            brand = document.getElementById(`corrBrand-${safeId}`).value;
-            markerId = document.getElementById(`correctId-${safeId}`).value;
-            if (!markerId) return alert("Введите номер маркера!");
+    function closeCorrection() {
+        document.getElementById('correction-block').classList.add('hidden');
+        document.getElementById('scanner-main').classList.remove('hidden');
+    }
+
+    async function sendCorrection() {
+        const brand = document.getElementById('corr-brand').value;
+        const id = document.getElementById('corr-id').value;
+        
+        if (!brand || !id || !currentPhoto) {
+            alert("Заполните все поля!");
+            return;
         }
 
         const formData = new FormData();
-        formData.append('file', lastProcessedFile);
+        formData.append('file', currentPhoto);
         formData.append('brand', brand);
-        formData.append('marker_id', markerId);
-        
-        document.getElementById('status').innerText = "⏳ Отправка отзыва...";
-        
-        try {
-            const response = await fetch(`${SERVER_URL}/submit_correction`, { method: 'POST', body: formData });
-            const res = await response.json();
-            alert(res.message);
-            document.getElementById('results').innerHTML = ""; // Очищаем после отправки
-            document.getElementById('status').innerText = "";
-        } catch (e) { alert("Ошибка отправки соединения с сервером"); }
-    }
+        formData.append('marker_id', id);
 
-    // --- ФУНКЦИИ АДМИНА ДЛЯ КАРАНТИНА ---
-    async function loadPending() {
-        const list = document.getElementById('admin-pending-list');
-        list.innerText = "Загрузка...";
         try {
-            const response = await fetch(`${SERVER_URL}/get_pending?admin_id=${MY_ID}`);
-            const data = await response.json();
-            list.innerHTML = data.length === 0 ? "<p style='text-align:center;'>Очередь пуста. Все проверено! 🎉</p>" : "";
-            
-            data.forEach((item, idx) => {
-                list.innerHTML += `
-                    <div class="pending-card">
-                        <div class="pending-title">${item.brand} №${item.marker_id}</div>
-                        <div style="text-align: center; color: #555;">Цвет с фото пользователя:</div>
-                        <div class="color-preview" style="background: rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]});"></div>
-                        <div style="display:flex; gap:10px; margin-top:15px;">
-                            <button class="btn" style="background:#2ecc71; padding:12px; flex:1;" onclick="moderate(${idx}, 'approve')">✅ Принять</button>
-                            <button class="btn" style="background:#e74c3c; padding:12px; flex:1;" onclick="moderate(${idx}, 'reject')">🗑 Удалить</button>
-                        </div>
-                    </div>`;
-            });
-        } catch (e) { list.innerText = "Ошибка загрузки списка"; }
-    }
-
-    async function moderate(index, action) {
-        try {
-            const response = await fetch(`${SERVER_URL}/moderate?admin_id=${MY_ID}&index=${index}&action=${action}`, {method: 'POST'});
-            const res = await response.json();
-            alert(res.message);
-            loadPending(); // Перезагружаем список после действия
+            await fetch(`${SERVER_URL}/submit_correction`, { method: 'POST', body: formData });
+            alert("Спасибо! Админ проверит вашу правку.");
+            tg.close();
         } catch (e) {
-            alert("Ошибка при модерации");
+            alert("Ошибка при отправке.");
         }
     }
+
+    // Функции для тебя (Админа)
+    async function fetchPending() {
+        const list = document.getElementById('pending-list');
+        list.innerText = "Загружаю...";
+        
+        try {
+            const resp = await fetch(`${SERVER_URL}/get_pending?admin_id=${ADMIN_ID}`);
+            const items = await resp.json();
+            
+            list.innerHTML = "";
+            items.forEach((item, index) => {
+                list.innerHTML += `
+                    <div class="pending-card">
+                        <div style="width:30px; height:30px; border-radius:4px; background:rgb(${item.rgb[0]},${item.rgb[1]},${item.rgb[2]}); border:1px solid #000;"></div>
+                        <div style="flex-grow:1; font-size:13px;"><b>${item.brand} ${item.marker_id}</b></div>
+                        <button class="btn" style="width:auto; padding:6px 10px; font-size:12px; margin:0;" onclick="handleMod(${index}, 'approve')">👍</button>
+                        <button class="btn btn-secondary" style="width:auto; padding:6px 10px; font-size:12px; margin:0;" onclick="handleMod(${index}, 'reject')">🗑</button>
+                    </div>
+                `;
+            });
+            if (items.length === 0) list.innerText = "Карантин пуст.";
+        } catch (e) {
+            list.innerText = "Ошибка загрузки.";
+        }
+    }
+
+    async function handleMod(idx, action) {
+        try {
+            await fetch(`${SERVER_URL}/moderate?admin_id=${ADMIN_ID}&index=${idx}&action=${action}`, { method: 'POST' });
+            fetchPending();
+        } catch (e) { alert("Ошибка!"); }
+    }
 </script>
+
 </body>
 </html>

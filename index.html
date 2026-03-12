@@ -776,9 +776,15 @@
                 if(dist < minDist) { minDist = dist; bestMatch = item; }
             });
 
+            // Расчет процента уверенности (макс. расстояние в RGB = 441.67)
+            let confidence = Math.max(0, (1 - (minDist / 441.67)) * 100).toFixed(1);
+
             resDiv.innerHTML = `
                 <h3 style="margin:0 0 5px 0;">Рекомендация: ${bestMatch.brand} <span style="color:var(--accent);">${bestMatch.marker}</span></h3>
-                <p style="margin:0 0 10px 0; font-size:12px; color:var(--gray);">Это максимально подходящий цвет из имеющихся у вас в наличии.</p>
+                <p style="margin:0 0 5px 0; font-size:12px; color:var(--gray);">Это максимально подходящий цвет из имеющихся у вас в наличии.</p>
+                <div style="background: rgba(241, 196, 15, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 8px; margin-bottom: 10px; display: inline-block;">
+                    <span style="font-weight:bold; font-size:13px; color: var(--gold);">⚡ Точность совпадения: ${confidence}%</span>
+                </div>
                 <div id="aiFeedbackBlock_${index}">
                     <p style="margin:0 0 10px 0; font-weight:bold; font-size:14px;">Подошло?</p>
                     <div style="display:flex; gap:10px;">

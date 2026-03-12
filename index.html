@@ -604,95 +604,78 @@
         }
 
         // Обновленный рендер инвентаря: теперь показывает ВСЕ маркеры бренда (с поддержкой наборов Tooli-Art)
-        function renderBrandInventory() {
-            if (!currentViewingBrand) return;
-            const container = document.getElementById('brandInventoryList');
-            const query = document.getElementById('brandSearchInput').value.toLowerCase();
-            
-            let allMarkers = [];
-            
-            if (currentViewingBrand.sets) {
-                // Если у бренда есть наборы (Tooli-Art)
-                for (const [setName, count] of Object.entries(currentViewingBrand.sets)) {
-                    if (setName === 'Essential') {
-                        allMarkers.push(`${setName} 00`);
-                        for (let i = 1; i <= 26; i++) { allMarkers.push(`${setName} ${i}`); }
-                        allMarkers.push(`${setName} 99`);
-                    } else {
-                        for (let i = 1; i <= count; i++) { allMarkers.push(`${setName} ${i}`); }
-                    }
-                }
-            } else {
-                // Обычные бренды (числа от 1 до total)
-                for (let i = 1; i <= currentViewingBrand.total; i++) {
-                    allMarkers.push(`${i}`);
-                }
-            }
+     function renderBrandInventory() {
+    if (!currentViewingBrand) return;
+    const container = document.getElementById('brandInventoryList');
+    const query = document.getElementById('brandSearchInput').value.toLowerCase();
+    
+    // ФИЛЬТР: Берем только те маркеры, которые реально есть в базе обученных (aiDB)
+    let trainedMarkersForBrand = aiDB
+        .filter(item => item.brand === currentViewingBrand.name)
+        .map(item => item.marker); 
 
-            let filtered = allMarkers.filter(m => m.toLowerCase().includes(query));
+    // Убираем дубликаты, если они есть
+    let allMarkers = [...new Set(trainedMarkersForBrand)];
 
-            if (filtered.length === 0) {
-                container.innerHTML = '<div style="grid-column: span 3; text-align:center; color:var(--gray); padding: 20px;">Маркеры не найдены</div>';
-                return;
-            }
+    let filtered = allMarkers.filter(m => m.toLowerCase().includes(query));
 
-            container.innerHTML = filtered.map(markerNum => {
-                let mId = `${currentViewingBrand.name}_${markerNum}`;
-                let isOwned = userInventory.includes(mId);
-                return `
-                <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})">
-                    ${markerNum}
-                </div>`;
-            }).join('');
-        }
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: span 3; text-align:center; color:var(--gray); padding: 20px;">
+                В этом бренде еще нет обученных цветов.<br>
+                <small>Номера появятся после обучения в разделе ИИ.</small>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = filtered.map(markerNum => {
+        let mId = `${currentViewingBrand.name}_${markerNum}`;
+        let isOwned = userInventory.includes(mId);
+        return `
+        <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})">
+            ${markerNum}
+        </div>`;
+    }).join('');
+}
+
 
         function filterBrandInventory() { renderBrandInventory(); }
 
         // Обновленное массовое добавление с поддержкой наборов
-        async function massToggle(isAdded) {
-            if (!currentViewingBrand) return;
-            
-            tg.showConfirm(isAdded ? "Добавить все маркеры этого бренда?" : "Убрать все маркеры этого бренда?", async (confirm) => {
-                if (confirm) {
-                    let allIds = [];
-                    
-                    if (currentViewingBrand.sets) {
-                        for (const [setName, count] of Object.entries(currentViewingBrand.sets)) {
-                            if (setName === 'Essential') {
-                                allIds.push(`${currentViewingBrand.name}_${setName} 00`);
-                                for (let i = 1; i <= 26; i++) {
-                                    allIds.push(`${currentViewingBrand.name}_${setName} ${i}`);
-                                }
-                                allIds.push(`${currentViewingBrand.name}_${setName} 99`);
-                            } else {
-                                for (let i = 1; i <= count; i++) {
-                                    allIds.push(`${currentViewingBrand.name}_${setName} ${i}`);
-                                }
-                            }
-                        }
-                    } else {
-                        for (let i = 1; i <= currentViewingBrand.total; i++) {
-                            allIds.push(`${currentViewingBrand.name}_${i}`);
-                        }
-                    }
+       async function massToggle(isAdded) {
+    if (!currentViewingBrand) return;
+    
+    const actionText = isAdded ? "Добавить все обученные маркеры?" : "Убрать все маркеры этого бренда?";
+    
+    tg.showConfirm(actionText, async (confirm) => {
+        if (confirm) {
+            // Берем ID только тех маркеров, которые уже прошли обучение (есть в aiDB)
+            let trainedIds = aiDB
+                .filter(item => item.brand === currentViewingBrand.name)
+                .map(item => `${currentViewingBrand.name}_${item.marker}`);
 
-                    if (isAdded) {
-                        userInventory = Array.from(new Set([...userInventory, ...allIds]));
-                    } else {
-                        userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
-                    }
+            if (isAdded) {
+                userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
+            } else {
+                userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+            }
 
-                    let userId = document.getElementById('userIdDisplay').innerText;
-                    await fetch(`${API_URL}/inventory_mass`, {
-                        method: 'POST', 
-                        body: JSON.stringify({ user_id: userId, brand: currentViewingBrand.name, action: isAdded ? "add_all" : "remove_all" })
-                    });
-
-                    renderBrandInventory();
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
+            let userId = document.getElementById('userIdDisplay').innerText;
+            await fetch(`${API_URL}/inventory_mass`, {
+                method: 'POST', 
+                body: JSON.stringify({ 
+                    user_id: userId, 
+                    brand: currentViewingBrand.name, 
+                    action: isAdded ? "add_all" : "remove_all" 
+                })
             });
+
+            renderBrandInventory();
+            tg.HapticFeedback.notificationOccurred('success');
         }
+    });
+}
+
 
         function tab(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));

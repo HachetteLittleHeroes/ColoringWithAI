@@ -222,6 +222,34 @@
         .brand-grid-modal { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
         .brand-btn { background: var(--secondary); border: 2px solid transparent; padding: 12px 5px; border-radius: 12px; font-weight: bold; cursor: pointer; color: var(--text); font-size: 14px; text-align: center; transition: 0.2s; }
         .brand-btn.active { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); color: var(--accent); }
+
+        /* --- СТИЛИ ДЛЯ АВАТАРА И ДОСТИЖЕНИЙ --- */
+        .profile-header-container { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-start; }
+        .avatar-preview { width: 110px; height: 130px; background: var(--secondary); border-radius: 20px; position: relative; overflow: hidden; border: 2px solid var(--accent); flex-shrink: 0; margin: 0 auto; }
+        .avatar-layers { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
+        .layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: bottom center; transition: all 0.3s ease; }
+        
+        .layer.body { z-index: 1; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,65 L70,65 L85,100 L15,100 Z" fill="%23ffd1b3"/><circle cx="50" cy="45" r="28" fill="%23ffd1b3"/></svg>'); } 
+        .layer.clothes { z-index: 2; }
+        .layer.face { z-index: 3; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="38" cy="42" r="3.5" fill="%23333"/><circle cx="62" cy="42" r="3.5" fill="%23333"/><path d="M45,55 Q50,62 55,55" stroke="%23333" stroke-width="2" fill="none" stroke-linecap="round"/></svg>'); }
+        .layer.hair { z-index: 4; }
+        .layer.accessory { z-index: 5; }
+
+        .avatar-editor { flex-grow: 1; background: var(--card-bg); padding: 15px; border-radius: 18px; border: 0.5px solid rgba(128,128,128,0.2); width: 100%; box-sizing: border-box; }
+        .editor-row { margin-bottom: 12px; }
+        .editor-row label { display: block; font-size: 11px; color: var(--gray); font-weight: bold; margin-bottom: 6px; text-transform: uppercase; }
+        .editor-options { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
+        .editor-options::-webkit-scrollbar { display: none; }
+        .editor-btn { background: var(--bg); border: 1px solid rgba(128,128,128,0.2); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; color: var(--text); }
+        .editor-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,122,255,0.1); }
+        .color-dot { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .color-dot.active { border-color: var(--accent); transform: scale(1.15); }
+
+        .achievements-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; margin-bottom: 20px;}
+        .achieve-card { background: var(--card-bg); border-radius: 12px; padding: 12px 5px; text-align: center; border: 1px solid rgba(128,128,128,0.2); filter: grayscale(1); opacity: 0.5; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .achieve-card.unlocked { filter: grayscale(0); opacity: 1; border-color: var(--gold); background: rgba(241, 196, 15, 0.05); box-shadow: 0 4px 10px rgba(241, 196, 15, 0.1); }
+        .achieve-icon { font-size: 26px; margin-bottom: 6px; }
+        .achieve-title { font-size: 10px; font-weight: bold; line-height: 1.1; color: var(--text); }
     </style>
 </head>
 <body>
@@ -297,6 +325,63 @@
 
     <div id="profile" class="page">
         <div class="header">Профиль</div>
+
+        <div class="category-title" style="margin-top: 0;">Мой Персонаж</div>
+        <div class="profile-header-container">
+            <div class="avatar-preview">
+                <div class="avatar-layers">
+                    <div class="layer body"></div>
+                    <div class="layer clothes" id="avatar-clothes"></div>
+                    <div class="layer face"></div>
+                    <div class="layer hair" id="avatar-hair"></div>
+                    <div class="layer accessory" id="avatar-accessory"></div>
+                </div>
+            </div>
+            
+            <div class="avatar-editor">
+                <div class="editor-row">
+                    <label>Прическа</label>
+                    <div class="editor-options">
+                        <button class="editor-btn active" onclick="setAvatarPart('hair', 'none', this)">Нет</button>
+                        <button class="editor-btn" onclick="setAvatarPart('hair', 'short', this)">Короткие</button>
+                        <button class="editor-btn" onclick="setAvatarPart('hair', 'long', this)">Длинные</button>
+                        <button class="editor-btn" onclick="setAvatarPart('hair', 'bob', this)">Каре</button>
+                    </div>
+                </div>
+                <div class="editor-row">
+                    <label>Цвет волос</label>
+                    <div class="editor-options">
+                        <div class="color-dot active" style="background: #4b2c20" onclick="setAvatarColor('hair', '#4b2c20', this)"></div>
+                        <div class="color-dot" style="background: #d4af37" onclick="setAvatarColor('hair', '#d4af37', this)"></div>
+                        <div class="color-dot" style="background: #ff4500" onclick="setAvatarColor('hair', '#ff4500', this)"></div>
+                        <div class="color-dot" style="background: #e91e63" onclick="setAvatarColor('hair', '#e91e63', this)"></div>
+                        <div class="color-dot" style="background: #34c759" onclick="setAvatarColor('hair', '#34c759', this)"></div>
+                    </div>
+                </div>
+                <div class="editor-row">
+                    <label>Одежда</label>
+                    <div class="editor-options">
+                        <button class="editor-btn active" onclick="setAvatarColor('clothes', '#e0e0e0', this)">Худи</button>
+                        <button class="editor-btn" onclick="setAvatarColor('clothes', '#007aff', this)">Футболка</button>
+                        <button class="editor-btn" onclick="setAvatarColor('clothes', '#ff9500', this)">Свитер</button>
+                        <button class="editor-btn" onclick="setAvatarColor('clothes', '#333333', this)">Пиджак</button>
+                    </div>
+                </div>
+                <div class="editor-row">
+                    <label>Аксессуары</label>
+                    <div class="editor-options">
+                        <button class="editor-btn active" onclick="setAvatarPart('accessory', 'none', this)">Нет</button>
+                        <button class="editor-btn" onclick="setAvatarPart('accessory', 'glasses', this)">Очки</button>
+                        <button class="editor-btn" onclick="setAvatarPart('accessory', 'earrings', this)">Серьги</button>
+                        <button class="editor-btn" onclick="setAvatarPart('accessory', 'chain', this)">Цепочка</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-title">Мои достижения</div>
+        <div class="achievements-grid" id="achievementsGrid"></div>
+
         <div class="balance-card">
             <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
             <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
@@ -490,6 +575,131 @@
         tg.ready();
         tg.expand();
 
+        // --- ЛОГИКА АВАТАРОВ И ДОСТИЖЕНИЙ ---
+        let userProfileData = {
+            avatar: { hair: 'none', hairColor: '#4b2c20', clothesColor: '#e0e0e0', accessory: 'none' },
+            achievements: [
+                { id: 'first_steps', title: 'Первые шаги', icon: '🐣', unlocked: true },
+                { id: 'stylist', title: 'Стиляга', icon: '🕶', unlocked: false },
+                { id: 'rich', title: 'Богатей', icon: '💰', unlocked: false },
+                { id: 'collector', title: 'Коллекционер', icon: '🎒', unlocked: false }
+            ],
+            styleChangesCount: 0
+        };
+
+        function loadProfileData() {
+            const saved = localStorage.getItem('user_profile_data_v1');
+            if (saved) userProfileData = JSON.parse(saved);
+            
+            // Восстанавливаем активные кнопки
+            document.querySelectorAll('.avatar-editor .editor-btn, .avatar-editor .color-dot').forEach(el => el.classList.remove('active'));
+            // Чтобы не усложнять код, просто применим стили, а кнопки оставим как есть при загрузке (пользователь сам прокликает при желании)
+            
+            applyAvatarStyles();
+            renderAchievements();
+        }
+
+        function saveProfileData() {
+            localStorage.setItem('user_profile_data_v1', JSON.stringify(userProfileData));
+            checkAchievements();
+        }
+
+        function setAvatarPart(part, value, btnElem) {
+            userProfileData.avatar[part] = value;
+            userProfileData.styleChangesCount++;
+            
+            if (btnElem) {
+                const parent = btnElem.parentElement;
+                parent.querySelectorAll('.editor-btn').forEach(b => b.classList.remove('active'));
+                btnElem.classList.add('active');
+            }
+            applyAvatarStyles();
+            saveProfileData();
+            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        }
+
+        function setAvatarColor(part, hex, dotElem) {
+            if (part === 'hair') userProfileData.avatar.hairColor = hex;
+            if (part === 'clothes') userProfileData.avatar.clothesColor = hex;
+            userProfileData.styleChangesCount++;
+
+            if (dotElem) {
+                const parent = dotElem.parentElement;
+                parent.querySelectorAll('.color-dot, .editor-btn').forEach(b => b.classList.remove('active'));
+                dotElem.classList.add('active');
+            }
+            applyAvatarStyles();
+            saveProfileData();
+            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        }
+
+        function applyAvatarStyles() {
+            const hairEl = document.getElementById('avatar-hair');
+            const accEl = document.getElementById('avatar-accessory');
+            const clothesEl = document.getElementById('avatar-clothes');
+
+            // Одежда (SVG форма)
+            const cColor = encodeURIComponent(userProfileData.avatar.clothesColor);
+            clothesEl.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M25,100 L35,65 Q50,85 65,65 L75,100 Z" fill="${cColor}"/></svg>')`;
+            
+            // Прическа
+            let hColor = encodeURIComponent(userProfileData.avatar.hairColor);
+            let hairSvg = '';
+            if (userProfileData.avatar.hair === 'short') hairSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M28,45 Q50,5 72,45 L68,25 Q50,15 32,25 Z" fill="${hColor}"/></svg>`;
+            else if (userProfileData.avatar.hair === 'long') hairSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,25 Q50,5 70,25 L80,80 Q60,65 50,35 Q40,65 20,80 Z" fill="${hColor}"/></svg>`;
+            else if (userProfileData.avatar.hair === 'bob') hairSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M28,45 Q50,5 72,45 L80,65 Q50,35 20,65 Z" fill="${hColor}"/></svg>`;
+            hairEl.style.backgroundImage = hairSvg ? `url('data:image/svg+xml;utf8,${hairSvg}')` : 'none';
+
+            // Аксессуары
+            let accSvg = '';
+            if (userProfileData.avatar.accessory === 'glasses') accSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="28" y="38" width="18" height="12" rx="3" fill="none" stroke="%23000" stroke-width="2.5"/><rect x="54" y="38" width="18" height="12" rx="3" fill="none" stroke="%23000" stroke-width="2.5"/><line x1="46" y1="44" x2="54" y2="44" stroke="%23000" stroke-width="2.5"/></svg>`;
+            else if (userProfileData.avatar.accessory === 'earrings') accSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="23" cy="55" r="3" fill="gold"/><circle cx="77" cy="55" r="3" fill="gold"/></svg>`;
+            else if (userProfileData.avatar.accessory === 'chain') accSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M36,65 Q50,85 64,65" fill="none" stroke="gold" stroke-width="2.5" stroke-dasharray="3,2"/></svg>`;
+            accEl.style.backgroundImage = accSvg ? `url('data:image/svg+xml;utf8,${accSvg}')` : 'none';
+        }
+
+        function renderAchievements() {
+            const grid = document.getElementById('achievementsGrid');
+            grid.innerHTML = userProfileData.achievements.map(ach => `
+                <div class="achieve-card ${ach.unlocked ? 'unlocked' : ''}">
+                    <div class="achieve-icon">${ach.icon}</div>
+                    <div class="achieve-title">${ach.title}</div>
+                </div>
+            `).join('');
+        }
+
+        function checkAchievements() {
+            let changed = false;
+            
+            // Ачивка за стиль
+            const stylist = userProfileData.achievements.find(a => a.id === 'stylist');
+            if (stylist && !stylist.unlocked && userProfileData.styleChangesCount >= 5) {
+                stylist.unlocked = true; changed = true;
+                if(tg.showAlert) tg.showAlert("🏆 Открыто достижение: Стиляга!");
+            }
+
+            // Ачивка за баланс
+            const currentBalance = parseInt(document.getElementById('userBalance').innerText || "0");
+            const rich = userProfileData.achievements.find(a => a.id === 'rich');
+            if (rich && !rich.unlocked && currentBalance >= 500) {
+                 rich.unlocked = true; changed = true;
+                 if(tg.showAlert) tg.showAlert("🏆 Открыто достижение: Богатей!");
+            }
+
+            // Ачивка за инвентарь маркеров
+            const collector = userProfileData.achievements.find(a => a.id === 'collector');
+            if (collector && !collector.unlocked && userInventory && userInventory.length >= 10) {
+                 collector.unlocked = true; changed = true;
+                 if(tg.showAlert) tg.showAlert("🏆 Открыто достижение: Коллекционер!");
+            }
+
+            if (changed) {
+                renderAchievements();
+                localStorage.setItem('user_profile_data_v1', JSON.stringify(userProfileData));
+            }
+        }
+        // --- КОНЕЦ ЛОГИКИ АВАТАРОВ ---
+
         // -- ЛОГИКА ОРГАНАЙЗЕРОВ НАЧАЛО --
         let organizers = JSON.parse(localStorage.getItem('marker_organizers')) || [];
         let currentOrgId = null;
@@ -572,7 +782,6 @@
             renderOrganizers();
         }
 
-        // НОВЫЙ МЕХАНИЗМ УПРАВЛЕНИЯ ЯЧЕЙКОЙ
         function manageCell(cellIndex) {
             currentCellIndex = cellIndex;
             const org = organizers.find(o => o.id === currentOrgId);
@@ -587,7 +796,7 @@
 
         function closeCellModal() {
             document.getElementById('cellManageModal').style.display = 'none';
-            viewOrganizer(currentOrgId); // Обновляем сетку на заднем фоне
+            viewOrganizer(currentOrgId); 
         }
 
         function renderCellMarkerList() {
@@ -603,7 +812,7 @@
             list.innerHTML = cell.markers.map(mId => {
                 let parts = mId.split('_');
                 let brand = parts[0];
-                let num = parts.slice(1).join('_'); // На случай если в номере есть подчеркивания
+                let num = parts.slice(1).join('_'); 
                 return `
                 <div class="marker-list-item">
                     <span><b>${brand}</b> <span style="color:var(--accent);">№${num}</span></span>
@@ -629,14 +838,13 @@
                 cell.customName = newName;
                 saveOrganizers();
                 document.getElementById('cellModalTitle').innerText = newName;
-                viewOrganizer(currentOrgId); // фоновое обновление
+                viewOrganizer(currentOrgId);
             }
         }
 
         function openAddMarkerModal() {
             document.getElementById('cellManageModal').style.display = 'none';
             
-            // Генерируем кнопки брендов
             const grid = document.getElementById('modalBrandGrid');
             grid.innerHTML = markerBrandsList.map(b => `
                 <button class="brand-btn" id="modalBtn_${b.name}" onclick="selectModalBrand('${b.name}')">${b.name}</button>
@@ -735,7 +943,6 @@
 
         let markersData = [], cart = [], markersLoaded = false;
         
-        // Обновленная структура брендов с наборами Tooli-Art
         const markerBrandsList = [
             { name: 'GuangNa', total: 408 },
             { name: 'Languo', total: 288 },
@@ -1034,7 +1241,6 @@
                 } else {
                     userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
                     
-                    // Также удаляем из всех органайзеров
                     organizers.forEach(org => {
                         org.cells.forEach(cell => {
                             cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
@@ -1055,6 +1261,7 @@
                 });
 
                 renderBrandInventory();
+                checkAchievements(); // Проверка ачивки Коллекционер
                 if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
         });
@@ -1074,7 +1281,7 @@
             if (id === 'mymarkers') {
                 closeBrandView();
                 renderBrandsList();
-                renderOrganizers(); // Обновляем органайзеры при переходе
+                renderOrganizers(); 
             }
         }
 
@@ -1103,7 +1310,6 @@
             if(isAdded && !userInventory.includes(mId)) userInventory.push(mId);
             if(!isAdded) {
                 userInventory = userInventory.filter(id => id !== mId);
-                // Убираем маркер из органайзера, если он удален из инвентаря
                 organizers.forEach(org => {
                     org.cells.forEach(cell => {
                         cell.markers = cell.markers.filter(id => id !== mId);
@@ -1114,6 +1320,7 @@
             }
             
             renderBrandInventory();
+            checkAchievements(); // Проверка ачивки Коллекционер
             if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 
             let userId = document.getElementById('userIdDisplay').innerText;
@@ -1193,7 +1400,6 @@
             });
         }
 
-        // Обновленная функция ИИ с показом местоположения
         function predictColorMultiple(rgb, imgB64, resDiv, index) {
             if(aiDB.length === 0) { resDiv.innerHTML = "<p>База ИИ пуста.</p>"; return; }
             let searchBrand = document.getElementById('aiSearchBrand').value;
@@ -1312,9 +1518,14 @@
             const params = new URLSearchParams(window.location.search);
             document.getElementById('userBalance').innerText = params.get('balance') || 0;
             document.getElementById('userIdDisplay').innerText = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
+            
+            // Загружаем профиль, аватара и достижения
+            loadProfileData(); 
+            checkAchievements(); // Проверяем ачивку за баланс сразу при загрузке
+
             initAI();
             renderBooks();
-            renderOrganizers(); // Инициализация отрисовки органайзеров
+            renderOrganizers(); 
         };
     </script>
 </body>

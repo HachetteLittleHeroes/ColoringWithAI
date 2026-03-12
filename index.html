@@ -120,7 +120,6 @@
             background: rgba(0, 122, 255, 0.05);
         }
 
-        /* Новые стили для полностью скругленных кнопок (капсулы) */
         .rounded-pill {
             border-radius: 50px !important;
         }
@@ -164,7 +163,7 @@
     </div>
 
     <div id="mymarkers" class="page">
-        <div class="header">Мои маркеры</div>
+        <div class="header">Мои маркеры 🎒</div>
         
         <div id="brandsMainView">
             <div id="brandsGridContainer">
@@ -251,7 +250,7 @@
     <div id="aipalette" class="page">
         <div class="header">ИИ Палитра ✨</div>
         <div class="card" style="padding: 20px; text-align: center; border:none; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-            <p style="font-size:14px; margin-top:0;">Загрузи фото чистой выкраски (без теней), и нейросеть определит номер!</p>
+            <p style="font-size:14px; margin-top:0;">Сфотографируй цвет — нейросеть найдет лучший маркер из твоей палитры!</p>
 
             <div style="margin-bottom: 20px; text-align: left; background: var(--secondary); padding: 15px; border-radius: 12px;">
                 <label style="display: block; font-size: 13px; margin-bottom: 5px; font-weight: bold;">Бренд для поиска:</label>
@@ -267,14 +266,14 @@
                 
                 <label style="display: flex; align-items: center; font-size: 14px; gap: 10px; cursor: pointer;">
                     <input type="checkbox" id="aiUseInventoryOnly" style="width: 18px; height: 18px; accent-color: var(--accent);">
-                    Искать только в моих маркерах
+                    Искать только среди моих маркеров
                 </label>
                 
-                <button class="buy-btn rounded-pill" style="padding: 12px; font-size: 14px; margin-top: 15px; background: var(--bg); border: 2px solid var(--accent); color: var(--text);" onclick="tab('mymarkers')">Мои маркеры</button>
+                <button class="buy-btn rounded-pill" style="padding: 12px; font-size: 14px; margin-top: 15px; background: var(--bg); border: 2px solid var(--accent); color: var(--text);" onclick="tab('mymarkers')">Мои маркеры 🎒</button>
             </div>
 
             <input type="file" id="aiInput" accept="image/*" multiple style="display:none;" onchange="processAI(event)">
-            <button class="buy-btn rounded-pill" style="padding:15px;" onclick="document.getElementById('aiInput').click()">📷 Загрузить фото маркера</button>
+            <button class="buy-btn rounded-pill" style="padding:15px;" onclick="document.getElementById('aiInput').click()">📷 Сфотографировать цвет</button>
             
             <div id="aiMultipleResultsContainer"></div>
 
@@ -323,10 +322,10 @@
         <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><span class="nav-icon">🎨</span>ИИ палитры</button>
         <button id="btn-shop" class="nav-btn" onclick="tab('shop')"><span class="nav-icon">🖍️</span>Маркеры</button>
         <button id="btn-cart" class="nav-btn" onclick="tab('cart')">
-            <span class="nav-icon">🛒</span>Корз
+            <span class="nav-icon">🛒</span>Корзина
             <span id="cartBadge" class="badge" style="display:none">0</span>
         </button> 
-        <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Проф</button>
+        <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Профиль</button>
     </nav>
 
     <script>
@@ -336,7 +335,6 @@
 
         let markersData = [], cart = [], markersLoaded = false;
         
-        // Обновленные лимиты
         const markerBrandsList = [
             { name: 'GuangNa', total: 408 },
             { name: 'Languo', total: 288 },
@@ -518,7 +516,6 @@
             }
         }
 
-        /* ЛОГИКА МАГАЗИНА НАГРАД */
         function toggleRewards() {
             const rewardsSection = document.getElementById('rewards-section');
             const loyaltyInfo = document.getElementById('loyalty-info');
@@ -551,7 +548,6 @@
             });
         }
 
-        // --- ЛОГИКА ВКЛАДКИ МОИ МАРКЕРЫ (ИНВЕНТАРЬ) ---
         let currentViewingBrand = null;
 
         function renderBrandsList() {
@@ -582,13 +578,11 @@
             renderBrandsList();
         }
 
-        // Отображаются только имеющиеся маркеры
         function renderBrandInventory() {
             if (!currentViewingBrand) return;
             const container = document.getElementById('brandInventoryList');
             const query = document.getElementById('brandSearchInput').value.toLowerCase();
             
-            // Получаем ТОЛЬКО те маркеры, которые есть у пользователя (никаких пустых клеток)
             let ownedIds = userInventory.filter(id => id.startsWith(currentViewingBrand.name + "_"));
             
             if (ownedIds.length === 0) {
@@ -716,13 +710,12 @@
             }
         }
 
-        // --- ЛОГИКА МУЛЬТИЗАГРУЗКИ ФОТО ---
         function processAI(event) {
             const files = event.target.files;
             if(!files || files.length === 0) return;
             
             const container = document.getElementById('aiMultipleResultsContainer');
-            container.innerHTML = ''; // Очистка старых результатов
+            container.innerHTML = ''; 
             
             Array.from(files).forEach((file, index) => {
                 const reader = new FileReader();
@@ -775,7 +768,7 @@
                 return true;
             });
 
-            if(filteredDB.length === 0) { resDiv.innerHTML = "<p style='color:var(--gray);'>Совпадений не найдено.</p>"; return; }
+            if(filteredDB.length === 0) { resDiv.innerHTML = "<p style='color:var(--gray);'>Совпадений в вашей палитре не найдено.</p>"; return; }
 
             let bestMatch = null, minDist = Infinity;
             filteredDB.forEach(item => {
@@ -783,74 +776,26 @@
                 if(dist < minDist) { minDist = dist; bestMatch = item; }
             });
 
-            const conf = Math.max(0, Math.round(100 - (minDist / 120) * 100));
-            
-            // Автоматическое запоминание если уверенность высока (>85%)
-            let autoAddTxt = "";
-            if(conf >= 85) {
-                let mId = `${bestMatch.brand}_${bestMatch.marker}`;
-                if(!userInventory.includes(mId)) {
-                    userInventory.push(mId);
-                    autoAddTxt = `<p style="color:#34c759; font-size:12px; font-weight:bold;">✅ Добавлен в ваши маркеры!</p>`;
-                    let userId = document.getElementById('userIdDisplay').innerText;
-                    fetch(`${API_URL}/inventory`, {
-                        method: 'POST', body: JSON.stringify({ user_id: userId, marker_id: mId, action: "add" })
-                    }).catch(e=>{});
-                } else {
-                    autoAddTxt = `<p style="color:var(--gray); font-size:12px;">Уже есть в вашем инвентаре</p>`;
-                }
-            }
-
             resDiv.innerHTML = `
-                <h3 style="margin:0 0 5px 0;">Это ${bestMatch.brand} <span style="color:var(--accent);">${bestMatch.marker}</span></h3>
-                <p style="margin:0 0 10px 0; font-size:12px; color:var(--gray);">Точность совпадения: ${conf}%</p>
-                ${autoAddTxt}
+                <h3 style="margin:0 0 5px 0;">Рекомендация: ${bestMatch.brand} <span style="color:var(--accent);">${bestMatch.marker}</span></h3>
+                <p style="margin:0 0 10px 0; font-size:12px; color:var(--gray);">Это максимально подходящий цвет из имеющихся у вас в наличии.</p>
                 <div id="aiFeedbackBlock_${index}">
-                    <p style="margin:0 0 10px 0; font-weight:bold; font-size:14px;">Мы угадали?</p>
+                    <p style="margin:0 0 10px 0; font-weight:bold; font-size:14px;">Подошло?</p>
                     <div style="display:flex; gap:10px;">
-                        <button class="buy-btn" style="background:#34c759; border-radius:8px;" onclick="document.getElementById('aiFeedbackBlock_${index}').style.display='none'">Да, точно!</button>
-                        <button class="buy-btn" style="background:#ff3b30; border-radius:8px;" onclick="showCorrectionBlock(${index})">Нет, ошибка</button>
+                        <button class="buy-btn" style="background:#34c759; border-radius:8px;" onclick="document.getElementById('aiFeedbackBlock_${index}').style.display='none'">Да, отлично!</button>
+                        <button class="buy-btn" style="background:#ff3b30; border-radius:8px;" onclick="showCorrectionBlock(${index})">Нет, нужен другой</button>
                     </div>
-                </div>
-                <div id="aiCorrectionBlock_${index}" style="display:none; margin-top:15px;">
-                    <p style="margin:0 0 10px 0; font-size:13px;">Укажите верный бренд и номер:</p>
-                    <select id="aiBrandSelect_${index}" onchange="toggleCorrectionSet(${index})" style="width:100%; padding:12px; border-radius:10px; border:none; margin-bottom:10px; background:var(--bg); color:var(--text);">
-                        <option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option>
-                        <option value="Tooli-Art">Tooli-Art</option><option value="InfiArt">InfiArt</option><option value="Grasp">Grasp</option>
-                    </select>
-                    <select id="aiCorrectionSet_${index}" style="display:none; width:100%; padding:12px; border-radius:10px; border:none; margin-bottom:10px; background:var(--bg); color:var(--text);">
-                        ${Array.from({length:16}, (_,i) => `<option value="Set ${i+1}">Набор ${i+1} (1-32)</option>`).join('')}
-                    </select>
-                    <input type="text" id="aiCorrectNum_${index}" placeholder="Номер маркера" style="background:var(--bg);">
-                    <button class="buy-btn" style="border-radius:8px; padding:12px;" onclick="submitCorrectionMultiple(${index}, '${imgB64}', '${rgb.join(',')}')">Отправить в карантин</button>
                 </div>
             `;
         }
 
         function showCorrectionBlock(index) {
             document.getElementById(`aiFeedbackBlock_${index}`).style.display = 'none';
-            document.getElementById(`aiCorrectionBlock_${index}`).style.display = 'block';
         }
 
         function toggleCorrectionSet(index) {
             const brand = document.getElementById(`aiBrandSelect_${index}`).value;
             document.getElementById(`aiCorrectionSet_${index}`).style.display = (brand === 'Tooli-Art') ? 'block' : 'none';
-        }
-
-        async function submitCorrectionMultiple(index, imgB64, rgbStr) {
-            const brand = document.getElementById(`aiBrandSelect_${index}`).value;
-            let num = document.getElementById(`aiCorrectNum_${index}`).value.trim();
-            if(!num) { tg.showAlert("Введите номер!"); return; }
-            if(brand === 'Tooli-Art') {
-                let setVal = document.getElementById(`aiCorrectionSet_${index}`).value;
-                num = setVal + "_" + num;
-            }
-            let rgb = rgbStr.split(',').map(Number);
-            await fetch(`${API_URL}/quarantine`, {
-                method: 'POST', body: JSON.stringify({ brand: brand, correct_marker: num, rgb: rgb, image: imgB64 })
-            });
-            tg.showAlert("Отправлено в карантин.");
-            document.getElementById(`aiResBlock_${index}`).style.display = "none";
         }
 
         function toggleAdminSet() {

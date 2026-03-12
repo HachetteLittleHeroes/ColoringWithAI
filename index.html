@@ -127,7 +127,7 @@
             border-radius: 50px !important;
         }
 
-        /* Органайзеры - Новые стили */
+        /* Органайзеры - Стили */
         .organizer-card {
             min-width: 140px;
             background: var(--card-bg);
@@ -210,6 +210,18 @@
             border: 2px solid var(--accent) !important;
             z-index: 10;
         }
+
+        /* --- НОВЫЕ СТИЛИ ДЛЯ МОДАЛОК ОРГАНАЙЗЕРА --- */
+        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .custom-modal { background: var(--bg); width: 92%; max-width: 400px; border-radius: 20px; padding: 20px; box-sizing: border-box; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .modal-title { font-size: 18px; font-weight: bold; color: var(--text); }
+        .close-btn { background: var(--secondary); border: none; width: 32px; height: 32px; border-radius: 16px; font-weight: bold; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .marker-list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--secondary); border-radius: 12px; margin-bottom: 8px; }
+        .delete-btn { background: #ff3b30; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .brand-grid-modal { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .brand-btn { background: var(--secondary); border: 2px solid transparent; padding: 12px 5px; border-radius: 12px; font-weight: bold; cursor: pointer; color: var(--text); font-size: 14px; text-align: center; transition: 0.2s; }
+        .brand-btn.active { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); color: var(--accent); }
     </style>
 </head>
 <body>
@@ -436,6 +448,32 @@
         <div id="gridContainer" class="organizer-grid"></div>
     </div>
 
+    <div id="cellManageModal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-header-row">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span class="modal-title" id="cellModalTitle">Ячейка</span>
+                    <button class="buy-btn" style="padding:4px 10px; width:auto; font-size:12px; background:var(--secondary); color:var(--text); border-radius: 8px;" onclick="renameCurrentCell()">✏️</button>
+                </div>
+                <button class="close-btn" onclick="closeCellModal()">✕</button>
+            </div>
+            <div id="cellMarkerList" style="overflow-y:auto; flex-grow:1; margin-bottom:15px; min-height:120px;"></div>
+            <button class="buy-btn" style="border-radius:12px;" onclick="openAddMarkerModal()">+ Добавить маркер</button>
+        </div>
+    </div>
+
+    <div id="addMarkerModal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-header-row">
+                <span class="modal-title">Выберите бренд и номер</span>
+                <button class="close-btn" onclick="closeAddMarkerModal()">✕</button>
+            </div>
+            <div class="brand-grid-modal" id="modalBrandGrid"></div>
+            <input type="text" id="modalMarkerSearch" placeholder="Введите номер маркера..." style="margin-bottom:15px; background: var(--bg); border: 2px solid var(--secondary);">
+            <button class="buy-btn" style="border-radius:12px; background:#34c759;" onclick="confirmAddMarkerToCell()">Сохранить в ячейку</button>
+        </div>
+    </div>
+
     <nav class="nav">
         <button id="btn-answers" class="nav-btn active" onclick="tab('answers')"><span class="nav-icon">📚</span>Ответы</button>
         <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><span class="nav-icon">🎨</span>ИИ палитры</button>
@@ -455,6 +493,8 @@
         // -- ЛОГИКА ОРГАНАЙЗЕРОВ НАЧАЛО --
         let organizers = JSON.parse(localStorage.getItem('marker_organizers')) || [];
         let currentOrgId = null;
+        let currentCellIndex = null;
+        let modalSelectedBrand = null;
 
         function getAutoCellName(index, cols) {
             const row = Math.floor(index / cols);
@@ -532,34 +572,119 @@
             renderOrganizers();
         }
 
+        // НОВЫЙ МЕХАНИЗМ УПРАВЛЕНИЯ ЯЧЕЙКОЙ
         function manageCell(cellIndex) {
+            currentCellIndex = cellIndex;
             const org = organizers.find(o => o.id === currentOrgId);
             const cell = org.cells[cellIndex];
             
-            let action = prompt(`Ячейка: ${cell.customName || cell.defaultName}\n\n1 - Добавить маркер (ID)\n2 - Убрать маркер (ID)\n3 - Переименовать ячейку\n\nВведите цифру:`, "1");
+            document.getElementById('cellModalTitle').innerText = cell.customName || cell.defaultName;
+            renderCellMarkerList();
             
-            if(action === "1") {
-                const mId = prompt("Введите ID маркера (например: GuangNa_15):");
-                if (mId && !cell.markers.includes(mId)) {
-                    cell.markers.push(mId);
-                    saveOrganizers();
-                    viewOrganizer(currentOrgId);
-                }
-            } else if (action === "2") {
-                const mId = prompt("Введите ID маркера для удаления из ячейки:");
-                if (mId) {
-                    cell.markers = cell.markers.filter(id => id !== mId);
-                    saveOrganizers();
-                    viewOrganizer(currentOrgId);
-                }
-            } else if (action === "3") {
-                const newName = prompt("Новое имя ячейки:", cell.customName || cell.defaultName);
-                if (newName) {
-                    cell.customName = newName;
-                    saveOrganizers();
-                    viewOrganizer(currentOrgId);
-                }
+            document.getElementById('cellManageModal').style.display = 'flex';
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function closeCellModal() {
+            document.getElementById('cellManageModal').style.display = 'none';
+            viewOrganizer(currentOrgId); // Обновляем сетку на заднем фоне
+        }
+
+        function renderCellMarkerList() {
+            const org = organizers.find(o => o.id === currentOrgId);
+            const cell = org.cells[currentCellIndex];
+            const list = document.getElementById('cellMarkerList');
+            
+            if (cell.markers.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color:var(--gray); padding:30px 0; font-size:14px;">В этой ячейке пока нет маркеров</div>';
+                return;
             }
+            
+            list.innerHTML = cell.markers.map(mId => {
+                let parts = mId.split('_');
+                let brand = parts[0];
+                let num = parts.slice(1).join('_'); // На случай если в номере есть подчеркивания
+                return `
+                <div class="marker-list-item">
+                    <span><b>${brand}</b> <span style="color:var(--accent);">№${num}</span></span>
+                    <button class="delete-btn" onclick="removeMarkerFromCell('${mId}')">Удалить</button>
+                </div>`;
+            }).join('');
+        }
+
+        function removeMarkerFromCell(mId) {
+            const org = organizers.find(o => o.id === currentOrgId);
+            const cell = org.cells[currentCellIndex];
+            cell.markers = cell.markers.filter(id => id !== mId);
+            saveOrganizers();
+            renderCellMarkerList();
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function renameCurrentCell() {
+            const org = organizers.find(o => o.id === currentOrgId);
+            const cell = org.cells[currentCellIndex];
+            const newName = prompt("Новое имя ячейки:", cell.customName || cell.defaultName);
+            if (newName) {
+                cell.customName = newName;
+                saveOrganizers();
+                document.getElementById('cellModalTitle').innerText = newName;
+                viewOrganizer(currentOrgId); // фоновое обновление
+            }
+        }
+
+        function openAddMarkerModal() {
+            document.getElementById('cellManageModal').style.display = 'none';
+            
+            // Генерируем кнопки брендов
+            const grid = document.getElementById('modalBrandGrid');
+            grid.innerHTML = markerBrandsList.map(b => `
+                <button class="brand-btn" id="modalBtn_${b.name}" onclick="selectModalBrand('${b.name}')">${b.name}</button>
+            `).join('');
+            
+            modalSelectedBrand = null;
+            document.getElementById('modalMarkerSearch').value = '';
+            document.getElementById('addMarkerModal').style.display = 'flex';
+        }
+
+        function closeAddMarkerModal() {
+            document.getElementById('addMarkerModal').style.display = 'none';
+            document.getElementById('cellManageModal').style.display = 'flex';
+        }
+
+        function selectModalBrand(brand) {
+            modalSelectedBrand = brand;
+            document.querySelectorAll('.brand-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`modalBtn_${brand}`).classList.add('active');
+            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        }
+
+        function confirmAddMarkerToCell() {
+            if (!modalSelectedBrand) {
+                tg.showAlert("Пожалуйста, выберите бренд (нажмите на кнопку).");
+                return;
+            }
+            const num = document.getElementById('modalMarkerSearch').value.trim();
+            if (!num) {
+                tg.showAlert("Пожалуйста, введите номер маркера.");
+                return;
+            }
+            
+            const mId = `${modalSelectedBrand}_${num}`;
+            const org = organizers.find(o => o.id === currentOrgId);
+            const cell = org.cells[currentCellIndex];
+            
+            if (!cell.markers.includes(mId)) {
+                cell.markers.push(mId);
+                saveOrganizers();
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                tg.showAlert("Этот маркер уже лежит в данной ячейке.");
+                return;
+            }
+            
+            closeAddMarkerModal();
+            renderCellMarkerList();
         }
 
         function findMarkerLocation(markerId) {
@@ -808,7 +933,7 @@
                 rewardsSection.style.display = 'block';
                 loyaltyInfo.style.display = 'none';
             }
-            tg.HapticFeedback.impactOccurred('medium');
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
 
         function buyReward(name, price) {
@@ -930,7 +1055,7 @@
                 });
 
                 renderBrandInventory();
-                tg.HapticFeedback.notificationOccurred('success');
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
         });
     }
@@ -989,7 +1114,7 @@
             }
             
             renderBrandInventory();
-            tg.HapticFeedback.impactOccurred('light');
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 
             let userId = document.getElementById('userIdDisplay').innerText;
             fetch(`${API_URL}/inventory`, {

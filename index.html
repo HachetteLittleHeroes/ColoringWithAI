@@ -126,6 +126,90 @@
         .rounded-pill {
             border-radius: 50px !important;
         }
+
+        /* Органайзеры - Новые стили */
+        .organizer-card {
+            min-width: 140px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 12px;
+            border: 1px solid rgba(128,128,128,0.2);
+            text-align: center;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .organizer-card b { display: block; font-size: 14px; margin-bottom: 4px; }
+        .organizer-card span { font-size: 11px; color: var(--gray); }
+        .organizer-active { border-color: var(--accent); background: rgba(0, 122, 255, 0.05); }
+
+        .organizer-grid {
+            display: grid;
+            gap: 8px;
+            margin-top: 15px;
+            background: var(--secondary);
+            padding: 15px;
+            border-radius: 15px;
+            overflow-x: auto;
+        }
+
+        .cell {
+            background: var(--bg);
+            border: 1px solid rgba(128,128,128,0.2);
+            border-radius: 8px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .cell:active { transform: scale(0.95); }
+
+        .cell-name {
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--gray);
+            margin-bottom: 4px;
+            text-align: center;
+            word-break: break-all;
+            line-height: 1.1;
+        }
+
+        .cell-count {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .marker-dot-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            justify-content: center;
+            margin-top: 2px;
+        }
+
+        .marker-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        @keyframes pulse-highlight {
+            0% { background-color: var(--bg); transform: scale(1); }
+            50% { background-color: rgba(0, 122, 255, 0.3); transform: scale(1.05); border-color: var(--accent); }
+            100% { background-color: var(--bg); transform: scale(1); }
+        }
+
+        .highlight-flash {
+            animation: pulse-highlight 1s ease-in-out 3;
+            border: 2px solid var(--accent) !important;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
@@ -168,6 +252,15 @@
     <div id="mymarkers" class="page">
         <div class="header">Мои маркеры 🎒</div>
         
+        <div id="organizerSection" style="margin-bottom: 25px;">
+            <div class="category-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Мои органайзеры 📦</span>
+                <button class="buy-btn" style="width:auto; padding:5px 12px; font-size:12px; border-radius:8px;" onclick="showAddOrganizer()">+ Новый</button>
+            </div>
+            <div id="organizersList" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                </div>
+        </div>
+
         <div id="brandsMainView">
             <div id="brandsGridContainer">
                 </div>
@@ -335,6 +428,14 @@
         </div>
     </div> 
 
+    <div id="organizerDetailView" class="page" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1001; background: var(--bg); overflow-y: auto; padding: 15px; box-sizing: border-box;">
+        <div style="display:flex; align-items:center; margin-bottom:20px;">
+            <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px; background:var(--secondary); color:var(--text);" onclick="closeOrganizerView()">← Назад</button>
+            <h3 id="viewOrgTitle" style="margin:0 0 0 15px;"></h3>
+        </div>
+        <div id="gridContainer" class="organizer-grid"></div>
+    </div>
+
     <nav class="nav">
         <button id="btn-answers" class="nav-btn active" onclick="tab('answers')"><span class="nav-icon">📚</span>Ответы</button>
         <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><span class="nav-icon">🎨</span>ИИ палитры</button>
@@ -350,6 +451,162 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
+
+        // -- ЛОГИКА ОРГАНАЙЗЕРОВ НАЧАЛО --
+        let organizers = JSON.parse(localStorage.getItem('marker_organizers')) || [];
+        let currentOrgId = null;
+
+        function getAutoCellName(index, cols) {
+            const row = Math.floor(index / cols);
+            const col = index % cols;
+            const letter = String.fromCharCode(65 + row);
+            return `${letter}${col + 1}`;
+        }
+
+        function saveOrganizers() {
+            localStorage.setItem('marker_organizers', JSON.stringify(organizers));
+        }
+
+        function showAddOrganizer() {
+            const name = prompt("Название органайзера (например, 'Кейс 1'):", "Мой Органайзер");
+            if (!name) return;
+            
+            const rows = parseInt(prompt("Сколько рядов ячеек (A, B, C...)?", "3"));
+            const cols = parseInt(prompt("Сколько ячеек в каждом ряду?", "10"));
+            
+            if (isNaN(rows) || isNaN(cols)) return;
+
+            const newOrg = { id: Date.now(), name: name, rows: rows, cols: cols, cells: [] };
+
+            for (let i = 0; i < rows * cols; i++) {
+                newOrg.cells.push({ defaultName: getAutoCellName(i, cols), customName: null, markers: [] });
+            }
+
+            organizers.push(newOrg);
+            saveOrganizers();
+            renderOrganizers();
+        }
+
+        function renderOrganizers() {
+            const list = document.getElementById('organizersList');
+            if (!list) return;
+            if (organizers.length === 0) {
+                list.innerHTML = '<div style="color:var(--gray); font-size:12px; padding:10px;">У вас пока нет цифровых органайзеров</div>';
+                return;
+            }
+            list.innerHTML = organizers.map(org => {
+                let totalMarkers = org.cells.reduce((sum, cell) => sum + cell.markers.length, 0);
+                return `
+                <div class="organizer-card" onclick="viewOrganizer(${org.id})">
+                    <b>${org.name}</b>
+                    <span>${totalMarkers} шт.</span>
+                </div>`;
+            }).join('');
+        }
+
+        function viewOrganizer(id) {
+            const org = organizers.find(o => o.id === id);
+            if (!org) return;
+            
+            currentOrgId = id;
+            document.getElementById('organizerDetailView').style.display = 'block';
+            document.getElementById('viewOrgTitle').innerText = org.name;
+            
+            const container = document.getElementById('gridContainer');
+            container.style.gridTemplateColumns = `repeat(${org.cols}, 1fr)`;
+            
+            container.innerHTML = org.cells.map((cell, index) => {
+                const dots = cell.markers.map(() => '<div class="marker-dot"></div>').join('');
+                return `
+                    <div class="cell" onclick="manageCell(${index})">
+                        <span class="cell-name">${cell.customName || cell.defaultName}</span>
+                        <span class="cell-count">${cell.markers.length}</span>
+                        <div class="marker-dot-container">${dots}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function closeOrganizerView() {
+            document.getElementById('organizerDetailView').style.display = 'none';
+            renderOrganizers();
+        }
+
+        function manageCell(cellIndex) {
+            const org = organizers.find(o => o.id === currentOrgId);
+            const cell = org.cells[cellIndex];
+            
+            let action = prompt(`Ячейка: ${cell.customName || cell.defaultName}\n\n1 - Добавить маркер (ID)\n2 - Убрать маркер (ID)\n3 - Переименовать ячейку\n\nВведите цифру:`, "1");
+            
+            if(action === "1") {
+                const mId = prompt("Введите ID маркера (например: GuangNa_15):");
+                if (mId && !cell.markers.includes(mId)) {
+                    cell.markers.push(mId);
+                    saveOrganizers();
+                    viewOrganizer(currentOrgId);
+                }
+            } else if (action === "2") {
+                const mId = prompt("Введите ID маркера для удаления из ячейки:");
+                if (mId) {
+                    cell.markers = cell.markers.filter(id => id !== mId);
+                    saveOrganizers();
+                    viewOrganizer(currentOrgId);
+                }
+            } else if (action === "3") {
+                const newName = prompt("Новое имя ячейки:", cell.customName || cell.defaultName);
+                if (newName) {
+                    cell.customName = newName;
+                    saveOrganizers();
+                    viewOrganizer(currentOrgId);
+                }
+            }
+        }
+
+        function findMarkerLocation(markerId) {
+            for (const org of organizers) {
+                for (const cell of org.cells) {
+                    if (cell.markers.includes(markerId)) {
+                        return `Органайзер «${org.name}», ячейка ${cell.customName || cell.defaultName}`;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function locateAndFlash(markerId) {
+            let foundOrg = null;
+            let foundCellIndex = -1;
+
+            for (const org of organizers) {
+                const cellIndex = org.cells.findIndex(c => c.markers.includes(markerId));
+                if (cellIndex !== -1) {
+                    foundOrg = org;
+                    foundCellIndex = cellIndex;
+                    break;
+                }
+            }
+
+            if (foundOrg) {
+                viewOrganizer(foundOrg.id);
+                setTimeout(() => {
+                    const cells = document.querySelectorAll('.cell');
+                    const targetCell = cells[foundCellIndex];
+                    
+                    if (targetCell) {
+                        targetCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targetCell.classList.add('highlight-flash');
+                        
+                        setTimeout(() => {
+                            targetCell.classList.remove('highlight-flash');
+                        }, 3000);
+                    }
+                }, 300);
+            } else {
+                tg.showAlert("Маркер не найден ни в одном органайзере.");
+            }
+        }
+        // -- ЛОГИКА ОРГАНАЙЗЕРОВ КОНЕЦ --
+
 
         let markersData = [], cart = [], markersLoaded = false;
         
@@ -603,78 +860,80 @@
             renderBrandsList();
         }
 
-        // Обновленный рендер инвентаря: теперь показывает ВСЕ маркеры бренда (с поддержкой наборов Tooli-Art)
      function renderBrandInventory() {
-    if (!currentViewingBrand) return;
-    const container = document.getElementById('brandInventoryList');
-    const query = document.getElementById('brandSearchInput').value.toLowerCase();
-    
-    // ФИЛЬТР: Берем только те маркеры, которые реально есть в базе обученных (aiDB)
-    let trainedMarkersForBrand = aiDB
-        .filter(item => item.brand === currentViewingBrand.name)
-        .map(item => item.marker); 
+        if (!currentViewingBrand) return;
+        const container = document.getElementById('brandInventoryList');
+        const query = document.getElementById('brandSearchInput').value.toLowerCase();
+        
+        let trainedMarkersForBrand = aiDB
+            .filter(item => item.brand === currentViewingBrand.name)
+            .map(item => item.marker); 
 
-    // Убираем дубликаты, если они есть
-    let allMarkers = [...new Set(trainedMarkersForBrand)];
+        let allMarkers = [...new Set(trainedMarkersForBrand)];
+        let filtered = allMarkers.filter(m => m.toLowerCase().includes(query));
 
-    let filtered = allMarkers.filter(m => m.toLowerCase().includes(query));
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div style="grid-column: span 3; text-align:center; color:var(--gray); padding: 20px;">
+                    В этом бренде еще нет обученных цветов.<br>
+                    <small>Номера появятся после обучения в разделе ИИ.</small>
+                </div>`;
+            return;
+        }
 
-    if (filtered.length === 0) {
-        container.innerHTML = `
-            <div style="grid-column: span 3; text-align:center; color:var(--gray); padding: 20px;">
-                В этом бренде еще нет обученных цветов.<br>
-                <small>Номера появятся после обучения в разделе ИИ.</small>
+        container.innerHTML = filtered.map(markerNum => {
+            let mId = `${currentViewingBrand.name}_${markerNum}`;
+            let isOwned = userInventory.includes(mId);
+            return `
+            <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})">
+                ${markerNum}
             </div>`;
-        return;
+        }).join('');
     }
-
-    container.innerHTML = filtered.map(markerNum => {
-        let mId = `${currentViewingBrand.name}_${markerNum}`;
-        let isOwned = userInventory.includes(mId);
-        return `
-        <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})">
-            ${markerNum}
-        </div>`;
-    }).join('');
-}
-
 
         function filterBrandInventory() { renderBrandInventory(); }
 
-        // Обновленное массовое добавление с поддержкой наборов
        async function massToggle(isAdded) {
-    if (!currentViewingBrand) return;
-    
-    const actionText = isAdded ? "Добавить все обученные маркеры?" : "Убрать все маркеры этого бренда?";
-    
-    tg.showConfirm(actionText, async (confirm) => {
-        if (confirm) {
-            // Берем ID только тех маркеров, которые уже прошли обучение (есть в aiDB)
-            let trainedIds = aiDB
-                .filter(item => item.brand === currentViewingBrand.name)
-                .map(item => `${currentViewingBrand.name}_${item.marker}`);
+        if (!currentViewingBrand) return;
+        
+        const actionText = isAdded ? "Добавить все обученные маркеры?" : "Убрать все маркеры этого бренда?";
+        
+        tg.showConfirm(actionText, async (confirm) => {
+            if (confirm) {
+                let trainedIds = aiDB
+                    .filter(item => item.brand === currentViewingBrand.name)
+                    .map(item => `${currentViewingBrand.name}_${item.marker}`);
 
-            if (isAdded) {
-                userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
-            } else {
-                userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+                if (isAdded) {
+                    userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
+                } else {
+                    userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+                    
+                    // Также удаляем из всех органайзеров
+                    organizers.forEach(org => {
+                        org.cells.forEach(cell => {
+                            cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+                        });
+                    });
+                    saveOrganizers();
+                    renderOrganizers();
+                }
+
+                let userId = document.getElementById('userIdDisplay').innerText;
+                await fetch(`${API_URL}/inventory_mass`, {
+                    method: 'POST', 
+                    body: JSON.stringify({ 
+                        user_id: userId, 
+                        brand: currentViewingBrand.name, 
+                        action: isAdded ? "add_all" : "remove_all" 
+                    })
+                });
+
+                renderBrandInventory();
+                tg.HapticFeedback.notificationOccurred('success');
             }
-
-            let userId = document.getElementById('userIdDisplay').innerText;
-            await fetch(`${API_URL}/inventory_mass`, {
-                method: 'POST', 
-                body: JSON.stringify({ 
-                    user_id: userId, 
-                    brand: currentViewingBrand.name, 
-                    action: isAdded ? "add_all" : "remove_all" 
-                })
-            });
-
-            renderBrandInventory();
-            tg.HapticFeedback.notificationOccurred('success');
-        }
-    });
-}
+        });
+    }
 
 
         function tab(id) {
@@ -690,6 +949,7 @@
             if (id === 'mymarkers') {
                 closeBrandView();
                 renderBrandsList();
+                renderOrganizers(); // Обновляем органайзеры при переходе
             }
         }
 
@@ -716,7 +976,17 @@
         async function toggleInventory(brand, marker, isAdded) {
             let mId = `${brand}_${marker}`;
             if(isAdded && !userInventory.includes(mId)) userInventory.push(mId);
-            if(!isAdded) userInventory = userInventory.filter(id => id !== mId);
+            if(!isAdded) {
+                userInventory = userInventory.filter(id => id !== mId);
+                // Убираем маркер из органайзера, если он удален из инвентаря
+                organizers.forEach(org => {
+                    org.cells.forEach(cell => {
+                        cell.markers = cell.markers.filter(id => id !== mId);
+                    });
+                });
+                saveOrganizers();
+                renderOrganizers(); 
+            }
             
             renderBrandInventory();
             tg.HapticFeedback.impactOccurred('light');
@@ -798,6 +1068,7 @@
             });
         }
 
+        // Обновленная функция ИИ с показом местоположения
         function predictColorMultiple(rgb, imgB64, resDiv, index) {
             if(aiDB.length === 0) { resDiv.innerHTML = "<p>База ИИ пуста.</p>"; return; }
             let searchBrand = document.getElementById('aiSearchBrand').value;
@@ -817,8 +1088,18 @@
                 if(dist < minDist) { minDist = dist; bestMatch = item; }
             });
 
-            // Расчет процента уверенности (макс. расстояние в RGB = 441.67)
             let confidence = Math.max(0, (1 - (minDist / 441.67)) * 100).toFixed(1);
+
+            const mId = `${bestMatch.brand}_${bestMatch.marker}`;
+            const locationInfo = findMarkerLocation(mId);
+
+            const locationLabel = locationInfo 
+                ? `<div style="margin-top:8px; color:#34c759; font-weight:bold; font-size:13px;">📍 Находится: ${locationInfo}</div>
+                   <button class="buy-btn" style="margin-top:10px; background:var(--secondary); color:var(--accent); font-size:12px; border:1px solid var(--accent); padding:8px; border-radius:8px;" 
+                    onclick="locateAndFlash('${mId}')">
+                    📍 Показать в органайзере
+                   </button>`
+                : `<div style="margin-top:8px; color:var(--gray); font-size:12px;">📍 Местоположение в органайзере не указано</div>`;
 
             resDiv.innerHTML = `
                 <h3 style="margin:0 0 5px 0;">Рекомендация: ${bestMatch.brand} <span style="color:var(--accent);">${bestMatch.marker}</span></h3>
@@ -826,7 +1107,8 @@
                 <div style="background: rgba(241, 196, 15, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 8px; margin-bottom: 10px; display: inline-block;">
                     <span style="font-weight:bold; font-size:13px; color: var(--gold);">⚡ Точность совпадения: ${confidence}%</span>
                 </div>
-                <div id="aiFeedbackBlock_${index}">
+                ${locationLabel}
+                <div id="aiFeedbackBlock_${index}" style="margin-top:10px;">
                     <p style="margin:0 0 10px 0; font-weight:bold; font-size:14px;">Подошло?</p>
                     <div style="display:flex; gap:10px;">
                         <button class="buy-btn" style="background:#34c759; border-radius:8px;" onclick="document.getElementById('aiFeedbackBlock_${index}').style.display='none'">Да, отлично!</button>
@@ -850,7 +1132,6 @@
             document.getElementById('adminTrainSet').style.display = (brand === 'Tooli-Art') ? 'block' : 'none';
         }
 
-        // Обновленная функция обучения ИИ (формирует красивые имена для наборов)
         function trainAI(event) {
             const brand = document.getElementById('adminTrainBrand').value;
             let num = document.getElementById('adminTrainNum').value.trim();
@@ -858,7 +1139,7 @@
             
             if(brand === 'Tooli-Art') {
                 let setVal = document.getElementById('adminTrainSet').value;
-                num = setVal + " " + num; // Получится красиво, например: "Pastel 15"
+                num = setVal + " " + num; 
             }
 
             const reader = new FileReader();
@@ -908,6 +1189,7 @@
             document.getElementById('userIdDisplay').innerText = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
             initAI();
             renderBooks();
+            renderOrganizers(); // Инициализация отрисовки органайзеров
         };
     </script>
 </body>

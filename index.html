@@ -114,10 +114,13 @@
             font-size: 14px;
             font-weight: 600;
             border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
         .inventory-item.owned {
             border-color: var(--accent);
             background: rgba(0, 122, 255, 0.05);
+            color: var(--accent);
         }
 
         .rounded-pill {
@@ -289,12 +292,27 @@
                     <option value="Tooli-Art">Tooli-Art</option><option value="InfiArt">InfiArt</option><option value="Grasp">Grasp</option>
                 </select>
                 <select id="adminTrainSet" style="display:none; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(128,128,128,0.2); margin-bottom:10px;">
-                    <option value="Set 1">Набор 1 (1-32)</option><option value="Set 2">Набор 2 (1-32)</option><option value="Set 3">Набор 3 (1-32)</option>
-                    <option value="Set 4">Набор 4 (1-32)</option><option value="Set 5">Набор 5 (1-32)</option><option value="Set 6">Набор 6 (1-32)</option>
-                    <option value="Set 7">Набор 7 (1-32)</option><option value="Set 8">Набор 8 (1-32)</option><option value="Set 9">Набор 9 (1-32)</option>
-                    <option value="Set 10">Набор 10 (1-32)</option><option value="Set 11">Набор 11 (1-32)</option><option value="Set 12">Набор 12 (1-32)</option>
-                    <option value="Set 13">Набор 13 (1-32)</option><option value="Set 14">Набор 14 (1-32)</option><option value="Set 15">Набор 15 (1-32)</option>
-                    <option value="Set 16">Набор 16 (1-32)</option>
+                    <option value="Pastel">Pastel (24)</option>
+                    <option value="Jewel">Jewel (24)</option>
+                    <option value="Confetti">Confetti (24)</option>
+                    <option value="Metallic">Metallic (24)</option>
+                    <option value="Neon">Neon (24)</option>
+                    <option value="Glitter">Glitter (24)</option>
+                    <option value="Wildflower">Wildflower (24)</option>
+                    <option value="Brown">Brown (22)</option>
+                    <option value="Purple">Purple (22)</option>
+                    <option value="Pink">Pink (22)</option>
+                    <option value="Skin">Skin (22)</option>
+                    <option value="Green">Green (22)</option>
+                    <option value="Gray">Gray (22)</option>
+                    <option value="Orange">Orange (22)</option>
+                    <option value="Red & Pink">Red & Pink (22)</option>
+                    <option value="Yellow & Brown">Yellow & Brown (22)</option>
+                    <option value="Blue & Purple">Blue & Purple (22)</option>
+                    <option value="Southwest">Southwest (28)</option>
+                    <option value="Nocturnal">Nocturnal (28)</option>
+                    <option value="Essential">Essential (28)</option>
+                    <option value="Earth">Earth (36)</option>
                 </select>
 
                 <input type="text" id="adminTrainNum" placeholder="Номер маркера" style="border:1px solid rgba(128,128,128,0.2);">
@@ -335,13 +353,20 @@
 
         let markersData = [], cart = [], markersLoaded = false;
         
+        // Обновленная структура брендов с наборами Tooli-Art
         const markerBrandsList = [
             { name: 'GuangNa', total: 408 },
             { name: 'Languo', total: 288 },
             { name: 'Zibeef', total: 240 },
             { name: 'Grasp', total: 168 },
             { name: 'InfiArt', total: 288 },
-            { name: 'Tooli-Art', total: 508 }
+            { name: 'Tooli-Art', total: 508, sets: {
+                "Pastel": 24, "Jewel": 24, "Confetti": 24, "Metallic": 24, "Neon": 24, 
+                "Glitter": 24, "Wildflower": 24, "Brown": 22, "Purple": 22, "Pink": 22, 
+                "Skin": 22, "Green": 22, "Gray": 22, "Orange": 22, "Red & Pink": 22, 
+                "Yellow & Brown": 22, "Blue & Purple": 22, "Southwest": 28, "Nocturnal": 28, 
+                "Essential": 28, "Earth": 36
+            }}
         ];
 
         const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 3", "Vitraux tome 2", "Trompe L'oeil Babies", "Trompe L'oeil Grand Bloc", "Stitch Au numero", "Sous L'Ocean", "Saisons", "Romantasy", "Princesses tome 1", "Princesses tome 2", "Princes&Heros", "Portraits De Famille", "Pokemon", "Pixar", "Petites Princesses", "Petites Betes", "Mondes Fantastiques", "Mickey, Donald&Co", "Mechants", "Marsupilami", "Love Stories", "Looney Tunes tome 3", "Lilo Et Stitch", "Les Grands Classiques Special Debutants tome 1", "Les Grands Classiques Special Debutants tome 2", "Les Grands Classiques Au numero", "La Petite Sirene", "Les Schtroumpfs tome 1", "Les Schtroumpfs tome 2", "L'age Glace", "Hiver", "Heros&Mechants La Battle", "Grands Classiques Grand Bloc", "Les Grands Classiques Coliector", "Girl Power", "Fees, Sorciers Et Magiciens", "Famille", "Escapades Merveilleuses Douce France", "Chiots&Chiens", "Chevaux", "Bisounours tome 1", "Best Of Pixar", "Best Of Les Grands Classiques", "La Belle Et La Bete", "Bestiaire", "Best Of Heroines"];
@@ -578,29 +603,44 @@
             renderBrandsList();
         }
 
+        // Обновленный рендер инвентаря: теперь показывает ВСЕ маркеры бренда (с поддержкой наборов Tooli-Art)
         function renderBrandInventory() {
             if (!currentViewingBrand) return;
             const container = document.getElementById('brandInventoryList');
             const query = document.getElementById('brandSearchInput').value.toLowerCase();
             
-            let ownedIds = userInventory.filter(id => id.startsWith(currentViewingBrand.name + "_"));
+            let allMarkers = [];
             
-            if (ownedIds.length === 0) {
-                container.innerHTML = '<div style="grid-column: span 3; text-align:center; color:var(--gray); padding: 20px;">Пока нет маркеров этого бренда</div>';
+            if (currentViewingBrand.sets) {
+                // Если у бренда есть наборы (Tooli-Art)
+                for (const [setName, count] of Object.entries(currentViewingBrand.sets)) {
+                    if (setName === 'Essential') {
+                        allMarkers.push(`${setName} 00`);
+                        for (let i = 1; i <= 26; i++) { allMarkers.push(`${setName} ${i}`); }
+                        allMarkers.push(`${setName} 99`);
+                    } else {
+                        for (let i = 1; i <= count; i++) { allMarkers.push(`${setName} ${i}`); }
+                    }
+                }
+            } else {
+                // Обычные бренды (числа от 1 до total)
+                for (let i = 1; i <= currentViewingBrand.total; i++) {
+                    allMarkers.push(`${i}`);
+                }
+            }
+
+            let filtered = allMarkers.filter(m => m.toLowerCase().includes(query));
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div style="grid-column: span 3; text-align:center; color:var(--gray); padding: 20px;">Маркеры не найдены</div>';
                 return;
             }
 
-            let filtered = ownedIds.map(id => id.split('_').slice(1).join('_'))
-                                   .filter(num => num.toLowerCase().includes(query))
-                                   .sort((a,b) => {
-                                       let numA = parseInt(a.replace(/\D/g, '')) || 0;
-                                       let numB = parseInt(b.replace(/\D/g, '')) || 0;
-                                       return numA - numB;
-                                   });
-
             container.innerHTML = filtered.map(markerNum => {
+                let mId = `${currentViewingBrand.name}_${markerNum}`;
+                let isOwned = userInventory.includes(mId);
                 return `
-                <div class="inventory-item owned" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', false)">
+                <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})">
                     ${markerNum}
                 </div>`;
             }).join('');
@@ -608,14 +648,32 @@
 
         function filterBrandInventory() { renderBrandInventory(); }
 
+        // Обновленное массовое добавление с поддержкой наборов
         async function massToggle(isAdded) {
             if (!currentViewingBrand) return;
             
             tg.showConfirm(isAdded ? "Добавить все маркеры этого бренда?" : "Убрать все маркеры этого бренда?", async (confirm) => {
                 if (confirm) {
                     let allIds = [];
-                    for (let i = 1; i <= currentViewingBrand.total; i++) {
-                        allIds.push(`${currentViewingBrand.name}_${i}`);
+                    
+                    if (currentViewingBrand.sets) {
+                        for (const [setName, count] of Object.entries(currentViewingBrand.sets)) {
+                            if (setName === 'Essential') {
+                                allIds.push(`${currentViewingBrand.name}_${setName} 00`);
+                                for (let i = 1; i <= 26; i++) {
+                                    allIds.push(`${currentViewingBrand.name}_${setName} ${i}`);
+                                }
+                                allIds.push(`${currentViewingBrand.name}_${setName} 99`);
+                            } else {
+                                for (let i = 1; i <= count; i++) {
+                                    allIds.push(`${currentViewingBrand.name}_${setName} ${i}`);
+                                }
+                            }
+                        }
+                    } else {
+                        for (let i = 1; i <= currentViewingBrand.total; i++) {
+                            allIds.push(`${currentViewingBrand.name}_${i}`);
+                        }
                     }
 
                     if (isAdded) {
@@ -809,13 +867,15 @@
             document.getElementById('adminTrainSet').style.display = (brand === 'Tooli-Art') ? 'block' : 'none';
         }
 
+        // Обновленная функция обучения ИИ (формирует красивые имена для наборов)
         function trainAI(event) {
             const brand = document.getElementById('adminTrainBrand').value;
             let num = document.getElementById('adminTrainNum').value.trim();
             if(!num) return;
+            
             if(brand === 'Tooli-Art') {
                 let setVal = document.getElementById('adminTrainSet').value;
-                num = setVal + "_" + num;
+                num = setVal + " " + num; // Получится красиво, например: "Pastel 15"
             }
 
             const reader = new FileReader();

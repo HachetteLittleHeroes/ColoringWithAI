@@ -346,9 +346,9 @@
         <div class="profile-hero">
             <div class="avatar-container">
                 <div class="avatar-preview" id="mainAvatarPreview">
-                    <img id="dicebear-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4" alt="Avatar">
+                    <img id="dicebear-avatar" src="https://placehold.co/100x100/b6e3f4/007aff?text=👤" alt="Avatar">
                 </div>
-                <div class="edit-avatar-btn" onclick="toggleAvatarEditor()"><i class="fas fa-pen"></i></div>
+                <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
             </div>
             <div class="profile-info-right">
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -569,6 +569,16 @@
         </div>
     </div>
 
+    <div id="statusSelectModal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-header-row">
+                <span class="modal-title">Выберите статус</span>
+                <button class="close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">✕</button>
+            </div>
+            <div id="statusSelectList" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+    </div>
+
     <nav class="nav">
         <button id="btn-answers" class="nav-btn active" onclick="tab('answers')"><span class="nav-icon">📚</span>Ответы</button>
         <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><span class="nav-icon">🎨</span>ИИ палитры</button>
@@ -700,27 +710,46 @@
             return Object.values(userProfileData.statusProgress).some(level => level >= 3);
         }
 
+        function getUnlockedGoldStatuses() {
+            const unlocked = [];
+            for (const [statusName, level] of Object.entries(userProfileData.statusProgress)) {
+                if (level >= 3) {
+                    unlocked.push(statusName);
+                }
+            }
+            return unlocked;
+        }
+
         function updateStatusDisplay() {
             const display = document.getElementById('userStatusDisplay');
-            if (hasGoldStatus() && userProfileData.customStatus) {
-                display.innerHTML = userProfileData.customStatus + ' <i class="fas fa-pen" style="font-size:10px; margin-left:4px;"></i>';
+            if (userProfileData.customStatus) {
+                display.innerHTML = userProfileData.customStatus;
             } else {
-                display.innerHTML = 'Без статуса' + (hasGoldStatus() ? ' <i class="fas fa-pen" style="font-size:10px; margin-left:4px;"></i>' : '');
+                display.innerHTML = 'Без статуса';
             }
         }
 
         function changeCustomStatus() {
-            if (hasGoldStatus()) {
-                const newStatus = prompt("Введите ваш новый статус:", userProfileData.customStatus || "");
-                if (newStatus !== null) {
-                    userProfileData.customStatus = newStatus.trim() || null;
-                    saveProfileData();
-                    updateStatusDisplay();
-                    if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                }
-            } else {
+            const goldStatuses = getUnlockedGoldStatuses();
+            if (goldStatuses.length === 0) {
                 tg.showAlert("🌟 Возможность установить свой статус откроется после достижения Золотого уровня (Ур. 3) в любом из направлений!");
+                return;
             }
+            
+            const modal = document.getElementById('statusSelectModal');
+            const list = document.getElementById('statusSelectList');
+            list.innerHTML = goldStatuses.map(status => `
+                <button class="buy-btn" style="border-radius:12px; background:var(--secondary); color:var(--text); border:1px solid var(--accent); font-size: 14px;" onclick="setCustomStatus('${status}')">${status}</button>
+            `).join('');
+            modal.style.display = 'flex';
+        }
+
+        function setCustomStatus(status) {
+            userProfileData.customStatus = status;
+            saveProfileData();
+            updateStatusDisplay();
+            document.getElementById('statusSelectModal').style.display = 'none';
+            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
         // --- КОНЕЦ ЛОГИКИ КАСТОМНОГО ИМЕНИ И СТАТУСА ---
 
@@ -754,8 +783,16 @@
 
         function updateAvatarImage() {
             const avatarImg = document.getElementById('dicebear-avatar');
-            const { seed } = userProfileData.avatar;
-            avatarImg.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4`;
+            const userId = document.getElementById('userIdDisplay').innerText;
+            const finalId = (userId && userId !== "---") ? userId : "default";
+            
+            // Аватар берется из вашего репозитория
+            avatarImg.src = `https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/${finalId}/avatar.jpg`;
+            
+            // На случай, если у пользователя еще нет фото в Гитхабе
+            avatarImg.onerror = function() {
+                this.src = 'https://placehold.co/100x100/b6e3f4/007aff?text=👤';
+            };
         }
 
         function renderAchievements() {

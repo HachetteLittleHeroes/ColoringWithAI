@@ -361,6 +361,12 @@
         
         <div class="avatar-editor" id="avatarEditorBlock">
             <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
+            
+            <div style="text-align: center; margin-bottom: 15px;">
+                <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
+                <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
+            </div>
+
             <div class="avatar-grid-presets" id="avatarPresetsGrid">
                 </div>
             <button class="buy-btn rounded-pill" style="margin-top: 10px;" onclick="toggleAvatarEditor()">Готово</button>
@@ -433,6 +439,12 @@
                 <div class="row-item"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
                 <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
             </div>
+        </div>
+
+        <div id="adminTaskPanel" style="display:none; margin-top:30px; border: 2px solid var(--accent); padding: 15px; border-radius: 18px;">
+            <div class="category-title" style="margin-top:0; color: var(--accent);">🛠 Админ: Проверка заданий</div>
+            <div id="adminTaskRequests">
+                </div>
         </div>
 
         <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
@@ -632,7 +644,7 @@
         let userProfileData = {
             customName: null,
             customStatus: null,
-            avatar: { seed: 'Felix' }, 
+            avatar: { seed: 'Felix', customImage: null }, // Добавлено customImage
             achievements: [
                 { id: 'first_steps', title: 'Первые шаги', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach1.png', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
                 { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach2.png', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: false },
@@ -659,7 +671,7 @@
             const saved = localStorage.getItem('user_profile_data_v4'); 
             if (saved) {
                 userProfileData = JSON.parse(saved);
-                if (!userProfileData.avatar || !userProfileData.avatar.seed) userProfileData.avatar = { seed: 'Felix' };
+                if (!userProfileData.avatar || !userProfileData.avatar.seed) userProfileData.avatar = { seed: 'Felix', customImage: null };
                 if (!userProfileData.statusProgress) userProfileData.statusProgress = { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 };
             }
             
@@ -760,10 +772,25 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
+        // Добавлено: Обработка загрузки своего фото
+        function handleCustomAvatar(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                userProfileData.avatar.customImage = e.target.result;
+                userProfileData.styleChangesCount++;
+                saveProfileData();
+                updateAvatarImage();
+                document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('active'));
+            };
+            reader.readAsDataURL(file);
+        }
+
         function renderAvatarPresets() {
             const grid = document.getElementById('avatarPresetsGrid');
             grid.innerHTML = avatarPresets.map(seed => `
-                <div class="avatar-preset-btn ${userProfileData.avatar.seed === seed ? 'active' : ''}" onclick="setPresetAvatar('${seed}', this)">
+                <div class="avatar-preset-btn ${userProfileData.avatar.seed === seed && !userProfileData.avatar.customImage ? 'active' : ''}" onclick="setPresetAvatar('${seed}', this)">
                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4" alt="${seed}">
                 </div>
             `).join('');
@@ -771,6 +798,7 @@
 
         function setPresetAvatar(seed, btnElem) {
             userProfileData.avatar.seed = seed;
+            userProfileData.avatar.customImage = null; // Сбрасываем кастомное фото при выборе пресета
             userProfileData.styleChangesCount++;
             
             document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('active'));
@@ -783,6 +811,13 @@
 
         function updateAvatarImage() {
             const avatarImg = document.getElementById('dicebear-avatar');
+            
+            // Если есть кастомное фото, показываем его
+            if (userProfileData.avatar.customImage) {
+                avatarImg.src = userProfileData.avatar.customImage;
+                return;
+            }
+
             const userId = document.getElementById('userIdDisplay').innerText;
             const finalId = (userId && userId !== "---") ? userId : "default";
             
@@ -929,22 +964,16 @@
             }).join('');
         }
 
-        // Заявка на статус админу
+        // Заявка на статус админу (обновленная: без ссылок)
         function submitStatusLevel(statusName, targetLevel) {
             tg.showConfirm(`Отправить заявку на получение ${targetLevel} уровня в статусе "${statusName}"?`, (confirm) => {
                 if (confirm) {
-                    const workLink = prompt("Пожалуйста, вставьте ссылку на пост, альбом или сообщение с вашими выполненными работами для проверки:");
-                    if (!workLink) {
-                        tg.showAlert("❌ Заявка отменена. Ссылка на работы обязательна для проверки администратором!");
-                        return;
-                    }
-
                     const userId = document.getElementById('userIdDisplay').innerText;
-                    const msg = `Заявка от ID${userId}\nПретендует на ${targetLevel} уровень статуса "${statusName}"\nСсылка на работы: ${workLink}`;
+                    const msg = `Заявка от ID${userId}\nПретендует на ${targetLevel} уровень статуса "${statusName}"\nПроверьте работы пользователя!`;
                     
                     // Отправляем данные боту (для админки)
-                    tg.sendData(JSON.stringify({ action: 'submit_level', status: statusName, level: targetLevel, link: workLink, message: msg }));
-                    tg.showAlert("✅ Заявка успешно отправлена! Администратор начислит XP и выдаст статус после проверки.");
+                    tg.sendData(JSON.stringify({ action: 'submit_level', status: statusName, level: targetLevel, message: msg }));
+                    tg.showAlert("✅ Заявка успешно отправлена! Администратор начислит XP и выдаст статус после проверки ваших работ.");
                     
                     // Скрытая фича для админа (для мгновенного теста)
                     if(userId === "496779756") {
@@ -959,6 +988,53 @@
             });
         }
         // --- КОНЕЦ ЛОГИКИ АВАТАРОВ И СТАТУСОВ ---
+
+        // --- Добавлено: Функции для Админки заданий ---
+        async function loadAdminTasks() {
+            try {
+                // Мокаем запрос на бэкенд или вызываем настоящий API
+                let res = await fetch(`${API_URL}/pending_tasks`);
+                let tasks = await res.json();
+                let container = document.getElementById('adminTaskRequests');
+                if(tasks.length === 0) {
+                    container.innerHTML = '<div style="color:var(--gray); font-size:12px; text-align:center;">Нет новых заданий на проверку</div>';
+                    return;
+                }
+                container.innerHTML = tasks.map(t => `
+                    <div class="row-item" style="flex-direction:column; align-items:flex-start;">
+                        <b style="font-size:14px;">Пользователь ID: ${t.user_id}</b>
+                        <span style="font-size:13px; color:var(--gray);">Статус: ${t.statusName} (Ур. ${t.level})</span>
+                        <div style="display:flex; gap:10px; margin-top:10px; width:100%;">
+                            <button class="buy-btn" style="flex:1; background:#34c759; padding:8px; border-radius:8px;" onclick="approveTask(${t.id}, '${t.user_id}', '${t.statusName}', ${t.level})">Одобрить</button>
+                            <button class="buy-btn" style="flex:1; background:#ff3b30; padding:8px; border-radius:8px;" onclick="rejectTask(${t.id})">Отклонить</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(e) {
+                document.getElementById('adminTaskRequests').innerHTML = '<div style="color:var(--gray); font-size:12px; text-align:center;">Ошибка соединения с сервером или нет новых заявок</div>';
+            }
+        }
+
+        async function approveTask(taskId, userId, statusName, level) {
+            try {
+                await fetch(`${API_URL}/approve_task`, { method: 'POST', body: JSON.stringify({ taskId, userId, statusName, level }) });
+                tg.showAlert("✅ Задание успешно одобрено!");
+                loadAdminTasks();
+            } catch(e) {
+                console.error("Ошибка при одобрении задания:", e);
+            }
+        }
+
+        async function rejectTask(taskId) {
+            try {
+                await fetch(`${API_URL}/reject_task`, { method: 'POST', body: JSON.stringify({ taskId }) });
+                tg.showAlert("❌ Задание отклонено.");
+                loadAdminTasks();
+            } catch(e) {
+                console.error("Ошибка при отклонении задания:", e);
+            }
+        }
+        // --- КОНЕЦ ЛОГИКИ Админки заданий ---
 
         // -- ЛОГИКА ОРГАНАЙЗЕРОВ НАЧАЛО --
         let organizers = JSON.parse(localStorage.getItem('marker_organizers')) || [];
@@ -1608,7 +1684,9 @@
             
             if (document.getElementById('userIdDisplay').innerText == "496779756") {
                 document.getElementById('aiAdminPanel').style.display = "block";
+                document.getElementById('adminTaskPanel').style.display = "block"; // Показываем админку заданий
                 loadQuarantine();
+                loadAdminTasks(); // Загружаем задания
             }
         }
 

@@ -351,100 +351,284 @@ text-transform: uppercase;
             <div id="brandInventoryList" class="inventory-grid"></div>
         </div>
     </div>
-<div id="profile" class="page">
+    <div id="profile" class="page">
     <div class="header" style="text-align: center;">Профиль</div>
 
-    <div class="profile-hero" style="display: flex; align-items: center; gap: 20px; padding: 10px; margin-bottom: 10px;">
-        <div class="avatar-container" style="flex-shrink: 0; position: relative;">
-            <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent);">
-                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+    <div class="profile-hero" style="display: flex; align-items: center; gap: 20px; padding: 0 10px; margin-bottom: 20px;">
+        <div class="avatar-container" style="flex-shrink: 0;">
+            <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
+                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg">
             </div>
-            <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="position: absolute; bottom: 0; right: 0; background: var(--accent); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 2px solid var(--bg);">
-                <i class="fas fa-pen"></i>
-            </div>
+            <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
         </div>
         
         <div class="profile-info-holder">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <h2 class="profile-username" id="displayUsername" style="margin: 0; font-size: 20px; color: white;">Без имени</h2>
+                <h2 class="profile-username" id="displayUsername" style="margin: 0; font-size: 22px;">Без имени</h2>
                 <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
             </div>
-            <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()" style="margin-top: 5px; font-size: 13px; color: var(--gray); background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 10px; display: inline-block;">Без статуса</div>
+            <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()" style="margin-top: 5px; font-size: 14px; color: var(--gray);">Без статуса</div>
         </div>
     </div>
 
-    <div class="avatar-editor" id="avatarEditorBlock" style="display:none; margin: 0 10px 20px 10px; background: var(--secondary); padding: 15px; border-radius: 18px;">
+    <div class="avatar-editor" id="avatarEditorBlock" style="display:none; margin-bottom: 20px;">
         <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
         <div style="text-align: center; margin-bottom: 15px;">
             <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
-            <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px; width: 100%;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
+            <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
         </div>
         <div class="avatar-grid-presets" id="avatarPresetsGrid"></div>
-        <button class="buy-btn rounded-pill" style="margin-top: 10px; width: 100%;" onclick="toggleAvatarEditor()">Готово</button>
+        <button class="buy-btn rounded-pill" style="margin-top: 10px;" onclick="toggleAvatarEditor()">Готово</button>
     </div>
 
-    <div id="loyaltyBlock" style="padding: 0 10px; margin-bottom: 20px;"> 
-        <div class="balance-card" style="background: linear-gradient(135deg, #ff8c00 0%, #ed6a1d 100%); padding: 20px; border-radius: 20px; color: white; text-align: center; width: 100%; box-sizing: border-box;">
-            <p style="margin:0; opacity:0.8; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;">Ваш баланс</p>
-            <div class="balance-amount" style="font-size: 36px; font-weight: bold; margin: 5px 0;">
-                <span id="userBalance">0</span> <i class="fas fa-book-open" style="color: #ffe082;"></i>
-            </div>
-            <p style="margin:0 0 15px 0; font-size: 14px;">ашетиков накоплено</p>
+    <div id="loyaltyBlock" style="width: 100%; margin-bottom: 25px;"> 
+        <div class="balance-card" style="margin-top:0; width: 100%; box-sizing: border-box;">
+            <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
+            <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
+            <p style="margin:0; font-weight: 500; margin-bottom: 10px;">ашетиков накоплено</p>
             
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:10px; color: white; font-weight: 600;" onclick="toggleRewardsInline()">Потратить ашетики 🎁</button>
-                <button class="buy-btn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.4); border-radius:12px; padding:10px; color: white; font-weight: 600;" onclick="toggleLoyaltyInfo()">Заработать ашетики 🚀</button>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:8px;" onclick="toggleRewardsInline()">Потратить ашетики 🎁</button>
+                <button class="buy-btn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.4); border-radius:12px; padding:8px;" onclick="toggleLoyaltyInfo()">Заработать ашетики 🚀</button>
             </div>
 
-            <div id="rewards-section-inline" style="display:none; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
+            <div id="rewards-section-inline" style="display:none; margin-top:20px;">
                 <div class="reward-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div style="background: white; padding: 8px; border-radius: 12px; color: #333;">
-                        <img src="bonusi/b1.png" style="width: 100%; border-radius: 8px; margin-bottom: 5px;">
-                        <div style="font-size: 10px; font-weight: bold;">Закладка</div>
-                        <button class="spend-btn" style="width:100%; margin-top:5px; font-size:11px;" onclick="buyReward('Закладка', 750)">750 <i class="fas fa-book-open"></i></button>
+                    <div class="reward-card" style="background: white; padding: 10px; border-radius: 12px; text-align: center;">
+                        <img src="bonusi/b1.png" style="width: 100%; border-radius: 8px;">
+                        <div class="reward-info" style="font-size: 11px; color: #333; margin: 5px 0;"><b>Закладка Hachette</b></div>
+                        <button class="spend-btn" style="width: 100%; font-size: 12px;" onclick="buyReward('Закладка Hachette', 750)">750 <i class="fas fa-book-open"></i></button>
                     </div>
-                    <div style="background: white; padding: 8px; border-radius: 12px; color: #333;">
-                        <img src="bonusi/b2.png" style="width: 100%; border-radius: 8px; margin-bottom: 5px;">
-                        <div style="font-size: 10px; font-weight: bold;">Petites Poupees</div>
-                        <button class="spend-btn" style="width:100%; margin-top:5px; font-size:11px;" onclick="buyReward('Poupees', 950)">950 <i class="fas fa-book-open"></i></button>
+                    <div class="reward-card" style="background: white; padding: 10px; border-radius: 12px; text-align: center;">
+                        <img src="bonusi/b2.png" style="width: 100%; border-radius: 8px;">
+                        <div class="reward-info" style="font-size: 11px; color: #333; margin: 5px 0;"><b>Petites Poupees</b></div>
+                        <button class="spend-btn" style="width: 100%; font-size: 12px;" onclick="buyReward('Petites Poupees', 950)">950 <i class="fas fa-book-open"></i></button>
+                    </div>
+                    <div class="reward-card" style="background: white; padding: 10px; border-radius: 12px; text-align: center;">
+                        <img src="bonusi/b3.png" style="width: 100%; border-radius: 8px;">
+                        <div class="reward-info" style="font-size: 11px; color: #333; margin: 5px 0;"><b>Трекер Hachette</b></div>
+                        <button class="spend-btn" style="width: 100%; font-size: 12px;" onclick="buyReward('Трекер Hachette', 950)">950 <i class="fas fa-book-open"></i></button>
+                    </div>
+                    <div class="reward-card" style="background: white; padding: 10px; border-radius: 12px; text-align: center;">
+                        <img src="bonusi/b4.png" style="width: 100%; border-radius: 8px;">
+                        <div class="reward-info" style="font-size: 11px; color: #333; margin: 5px 0;"><b>Раскраска</b></div>
+                        <button class="spend-btn" style="width: 100%; font-size: 12px;" onclick="buyReward('Спиртовая раскраска', 1250)">1250 <i class="fas fa-book-open"></i></button>
                     </div>
                 </div>
+                <button class="buy-btn" style="background:none; color:white; width: 100%; margin-top: 10px; border:none;" onclick="toggleRewardsInline()">← Назад</button>
             </div>
 
-            <div id="loyalty-info" style="display:none; margin-top: 20px; text-align: left; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #ffe082; text-align: center;">Как получить ашетики?</div>
-                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span>Приветственный бонус</span><b>+100</b></div>
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span>Отзыв о книге</span><b>+25</b></div>
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span>Покупка от 3000₽</span><b>+20</b></div>
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span>От 5000₽ / 7500₽ / 10000₽</span><b>+30 / 40 / 50</b></div>
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span>Событие «Baby Boom»</span><b>+50</b></div>
-                    <div style="display:flex; justify-content:space-between;"><span>1 место в челлендже</span><b>+150</b></div>
+            <div id="loyalty-info" style="display:none; margin-top:20px; text-align: left;">
+                <div class="category-title" style="margin-top:0; color: white;">Программа лояльности</div>
+                <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
+                <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Бонус за отзыв</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
+                <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Бонус за покупку от 3000₽</span><b class="gold-book">+20 <i class="fas fa-book-open"></i></b></div>
+                <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display:flex; flex-direction:column;">
+                        <span>Бонусы за крупные покупки</span>
+                        <small style="color:rgba(255,255,255,0.7); font-size:11px;">от 5к - 30 / от 7.5к - 40 / от 10к - 50</small>
+                    </div>
+                    <b class="gold-book"><i class="fas fa-book-open"></i></b>
                 </div>
+                <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
+                <div class="row-item" style="color: white;"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
+                <button class="buy-btn" style="background:none; color:white; width: 100%; margin-top: 10px; border:none;" onclick="toggleLoyaltyInfo()">← Назад</button>
             </div>
         </div>
     </div>
 
-    <div style="padding: 0 10px; margin-bottom: 15px;">
-        <div class="brand-button" onclick="toggleBlock('questsListContainer', this)" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--secondary); border-radius: 15px;">
-            <span>📋 Задания ✨</span>
-            <span class="brand-counter" style="background: var(--accent); padding: 2px 10px; border-radius: 10px; font-size: 12px;">Развернуть</span>
-        </div>
-        <div id="questsListContainer" style="display:none; margin-top: 10px; background: var(--secondary); border-radius: 15px; padding: 10px;">
-            </div>
-    </div>
+    <div class="category-title" style="margin-top: 0; text-align: center;">Награды (Статусы)</div>
+    <div id="statusAwardsContainer" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:20px;"></div>
 
-    <div style="padding: 0 10px; margin-bottom: 30px;">
-        <div class="category-title" style="text-align: center; margin-bottom: 15px;">Достижения</div>
-        <div id="achievementsGrid" class="achievements-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-            </div>
-    </div>
+    <div class="category-title" style="margin-top: 0; text-align: center;">Достижения</div>
+    <div id="achievementsGrid" class="achievements-grid"></div>
 
-    <div style="text-align: center; margin-bottom: 80px; opacity: 0.3; font-size: 10px;">
-        ID: <span id="userIdDisplay">---</span>
+    <div class="brand-button" onclick="toggleBlock('questsListContainer', this)" style="margin-bottom: 20px;">
+        <span>📋 Задания статусов ✨</span>
+        <span class="brand-counter">Развернуть</span>
+    </div>
+    <div id="questsListContainer" style="display:none; margin-bottom: 25px;"></div>
+    
+    <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+        <div class="profile-id" style="opacity: 0.5; font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
     </div>
 </div>
 
+
+        <div id="rewards-section">
+            <div class="category-title">Магазин наград</div>
+            <div class="reward-grid">
+                <div class="reward-card">
+                    <img src="bonusi/b1.png">
+                    <div class="reward-info"><b>Книжная закладка Hachette (любая)</b></div>
+                    <button class="spend-btn" onclick="buyReward('Закладка Hachette', 750)">750 <i class="fas fa-book-open"></i></button>
+                </div>
+                <div class="reward-card">
+                    <img src="bonusi/b2.png">
+                    <div class="reward-info"><b>Petites Poupees</b></div>
+                    <button class="spend-btn" onclick="buyReward('Petites Poupees', 950)">950 <i class="fas fa-book-open"></i></button>
+                </div>
+                <div class="reward-card">
+                    <img src="bonusi/b3.png">
+                    <div class="reward-info"><b>Трекер от Hachette</b></div>
+                    <button class="spend-btn" onclick="buyReward('Трекер Hachette', 950)">950 <i class="fas fa-book-open"></i></button>
+                </div>
+                <div class="reward-card">
+                    <img src="bonusi/b4.png">
+                    <div class="reward-info"><b>Спиртовая раскраска (любая)</b></div>
+                    <button class="spend-btn" onclick="buyReward('Спиртовая раскраска', 1250)">1250 <i class="fas fa-book-open"></i></button>
+                </div>
+                <div class="reward-card" style="grid-column: span 2;">
+                    <img src="bonusi/b5.png" style="height: 140px;">
+                    <div class="reward-info"><b>Hachette Coloriages (А4 том любой)</b></div>
+                    <button class="spend-btn" onclick="buyReward('Hachette Coloriages A4', 1500)">1500 <i class="fas fa-book-open"></i></button>
+                </div>
+            </div>
+            <button class="buy-btn" style="background:none; color:var(--gray); margin-top:15px; font-size: 14px;" onclick="toggleRewards()">← Назад к инфо</button>
+        </div>
+
+        <div id="adminTaskPanel" style="display:none; margin-top:30px; border: 2px solid var(--accent); padding: 15px; border-radius: 18px;">
+            <div class="category-title" style="margin-top:0; color: var(--accent);">🛠 Админ: Проверка заданий</div>
+            <div id="adminTaskRequests"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <div class="profile-id" style="opacity: 0.5; font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
+        </div>
+    </div>
+
+
+    <div id="addMarkerModal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-header-row">
+                <span class="modal-title">Выберите бренд и номер</span>
+                <button class="close-btn" onclick="closeAddMarkerModal()">✕</button>
+            </div>
+            <div class="brand-grid-modal" id="modalBrandGrid"></div>
+            <input type="text" id="modalMarkerSearch" placeholder="Введите номер маркера..." style="margin-bottom:15px; background: var(--bg); border: 2px solid var(--secondary);">
+            <button class="buy-btn" style="border-radius:12px; background:#34c759;" onclick="confirmAddMarkerToCell()">Сохранить в ячейку</button>
+        </div>
+    </div>
+
+    <div id="statusSelectModal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-header-row">
+                <span class="modal-title">Выберите статус</span>
+                <button class="close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">✕</button>
+            </div>
+            <div id="statusSelectList" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+    </div>
+
+    <nav class="nav">
+        <button id="btn-answers" class="nav-btn active" onclick="tab('answers')"><span class="nav-icon">📚</span>Ответы</button>
+        <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><span class="nav-icon">🎨</span>ИИ палитры</button>
+        <button id="btn-shop" class="nav-btn" onclick="tab('shop')"><span class="nav-icon">🖍️</span>Маркеры</button>
+        <button id="btn-cart" class="nav-btn" onclick="tab('cart')">
+            <span class="nav-icon">🛒</span>Корзина
+            <span id="cartBadge" class="badge" style="display:none">0</span>
+        </button> 
+        <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Профиль</button>
+    </nav>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // --- ЛОГИКА АВАТАРОВ, ПРОФИЛЯ И СТАТУСОВ ---
+        let isEditingAvatar = false;
+
+        // Пресеты аватаров (готовые)
+const avatarBaseURL =
+"https://raw.githubusercontent.com/HachetteLittleHeroes/ColoriagesWithAI/main/avatars/";
+  const avatarPresets = [
+"av1.jpg",
+"av2.jpg",
+"av3.jpg",
+"av4.jpg",
+"av5.jpg",
+"av6.jpg",
+"av7.jpg",
+"av8.jpg"
+];
+
+        // База путей развития статусов 
+        const statusPaths = {
+            "Спиртесса": {
+                title: "Спиртесса",
+                levels: [
+                    { req: 5, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
+                    { req: 20, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
+                    { req: 50, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
+                ]
+            },
+            "Графиня Линеров": {
+                title: "Графиня Линеров",
+                levels: [
+                    { req: 10, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
+                    { req: 30, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
+                    { req: 70, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
+                ]
+            },
+            "Аквамаринка": {
+                title: "Аквамаринка",
+                levels: [
+                    { req: 5, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
+                    { req: 15, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
+                    { req: 40, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
+                ]
+            }
+        };
+
+        let userProfileData = {
+            customName: null,
+            customStatus: null,
+            avatar: { seed: 'av2.jpg', customImage: null }, // Добавлено customImage
+            achievements: [
+                { id: 'first_steps', title: 'Первые шаги', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach1.png', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
+                { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach2.png', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: false },
+                { id: 'rich', title: 'Богатей', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach3.png', desc: 'Накопите 500 ашетиков на балансе лояльности.', unlocked: false },
+                { id: 'collector', title: 'Коллекционер', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach4.png', desc: 'Соберите 10 любых маркеров в своем инвентаре.', unlocked: false }
+            ],
+            styleChangesCount: 0,
+            statusProgress: { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 }
+        };
+
+        function toggleBlock(id, btn) {
+            const el = document.getElementById(id);
+            if(el.style.display === 'none') {
+                el.style.display = 'block';
+                btn.querySelector('.brand-counter').innerText = 'Свернуть';
+            } else {
+                el.style.display = 'none';
+                btn.querySelector('.brand-counter').innerText = 'Развернуть';
+            }
+            if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        }
+
+        function loadProfileData() {
+            const saved = localStorage.getItem('user_profile_data_v4'); 
+            if (saved) {
+                userProfileData = JSON.parse(saved);
+                if (!userProfileData.avatar || !userProfileData.avatar.seed)
+userProfileData.avatar = { seed: 'av2.jpg', customImage: null };
+                if (!userProfileData.statusProgress) userProfileData.statusProgress = { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 };
+            }
+            
+            renderAvatarPresets();
+            updateAvatarImage();
+            renderAchievements();
+            renderStatusAwards();
+            renderStatusQuests();
+            updateNameDisplay();
+            updateStatusDisplay();
+        }
+
+        function saveProfileData() {
+            localStorage.setItem('user_profile_data_v4', JSON.stringify(userProfileData));
+            checkAchievements();
+        }
 
         // --- ЛОГИКА КАСТОМНОГО ИМЕНИ И СТАТУСА ---
         function updateNameDisplay() {

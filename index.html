@@ -226,7 +226,7 @@
         /* --- СТИЛИ ДЛЯ АВАТАРА (Duolingo Style) --- */
         .profile-hero { display: flex; flex-direction: row; align-items: center; gap: 20px; margin-bottom: 25px; padding: 0 10px; }
         .avatar-container { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
-        .avatar-preview { width: 100%; height: 100%; background: #b6e3f4; border-radius: 50%; overflow: hidden; border: 4px solid var(--accent); box-sizing: border-box; box-shadow: 0 6px 12px rgba(0,122,255,0.2); }
+        .avatar-preview { width: 100%; height: 100%; background: #b6e3f4; border-radius: 50%; overflow: hidden; border: 4px solid var(--accent); box-sizing: border-box; box-shadow: 0 6px 12px rgba(0,122,255,0.2); transition: 0.3s; }
         .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
         .edit-avatar-btn { position: absolute; bottom: -5px; right: -5px; background: var(--bg); border: 2px solid var(--accent); color: var(--accent); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 12px; }
         .profile-info-right { display: flex; flex-direction: column; justify-content: center; flex-grow: 1; }
@@ -243,7 +243,7 @@
         .editor-btn { background: var(--bg); border: 2px solid transparent; padding: 10px 15px; border-radius: 12px; font-size: 14px; font-weight: bold; cursor: pointer; white-space: nowrap; color: var(--text); transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .editor-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,122,255,0.1); transform: translateY(-2px); }
 
-        .achievements-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px; margin-bottom: 25px;}
+        .achievements-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px;}
         .achieve-card { background: var(--card-bg); border-radius: 16px; padding: 15px 5px; text-align: center; border: 2px solid rgba(128,128,128,0.1); filter: grayscale(1); opacity: 0.5; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
         .achieve-card.unlocked { filter: grayscale(0); opacity: 1; border-color: var(--gold); background: rgba(241, 196, 15, 0.05); box-shadow: 0 4px 10px rgba(241, 196, 15, 0.1); transform: scale(1); }
         .achieve-card.unlocked:active { transform: scale(0.95); }
@@ -251,21 +251,19 @@
         .achieve-title { font-size: 11px; font-weight: 800; line-height: 1.2; color: var(--text); }
         
         .achievement-icon-large { font-size: 60px; margin-bottom: 10px; filter: drop-shadow(0 4px 10px rgba(241,196,15,0.4)); }
-
-        /* Вкладки профиля */
-        .profile-tabs-nav { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        .profile-tabs-nav::-webkit-scrollbar { display: none; }
-        .p-tab-btn { background: var(--secondary); color: var(--text); border: none; padding: 10px 16px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
-        .p-tab-btn.active { background: var(--accent); color: white; }
-        .p-tab-content { display: none; animation: slideDown 0.3s ease-out; }
-        .p-tab-content.active { display: block; }
         
-        /* Задания */
+        /* Задания и Статусы */
         .quest-card { background: var(--card-bg); border: 1px solid rgba(128,128,128,0.2); padding: 15px; border-radius: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
         .quest-header { display: flex; justify-content: space-between; align-items: center; }
-        .quest-status-badge { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--accent); background: rgba(0,122,255,0.1); padding: 4px 8px; border-radius: 8px; }
+        .quest-status-badge { font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; color: var(--text); }
         .quest-xp { font-weight: bold; color: var(--gold); font-size: 14px; }
         .quest-title { font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--text); }
+
+        /* Иконки наград и рамки */
+        .status-award-img { width: 55px; height: 55px; border-radius: 50%; border: 3px solid transparent; object-fit: cover; background: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 24px; transition: 0.3s; }
+        .border-lvl-1 { border-color: #2ecc71 !important; box-shadow: 0 0 12px rgba(46, 204, 113, 0.4); }
+        .border-lvl-2 { border-color: #9b59b6 !important; box-shadow: 0 0 12px rgba(155, 89, 182, 0.4); }
+        .border-lvl-3 { border-color: #f1c40f !important; box-shadow: 0 0 12px rgba(241, 196, 15, 0.4); }
     </style>
 </head>
 <body>
@@ -344,7 +342,7 @@
 
         <div class="profile-hero">
             <div class="avatar-container">
-                <div class="avatar-preview">
+                <div class="avatar-preview" id="mainAvatarPreview">
                     <img id="dicebear-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="Avatar">
                 </div>
                 <div class="edit-avatar-btn" onclick="toggleAvatarEditor()"><i class="fas fa-pen"></i></div>
@@ -388,18 +386,19 @@
             <button class="buy-btn rounded-pill" style="margin-top: 10px;" onclick="toggleAvatarEditor()">Готово</button>
         </div>
 
-        <div class="profile-tabs-nav">
-            <button class="p-tab-btn active" onclick="switchProfileTab('achievements', this)">Достижения</button>
-            <button class="p-tab-btn" onclick="switchProfileTab('loyalty', this)">Лояльность</button>
-            <button class="p-tab-btn" onclick="switchProfileTab('quests', this)">Задания ✨</button>
-        </div>
+        <div class="category-title" style="margin-top: 0; text-align: center;">Награды (Статусы)</div>
+        <div id="statusAwardsContainer" style="display:flex; justify-content:center; gap:20px; margin-bottom: 25px;"></div>
 
-        <div id="tab-achievements" class="p-tab-content active">
-            <div class="category-title" style="margin-top: 0;">Мои достижения</div>
-            <div class="achievements-grid" id="achievementsGrid"></div>
-        </div>
+        <div class="category-title" style="margin-top: 0; text-align: center;">Достижения</div>
+        <div class="achievements-grid" id="achievementsGrid"></div>
 
-        <div id="tab-loyalty" class="p-tab-content">
+        <div class="brand-button" onclick="toggleBlock('questsListContainer', this)" style="margin-bottom: 20px;">
+            <span>📋 Задания статусов ✨</span>
+            <span class="brand-counter">Развернуть</span>
+        </div>
+        <div id="questsListContainer" style="display:none; margin-bottom: 25px; animation: slideDown 0.3s ease-out;"></div>
+
+        <div id="loyaltyBlock">
             <div class="balance-card" style="margin-top:0;">
                 <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
                 <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
@@ -454,12 +453,6 @@
                 <div class="row-item"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
                 <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
             </div>
-        </div>
-
-        <div id="tab-quests" class="p-tab-content">
-            <div class="category-title" style="margin-top: 0;">Еженедельные квесты</div>
-            <div id="questsListContainer">
-                </div>
         </div>
 
         <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
@@ -612,9 +605,37 @@
         tg.ready();
         tg.expand();
 
-        // --- ЛОГИКА АВАТАРОВ, ПРОФИЛЯ И ЗАДАНИЙ ---
+        // --- ЛОГИКА АВАТАРОВ, ПРОФИЛЯ И СТАТУСОВ ---
         let isEditingAvatar = false;
         let currentUserStatus = "Без статуса"; // Дефолтный статус
+
+        // База путей развития статусов
+        const statusPaths = {
+            "Спиртесса": {
+                icon: "🍺", img: "aw1.png", title: "Спиртесса",
+                levels: [
+                    { req: 5, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
+                    { req: 20, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
+                    { req: 50, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
+                ]
+            },
+            "Графиня Линеров": {
+                icon: "✒️", img: "aw2.png", title: "Графиня Линеров",
+                levels: [
+                    { req: 10, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
+                    { req: 30, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
+                    { req: 70, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
+                ]
+            },
+            "Аквамаринка": {
+                icon: "💧", img: "aw3.png", title: "Аквамаринка",
+                levels: [
+                    { req: 5, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
+                    { req: 15, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
+                    { req: 40, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
+                ]
+            }
+        };
 
         let userProfileData = {
             avatar: { seed: 'Felix', top: 'shortHair', clothing: 'hoodie', accessories: 'blank' },
@@ -624,48 +645,28 @@
                 { id: 'rich', title: 'Богатей', icon: '💰', desc: 'Накопите 500 ашетиков на балансе лояльности.', unlocked: false },
                 { id: 'collector', title: 'Коллекционер', icon: '🎒', desc: 'Соберите 10 любых маркеров в своем инвентаре.', unlocked: false }
             ],
-            styleChangesCount: 0
+            styleChangesCount: 0,
+            statusProgress: { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 }
         };
 
-        // База еженедельных заданий, привязанных к статусу пользователя
-        const weeklyQuestsDB = {
-            "Без статуса": [
-                { id: "q_newbie_1", title: "Заполните свой профиль", xp: 10, desc: "Отредактируйте аватар и исследуйте интерфейс." }
-            ],
-            "Проспиртованный": [
-                { id: "q_alco_1", title: "Раскрасить 1 картинку спиртовыми маркерами", xp: 25, desc: "Отправьте фото готовой работы администратору на проверку." },
-                { id: "q_alco_2", title: "Добавить 5 маркеров в органайзер", xp: 15, desc: "Разложите свои маркеры по ячейкам." }
-            ],
-            "Акварелист": [
-                { id: "q_aqua_1", title: "Смешать 3 оттенка акварели", xp: 20, desc: "Создайте градиент и отправьте фото в чат." }
-            ]
-        };
-
-        function switchProfileTab(tabId, btnElem) {
-            // Переключаем активные кнопки
-            document.querySelectorAll('.p-tab-btn').forEach(b => b.classList.remove('active'));
-            btnElem.classList.add('active');
-
-            // Переключаем контент
-            document.querySelectorAll('.p-tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            
-            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        function toggleBlock(id, btn) {
+            const el = document.getElementById(id);
+            if(el.style.display === 'none') {
+                el.style.display = 'block';
+                btn.querySelector('.brand-counter').innerText = 'Свернуть';
+            } else {
+                el.style.display = 'none';
+                btn.querySelector('.brand-counter').innerText = 'Развернуть';
+            }
+            if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
         }
 
         function loadProfileData() {
-            const saved = localStorage.getItem('user_profile_data_v2'); 
+            const saved = localStorage.getItem('user_profile_data_v3'); 
             if (saved) {
                 userProfileData = JSON.parse(saved);
                 if (!userProfileData.avatar.top) userProfileData.avatar = { seed: 'User', top: 'shortHair', clothing: 'hoodie', accessories: 'blank' };
-                if (!userProfileData.achievements[0].desc) { 
-                   userProfileData.achievements = [
-                        { id: 'first_steps', title: 'Первые шаги', icon: '🐣', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
-                        { id: 'stylist', title: 'Стиляга', icon: '🕶', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: userProfileData.achievements.find(a=>a.id==='stylist')?.unlocked || false },
-                        { id: 'rich', title: 'Богатей', icon: '💰', desc: 'Накопите 500 ашетиков на балансе.', unlocked: userProfileData.achievements.find(a=>a.id==='rich')?.unlocked || false },
-                        { id: 'collector', title: 'Коллекционер', icon: '🎒', desc: 'Соберите 10 маркеров в инвентаре.', unlocked: userProfileData.achievements.find(a=>a.id==='collector')?.unlocked || false }
-                   ];
-                }
+                if (!userProfileData.statusProgress) userProfileData.statusProgress = { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 };
             }
             
             const userId = tg.initDataUnsafe?.user?.id || "User";
@@ -675,10 +676,12 @@
             
             updateAvatarImage();
             renderAchievements();
+            renderStatusAwards();
+            renderStatusQuests();
         }
 
         function saveProfileData() {
-            localStorage.setItem('user_profile_data_v2', JSON.stringify(userProfileData));
+            localStorage.setItem('user_profile_data_v3', JSON.stringify(userProfileData));
             checkAchievements();
         }
 
@@ -761,41 +764,98 @@
 
             if (changed) {
                 renderAchievements();
-                localStorage.setItem('user_profile_data_v2', JSON.stringify(userProfileData));
+                localStorage.setItem('user_profile_data_v3', JSON.stringify(userProfileData));
             }
         }
 
-        function renderQuests() {
-            const container = document.getElementById('questsListContainer');
-            let quests = weeklyQuestsDB[currentUserStatus] || weeklyQuestsDB["Без статуса"];
+        // Рендер наград со статусами (цветовые рамки)
+        function renderStatusAwards() {
+            const container = document.getElementById('statusAwardsContainer');
+            let maxLevelFound = 0;
+            let highestColorClass = "";
 
-            if (!quests || quests.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:var(--gray); padding: 20px;">Нет заданий для вашего статуса.</div>`;
-                return;
+            container.innerHTML = Object.keys(statusPaths).map(key => {
+                const path = statusPaths[key];
+                const currentLevel = userProfileData.statusProgress[key] || 0;
+                
+                if (currentLevel > maxLevelFound) {
+                    maxLevelFound = currentLevel;
+                    highestColorClass = path.levels[currentLevel - 1].colorClass;
+                }
+
+                let borderClass = currentLevel > 0 ? path.levels[currentLevel - 1].colorClass : "";
+                
+                return `
+                <div style="position: relative;">
+                    <img src="img/${path.img}" class="status-award-img ${borderClass}" alt="${key}" title="${key}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="status-award-img ${borderClass}" style="display:none;" title="${key}">${path.icon}</div>
+                </div>`;
+            }).join('');
+
+            // Применяем рамку к главному аватару
+            const avatarPreview = document.getElementById('mainAvatarPreview');
+            avatarPreview.className = 'avatar-preview'; 
+            if (highestColorClass) {
+                avatarPreview.classList.add(highestColorClass);
             }
+        }
 
-            container.innerHTML = quests.map(quest => `
+        // Рендер квестов на получение уровней
+        function renderStatusQuests() {
+            const container = document.getElementById('questsListContainer');
+            container.innerHTML = Object.keys(statusPaths).map(key => {
+                const path = statusPaths[key];
+                const currentLevel = userProfileData.statusProgress[key] || 0;
+                
+                if (currentLevel >= 3) {
+                    return `
+                    <div class="quest-card">
+                        <div class="quest-header">
+                            <span class="quest-status-badge border-lvl-3" style="color:#000;">${path.icon} ${key} (Макс)</span>
+                            <span class="quest-xp">Выполнено 🌟</span>
+                        </div>
+                        <div class="quest-title" style="color:var(--gray); font-size:12px;">Все 3 уровня пройдены! Вы мастер в этом направлении.</div>
+                    </div>`;
+                }
+
+                const nextTier = path.levels[currentLevel];
+                
+                return `
                 <div class="quest-card">
                     <div class="quest-header">
-                        <span class="quest-status-badge">Статус: ${currentUserStatus}</span>
-                        <span class="quest-xp">+${quest.xp} XP</span>
+                        <span class="quest-status-badge" style="background:var(--secondary);">${path.icon} ${key} • Ур. ${currentLevel + 1}</span>
+                        <span class="quest-xp">+${nextTier.xp} XP</span>
                     </div>
-                    <div class="quest-title">${quest.title}</div>
-                    <div style="font-size: 12px; color: var(--gray);">${quest.desc}</div>
-                    <button class="buy-btn" style="padding: 10px; border-radius: 12px; font-size: 13px; margin-top: 5px;" onclick="sendQuestReport('${quest.id}')">Отправить отчет</button>
-                </div>
-            `).join('');
+                    <div class="quest-title">Нарисовать работ: ${nextTier.req}</div>
+                    <div style="font-size: 12px; color: var(--gray);">Наберите нужное количество работ для проверки, чтобы получить рамку цвета: <b style="color:var(--text);">${nextTier.name}</b>.</div>
+                    <button class="buy-btn" style="padding: 10px; border-radius: 12px; font-size: 13px; margin-top: 5px;" onclick="submitStatusLevel('${key}', ${currentLevel + 1})">Сдать уровень (${nextTier.req} работ)</button>
+                </div>`;
+            }).join('');
         }
 
-        function sendQuestReport(questId) {
-            tg.showConfirm("Отправить отчет о выполнении администратору?", (confirm) => {
+        // Заявка на статус админу
+        function submitStatusLevel(statusName, targetLevel) {
+            tg.showConfirm(`Отправить заявку на получение ${targetLevel} уровня в статусе "${statusName}"?\nВы должны будете предоставить фото или ссылки на работы.`, (confirm) => {
                 if (confirm) {
-                    tg.showAlert("✅ Отчет успешно отправлен! Администратор начислит XP после проверки.");
-                    // Здесь в будущем будет отправка данных боту (tg.sendData)
+                    const userId = document.getElementById('userIdDisplay').innerText;
+                    const msg = `Заявка от ID${userId}\nПретендует на ${targetLevel} уровень статуса "${statusName}"`;
+                    
+                    // Отправляем данные боту (для админки)
+                    tg.sendData(JSON.stringify({ action: 'submit_level', status: statusName, level: targetLevel, message: msg }));
+                    tg.showAlert("✅ Заявка успешно отправлена! Администратор начислит XP и выдаст статус после проверки.");
+                    
+                    // Скрытая фича для админа (для мгновенного теста)
+                    if(userId === "496779756") {
+                        userProfileData.statusProgress[statusName] = targetLevel;
+                        saveProfileData();
+                        renderStatusAwards();
+                        renderStatusQuests();
+                        tg.showAlert("🔧 [Админ] Уровень мгновенно выдан для теста.");
+                    }
                 }
             });
         }
-        // --- КОНЕЦ ЛОГИКИ АВАТАРОВ И ЗАДАНИЙ ---
+        // --- КОНЕЦ ЛОГИКИ АВАТАРОВ И СТАТУСОВ ---
 
         // -- ЛОГИКА ОРГАНАЙЗЕРОВ НАЧАЛО --
         let organizers = JSON.parse(localStorage.getItem('marker_organizers')) || [];
@@ -882,7 +942,7 @@
         function manageCell(cellIndex) {
             currentCellIndex = cellIndex;
             const org = organizers.find(o => o.id === currentOrgId);
-            const cell = org.cells[cellIndex];
+            const cell = org.cells[currentCellIndex];
             
             document.getElementById('cellModalTitle').innerText = cell.customName || cell.defaultName;
             renderCellMarkerList();
@@ -1614,12 +1674,6 @@
             const params = new URLSearchParams(window.location.search);
             document.getElementById('userBalance').innerText = params.get('balance') || 0;
             
-            // Если в URL передан статус от админа (например, ?status=Проспиртованный)
-            if (params.get('status')) {
-                currentUserStatus = params.get('status');
-            }
-            document.getElementById('userStatusDisplay').innerText = currentUserStatus;
-            
             const userId = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
             document.getElementById('userIdDisplay').innerText = userId;
             
@@ -1635,8 +1689,6 @@
             }
 
             loadProfileData(); 
-            checkAchievements(); 
-            renderQuests();
 
             initAI();
             renderBooks();

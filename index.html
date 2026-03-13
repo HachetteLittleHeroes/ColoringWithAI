@@ -345,8 +345,8 @@
 
         <div class="profile-hero">
             <div class="avatar-container">
-                <div class="avatar-preview" id="mainAvatarPreview">
-                    <img id="dicebear-avatar" src="https://placehold.co/100x100/b6e3f4/007aff?text=👤" alt="Avatar">
+              <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
+               <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg">
                 </div>
                 <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
             </div>
@@ -611,7 +611,16 @@
         let isEditingAvatar = false;
 
         // Пресеты аватаров (готовые)
-        const avatarPresets = ['Felix', 'Aneka', 'Mimi', 'Jasper', 'Ryker', 'Leo', 'Zoe', 'Max'];
+  const avatarPresets = [
+"av1.jpg",
+"av2.jpg",
+"av3.jpg",
+"av4.jpg",
+"av5.jpg",
+"av6.jpg",
+"av7.jpg",
+"av8.jpg"
+];
 
         // База путей развития статусов 
         const statusPaths = {
@@ -787,48 +796,43 @@
             reader.readAsDataURL(file);
         }
 
-        function renderAvatarPresets() {
-            const grid = document.getElementById('avatarPresetsGrid');
-            grid.innerHTML = avatarPresets.map(seed => `
-                <div class="avatar-preset-btn ${userProfileData.avatar.seed === seed && !userProfileData.avatar.customImage ? 'active' : ''}" onclick="setPresetAvatar('${seed}', this)">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4" alt="${seed}">
-                </div>
-            `).join('');
-        }
+       function renderAvatarPresets() {
 
-        function setPresetAvatar(seed, btnElem) {
-            userProfileData.avatar.seed = seed;
-            userProfileData.avatar.customImage = null; // Сбрасываем кастомное фото при выборе пресета
-            userProfileData.styleChangesCount++;
-            
-            document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('active'));
-            if(btnElem) btnElem.classList.add('active');
-            
-            updateAvatarImage();
-            saveProfileData();
-            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-        }
+const grid = document.getElementById('avatarPresetsGrid');
 
-        function updateAvatarImage() {
-            const avatarImg = document.getElementById('dicebear-avatar');
-            
-            // Если есть кастомное фото, показываем его
-            if (userProfileData.avatar.customImage) {
-                avatarImg.src = userProfileData.avatar.customImage;
-                return;
-            }
+grid.innerHTML = avatarPresets.map(file => `
+<div class="avatar-preset-btn ${userProfileData.avatar.seed === file ? 'active' : ''}" onclick="setPresetAvatar('${file}', this)">
+<img src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/${file}">
+</div>
+`).join('');
 
-            const userId = document.getElementById('userIdDisplay').innerText;
-            const finalId = (userId && userId !== "---") ? userId : "default";
-            
-            // Аватар берется из вашего репозитория
-            avatarImg.src = `https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/${finalId}/avatar.jpg`;
-            
-            // На случай, если у пользователя еще нет фото в Гитхабе
-            avatarImg.onerror = function() {
-                this.src = 'https://placehold.co/100x100/b6e3f4/007aff?text=👤';
-            };
-        }
+}
+
+       function setPresetAvatar(file, btnElem) {
+
+userProfileData.avatar.seed = file;
+userProfileData.avatar.customImage = null;
+
+document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('active'));
+btnElem.classList.add('active');
+
+updateAvatarImage();
+saveProfileData();
+
+}
+
+     function updateAvatarImage() {
+
+const avatarImg = document.getElementById('user-avatar');
+
+if (userProfileData.avatar.customImage) {
+avatarImg.src = userProfileData.avatar.customImage;
+return;
+}
+
+avatarImg.src = `https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/${userProfileData.avatar.seed}`;
+
+}
 
         function renderAchievements() {
             const grid = document.getElementById('achievementsGrid');
@@ -1318,7 +1322,7 @@
         }
 
         async function loadMarkers() {
-            const csvUrl = 'https://script.google.com/macros/s/AKfycbwNzGJlazpBtq9gtnGkF7c6zMoSh-gnse4XkL6GWEaIirV0mF8ZliIw48HT6A7oV4cqyw/exec';
+            const csvUrl = ‘https://script.google.com/macros/s/AKfycbwNzGJlazpBtq9gtnGkF7c6zMoSh-gnse4XkL6GWEaIirV0mF8ZliIw48HT6A7oV4cqyw/exec’;
             try {
                 const res = await fetch(csvUrl);
                 const text = await res.text();

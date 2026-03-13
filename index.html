@@ -956,290 +956,78 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
         // --- КОНЕЦ ЛОГИКИ Админки заданий ---
 
         // -- ЛОГИКА ОРГАНАЙЗЕРОВ НАЧАЛО --
-        let organizers = JSON.parse(localStorage.getItem('marker_organizers')) || [];
-        let currentOrgId = null;
-        let currentCellIndex = null;
-        let modalSelectedBrand = null;
+function renderCellMarkerList() {
+    const org = organizers.find(o => o.id === currentOrgId);
+    if (!org) return;
+    const cell = org.cells[currentCellIndex];
+    const list = document.getElementById('cellMarkerList');
+    
+    if (!list) return; 
 
-        function getAutoCellName(index, cols) {
-            const row = Math.floor(index / cols);
-            const col = index % cols;
-            const letter = String.fromCharCode(65 + row);
-            return `${letter}${col + 1}`;
-        }
+    if (!cell.markers || cell.markers.length === 0) {
+        list.innerHTML = '<div style="text-align:center; color:var(--gray); padding:30px 0; font-size:14px;">В этой ячейке пока нет маркеров</div>';
+        return;
+    }
+    
+    list.innerHTML = cell.markers.map(mId => {
+        let parts = mId.split('_');
+        let brand = parts[0];
+        let num = parts.slice(1).join('_'); 
+        return `
+        <div class="marker-list-item">
+            <span><b>${brand}</b> <span style="color:var(--accent);">№${num}</span></span>
+            <button class="delete-btn" onclick="removeMarkerFromCell('${mId}')">Удалить</button>
+        </div>`;
+    }).join('');
+}
 
-        function saveOrganizers() {
-            localStorage.setItem('marker_organizers', JSON.stringify(organizers));
-        }
+function removeMarkerFromCell(mId) {
+    const org = organizers.find(o => o.id === currentOrgId);
+    if (!org) return;
+    const cell = org.cells[currentCellIndex];
+    cell.markers = cell.markers.filter(id => id !== mId);
+    saveOrganizers();
+    renderCellMarkerList();
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+}
 
-        function showAddOrganizer() {
-            const name = prompt("Название органайзера (например, 'Кейс 1'):", "Мой Органайзер");
-            if (!name) return;
-            
-            const rows = parseInt(prompt("Сколько рядов ячеек (A, B, C...)?", "3"));
-            const cols = parseInt(prompt("Сколько ячеек в каждом ряду?", "10"));
-            
-            if (isNaN(rows) || isNaN(cols)) return;
+function saveOrganizers() {
+    localStorage.setItem('organizers', JSON.stringify(organizers));
+}
+       // Инициализация Telegram WebApp
+const tg = window.Telegram.WebApp;
+tg.expand();
 
-            const newOrg = { id: Date.now(), name: name, rows: rows, cols: cols, cells: [] };
+// Глобальные переменные данных
+let organizers = JSON.parse(localStorage.getItem('organizers')) || [];
+let currentOrgId = null;
+let currentCellIndex = null;
+let modalSelectedBrand = null;
+let markersData = [];
+let cart = [];
+let markersLoaded = false;
+let aiDB = [];
+let userInventory = [];
+const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io/api";
 
-            for (let i = 0; i < rows * cols; i++) {
-                newOrg.cells.push({ defaultName: getAutoCellName(i, cols), customName: null, markers: [] });
-            }
+// Списки брендов и книг
+const markerBrandsList = [
+    { name: 'GuangNa', total: 408 },
+    { name: 'Languo', total: 288 },
+    { name: 'Zibeef', total: 240 },
+    { name: 'Grasp', total: 168 },
+    { name: 'InfiArt', total: 288 },
+    { name: 'Tooli-Art', total: 508, sets: {
+        "Pastel": 24, "Jewel": 24, "Confetti": 24, "Metallic": 24, "Neon": 24, 
+        "Glitter": 24, "Wildflower": 24, "Brown": 22, "Purple": 22, "Pink": 22, 
+        "Skin": 22, "Green": 22, "Gray": 22, "Orange": 22, "Red & Pink": 22, 
+        "Yellow & Brown": 22, "Blue & Purple": 22, "Southwest": 28, "Nocturnal": 28, 
+        "Essential": 28, "Earth": 36
+    }}
+];
 
-            organizers.push(newOrg);
-            saveOrganizers();
-            renderOrganizers();
-        }
+const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 3", "Vitraux tome 2", "Trompe L'oeil Babies", "Trompe L'oeil Grand Bloc", "Stitch Au numero", "Sous L'Ocean", "Saisons", "Romantasy", "Princesses tome 1", "Princesses tome 2", "Princes&Heros", "Portraits De Famille", "Pokemon", "Pixar", "Petites Princesses", "Petites Betes", "Mondes Fantastiques", "Mickey, Donald&Co", "Mechants", "Marsupilami", "Love Stories", "Looney Tunes tome 3", "Lilo Et Stitch", "Les Grands Classiques Special Debutants tome 1", "Les Grands Classiques Special Debutants tome 2", "Les Grands Classiques Au numero", "La Petite Sirene", "Les Schtroumpfs tome 1", "Les Schtroumpfs tome 2", "L'age Glace", "Hiver", "Heros&Mechants La Battle", "Grands Classiques Grand Bloc", "Les Grands Classiques Coliector", "Girl Power", "Fees, Sorciers Et Magiciens", "Famille", "Escapades Merveilleuses Douce France", "Chiots&Chiens", "Chevaux", "Bisounours tome 1", "Best Of Pixar", "Best Of Les Grands Classiques", "La Belle Et La Bete", "Bestiaire", "Best Of Heroines"];
 
-        function renderOrganizers() {
-            const list = document.getElementById('organizersList');
-            if (!list) return;
-            if (organizers.length === 0) {
-                list.innerHTML = '<div style="color:var(--gray); font-size:12px; padding:10px;">У вас пока нет цифровых органайзеров</div>';
-                return;
-            }
-            list.innerHTML = organizers.map(org => {
-                let totalMarkers = org.cells.reduce((sum, cell) => sum + cell.markers.length, 0);
-                return `
-                <div class="organizer-card" onclick="viewOrganizer(${org.id})">
-                    <b>${org.name}</b>
-                    <span>${totalMarkers} шт.</span>
-                </div>`;
-            }).join('');
-        }
-
-        function viewOrganizer(id) {
-            const org = organizers.find(o => o.id === id);
-            if (!org) return;
-            
-            currentOrgId = id;
-            document.getElementById('organizerDetailView').style.display = 'block';
-            document.getElementById('viewOrgTitle').innerText = org.name;
-            
-            const container = document.getElementById('gridContainer');
-            container.style.gridTemplateColumns = `repeat(${org.cols}, 1fr)`;
-            
-            container.innerHTML = org.cells.map((cell, index) => {
-                const dots = cell.markers.map(() => '<div class="marker-dot"></div>').join('');
-                return `
-                    <div class="cell" onclick="manageCell(${index})">
-                        <span class="cell-name">${cell.customName || cell.defaultName}</span>
-                        <span class="cell-count">${cell.markers.length}</span>
-                        <div class="marker-dot-container">${dots}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function closeOrganizerView() {
-            document.getElementById('organizerDetailView').style.display = 'none';
-            renderOrganizers();
-        }
-
-        function manageCell(cellIndex) {
-            currentCellIndex = cellIndex;
-            const org = organizers.find(o => o.id === currentOrgId);
-            const cell = org.cells[currentCellIndex];
-            
-            document.getElementById('cellModalTitle').innerText = cell.customName || cell.defaultName;
-            renderCellMarkerList();
-            
-            document.getElementById('cellManageModal').style.display = 'flex';
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
-
-        function closeCellModal() {
-            document.getElementById('cellManageModal').style.display = 'none';
-            viewOrganizer(currentOrgId); 
-        }
-
-        <script>
-        function renderCellMarkerList() {
-            const org = organizers.find(o => o.id === currentOrgId);
-            const cell = org.cells[currentCellIndex];
-            const list = document.getElementById('cellMarkerList');
-            
-            if (!list) return; // Защита
-
-            if (cell.markers.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:var(--gray); padding:30px 0; font-size:14px;">В этой ячейке пока нет маркеров</div>';
-                return;
-            }
-            
-            list.innerHTML = cell.markers.map(mId => {
-                let parts = mId.split('_');
-                let brand = parts[0];
-                let num = parts.slice(1).join('_'); 
-                return `
-                <div class="marker-list-item">
-                    <span><b>${brand}</b> <span style="color:var(--accent);">№${num}</span></span>
-                    <button class="delete-btn" onclick="removeMarkerFromCell('${mId}')">Удалить</button>
-                </div>`;
-            }).join('');
-        }
-        function renderCellMarkerList() {
-            const org = organizers.find(o => o.id === currentOrgId);
-            const cell = org.cells[currentCellIndex];
-            const list = document.getElementById('cellMarkerList');
-            
-            if (!list) return; // Защита
-            
-            if (cell.markers.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:var(--gray); padding:30px 0; font-size:14px;">В этой ячейке пока нет маркеров</div>';
-                return;
-            }
-            
-            list.innerHTML = cell.markers.map(mId => {
-                let parts = mId.split('_');
-                let brand = parts[0];
-                let num = parts.slice(1).join('_'); 
-                return `
-                <div class="marker-list-item">
-                    <span><b>${brand}</b> <span style="color:var(--accent);">№${num}</span></span>
-                    <button class="delete-btn" onclick="removeMarkerFromCell('${mId}')">Удалить</button>
-                </div>`;
-            }).join('');
-        }
-
-        function removeMarkerFromCell(mId) {
-            const org = organizers.find(o => o.id === currentOrgId);
-            const cell = org.cells[currentCellIndex];
-            cell.markers = cell.markers.filter(id => id !== mId);
-            saveOrganizers();
-            renderCellMarkerList();
-            if (typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-        }
-
-        function renameCurrentCell() {
-            const org = organizers.find(o => o.id === currentOrgId);
-            const cell = org.cells[currentCellIndex];
-            const newName = prompt("Новое имя ячейки:", cell.customName || cell.defaultName);
-            if (newName) {
-                cell.customName = newName;
-                saveOrganizers();
-                document.getElementById('cellModalTitle').innerText = newName;
-                viewOrganizer(currentOrgId);
-            }
-        }
-
-        function openAddMarkerModal() {
-            document.getElementById('cellManageModal').style.display = 'none';
-            
-            const grid = document.getElementById('modalBrandGrid');
-            grid.innerHTML = markerBrandsList.map(b => `
-                <button class="brand-btn" id="modalBtn_${b.name}" onclick="selectModalBrand('${b.name}')">${b.name}</button>
-            `).join('');
-            
-            modalSelectedBrand = null;
-            document.getElementById('modalMarkerSearch').value = '';
-            document.getElementById('addMarkerModal').style.display = 'flex';
-        }
-
-        function closeAddMarkerModal() {
-            document.getElementById('addMarkerModal').style.display = 'none';
-            document.getElementById('cellManageModal').style.display = 'flex';
-        }
-
-        function selectModalBrand(brand) {
-            modalSelectedBrand = brand;
-            document.querySelectorAll('.brand-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`modalBtn_${brand}`).classList.add('active');
-            if (typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-        }
-
-        function confirmAddMarkerToCell() {
-            if (!modalSelectedBrand) {
-                if (typeof tg !== 'undefined') tg.showAlert("Пожалуйста, выберите бренд (нажмите на кнопку).");
-                return;
-            }
-            const num = document.getElementById('modalMarkerSearch').value.trim();
-            if (!num) {
-                if (typeof tg !== 'undefined') tg.showAlert("Пожалуйста, введите номер маркера.");
-                return;
-            }
-            
-            const mId = `${modalSelectedBrand}_${num}`;
-            const org = organizers.find(o => o.id === currentOrgId);
-            const cell = org.cells[currentCellIndex];
-            
-            if (!cell.markers.includes(mId)) {
-                cell.markers.push(mId);
-                saveOrganizers();
-                if (typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                if (typeof tg !== 'undefined') tg.showAlert("Этот маркер уже лежит в данной ячейке.");
-                return;
-            }
-            
-            closeAddMarkerModal();
-            renderCellMarkerList();
-        }
-
-        function findMarkerLocation(markerId) {
-            for (const org of organizers) {
-                for (const cell of org.cells) {
-                    if (cell.markers.includes(markerId)) {
-                        return `Органайзер «${org.name}», ячейка ${cell.customName || cell.defaultName}`;
-                    }
-                }
-            }
-            return null;
-        }
-
-        function locateAndFlash(markerId) {
-            let foundOrg = null;
-            let foundCellIndex = -1;
-
-            for (const org of organizers) {
-                const cellIndex = org.cells.findIndex(c => c.markers.includes(markerId));
-                if (cellIndex !== -1) {
-                    foundOrg = org;
-                    foundCellIndex = cellIndex;
-                    break;
-                }
-            }
-
-            if (foundOrg) {
-                viewOrganizer(foundOrg.id);
-                setTimeout(() => {
-                    const cells = document.querySelectorAll('.cell');
-                    const targetCell = cells[foundCellIndex];
-                    
-                    if (targetCell) {
-                        targetCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        targetCell.classList.add('highlight-flash');
-                        
-                        setTimeout(() => {
-                            targetCell.classList.remove('highlight-flash');
-                        }, 3000);
-                    }
-                }, 300);
-            } else {
-                if (typeof tg !== 'undefined') tg.showAlert("Маркер не найден ни в одном органайзере.");
-            }
-        }
-        // -- ЛОГИКА ОРГАНАЙЗЕРОВ КОНЕЦ --
-
-
-        let markersData = [], cart = [], markersLoaded = false;
-        
-        const markerBrandsList = [
-            { name: 'GuangNa', total: 408 },
-            { name: 'Languo', total: 288 },
-            { name: 'Zibeef', total: 240 },
-            { name: 'Grasp', total: 168 },
-            { name: 'InfiArt', total: 288 },
-            { name: 'Tooli-Art', total: 508, sets: {
-                "Pastel": 24, "Jewel": 24, "Confetti": 24, "Metallic": 24, "Neon": 24, 
-                "Glitter": 24, "Wildflower": 24, "Brown": 22, "Purple": 22, "Pink": 22, 
-                "Skin": 22, "Green": 22, "Gray": 22, "Orange": 22, "Red & Pink": 22, 
-                "Yellow & Brown": 22, "Blue & Purple": 22, "Southwest": 28, "Nocturnal": 28, 
-                "Essential": 28, "Earth": 36
-            }}
-        ];
-
-        const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 3", "Vitraux tome 2", "Trompe L'oeil Babies", "Trompe L'oeil Grand Bloc", "Stitch Au numero", "Sous L'Ocean", "Saisons", "Romantasy", "Princesses tome 1", "Princesses tome 2", "Princes&Heros", "Portraits De Famille", "Pokemon", "Pixar", "Petites Princesses", "Petites Betes", "Mondes Fantastiques", "Mickey, Donald&Co", "Mechants", "Marsupilami", "Love Stories", "Looney Tunes tome 3", "Lilo Et Stitch", "Les Grands Classiques Special Debutants tome 1", "Les Grands Classiques Special Debutants tome 2", "Les Grands Classiques Au numero", "La Petite Sirene", "Les Schtroumpfs tome 1", "Les Schtroumpfs tome 2", "L'age Glace", "Hiver", "Heros&Mechants La Battle", "Grands Classiques Grand Bloc", "Les Grands Classiques Coliector", "Girl Power", "Fees, Sorciers Et Magiciens", "Famille", "Escapades Merveilleuses Douce France", "Chiots&Chiens", "Chevaux", "Bisounours tome 1", "Best Of Pixar", "Best Of Les Grands Classiques", "La Belle Et La Bete", "Bestiaire", "Best Of Heroines"];
 
         function renderBooks(list = bookNames) {
             const grid = document.getElementById('booksGrid');
@@ -1854,30 +1642,39 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
         }
 
         // Ключевой блок: обернут в try-catch и проверяет Telegram WebApp, чтобы меню не пропадало из-за фатальных ошибок
-        window.onload = () => {
-            try {
-                const params = new URLSearchParams(window.location.search);
-                const balanceEl = document.getElementById('userBalance');
-                if (balanceEl) balanceEl.innerText = params.get('balance') || 0;
-                
-                let tgid = "---";
-                if (typeof tg !== 'undefined' && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    tgid = tg.initDataUnsafe.user.id;
-                }
-                
-                const userId = params.get('id') || tgid || "---";
-                const userIdDisplayEl = document.getElementById('userIdDisplay');
-                if (userIdDisplayEl) userIdDisplayEl.innerText = userId;
-                
-                if (typeof loadProfileData === 'function') loadProfileData(); 
+        window.onload = async () => {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const balanceEl = document.getElementById('userBalance');
+        if (balanceEl) balanceEl.innerText = params.get('balance') || 0;
+        
+        let tgid = "---";
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            tgid = tg.initDataUnsafe.user.id;
+        }
+        
+        const userId = params.get('id') || tgid || "---";
+        const userIdDisplayEl = document.getElementById('userIdDisplay');
+        if (userIdDisplayEl) userIdDisplayEl.innerText = userId;
+        
+        // Запускаем асинхронную загрузку данных
+        await initAI();
+        
+        if (typeof renderBooks === 'function') renderBooks();
+        if (typeof renderBrandsList === 'function') renderBrandsList();
+        if (typeof renderOrganizers === 'function') renderOrganizers(); 
+        
+        // Если есть админ-панель
+        if (userId == "496779756") {
+            const adminTask = document.getElementById('adminTaskPanel');
+            if (adminTask) adminTask.style.display = "block";
+        }
 
-                if (typeof initAI === 'function') initAI();
-                if (typeof renderBooks === 'function') renderBooks();
-                if (typeof renderOrganizers === 'function') renderOrganizers(); 
-            } catch (error) {
-                console.error("Ошибка при инициализации окна: ", error);
-            }
-        };
+    } catch (error) {
+        console.error("Ошибка при инициализации: ", error);
+    }
+};
+
     </script>
 </body>
 </html>

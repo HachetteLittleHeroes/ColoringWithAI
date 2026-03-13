@@ -258,7 +258,19 @@
         .quest-title { font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--text); }
 
         /* Текстовые статусы-плашки */
-        .status-pill { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 800; cursor: pointer; border: 2px solid transparent; text-align: center; transition: 0.2s; background: var(--secondary); color: var(--gray); text-transform: uppercase; }
+        .status-pill {
+padding: 6px 10px;
+border-radius: 14px;
+font-size: 11px;
+font-weight: 800;
+cursor: pointer;
+border: 2px solid transparent;
+text-align: center;
+transition: 0.2s;
+background: var(--secondary);
+color: var(--gray);
+text-transform: uppercase;
+}
         .status-pill:active { transform: scale(0.95); }
         .status-pill.border-lvl-1 { border-color: #2ecc71; color: #2ecc71; background: rgba(46, 204, 113, 0.1); box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
         .status-pill.border-lvl-2 { border-color: #9b59b6; color: #9b59b6; background: rgba(155, 89, 182, 0.1); box-shadow: 0 0 10px rgba(155, 89, 182, 0.2); }
@@ -350,6 +362,13 @@
                 </div>
                 <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
             </div>
+               <div id="loyaltyBlock">
+            <div class="balance-card" style="margin-top:0;">
+                <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
+                <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
+                <p style="margin:0; font-weight: 500; margin-bottom: 10px;">ашетиков накоплено</p>
+                <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:8px;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
+            </div>
             <div class="profile-info-right">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <h2 class="profile-username" id="displayUsername">Без имени</h2>
@@ -373,7 +392,7 @@
         </div>
 
         <div class="category-title" style="margin-top: 0; text-align: center;">Награды (Статусы)</div>
-        <div id="statusAwardsContainer" style="display:flex; flex-wrap: wrap; justify-content:center; gap:15px; margin-bottom: 25px;"></div>
+      <div id="statusAwardsContainer" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:20px;"></div>
 
         <div class="category-title" style="margin-top: 0; text-align: center;">Достижения</div>
         <div class="achievements-grid" id="achievementsGrid"></div>
@@ -383,14 +402,6 @@
             <span class="brand-counter">Развернуть</span>
         </div>
         <div id="questsListContainer" style="display:none; margin-bottom: 25px; animation: slideDown 0.3s ease-out;"></div>
-
-        <div id="loyaltyBlock">
-            <div class="balance-card" style="margin-top:0;">
-                <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
-                <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
-                <p style="margin:0; font-weight: 500; margin-bottom: 10px;">ашетиков накоплено</p>
-                <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:8px;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
-            </div>
 
             <div id="rewards-section">
                 <div class="category-title">Магазин наград</div>
@@ -611,6 +622,8 @@
         let isEditingAvatar = false;
 
         // Пресеты аватаров (готовые)
+const avatarBaseURL =
+"https://raw.githubusercontent.com/HachetteLittleHeroes/ColoriagesWithAI/main/avatars/";
   const avatarPresets = [
 "av1.jpg",
 "av2.jpg",
@@ -653,7 +666,7 @@
         let userProfileData = {
             customName: null,
             customStatus: null,
-            avatar: { seed: 'Felix', customImage: null }, // Добавлено customImage
+            avatar: { seed: 'av2.jpg', customImage: null }, // Добавлено customImage
             achievements: [
                 { id: 'first_steps', title: 'Первые шаги', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach1.png', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
                 { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach2.png', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: false },
@@ -680,7 +693,8 @@
             const saved = localStorage.getItem('user_profile_data_v4'); 
             if (saved) {
                 userProfileData = JSON.parse(saved);
-                if (!userProfileData.avatar || !userProfileData.avatar.seed) userProfileData.avatar = { seed: 'Felix', customImage: null };
+                if (!userProfileData.avatar || !userProfileData.avatar.seed)
+userProfileData.avatar = { seed: 'av2.jpg', customImage: null };
                 if (!userProfileData.statusProgress) userProfileData.statusProgress = { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 };
             }
             
@@ -801,8 +815,10 @@
 const grid = document.getElementById('avatarPresetsGrid');
 
 grid.innerHTML = avatarPresets.map(file => `
-<div class="avatar-preset-btn ${userProfileData.avatar.seed === file ? 'active' : ''}" onclick="setPresetAvatar('${file}', this)">
-<img src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/${file}">
+<div class="avatar-preset-btn ${userProfileData.avatar.seed === file ? 'active' : ''}"
+onclick="setPresetAvatar('${file}', this)">
+<img src="${avatarBaseURL}${file}"
+onerror="this.src='https://placehold.co/100x100?text=?'">
 </div>
 `).join('');
 
@@ -830,7 +846,7 @@ avatarImg.src = userProfileData.avatar.customImage;
 return;
 }
 
-avatarImg.src = `https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/${userProfileData.avatar.seed}`;
+avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
 
 }
 

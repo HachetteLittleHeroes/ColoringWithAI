@@ -351,360 +351,220 @@ text-transform: uppercase;
             <div id="brandInventoryList" class="inventory-grid"></div>
         </div>
     </div>
-    <div id="profile" class="page">
-        <div class="header" style="text-align: center;">Профиль</div>
+  <div id="profile" class="page">
+    <div class="header" style="text-align: center;">Профиль</div>
 
-        <div class="profile-hero">
-            <div class="avatar-container">
-              <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
-               <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg">
-                </div>
-                <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
+    <div class="profile-hero" style="display: flex; align-items: flex-start; gap: 20px; padding: 15px; margin-bottom: 10px;">
+        <div class="avatar-container" style="flex-shrink: 0;">
+            <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()" style="width: 85px; height: 85px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent); cursor: pointer;">
+                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
+        </div>
+        
+        <div class="profile-info-holder" style="padding-top: 5px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <h2 class="profile-username" id="displayUsername" style="margin: 0; font-size: 22px;">Без имени</h2>
+                <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
+            </div>
+            <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()" style="margin-top: 5px; font-size: 14px; color: var(--gray); cursor: pointer;">Без статуса</div>
+        </div>
+    </div>
+
+    <div class="avatar-editor" id="avatarEditorBlock" style="display:none; margin: 0 15px 20px; background: var(--secondary); padding: 15px; border-radius: 20px;">
+        <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
+        <div style="text-align: center; margin-bottom: 15px;">
+            <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
+            <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
+        </div>
+        <div class="avatar-grid-presets" id="avatarPresetsGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
+        <button class="buy-btn rounded-pill" style="margin-top: 15px;" onclick="toggleAvatarEditor()">Готово</button>
+    </div>
+
+    <div id="loyaltyBlock" style="padding: 0 15px; margin-bottom: 25px;"> 
+        <div class="balance-card" style="margin-top:0; text-align: center; width: 100%; box-sizing: border-box; background: linear-gradient(135deg, #FF8C00, #E65100); border-radius: 20px; padding: 20px; color: white;">
+            <p style="margin:0; opacity:0.9; font-size: 12px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
+            <div class="balance-amount" style="font-size: 32px; font-weight: 800; margin: 5px 0;"><span id="userBalance">0</span> <i class="fas fa-book-open"></i></div>
             
-            <div id="loyaltyBlock" style="flex-grow: 1;"> <div class="balance-card" style="margin-top:0;">
-                    <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
-                    <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
-                    <p style="margin:0; font-weight: 500; margin-bottom: 10px;">ашетиков накоплено</p>
-                    <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:8px;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
-                </div>
-                <div class="profile-info-right" style="margin-top: 15px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <h2 class="profile-username" id="displayUsername">Без имени</h2>
-                        <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:12px;" onclick="toggleAccordion('rewards-section')">Потратить ашетики 🎁</button>
+                <div id="rewards-section" style="display:none; background: var(--bg); border-radius: 12px; padding: 15px; margin-top: 5px; text-align: left;">
+                    <div class="reward-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="reward-card-mini" style="background: var(--secondary); padding: 10px; border-radius: 10px; text-align: center;">
+                            <img src="bonusi/b1.png" style="width: 50px; height: 50px; object-fit: contain;">
+                            <div style="font-size: 10px; color: var(--text); margin: 5px 0; font-weight: bold; height: 30px;">Закладка Hachette</div>
+                            <button class="spend-btn" style="width: 100%; font-size: 11px;" onclick="buyReward('Закладка', 750)">750 <i class="fas fa-book-open"></i></button>
+                        </div>
+                        <div class="reward-card-mini" style="background: var(--secondary); padding: 10px; border-radius: 10px; text-align: center;">
+                            <img src="bonusi/b4.png" style="width: 50px; height: 50px; object-fit: contain;">
+                            <div style="font-size: 10px; color: var(--text); margin: 5px 0; font-weight: bold; height: 30px;">Раскраска</div>
+                            <button class="spend-btn" style="width: 100%; font-size: 11px;" onclick="buyReward('Раскраска', 1250)">1250 <i class="fas fa-book-open"></i></button>
+                        </div>
                     </div>
-                    <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()">Без статуса</div>
+                </div>
+
+                <button class="buy-btn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.5); border-radius:12px; padding:12px;" onclick="toggleAccordion('loyalty-info')">Заработать ашетики 🚀</button>
+                <div id="loyalty-info" style="display:none; background: var(--bg); border-radius: 12px; padding: 15px; margin-top: 5px; text-align: left; color: var(--text);">
+                    <div class="row-item" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 0; display: flex; justify-content: space-between;"><span>Приветственный бонус</span><b>+100</b></div>
+                    <div class="row-item" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 0; display: flex; justify-content: space-between;"><span>Отзыв</span><b>+25</b></div>
+                    <div class="row-item" style="padding: 8px 0; display: flex; justify-content: space-between;"><span>1 место в челлендже</span><b>+150</b></div>
                 </div>
             </div>
-        </div> <div class="avatar-editor" id="avatarEditorBlock">
-            <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
-            
-            <div style="text-align: center; margin-bottom: 15px;">
-                <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
-                <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
-            </div>
-
-            <div class="avatar-grid-presets" id="avatarPresetsGrid"></div>
-            <button class="buy-btn rounded-pill" style="margin-top: 10px;" onclick="toggleAvatarEditor()">Готово</button>
-        </div>
-
-        <div class="category-title" style="margin-top: 0; text-align: center;">Награды (Статусы)</div>
-        <div id="statusAwardsContainer" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:20px;"></div>
-
-        <div class="category-title" style="margin-top: 0; text-align: center;">Достижения</div>
-        <div id="achievementsGrid" class="achievements-grid"></div>
-
-        <div class="brand-button" onclick="toggleBlock('questsListContainer', this)" style="margin-bottom: 20px;">
-            <span>📋 Задания статусов ✨</span>
-            <span class="brand-counter">Развернуть</span>
-        </div>
-        <div id="questsListContainer" style="display:none; margin-bottom: 25px; animation: slideDown 0.3s ease-out;"></div>
-
-        <div id="rewards-section">
-            <div class="category-title">Магазин наград</div>
-            <div class="reward-grid">
-                <div class="reward-card">
-                    <img src="bonusi/b1.png">
-                    <div class="reward-info"><b>Книжная закладка Hachette (любая)</b></div>
-                    <button class="spend-btn" onclick="buyReward('Закладка Hachette', 750)">750 <i class="fas fa-book-open"></i></button>
-                </div>
-                <div class="reward-card">
-                    <img src="bonusi/b2.png">
-                    <div class="reward-info"><b>Petites Poupees</b></div>
-                    <button class="spend-btn" onclick="buyReward('Petites Poupees', 950)">950 <i class="fas fa-book-open"></i></button>
-                </div>
-                <div class="reward-card">
-                    <img src="bonusi/b3.png">
-                    <div class="reward-info"><b>Трекер от Hachette</b></div>
-                    <button class="spend-btn" onclick="buyReward('Трекер Hachette', 950)">950 <i class="fas fa-book-open"></i></button>
-                </div>
-                <div class="reward-card">
-                    <img src="bonusi/b4.png">
-                    <div class="reward-info"><b>Спиртовая раскраска (любая)</b></div>
-                    <button class="spend-btn" onclick="buyReward('Спиртовая раскраска', 1250)">1250 <i class="fas fa-book-open"></i></button>
-                </div>
-                <div class="reward-card" style="grid-column: span 2;">
-                    <img src="bonusi/b5.png" style="height: 140px;">
-                    <div class="reward-info"><b>Hachette Coloriages (А4 том любой)</b></div>
-                    <button class="spend-btn" onclick="buyReward('Hachette Coloriages A4', 1500)">1500 <i class="fas fa-book-open"></i></button>
-                </div>
-            </div>
-            <button class="buy-btn" style="background:none; color:var(--gray); margin-top:15px; font-size: 14px;" onclick="toggleRewards()">← Назад к инфо</button>
-        </div>
-
-        <div id="loyalty-info">
-            <div class="category-title" style="margin-top:25px;">Программа лояльности</div>
-            <div class="row-item"><span>Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>Бонус за отзыв</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>Бонус за покупку от 3000₽</span><b class="gold-book">+20 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item">
-                <div style="display:flex; flex-direction:column;">
-                    <span>Бонусы за крупные покупки</span>
-                    <small style="color:var(--gray); font-size:11px;">от 5к - 30 / от 7.5к - 40 / от 10к - 50</small>
-                </div>
-                <b class="gold-book"><i class="fas fa-book-open"></i></b>
-            </div>
-            <div class="row-item"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
-        </div>
-
-        <div id="adminTaskPanel" style="display:none; margin-top:30px; border: 2px solid var(--accent); padding: 15px; border-radius: 18px;">
-            <div class="category-title" style="margin-top:0; color: var(--accent);">🛠 Админ: Проверка заданий</div>
-            <div id="adminTaskRequests"></div>
-        </div>
-
-        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
-            <div class="profile-id" style="opacity: 0.5; font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
         </div>
     </div>
 
-    <div id="achievementModal" class="custom-modal-overlay">
-        <div class="custom-modal" style="text-align: center; max-width: 300px; padding: 30px 20px;">
-            <img id="achModalIconImg" class="achievement-icon-large-img" src="">
-            <h3 id="achModalTitle" style="margin: 0 0 10px; font-size: 20px;">Название</h3>
-            <p id="achModalDesc" style="color: var(--gray); font-size: 14px; margin: 0 0 25px; line-height: 1.4;">Описание достижения</p>
-            <button class="buy-btn rounded-pill" onclick="closeAchievementModal()">Потрясающе!</button>
-        </div>
-    </div>
-
-    <div id="aipalette" class="page">
-        <div class="header">ИИ Палитра ✨</div>
-        <div class="card" style="padding: 20px; text-align: center; border:none; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-            <p style="font-size:14px; margin-top:0;">Сфотографируй цвет — нейросеть найдет лучший маркер из твоей палитры!</p>
-
-            <div style="margin-bottom: 20px; text-align: left; background: var(--secondary); padding: 15px; border-radius: 12px;">
-                <label style="display: block; font-size: 13px; margin-bottom: 5px; font-weight: bold;">Бренд для поиска:</label>
-                <select id="aiSearchBrand" style="width: 100%; padding: 10px; border-radius: 8px; border: none; margin-bottom: 15px; background: var(--bg); color: var(--text);">
-                    <option value="All">Все бренды (Глобальный поиск)</option>
-                    <option value="GuangNa">GuangNa</option>
-                    <option value="Languo">Languo</option>
-                    <option value="Zibeef">Zibeef</option>
-                    <option value="Tooli-Art">Tooli-Art</option>
-                    <option value="InfiArt">InfiArt</option>
-                    <option value="Grasp">Grasp</option>
-                </select>
-                
-                <label style="display: flex; align-items: center; font-size: 14px; gap: 10px; cursor: pointer;">
-                    <input type="checkbox" id="aiUseInventoryOnly" style="width: 18px; height: 18px; accent-color: var(--accent);">
-                    Искать только среди моих маркеров
-                </label>
-                
-                <button class="buy-btn rounded-pill" style="padding: 12px; font-size: 14px; margin-top: 15px; background: var(--bg); border: 2px solid var(--accent); color: var(--text);" onclick="tab('mymarkers')">Мои маркеры 🎒</button>
+    <div class="category-title" style="text-align: center;">Задания</div>
+    <div id="questsContainer" style="padding: 0 15px; margin-bottom: 25px;">
+        <div class="quest-item" style="background: var(--secondary); padding: 15px; border-radius: 15px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: bold;">
+                <span>Раскрасить 5 картинок</span>
+                <span id="q-progress-val">0/5</span>
             </div>
-
-            <input type="file" id="aiInput" accept="image/*" multiple style="display:none;" onchange="processAI(event)">
-            <button class="buy-btn rounded-pill" style="padding:15px;" onclick="document.getElementById('aiInput').click()">📷 Сфотографировать цвет</button>
-            
-            <div id="aiMultipleResultsContainer"></div>
-
-        </div>
-
-        <div id="aiAdminPanel" style="display:none; margin-top:30px;">
-            <div class="category-title">🛠 Админ: Управление ИИ</div>
-            
-            <div class="row-item" style="flex-direction:column; align-items:stretch;">
-                <p style="margin:0 0 10px 0; font-weight:bold; font-size:14px;">Обучить новый цвет:</p>
-                <select id="adminTrainBrand" onchange="toggleAdminSet()" style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(128,128,128,0.2); margin-bottom:10px;">
-                    <option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option>
-                    <option value="Tooli-Art">Tooli-Art</option><option value="InfiArt">InfiArt</option><option value="Grasp">Grasp</option>
-                </select>
-                <select id="adminTrainSet" style="display:none; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(128,128,128,0.2); margin-bottom:10px;">
-                    <option value="Pastel">Pastel (24)</option>
-                    <option value="Jewel">Jewel (24)</option>
-                    <option value="Confetti">Confetti (24)</option>
-                    <option value="Metallic">Metallic (24)</option>
-                    <option value="Neon">Neon (24)</option>
-                    <option value="Glitter">Glitter (24)</option>
-                    <option value="Wildflower">Wildflower (24)</option>
-                    <option value="Brown">Brown (22)</option>
-                    <option value="Purple">Purple (22)</option>
-                    <option value="Pink">Pink (22)</option>
-                    <option value="Skin">Skin (22)</option>
-                    <option value="Green">Green (22)</option>
-                    <option value="Gray">Gray (22)</option>
-                    <option value="Orange">Orange (22)</option>
-                    <option value="Red & Pink">Red & Pink (22)</option>
-                    <option value="Yellow & Brown">Yellow & Brown (22)</option>
-                    <option value="Blue & Purple">Blue & Purple (22)</option>
-                    <option value="Southwest">Southwest (28)</option>
-                    <option value="Nocturnal">Nocturnal (28)</option>
-                    <option value="Essential">Essential (28)</option>
-                    <option value="Earth">Earth (36)</option>
-                </select>
-
-                <input type="text" id="adminTrainNum" placeholder="Номер маркера" style="border:1px solid rgba(128,128,128,0.2);">
-                <input type="file" id="adminTrainInput" accept="image/*" style="display:none;" onchange="trainAI(event)">
-                <button class="buy-btn rounded-pill" style="background:var(--gold); color:#000;" onclick="document.getElementById('adminTrainInput').click()">📥 Загрузить и Обучить</button>
+            <div style="width: 100%; height: 8px; background: #ddd; border-radius: 4px; overflow: hidden;">
+                <div id="q-progress-bar" style="width: 20%; height: 100%; background: var(--accent);"></div>
             </div>
-
-            <div class="category-title" style="margin-top:20px;">🚨 Карантин (Ожидают проверки)</div>
-            <div id="adminQuarantineList"></div>
         </div>
     </div>
 
-    <div id="viewer">
-        <div class="viewer-header">
-            <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="closeBook()">Назад</button>
-            <div id="page-counter" style="color:var(--text); font-weight:bold;"></div>
+    <div style="padding: 0 15px; margin-bottom: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div class="category-title" style="margin:0;">Достижения</div>
+            <button onclick="openTop3Selector()" style="background: none; border: none; color: var(--accent); font-weight: bold; font-size: 12px;">Выбрать ТОП-3</button>
         </div>
-        <div id="viewer-content" style="height: 85vh; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none;" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
-            <img src="" id="current-page" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+        
+        <div id="top3Achievements" style="display: flex; justify-content: center; gap: 15px; background: var(--secondary); padding: 15px; border-radius: 18px; margin-bottom: 15px;">
+            <div class="top-slot">❓</div><div class="top-slot">❓</div><div class="top-slot">❓</div>
         </div>
-    </div> 
 
-    <div id="organizerDetailView" class="page" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1001; background: var(--bg); overflow-y: auto; padding: 15px; box-sizing: border-box;">
-        <div style="display:flex; align-items:center; margin-bottom:20px;">
-            <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px; background:var(--secondary); color:var(--text);" onclick="closeOrganizerView()">← Назад</button>
-            <h3 id="viewOrgTitle" style="margin:0 0 0 15px;"></h3>
-        </div>
-        <div id="gridContainer" class="organizer-grid"></div>
-    </div>
-
-    <div id="cellManageModal" class="custom-modal-overlay">
-        <div class="custom-modal">
-            <div class="modal-header-row">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span class="modal-title" id="cellModalTitle">Ячейка</span>
-                    <button class="buy-btn" style="padding:4px 10px; width:auto; font-size:12px; background:var(--secondary); color:var(--text); border-radius: 8px;" onclick="renameCurrentCell()">✏️</button>
-                </div>
-                <button class="close-btn" onclick="closeCellModal()">✕</button>
+        <div id="achievementsCarousel" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
             </div>
-            <div id="cellMarkerList" style="overflow-y:auto; flex-grow:1; margin-bottom:15px; min-height:120px;"></div>
-            <button class="buy-btn" style="border-radius:12px;" onclick="openAddMarkerModal()">+ Добавить маркер</button>
-        </div>
     </div>
 
-    <div id="addMarkerModal" class="custom-modal-overlay">
-        <div class="custom-modal">
-            <div class="modal-header-row">
-                <span class="modal-title">Выберите бренд и номер</span>
-                <button class="close-btn" onclick="closeAddMarkerModal()">✕</button>
-            </div>
-            <div class="brand-grid-modal" id="modalBrandGrid"></div>
-            <input type="text" id="modalMarkerSearch" placeholder="Введите номер маркера..." style="margin-bottom:15px; background: var(--bg); border: 2px solid var(--secondary);">
-            <button class="buy-btn" style="border-radius:12px; background:#34c759;" onclick="confirmAddMarkerToCell()">Сохранить в ячейку</button>
-        </div>
+    <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+        <div class="profile-id" style="opacity: 0.5; font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
     </div>
+</div>
 
-    <div id="statusSelectModal" class="custom-modal-overlay">
-        <div class="custom-modal">
-            <div class="modal-header-row">
-                <span class="modal-title">Выберите статус</span>
-                <button class="close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">✕</button>
-            </div>
-            <div id="statusSelectList" style="display:flex; flex-direction:column; gap:10px;"></div>
-        </div>
-    </div>
+<script>
+    // --- ПЕРЕМЕННЫЕ И ДАННЫЕ ---
+    let userProfileData = {
+        customName: null,
+        customStatus: null,
+        avatar: { seed: 'av1.jpg', customImage: null },
+        achievements: [
+            { id: 'hello_name', title: 'Hello, my name is', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach1.png', desc: 'Смените имя в профиле.', unlocked: false },
+            { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach2.png', desc: 'Измените стиль 5 раз.', unlocked: false },
+            { id: 'gold_master', title: 'Золотой статус', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach3.png', desc: 'Достигните золотого уровня в любом пути.', unlocked: false }
+        ],
+        top3: [null, null, null],
+        styleChangesCount: 0,
+        statusProgress: { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 }
+    };
 
-    <nav class="nav">
-        <button id="btn-answers" class="nav-btn active" onclick="tab('answers')"><span class="nav-icon">📚</span>Ответы</button>
-        <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><span class="nav-icon">🎨</span>ИИ палитры</button>
-        <button id="btn-shop" class="nav-btn" onclick="tab('shop')"><span class="nav-icon">🖍️</span>Маркеры</button>
-        <button id="btn-cart" class="nav-btn" onclick="tab('cart')">
-            <span class="nav-icon">🛒</span>Корзина
-            <span id="cartBadge" class="badge" style="display:none">0</span>
-        </button> 
-        <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Профиль</button>
-    </nav>
+    // --- ФУНКЦИИ ПРОФИЛЯ ---
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+    function changeUserName() {
+        const name = prompt("Введите ваше имя:", userProfileData.customName || "");
+        if (name && name.trim() !== "") {
+            userProfileData.customName = name.trim();
+            // Выдаем достижение
+            unlockAchievement('hello_name');
+            saveProfileData();
+            updateUI();
+        }
+    }
 
-        // --- ЛОГИКА АВАТАРОВ, ПРОФИЛЯ И СТАТУСОВ ---
-        let isEditingAvatar = false;
-
-        // Пресеты аватаров (готовые)
-const avatarBaseURL =
-"https://raw.githubusercontent.com/HachetteLittleHeroes/ColoriagesWithAI/main/avatars/";
-  const avatarPresets = [
-"av1.jpg",
-"av2.jpg",
-"av3.jpg",
-"av4.jpg",
-"av5.jpg",
-"av6.jpg",
-"av7.jpg",
-"av8.jpg"
-];
-
-        // База путей развития статусов 
-        const statusPaths = {
-            "Спиртесса": {
-                title: "Спиртесса",
-                levels: [
-                    { req: 5, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
-                    { req: 20, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
-                    { req: 50, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
-                ]
-            },
-            "Графиня Линеров": {
-                title: "Графиня Линеров",
-                levels: [
-                    { req: 10, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
-                    { req: 30, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
-                    { req: 70, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
-                ]
-            },
-            "Аквамаринка": {
-                title: "Аквамаринка",
-                levels: [
-                    { req: 5, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
-                    { req: 15, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
-                    { req: 40, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
-                ]
-            }
-        };
-
-        let userProfileData = {
-            customName: null,
-            customStatus: null,
-            avatar: { seed: 'av2.jpg', customImage: null }, // Добавлено customImage
-            achievements: [
-                { id: 'first_steps', title: 'Первые шаги', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach1.png', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
-                { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach2.png', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: false },
-                { id: 'rich', title: 'Богатей', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach3.png', desc: 'Накопите 500 ашетиков на балансе лояльности.', unlocked: false },
-                { id: 'collector', title: 'Коллекционер', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach4.png', desc: 'Соберите 10 любых маркеров в своем инвентаре.', unlocked: false }
-            ],
-            styleChangesCount: 0,
-            statusProgress: { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 }
-        };
-
-        function toggleBlock(id, btn) {
-            const el = document.getElementById(id);
-            if(el.style.display === 'none') {
-                el.style.display = 'block';
-                btn.querySelector('.brand-counter').innerText = 'Свернуть';
-            } else {
-                el.style.display = 'none';
-                btn.querySelector('.brand-counter').innerText = 'Развернуть';
-            }
-            if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+    function changeCustomStatus() {
+        // Проверка на Золотой Уровень (например, если XP в любом пути >= 300)
+        const isGold = Object.values(userProfileData.statusProgress).some(val => val >= 300);
+        
+        if (!isGold) {
+            alert("🔒 Установка статуса доступна только пользователям с Золотым Уровнем!");
+            return;
         }
 
-        function loadProfileData() {
-            const saved = localStorage.getItem('user_profile_data_v4'); 
-            if (saved) {
-                userProfileData = JSON.parse(saved);
-                if (!userProfileData.avatar || !userProfileData.avatar.seed)
-userProfileData.avatar = { seed: 'av2.jpg', customImage: null };
-                if (!userProfileData.statusProgress) userProfileData.statusProgress = { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 };
-            }
-            
-            renderAvatarPresets();
-            updateAvatarImage();
-            renderAchievements();
-            renderStatusAwards();
-            renderStatusQuests();
-            updateNameDisplay();
-            updateStatusDisplay();
+        const status = prompt("Ваш новый статус:", userProfileData.customStatus || "");
+        if (status !== null) {
+            userProfileData.customStatus = status.trim();
+            saveProfileData();
+            updateUI();
         }
+    }
 
-        function saveProfileData() {
-            localStorage.setItem('user_profile_data_v4', JSON.stringify(userProfileData));
-            checkAchievements();
+    function toggleAccordion(id) {
+        const el = document.getElementById(id);
+        const isOpen = el.style.display === 'block';
+        
+        // Закрываем все
+        document.getElementById('rewards-section').style.display = 'none';
+        document.getElementById('loyalty-info').style.display = 'none';
+        
+        // Открываем нужное
+        el.style.display = isOpen ? 'none' : 'block';
+        if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+    }
+
+    function unlockAchievement(id) {
+        const ach = userProfileData.achievements.find(a => a.id === id);
+        if (ach && !ach.unlocked) {
+            ach.unlocked = true;
+            alert(`🎉 Достижение получено: ${ach.title}`);
         }
+    }
+
+    function toggleAvatarEditor() {
+        const block = document.getElementById('avatarEditorBlock');
+        block.style.display = (block.style.display === 'none') ? 'block' : 'none';
+    }
+
+    function updateUI() {
+        document.getElementById('displayUsername').innerText = userProfileData.customName || "Без имени";
+        document.getElementById('userStatusDisplay').innerText = userProfileData.customStatus || "Без статуса";
+        
+        const imgEl = document.getElementById('user-avatar');
+        imgEl.src = userProfileData.avatar.customImage || (avatarBaseURL + userProfileData.avatar.seed);
+        
+        renderAchievementsCarousel();
+        renderTop3Slots();
+    }
+
+    function renderAchievementsCarousel() {
+        const container = document.getElementById('achievementsCarousel');
+        container.innerHTML = userProfileData.achievements.map(ach => `
+            <div class="ach-card" style="min-width: 100px; text-align: center; opacity: ${ach.unlocked ? '1' : '0.3'}; scroll-snap-align: center;" onclick="alert('${ach.title}: ${ach.desc}')">
+                <img src="${ach.img}" style="width: 60px; height: 60px;">
+                <div style="font-size: 10px; font-weight: bold; margin-top: 5px; color: var(--text);">${ach.title}</div>
+            </div>
+        `).join('');
+    }
+
+    function renderTop3Slots() {
+        const container = document.getElementById('top3Achievements');
+        container.innerHTML = userProfileData.top3.map(achIdx => {
+            if (achIdx === null) return `<div class="top-slot" style="width: 50px; height: 50px; background: rgba(0,0,0,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center;">❓</div>`;
+            const ach = userProfileData.achievements[achIdx];
+            return `<img src="${ach.img}" style="width: 50px; height: 50px; border-radius: 50%;">`;
+        }).join('');
+    }
+
+    // Сохранение и загрузка
+    function saveProfileData() {
+        localStorage.setItem('user_profile_data_v4', JSON.stringify(userProfileData));
+    }
+
+    function loadProfileData() {
+        const saved = localStorage.getItem('user_profile_data_v4');
+        if (saved) userProfileData = JSON.parse(saved);
+        updateUI();
+    }
+
+    window.onload = loadProfileData;
+</script>
+
+<style>
+    .top-slot { font-size: 20px; color: var(--gray); }
+    .ach-card { flex-shrink: 0; transition: 0.3s; }
+    #achievementsCarousel::-webkit-scrollbar { display: none; }
+</style>
 
         // --- ЛОГИКА КАСТОМНОГО ИМЕНИ И СТАТУСА ---
         function updateNameDisplay() {

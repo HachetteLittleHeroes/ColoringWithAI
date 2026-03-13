@@ -351,39 +351,61 @@ text-transform: uppercase;
             <div id="brandInventoryList" class="inventory-grid"></div>
         </div>
     </div>
-    <div id="profile" class="page">
+      <div id="profile" class="page">
         <div class="header" style="text-align: center;">Профиль</div>
 
-        <div class="profile-hero">
-            <div class="avatar-container">
-              <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
-               <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg">
+        <div class="profile-hero" style="display: flex; align-items: center; gap: 20px; padding: 0 10px; margin-bottom: 20px; flex-direction: row; justify-content: flex-start;">
+            <div class="avatar-container" style="flex-shrink: 0;">
+                <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
+                    <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg">
                 </div>
                 <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
             </div>
             
-            <div id="loyaltyBlock" style="flex-grow: 1;"> <div class="balance-card" style="margin-top:0;">
-                    <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
-                    <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
-                    <p style="margin:0; font-weight: 500; margin-bottom: 10px;">ашетиков накоплено</p>
-                    <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:8px;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
+            <div class="profile-info-holder" style="display: flex; flex-direction: column; justify-content: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <h2 class="profile-username" id="displayUsername" style="margin: 0; font-size: 22px;">Без имени</h2>
+                    <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
                 </div>
-                <div class="profile-info-right" style="margin-top: 15px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <h2 class="profile-username" id="displayUsername">Без имени</h2>
-                        <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
+                <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()" style="margin-top: 5px; font-size: 14px; color: var(--gray);">Без статуса</div>
+            </div>
+        </div>
+
+        <div id="loyaltyBlock" style="width: 100%; margin-bottom: 25px;"> 
+            <div class="balance-card" style="margin-top:0; text-align: center; width: 100%; box-sizing: border-box;">
+                <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
+                <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
+                <p style="margin:0; font-weight: 500; margin-bottom: 15px;">ашетиков накоплено</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:10px; width: 100%;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
+                    <button class="buy-btn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.5); border-radius:12px; padding:10px; width: 100%;" onclick="toggleLoyaltyInfo()">Заработать ашетики 🚀</button>
+                </div>
+
+                <div id="loyalty-info" style="display:none; margin-top: 20px; text-align: left; background: rgba(0,0,0,0.1); padding: 15px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.3);">
+                    <div class="category-title" style="margin-top:0; color: white; font-size: 16px;">Программа лояльности</div>
+                    <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Приветственный бонус</span><b style="color: #ffe082;">+100 <i class="fas fa-book-open"></i></b></div>
+                    <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Бонус за отзыв</span><b style="color: #ffe082;">+25 <i class="fas fa-book-open"></i></b></div>
+                    <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Бонус за покупку от 3000₽</span><b style="color: #ffe082;">+20 <i class="fas fa-book-open"></i></b></div>
+                    <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <div style="display:flex; flex-direction:column;">
+                            <span>Бонусы за крупные покупки</span>
+                            <small style="opacity: 0.8; font-size:10px;">от 5к - 30 / от 7.5к - 40 / от 10к - 50</small>
+                        </div>
+                        <b style="color: #ffe082;"><i class="fas fa-book-open"></i></b>
                     </div>
-                    <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()">Без статуса</div>
+                    <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Событие «Baby Boom»</span><b style="color: #ffe082;">+50 <i class="fas fa-book-open"></i></b></div>
+                    <div class="row-item" style="color: white;"><span>1 место в челленджах</span><b style="color: #ffe082;">+150 <i class="fas fa-book-open"></i></b></div>
                 </div>
             </div>
-        </div> <div class="avatar-editor" id="avatarEditorBlock">
+        </div>
+
+        <div class="avatar-editor" id="avatarEditorBlock">
             <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
-            
             <div style="text-align: center; margin-bottom: 15px;">
                 <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
                 <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
             </div>
-
             <div class="avatar-grid-presets" id="avatarPresetsGrid"></div>
             <button class="buy-btn rounded-pill" style="margin-top: 10px;" onclick="toggleAvatarEditor()">Готово</button>
         </div>
@@ -432,22 +454,6 @@ text-transform: uppercase;
             <button class="buy-btn" style="background:none; color:var(--gray); margin-top:15px; font-size: 14px;" onclick="toggleRewards()">← Назад к инфо</button>
         </div>
 
-        <div id="loyalty-info">
-            <div class="category-title" style="margin-top:25px;">Программа лояльности</div>
-            <div class="row-item"><span>Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>Бонус за отзыв</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>Бонус за покупку от 3000₽</span><b class="gold-book">+20 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item">
-                <div style="display:flex; flex-direction:column;">
-                    <span>Бонусы за крупные покупки</span>
-                    <small style="color:var(--gray); font-size:11px;">от 5к - 30 / от 7.5к - 40 / от 10к - 50</small>
-                </div>
-                <b class="gold-book"><i class="fas fa-book-open"></i></b>
-            </div>
-            <div class="row-item"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
-        </div>
-
         <div id="adminTaskPanel" style="display:none; margin-top:30px; border: 2px solid var(--accent); padding: 15px; border-radius: 18px;">
             <div class="category-title" style="margin-top:0; color: var(--accent);">🛠 Админ: Проверка заданий</div>
             <div id="adminTaskRequests"></div>
@@ -458,121 +464,6 @@ text-transform: uppercase;
         </div>
     </div>
 
-    <div id="achievementModal" class="custom-modal-overlay">
-        <div class="custom-modal" style="text-align: center; max-width: 300px; padding: 30px 20px;">
-            <img id="achModalIconImg" class="achievement-icon-large-img" src="">
-            <h3 id="achModalTitle" style="margin: 0 0 10px; font-size: 20px;">Название</h3>
-            <p id="achModalDesc" style="color: var(--gray); font-size: 14px; margin: 0 0 25px; line-height: 1.4;">Описание достижения</p>
-            <button class="buy-btn rounded-pill" onclick="closeAchievementModal()">Потрясающе!</button>
-        </div>
-    </div>
-
-    <div id="aipalette" class="page">
-        <div class="header">ИИ Палитра ✨</div>
-        <div class="card" style="padding: 20px; text-align: center; border:none; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-            <p style="font-size:14px; margin-top:0;">Сфотографируй цвет — нейросеть найдет лучший маркер из твоей палитры!</p>
-
-            <div style="margin-bottom: 20px; text-align: left; background: var(--secondary); padding: 15px; border-radius: 12px;">
-                <label style="display: block; font-size: 13px; margin-bottom: 5px; font-weight: bold;">Бренд для поиска:</label>
-                <select id="aiSearchBrand" style="width: 100%; padding: 10px; border-radius: 8px; border: none; margin-bottom: 15px; background: var(--bg); color: var(--text);">
-                    <option value="All">Все бренды (Глобальный поиск)</option>
-                    <option value="GuangNa">GuangNa</option>
-                    <option value="Languo">Languo</option>
-                    <option value="Zibeef">Zibeef</option>
-                    <option value="Tooli-Art">Tooli-Art</option>
-                    <option value="InfiArt">InfiArt</option>
-                    <option value="Grasp">Grasp</option>
-                </select>
-                
-                <label style="display: flex; align-items: center; font-size: 14px; gap: 10px; cursor: pointer;">
-                    <input type="checkbox" id="aiUseInventoryOnly" style="width: 18px; height: 18px; accent-color: var(--accent);">
-                    Искать только среди моих маркеров
-                </label>
-                
-                <button class="buy-btn rounded-pill" style="padding: 12px; font-size: 14px; margin-top: 15px; background: var(--bg); border: 2px solid var(--accent); color: var(--text);" onclick="tab('mymarkers')">Мои маркеры 🎒</button>
-            </div>
-
-            <input type="file" id="aiInput" accept="image/*" multiple style="display:none;" onchange="processAI(event)">
-            <button class="buy-btn rounded-pill" style="padding:15px;" onclick="document.getElementById('aiInput').click()">📷 Сфотографировать цвет</button>
-            
-            <div id="aiMultipleResultsContainer"></div>
-
-        </div>
-
-        <div id="aiAdminPanel" style="display:none; margin-top:30px;">
-            <div class="category-title">🛠 Админ: Управление ИИ</div>
-            
-            <div class="row-item" style="flex-direction:column; align-items:stretch;">
-                <p style="margin:0 0 10px 0; font-weight:bold; font-size:14px;">Обучить новый цвет:</p>
-                <select id="adminTrainBrand" onchange="toggleAdminSet()" style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(128,128,128,0.2); margin-bottom:10px;">
-                    <option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option>
-                    <option value="Tooli-Art">Tooli-Art</option><option value="InfiArt">InfiArt</option><option value="Grasp">Grasp</option>
-                </select>
-                <select id="adminTrainSet" style="display:none; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(128,128,128,0.2); margin-bottom:10px;">
-                    <option value="Pastel">Pastel (24)</option>
-                    <option value="Jewel">Jewel (24)</option>
-                    <option value="Confetti">Confetti (24)</option>
-                    <option value="Metallic">Metallic (24)</option>
-                    <option value="Neon">Neon (24)</option>
-                    <option value="Glitter">Glitter (24)</option>
-                    <option value="Wildflower">Wildflower (24)</option>
-                    <option value="Brown">Brown (22)</option>
-                    <option value="Purple">Purple (22)</option>
-                    <option value="Pink">Pink (22)</option>
-                    <option value="Skin">Skin (22)</option>
-                    <option value="Green">Green (22)</option>
-                    <option value="Gray">Gray (22)</option>
-                    <option value="Orange">Orange (22)</option>
-                    <option value="Red & Pink">Red & Pink (22)</option>
-                    <option value="Yellow & Brown">Yellow & Brown (22)</option>
-                    <option value="Blue & Purple">Blue & Purple (22)</option>
-                    <option value="Southwest">Southwest (28)</option>
-                    <option value="Nocturnal">Nocturnal (28)</option>
-                    <option value="Essential">Essential (28)</option>
-                    <option value="Earth">Earth (36)</option>
-                </select>
-
-                <input type="text" id="adminTrainNum" placeholder="Номер маркера" style="border:1px solid rgba(128,128,128,0.2);">
-                <input type="file" id="adminTrainInput" accept="image/*" style="display:none;" onchange="trainAI(event)">
-                <button class="buy-btn rounded-pill" style="background:var(--gold); color:#000;" onclick="document.getElementById('adminTrainInput').click()">📥 Загрузить и Обучить</button>
-            </div>
-
-            <div class="category-title" style="margin-top:20px;">🚨 Карантин (Ожидают проверки)</div>
-            <div id="adminQuarantineList"></div>
-        </div>
-    </div>
-
-    <div id="viewer">
-        <div class="viewer-header">
-            <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="closeBook()">Назад</button>
-            <div id="page-counter" style="color:var(--text); font-weight:bold;"></div>
-        </div>
-        <div id="viewer-content" style="height: 85vh; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none;" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
-            <img src="" id="current-page" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-        </div>
-    </div> 
-
-    <div id="organizerDetailView" class="page" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1001; background: var(--bg); overflow-y: auto; padding: 15px; box-sizing: border-box;">
-        <div style="display:flex; align-items:center; margin-bottom:20px;">
-            <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px; background:var(--secondary); color:var(--text);" onclick="closeOrganizerView()">← Назад</button>
-            <h3 id="viewOrgTitle" style="margin:0 0 0 15px;"></h3>
-        </div>
-        <div id="gridContainer" class="organizer-grid"></div>
-    </div>
-
-    <div id="cellManageModal" class="custom-modal-overlay">
-        <div class="custom-modal">
-            <div class="modal-header-row">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span class="modal-title" id="cellModalTitle">Ячейка</span>
-                    <button class="buy-btn" style="padding:4px 10px; width:auto; font-size:12px; background:var(--secondary); color:var(--text); border-radius: 8px;" onclick="renameCurrentCell()">✏️</button>
-                </div>
-                <button class="close-btn" onclick="closeCellModal()">✕</button>
-            </div>
-            <div id="cellMarkerList" style="overflow-y:auto; flex-grow:1; margin-bottom:15px; min-height:120px;"></div>
-            <button class="buy-btn" style="border-radius:12px;" onclick="openAddMarkerModal()">+ Добавить маркер</button>
-        </div>
-    </div>
 
     <div id="addMarkerModal" class="custom-modal-overlay">
         <div class="custom-modal">
@@ -898,6 +789,15 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
                 localStorage.setItem('user_profile_data_v4', JSON.stringify(userProfileData));
             }
         }
+        function toggleLoyaltyInfo() {
+    const info = document.getElementById('loyalty-info');
+    if (info.style.display === 'none' || info.style.display === '') {
+        info.style.display = 'block';
+    } else {
+        info.style.display = 'none';
+    }
+}
+
 
         // Рендер наград со статусами (только текстовые плашки)
         function renderStatusAwards() {

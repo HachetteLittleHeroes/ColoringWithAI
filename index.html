@@ -446,6 +446,7 @@ text-transform: uppercase;
 
 <script>
 // --- ОБЯЗАТЕЛЬНО: Проверь, что этот скрипт ОДИН и находится в конце файла ---
+var tg = window.Telegram.WebApp;
 
 let userProfileData = {
     customName: null,
@@ -609,7 +610,7 @@ window.addEventListener('DOMContentLoaded', loadProfileData);
 #achievementsCarousel::-webkit-scrollbar { display: none; }
 </style>
 
-
+<script>
         // --- ЛОГИКА КАСТОМНОГО ИМЕНИ И СТАТУСА ---
         function updateNameDisplay() {
             if (userProfileData.customName) {
@@ -1053,6 +1054,27 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             viewOrganizer(currentOrgId); 
         }
 
+        function renderCellMarkerList() {
+            const org = organizers.find(o => o.id === currentOrgId);
+            const cell = org.cells[currentCellIndex];
+            const list = document.getElementById('cellMarkerList');
+            
+            if (cell.markers.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color:var(--gray); padding:30px 0; font-size:14px;">В этой ячейке пока нет маркеров</div>';
+                return;
+            }
+            
+            list.innerHTML = cell.markers.map(mId => {
+                let parts = mId.split('_');
+                let brand = parts[0];
+                let num = parts.slice(1).join('_'); 
+                return `
+                <div class="marker-list-item">
+                    <span><b>${brand}</b> <span style="color:var(--accent);">№${num}</span></span>
+                    <button class="delete-btn" onclick="removeMarkerFromCell('${mId}')">Удалить</button>
+                </div>`;
+            }).join('');
+        }
         function renderCellMarkerList() {
             const org = organizers.find(o => o.id === currentOrgId);
             const cell = org.cells[currentCellIndex];

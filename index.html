@@ -1054,11 +1054,14 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             viewOrganizer(currentOrgId); 
         }
 
+        <script>
         function renderCellMarkerList() {
             const org = organizers.find(o => o.id === currentOrgId);
             const cell = org.cells[currentCellIndex];
             const list = document.getElementById('cellMarkerList');
             
+            if (!list) return; // Защита
+
             if (cell.markers.length === 0) {
                 list.innerHTML = '<div style="text-align:center; color:var(--gray); padding:30px 0; font-size:14px;">В этой ячейке пока нет маркеров</div>';
                 return;
@@ -1079,6 +1082,8 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             const org = organizers.find(o => o.id === currentOrgId);
             const cell = org.cells[currentCellIndex];
             const list = document.getElementById('cellMarkerList');
+            
+            if (!list) return; // Защита
             
             if (cell.markers.length === 0) {
                 list.innerHTML = '<div style="text-align:center; color:var(--gray); padding:30px 0; font-size:14px;">В этой ячейке пока нет маркеров</div>';
@@ -1103,7 +1108,7 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             cell.markers = cell.markers.filter(id => id !== mId);
             saveOrganizers();
             renderCellMarkerList();
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            if (typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
 
         function renameCurrentCell() {
@@ -1140,17 +1145,17 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             modalSelectedBrand = brand;
             document.querySelectorAll('.brand-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`modalBtn_${brand}`).classList.add('active');
-            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+            if (typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
         }
 
         function confirmAddMarkerToCell() {
             if (!modalSelectedBrand) {
-                tg.showAlert("Пожалуйста, выберите бренд (нажмите на кнопку).");
+                if (typeof tg !== 'undefined') tg.showAlert("Пожалуйста, выберите бренд (нажмите на кнопку).");
                 return;
             }
             const num = document.getElementById('modalMarkerSearch').value.trim();
             if (!num) {
-                tg.showAlert("Пожалуйста, введите номер маркера.");
+                if (typeof tg !== 'undefined') tg.showAlert("Пожалуйста, введите номер маркера.");
                 return;
             }
             
@@ -1161,9 +1166,9 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             if (!cell.markers.includes(mId)) {
                 cell.markers.push(mId);
                 saveOrganizers();
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                if (typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
-                tg.showAlert("Этот маркер уже лежит в данной ячейке.");
+                if (typeof tg !== 'undefined') tg.showAlert("Этот маркер уже лежит в данной ячейке.");
                 return;
             }
             
@@ -1211,7 +1216,7 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
                     }
                 }, 300);
             } else {
-                tg.showAlert("Маркер не найден ни в одном органайзере.");
+                if (typeof tg !== 'undefined') tg.showAlert("Маркер не найден ни в одном органайзере.");
             }
         }
         // -- ЛОГИКА ОРГАНАЙЗЕРОВ КОНЕЦ --
@@ -1238,6 +1243,7 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
 
         function renderBooks(list = bookNames) {
             const grid = document.getElementById('booksGrid');
+            if(!grid) return;
             grid.innerHTML = list.map((name) => {
                 const originalId = bookNames.indexOf(name) + 1;
                 const safeName = name.replace(/'/g, "\\'");
@@ -1290,7 +1296,8 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
         function renderMarkers(data) {
             const list = document.getElementById('markersList');
             if(!list) return;
-            const q = document.getElementById('markerSearch').value.toLowerCase();
+            const searchEl = document.getElementById('markerSearch');
+            const q = searchEl ? searchEl.value.toLowerCase() : "";
             const filtered = data.filter(m => m.number.includes(q)).sort((a, b) => a.number - b.number);
             list.innerHTML = filtered.map(m => {
                 const cartIndex = cart.findIndex(c => c.key === 'Маркер-' + m.number);
@@ -1322,19 +1329,23 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             updateUI();
             if(type === 'Маркер') renderMarkers(markersData);
             if(type === 'Раскраска') renderBooks();
-            tg.HapticFeedback.impactOccurred('light');
+            if(typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
         function updateUI() {
             const total = cart.reduce((sum, i) => sum + i.qty, 0);
             const badge = document.getElementById('cartBadge');
-            badge.innerText = total;
-            badge.style.display = total > 0 ? 'block' : 'none';
-            document.getElementById('mainOrderBtn').style.display = total > 0 ? 'block' : 'none';
+            const orderBtn = document.getElementById('mainOrderBtn');
+            if(badge) {
+                badge.innerText = total;
+                badge.style.display = total > 0 ? 'block' : 'none';
+            }
+            if(orderBtn) orderBtn.style.display = total > 0 ? 'block' : 'none';
         }
 
         function renderCart() {
             const list = document.getElementById('cartList');
+            if (!list) return;
             if (cart.length === 0) { list.innerHTML = '<div style="text-align:center; padding:50px; color:var(--gray)">Корзина пуста</div>'; return; }
             const totalSum = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
@@ -1366,8 +1377,12 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             item.qty += delta;
             if (item.qty <= 0) cart.splice(index, 1);
             updateUI();
-            if (document.getElementById('cart').classList.contains('active')) renderCart();
-            if (document.getElementById('shop').classList.contains('active')) renderMarkers(markersData);
+            
+            const cartEl = document.getElementById('cart');
+            const shopEl = document.getElementById('shop');
+            
+            if (cartEl && cartEl.classList.contains('active')) renderCart();
+            if (shopEl && shopEl.classList.contains('active')) renderMarkers(markersData);
         }
 
         function checkout() {
@@ -1375,7 +1390,7 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             let markersCount = 0;
             cart.forEach(item => { if (item.type === 'Маркер') markersCount += item.qty; });
             if (markersCount > 0 && markersCount < 3) {
-                tg.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук.");
+                if (typeof tg !== 'undefined') tg.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук.");
                 return;
             }
             let totalSum = 0, hasPreorder = false;
@@ -1393,22 +1408,27 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             else if (totalSum >= 7500 && totalSum < 10000) bonusToEarn = 40;
             else if (totalSum >= 10000) bonusToEarn = 50;
             
+            const userBalEl = document.getElementById('userBalance');
             details += `\n💰 **ИТОГО: ${totalSum} руб.**`;
             details += `\n📖 **БОНУС К НАЧИСЛЕНИЮ: ${bonusToEarn}**`;
-            details += `\n👤 **ТЕКУЩИЙ БАЛАНС ЮЗЕРА: ${document.getElementById('userBalance').innerText}**`;
+            details += `\n👤 **ТЕКУЩИЙ БАЛАНС ЮЗЕРА: ${userBalEl ? userBalEl.innerText : '0'}**`;
             
-            if (hasPreorder) {
-                tg.showConfirm("В вашем заказе есть раскраски (ПОД ЗАКАЗ). Оформить?", (c) => { 
-                    if(c) { tg.sendData(JSON.stringify({ details: details })); tg.close(); }
-                });
-            } else { 
-                tg.sendData(JSON.stringify({ details: details })); tg.close(); 
+            if (typeof tg !== 'undefined') {
+                if (hasPreorder) {
+                    tg.showConfirm("В вашем заказе есть раскраски (ПОД ЗАКАЗ). Оформить?", (c) => { 
+                        if(c) { tg.sendData(JSON.stringify({ details: details })); tg.close(); }
+                    });
+                } else { 
+                    tg.sendData(JSON.stringify({ details: details })); tg.close(); 
+                }
             }
         }
 
         function toggleRewards() {
             const rewardsSection = document.getElementById('rewards-section');
             const loyaltyInfo = document.getElementById('loyalty-info');
+            if(!rewardsSection || !loyaltyInfo) return;
+            
             if (rewardsSection.style.display === 'block') {
                 rewardsSection.style.display = 'none';
                 loyaltyInfo.style.display = 'block';
@@ -1416,32 +1436,38 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
                 rewardsSection.style.display = 'block';
                 loyaltyInfo.style.display = 'none';
             }
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            if(typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
 
         function buyReward(name, price) {
-            const currentBalance = parseInt(document.getElementById('userBalance').innerText);
+            const balanceEl = document.getElementById('userBalance');
+            const currentBalance = balanceEl ? parseInt(balanceEl.innerText) : 0;
+            
             if (currentBalance < price) {
-                tg.showAlert("❌ Недостаточно ашетиков для этого товара!");
+                if (typeof tg !== 'undefined') tg.showAlert("❌ Недостаточно ашетиков для этого товара!");
                 return;
             }
-            tg.showConfirm(`Вы действительно хотите обменять ${price} ашетиков на "${name}"?`, (confirm) => {
-                if (confirm) {
-                    tg.sendData(JSON.stringify({
-                        action: 'buy_reward',
-                        reward: name,
-                        price: price,
-                        user_id: document.getElementById('userIdDisplay').innerText
-                    }));
-                    tg.close();
-                }
-            });
+            if (typeof tg !== 'undefined') {
+                tg.showConfirm(`Вы действительно хотите обменять ${price} ашетиков на "${name}"?`, (confirm) => {
+                    if (confirm) {
+                        const userDisplay = document.getElementById('userIdDisplay');
+                        tg.sendData(JSON.stringify({
+                            action: 'buy_reward',
+                            reward: name,
+                            price: price,
+                            user_id: userDisplay ? userDisplay.innerText : ''
+                        }));
+                        tg.close();
+                    }
+                });
+            }
         }
 
         let currentViewingBrand = null;
 
         function renderBrandsList() {
             const container = document.getElementById('brandsGridContainer');
+            if(!container) return;
             container.innerHTML = markerBrandsList.map(brand => {
                 const ownedCount = userInventory.filter(id => id.startsWith(brand.name + "_")).length;
                 return `
@@ -1471,7 +1497,10 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
      function renderBrandInventory() {
         if (!currentViewingBrand) return;
         const container = document.getElementById('brandInventoryList');
-        const query = document.getElementById('brandSearchInput').value.toLowerCase();
+        if (!container) return;
+        
+        const searchInput = document.getElementById('brandSearchInput');
+        const query = searchInput ? searchInput.value.toLowerCase() : "";
         
         let trainedMarkersForBrand = aiDB
             .filter(item => item.brand === currentViewingBrand.name)
@@ -1506,49 +1535,59 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
         
         const actionText = isAdded ? "Добавить все обученные маркеры?" : "Убрать все маркеры этого бренда?";
         
-        tg.showConfirm(actionText, async (confirm) => {
-            if (confirm) {
-                let trainedIds = aiDB
-                    .filter(item => item.brand === currentViewingBrand.name)
-                    .map(item => `${currentViewingBrand.name}_${item.marker}`);
+        if (typeof tg !== 'undefined') {
+            tg.showConfirm(actionText, async (confirm) => {
+                if (confirm) {
+                    let trainedIds = aiDB
+                        .filter(item => item.brand === currentViewingBrand.name)
+                        .map(item => `${currentViewingBrand.name}_${item.marker}`);
 
-                if (isAdded) {
-                    userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
-                } else {
-                    userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
-                    
-                    organizers.forEach(org => {
-                        org.cells.forEach(cell => {
-                            cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+                    if (isAdded) {
+                        userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
+                    } else {
+                        userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+                        
+                        organizers.forEach(org => {
+                            org.cells.forEach(cell => {
+                                cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+                            });
                         });
-                    });
-                    saveOrganizers();
-                    renderOrganizers();
+                        if (typeof saveOrganizers === 'function') saveOrganizers();
+                        if (typeof renderOrganizers === 'function') renderOrganizers();
+                    }
+
+                    let userIdEl = document.getElementById('userIdDisplay');
+                    let userId = userIdEl ? userIdEl.innerText : '';
+                    
+                    try {
+                        await fetch(`${API_URL}/inventory_mass`, {
+                            method: 'POST', 
+                            body: JSON.stringify({ 
+                                user_id: userId, 
+                                brand: currentViewingBrand.name, 
+                                action: isAdded ? "add_all" : "remove_all" 
+                            })
+                        });
+                    } catch (e) { console.error(e); }
+
+                    renderBrandInventory();
+                    if (typeof checkAchievements === 'function') checkAchievements(); 
+                    if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 }
-
-                let userId = document.getElementById('userIdDisplay').innerText;
-                await fetch(`${API_URL}/inventory_mass`, {
-                    method: 'POST', 
-                    body: JSON.stringify({ 
-                        user_id: userId, 
-                        brand: currentViewingBrand.name, 
-                        action: isAdded ? "add_all" : "remove_all" 
-                    })
-                });
-
-                renderBrandInventory();
-                checkAchievements(); 
-                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            }
-        });
+            });
+        }
     }
 
         function tab(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(document.getElementById('btn-' + id)) {
-                document.getElementById('btn-' + id).classList.add('active');
+            
+            const targetPage = document.getElementById(id);
+            if (targetPage) targetPage.classList.add('active');
+            
+            const targetBtn = document.getElementById('btn-' + id);
+            if(targetBtn) {
+                targetBtn.classList.add('active');
             }
             
             if (id === 'shop') loadMarkers();
@@ -1556,7 +1595,7 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             if (id === 'mymarkers') {
                 closeBrandView();
                 renderBrandsList();
-                renderOrganizers(); 
+                if (typeof renderOrganizers === 'function') renderOrganizers(); 
             }
         }
 
@@ -1566,9 +1605,12 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
         function updatePage() {
             const img = document.getElementById('current-page'), counter = document.getElementById('page-counter'), formats = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG'];
             let fIndex = 0;
-            function tryLoad() { img.src = `otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; }
-            img.onerror = () => { fIndex++; if (fIndex < formats.length) tryLoad(); };
-            tryLoad(); counter.innerText = `${currentPage} / ${maxPages}`;
+            function tryLoad() { if(img) img.src = `otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; }
+            if(img) {
+                img.onerror = () => { fIndex++; if (fIndex < formats.length) tryLoad(); };
+            }
+            tryLoad(); 
+            if(counter) counter.innerText = `${currentPage} / ${maxPages}`;
         }
 
         function handleTouchStart(e) { touchStartX = e.touches[0].screenX; touchStartY = e.touches[0].screenY; }
@@ -1590,15 +1632,16 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
                         cell.markers = cell.markers.filter(id => id !== mId);
                     });
                 });
-                saveOrganizers();
-                renderOrganizers(); 
+                if (typeof saveOrganizers === 'function') saveOrganizers();
+                if (typeof renderOrganizers === 'function') renderOrganizers(); 
             }
             
             renderBrandInventory();
-            checkAchievements(); 
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if (typeof checkAchievements === 'function') checkAchievements(); 
+            if(typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 
-            let userId = document.getElementById('userIdDisplay').innerText;
+            let userIdEl = document.getElementById('userIdDisplay');
+            let userId = userIdEl ? userIdEl.innerText : '';
             fetch(`${API_URL}/inventory`, {
                 method: 'POST', body: JSON.stringify({ user_id: userId, marker_id: mId, action: isAdded ? "add" : "remove" })
             }).catch(e => console.error("Ошибка сохранения инвентаря", e));
@@ -1615,18 +1658,20 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
                 let res = await fetch(`${API_URL}/ai_db`);
                 aiDB = await res.json();
                 
-                let userId = document.getElementById('userIdDisplay').innerText;
+                let userIdEl = document.getElementById('userIdDisplay');
+                let userId = userIdEl ? userIdEl.innerText : '';
                 if(userId && userId !== "---") {
                     let invRes = await fetch(`${API_URL}/inventory?user_id=${userId}`);
                     userInventory = await invRes.json();
                 }
             } catch(e) { console.error("Ошибка загрузки БД ИИ или инвентаря", e); }
             
-            if (document.getElementById('userIdDisplay').innerText == "496779756") {
-                document.getElementById('aiAdminPanel').style.display = "block";
-                document.getElementById('adminTaskPanel').style.display = "block"; // Показываем админку заданий
+            let adminPanel = document.getElementById('userIdDisplay');
+            if (adminPanel && adminPanel.innerText == "496779756") {
+                if (document.getElementById('aiAdminPanel')) document.getElementById('aiAdminPanel').style.display = "block";
+                if (document.getElementById('adminTaskPanel')) document.getElementById('adminTaskPanel').style.display = "block"; 
                 loadQuarantine();
-                loadAdminTasks(); // Загружаем задания
+                if (typeof loadAdminTasks === 'function') loadAdminTasks(); // Безопасный вызов админки
             }
         }
 
@@ -1635,6 +1680,7 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             if(!files || files.length === 0) return;
             
             const container = document.getElementById('aiMultipleResultsContainer');
+            if (!container) return;
             container.innerHTML = ''; 
             
             Array.from(files).forEach((file, index) => {
@@ -1679,8 +1725,10 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
 
         function predictColorMultiple(rgb, imgB64, resDiv, index) {
             if(aiDB.length === 0) { resDiv.innerHTML = "<p>База ИИ пуста.</p>"; return; }
-            let searchBrand = document.getElementById('aiSearchBrand').value;
-            let useInventory = document.getElementById('aiUseInventoryOnly').checked;
+            let searchBrandEl = document.getElementById('aiSearchBrand');
+            let searchBrand = searchBrandEl ? searchBrandEl.value : 'All';
+            let useInventoryEl = document.getElementById('aiUseInventoryOnly');
+            let useInventory = useInventoryEl ? useInventoryEl.checked : false;
             
             let filteredDB = aiDB.filter(item => {
                 if (searchBrand !== "All" && item.brand !== searchBrand) return false;
@@ -1727,22 +1775,33 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
         }
 
         function showCorrectionBlock(index) {
-            document.getElementById(`aiFeedbackBlock_${index}`).style.display = 'none';
+            let el = document.getElementById(`aiFeedbackBlock_${index}`);
+            if(el) el.style.display = 'none';
         }
 
         function toggleCorrectionSet(index) {
-            const brand = document.getElementById(`aiBrandSelect_${index}`).value;
-            document.getElementById(`aiCorrectionSet_${index}`).style.display = (brand === 'Tooli-Art') ? 'block' : 'none';
+            const brandEl = document.getElementById(`aiBrandSelect_${index}`);
+            const setEl = document.getElementById(`aiCorrectionSet_${index}`);
+            if(brandEl && setEl) {
+                setEl.style.display = (brandEl.value === 'Tooli-Art') ? 'block' : 'none';
+            }
         }
 
         function toggleAdminSet() {
-            const brand = document.getElementById('adminTrainBrand').value;
-            document.getElementById('adminTrainSet').style.display = (brand === 'Tooli-Art') ? 'block' : 'none';
+            const brandEl = document.getElementById('adminTrainBrand');
+            const setEl = document.getElementById('adminTrainSet');
+            if(brandEl && setEl) {
+                setEl.style.display = (brandEl.value === 'Tooli-Art') ? 'block' : 'none';
+            }
         }
 
         function trainAI(event) {
-            const brand = document.getElementById('adminTrainBrand').value;
-            let num = document.getElementById('adminTrainNum').value.trim();
+            const brandEl = document.getElementById('adminTrainBrand');
+            const numEl = document.getElementById('adminTrainNum');
+            if(!brandEl || !numEl) return;
+            
+            const brand = brandEl.value;
+            let num = numEl.value.trim();
             if(!num) return;
             
             if(brand === 'Tooli-Art') {
@@ -1767,23 +1826,26 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
         }
 
         async function loadQuarantine() {
-            let res = await fetch(`${API_URL}/quarantine_list`);
-            let data = await res.json();
-            let html = data.length === 0 ? "<p>Пусто.</p>" : "";
-            data.forEach(q => {
-                html += `<div class="row-item" style="align-items:center;">
-                    <img src="${q.image}" style="width:50px; border-radius:8px; margin-right:10px; object-fit:cover;"> 
-                    <div style="flex:1;">
-                        <b>${q.brand}</b><br>
-                        <span style="font-size:14px; color:var(--accent);">№ ${q.correct_marker}</span>
-                    </div>
-                    <div style="display:flex; flex-direction:column; gap:5px;">
-                        <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#34c759;" onclick="resolveQ(${q.id}, 'approve')">Одобрить</button>
-                        <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#ff3b30;" onclick="resolveQ(${q.id}, 'reject')">Отвергнуть</button>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('adminQuarantineList').innerHTML = html;
+            try {
+                let res = await fetch(`${API_URL}/quarantine_list`);
+                let data = await res.json();
+                let html = data.length === 0 ? "<p>Пусто.</p>" : "";
+                data.forEach(q => {
+                    html += `<div class="row-item" style="align-items:center;">
+                        <img src="${q.image}" style="width:50px; border-radius:8px; margin-right:10px; object-fit:cover;"> 
+                        <div style="flex:1;">
+                            <b>${q.brand}</b><br>
+                            <span style="font-size:14px; color:var(--accent);">№ ${q.correct_marker}</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:5px;">
+                            <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#34c759;" onclick="resolveQ(${q.id}, 'approve')">Одобрить</button>
+                            <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#ff3b30;" onclick="resolveQ(${q.id}, 'reject')">Отвергнуть</button>
+                        </div>
+                    </div>`;
+                });
+                let qList = document.getElementById('adminQuarantineList');
+                if (qList) qList.innerHTML = html;
+            } catch (e) { console.error(e); }
         }
 
         async function resolveQ(id, action) {
@@ -1791,18 +1853,30 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             initAI(); loadQuarantine();
         }
 
+        // Ключевой блок: обернут в try-catch и проверяет Telegram WebApp, чтобы меню не пропадало из-за фатальных ошибок
         window.onload = () => {
-            const params = new URLSearchParams(window.location.search);
-            document.getElementById('userBalance').innerText = params.get('balance') || 0;
-            
-            const userId = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
-            document.getElementById('userIdDisplay').innerText = userId;
-            
-            loadProfileData(); 
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const balanceEl = document.getElementById('userBalance');
+                if (balanceEl) balanceEl.innerText = params.get('balance') || 0;
+                
+                let tgid = "---";
+                if (typeof tg !== 'undefined' && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    tgid = tg.initDataUnsafe.user.id;
+                }
+                
+                const userId = params.get('id') || tgid || "---";
+                const userIdDisplayEl = document.getElementById('userIdDisplay');
+                if (userIdDisplayEl) userIdDisplayEl.innerText = userId;
+                
+                if (typeof loadProfileData === 'function') loadProfileData(); 
 
-            initAI();
-            renderBooks();
-            renderOrganizers(); 
+                if (typeof initAI === 'function') initAI();
+                if (typeof renderBooks === 'function') renderBooks();
+                if (typeof renderOrganizers === 'function') renderOrganizers(); 
+            } catch (error) {
+                console.error("Ошибка при инициализации окна: ", error);
+            }
         };
     </script>
 </body>

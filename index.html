@@ -1186,9 +1186,6 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             }
         }
         // -- ЛОГИКА ОРГАНАЙЗЕРОВ КОНЕЦ --
-
-
-        let markersData = [], cart = [], markersLoaded = false;
         
         const markerBrandsList = [
             { name: 'GuangNa', total: 408 },
@@ -1774,11 +1771,7 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             initAI();
             renderBooks();
             renderOrganizers(); 
-        };
-        function startBook(id, pages){
-    const img = `img/t${id}.png`;
-    tg.openLink(img);
-}
+        }
     </script>
 </body>
 </html>

@@ -223,14 +223,15 @@
         .brand-btn { background: var(--secondary); border: 2px solid transparent; padding: 12px 5px; border-radius: 12px; font-weight: bold; cursor: pointer; color: var(--text); font-size: 14px; text-align: center; transition: 0.2s; }
         .brand-btn.active { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); color: var(--accent); }
 
-        /* --- НОВЫЕ СТИЛИ ДЛЯ АВАТАРА (Duolingo Style) --- */
-        .profile-hero { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
-        .avatar-container { position: relative; width: 120px; height: 120px; margin-bottom: 10px; }
+        /* --- СТИЛИ ДЛЯ АВАТАРА (Duolingo Style) --- */
+        .profile-hero { display: flex; flex-direction: row; align-items: center; gap: 20px; margin-bottom: 25px; padding: 0 10px; }
+        .avatar-container { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
         .avatar-preview { width: 100%; height: 100%; background: #b6e3f4; border-radius: 50%; overflow: hidden; border: 4px solid var(--accent); box-sizing: border-box; box-shadow: 0 6px 12px rgba(0,122,255,0.2); }
         .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
-        .edit-avatar-btn { position: absolute; bottom: 0; right: -5px; background: var(--bg); border: 2px solid var(--accent); color: var(--accent); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 14px; }
-        .profile-username { font-size: 22px; font-weight: 800; margin: 0; color: var(--text); }
-        .profile-id { font-size: 13px; color: var(--gray); margin-top: 4px; font-weight: 600; }
+        .edit-avatar-btn { position: absolute; bottom: -5px; right: -5px; background: var(--bg); border: 2px solid var(--accent); color: var(--accent); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 12px; }
+        .profile-info-right { display: flex; flex-direction: column; justify-content: center; flex-grow: 1; }
+        .profile-username { font-size: 20px; font-weight: 800; margin: 0; color: var(--text); }
+        .profile-status { font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--gray); padding: 4px 10px; background: var(--secondary); border-radius: 12px; display: inline-block; width: fit-content; }
 
         .avatar-editor { display: none; background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid rgba(128,128,128,0.2); width: 100%; box-sizing: border-box; margin-bottom: 20px; animation: slideDown 0.3s ease-out; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -249,8 +250,22 @@
         .achieve-icon { font-size: 32px; margin-bottom: 8px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
         .achieve-title { font-size: 11px; font-weight: 800; line-height: 1.2; color: var(--text); }
         
-        /* Модалка Достижения (Duolingo Style) */
         .achievement-icon-large { font-size: 60px; margin-bottom: 10px; filter: drop-shadow(0 4px 10px rgba(241,196,15,0.4)); }
+
+        /* Вкладки профиля */
+        .profile-tabs-nav { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .profile-tabs-nav::-webkit-scrollbar { display: none; }
+        .p-tab-btn { background: var(--secondary); color: var(--text); border: none; padding: 10px 16px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .p-tab-btn.active { background: var(--accent); color: white; }
+        .p-tab-content { display: none; animation: slideDown 0.3s ease-out; }
+        .p-tab-content.active { display: block; }
+        
+        /* Задания */
+        .quest-card { background: var(--card-bg); border: 1px solid rgba(128,128,128,0.2); padding: 15px; border-radius: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .quest-header { display: flex; justify-content: space-between; align-items: center; }
+        .quest-status-badge { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--accent); background: rgba(0,122,255,0.1); padding: 4px 8px; border-radius: 8px; }
+        .quest-xp { font-weight: bold; color: var(--gold); font-size: 14px; }
+        .quest-title { font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--text); }
     </style>
 </head>
 <body>
@@ -334,8 +349,10 @@
                 </div>
                 <div class="edit-avatar-btn" onclick="toggleAvatarEditor()"><i class="fas fa-pen"></i></div>
             </div>
-            <h2 class="profile-username" id="displayUsername">@username</h2>
-            <div class="profile-id">ID: <span id="userIdDisplay">---</span></div>
+            <div class="profile-info-right">
+                <h2 class="profile-username" id="displayUsername">@username</h2>
+                <div class="profile-status" id="userStatusDisplay">Без статуса</div>
+            </div>
         </div>
         
         <div class="avatar-editor" id="avatarEditorBlock">
@@ -371,63 +388,84 @@
             <button class="buy-btn rounded-pill" style="margin-top: 10px;" onclick="toggleAvatarEditor()">Готово</button>
         </div>
 
-        <div class="category-title">Мои достижения</div>
-        <div class="achievements-grid" id="achievementsGrid"></div>
-
-        <div class="balance-card">
-            <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
-            <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
-            <p style="margin:0; font-weight: 500; margin-bottom: 10px;">ашетиков накоплено</p>
-            <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:8px;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
+        <div class="profile-tabs-nav">
+            <button class="p-tab-btn active" onclick="switchProfileTab('achievements', this)">Достижения</button>
+            <button class="p-tab-btn" onclick="switchProfileTab('loyalty', this)">Лояльность</button>
+            <button class="p-tab-btn" onclick="switchProfileTab('quests', this)">Задания ✨</button>
         </div>
 
-        <div id="rewards-section">
-            <div class="category-title">Магазин наград</div>
-            <div class="reward-grid">
-                <div class="reward-card">
-                    <img src="bonusi/b1.png">
-                    <div class="reward-info"><b>Книжная закладка Hachette (любая)</b></div>
-                    <button class="spend-btn" onclick="buyReward('Закладка Hachette', 750)">750 <i class="fas fa-book-open"></i></button>
-                </div>
-                <div class="reward-card">
-                    <img src="bonusi/b2.png">
-                    <div class="reward-info"><b>Petites Poupees</b></div>
-                    <button class="spend-btn" onclick="buyReward('Petites Poupees', 950)">950 <i class="fas fa-book-open"></i></button>
-                </div>
-                <div class="reward-card">
-                    <img src="bonusi/b3.png">
-                    <div class="reward-info"><b>Трекер от Hachette</b></div>
-                    <button class="spend-btn" onclick="buyReward('Трекер Hachette', 950)">950 <i class="fas fa-book-open"></i></button>
-                </div>
-                <div class="reward-card">
-                    <img src="bonusi/b4.png">
-                    <div class="reward-info"><b>Спиртовая раскраска (любая)</b></div>
-                    <button class="spend-btn" onclick="buyReward('Спиртовая раскраска', 1250)">1250 <i class="fas fa-book-open"></i></button>
-                </div>
-                <div class="reward-card" style="grid-column: span 2;">
-                    <img src="bonusi/b5.png" style="height: 140px;">
-                    <div class="reward-info"><b>Hachette Coloriages (А4 том любой)</b></div>
-                    <button class="spend-btn" onclick="buyReward('Hachette Coloriages A4', 1500)">1500 <i class="fas fa-book-open"></i></button>
-                </div>
+        <div id="tab-achievements" class="p-tab-content active">
+            <div class="category-title" style="margin-top: 0;">Мои достижения</div>
+            <div class="achievements-grid" id="achievementsGrid"></div>
+        </div>
+
+        <div id="tab-loyalty" class="p-tab-content">
+            <div class="balance-card" style="margin-top:0;">
+                <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
+                <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
+                <p style="margin:0; font-weight: 500; margin-bottom: 10px;">ашетиков накоплено</p>
+                <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:8px;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
             </div>
-            <button class="buy-btn" style="background:none; color:var(--gray); margin-top:15px; font-size: 14px;" onclick="toggleRewards()">← Назад к лояльности</button>
+
+            <div id="rewards-section">
+                <div class="category-title">Магазин наград</div>
+                <div class="reward-grid">
+                    <div class="reward-card">
+                        <img src="bonusi/b1.png">
+                        <div class="reward-info"><b>Книжная закладка Hachette (любая)</b></div>
+                        <button class="spend-btn" onclick="buyReward('Закладка Hachette', 750)">750 <i class="fas fa-book-open"></i></button>
+                    </div>
+                    <div class="reward-card">
+                        <img src="bonusi/b2.png">
+                        <div class="reward-info"><b>Petites Poupees</b></div>
+                        <button class="spend-btn" onclick="buyReward('Petites Poupees', 950)">950 <i class="fas fa-book-open"></i></button>
+                    </div>
+                    <div class="reward-card">
+                        <img src="bonusi/b3.png">
+                        <div class="reward-info"><b>Трекер от Hachette</b></div>
+                        <button class="spend-btn" onclick="buyReward('Трекер Hachette', 950)">950 <i class="fas fa-book-open"></i></button>
+                    </div>
+                    <div class="reward-card">
+                        <img src="bonusi/b4.png">
+                        <div class="reward-info"><b>Спиртовая раскраска (любая)</b></div>
+                        <button class="spend-btn" onclick="buyReward('Спиртовая раскраска', 1250)">1250 <i class="fas fa-book-open"></i></button>
+                    </div>
+                    <div class="reward-card" style="grid-column: span 2;">
+                        <img src="bonusi/b5.png" style="height: 140px;">
+                        <div class="reward-info"><b>Hachette Coloriages (А4 том любой)</b></div>
+                        <button class="spend-btn" onclick="buyReward('Hachette Coloriages A4', 1500)">1500 <i class="fas fa-book-open"></i></button>
+                    </div>
+                </div>
+                <button class="buy-btn" style="background:none; color:var(--gray); margin-top:15px; font-size: 14px;" onclick="toggleRewards()">← Назад к инфо</button>
+            </div>
+
+            <div id="loyalty-info">
+                <div class="category-title" style="margin-top:25px;">Программа лояльности</div>
+                <div class="row-item"><span>Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
+                <div class="row-item"><span>Бонус за отзыв</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
+                <div class="row-item"><span>Бонус за покупку от 3000₽</span><b class="gold-book">+20 <i class="fas fa-book-open"></i></b></div>
+                <div class="row-item">
+                    <div style="display:flex; flex-direction:column;">
+                        <span>Бонусы за крупные покупки</span>
+                        <small style="color:var(--gray); font-size:11px;">от 5к - 30 / от 7.5к - 40 / от 10к - 50</small>
+                    </div>
+                    <b class="gold-book"><i class="fas fa-book-open"></i></b>
+                </div>
+                <div class="row-item"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
+                <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
+            </div>
         </div>
 
-        <div id="loyalty-info">
-            <div class="category-title" style="margin-top:25px;">Программа лояльности</div>
-            <div class="row-item"><span>Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>Бонус за отзыв</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>Бонус за покупку от 3000₽</span><b class="gold-book">+20 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item">
-                <div style="display:flex; flex-direction:column;">
-                    <span>Бонусы за крупные покупки</span>
-                    <small style="color:var(--gray); font-size:11px;">от 5к - 30 / от 7.5к - 40 / от 10к - 50</small>
+        <div id="tab-quests" class="p-tab-content">
+            <div class="category-title" style="margin-top: 0;">Еженедельные квесты</div>
+            <div id="questsListContainer">
                 </div>
-                <b class="gold-book"><i class="fas fa-book-open"></i></b>
-            </div>
-            <div class="row-item"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
         </div>
+
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <div class="profile-id" style="opacity: 0.5; font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
+        </div>
+
     </div>
 
     <div id="achievementModal" class="custom-modal-overlay">
@@ -574,8 +612,10 @@
         tg.ready();
         tg.expand();
 
-        // --- ЛОГИКА АВАТАРОВ И ДОСТИЖЕНИЙ (DiceBear Duolingo Style) ---
+        // --- ЛОГИКА АВАТАРОВ, ПРОФИЛЯ И ЗАДАНИЙ ---
         let isEditingAvatar = false;
+        let currentUserStatus = "Без статуса"; // Дефолтный статус
+
         let userProfileData = {
             avatar: { seed: 'Felix', top: 'shortHair', clothing: 'hoodie', accessories: 'blank' },
             achievements: [
@@ -587,13 +627,38 @@
             styleChangesCount: 0
         };
 
+        // База еженедельных заданий, привязанных к статусу пользователя
+        const weeklyQuestsDB = {
+            "Без статуса": [
+                { id: "q_newbie_1", title: "Заполните свой профиль", xp: 10, desc: "Отредактируйте аватар и исследуйте интерфейс." }
+            ],
+            "Проспиртованный": [
+                { id: "q_alco_1", title: "Раскрасить 1 картинку спиртовыми маркерами", xp: 25, desc: "Отправьте фото готовой работы администратору на проверку." },
+                { id: "q_alco_2", title: "Добавить 5 маркеров в органайзер", xp: 15, desc: "Разложите свои маркеры по ячейкам." }
+            ],
+            "Акварелист": [
+                { id: "q_aqua_1", title: "Смешать 3 оттенка акварели", xp: 20, desc: "Создайте градиент и отправьте фото в чат." }
+            ]
+        };
+
+        function switchProfileTab(tabId, btnElem) {
+            // Переключаем активные кнопки
+            document.querySelectorAll('.p-tab-btn').forEach(b => b.classList.remove('active'));
+            btnElem.classList.add('active');
+
+            // Переключаем контент
+            document.querySelectorAll('.p-tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        }
+
         function loadProfileData() {
-            const saved = localStorage.getItem('user_profile_data_v2'); // Изменили ключ, чтобы не конфликтовало со старой версией
+            const saved = localStorage.getItem('user_profile_data_v2'); 
             if (saved) {
                 userProfileData = JSON.parse(saved);
-                // Защита от старых форматов
                 if (!userProfileData.avatar.top) userProfileData.avatar = { seed: 'User', top: 'shortHair', clothing: 'hoodie', accessories: 'blank' };
-                if (!userProfileData.achievements[0].desc) { // Если нет описания - сбросим ачивки к новому формату
+                if (!userProfileData.achievements[0].desc) { 
                    userProfileData.achievements = [
                         { id: 'first_steps', title: 'Первые шаги', icon: '🐣', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
                         { id: 'stylist', title: 'Стиляга', icon: '🕶', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: userProfileData.achievements.find(a=>a.id==='stylist')?.unlocked || false },
@@ -603,11 +668,9 @@
                 }
             }
             
-            // Задаем уникальный сид (ИД пользователя) чтобы лицо у каждого было свое, если не было сохранено
             const userId = tg.initDataUnsafe?.user?.id || "User";
             if (!saved) userProfileData.avatar.seed = userId.toString();
 
-            // Восстанавливаем кнопки редактора
             document.querySelectorAll('.avatar-editor .editor-btn').forEach(btn => btn.classList.remove('active'));
             
             updateAvatarImage();
@@ -644,7 +707,6 @@
         function updateAvatarImage() {
             const avatarImg = document.getElementById('dicebear-avatar');
             const { seed, top, clothing, accessories } = userProfileData.avatar;
-            // Используем Avataaars API от DiceBear. backgroundColor делает фон приятным синим, как в Дуолинго
             const url = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=${top}&clothing=${clothing}&accessories=${accessories}&backgroundColor=b6e3f4`;
             avatarImg.src = url;
         }
@@ -678,14 +740,12 @@
         function checkAchievements() {
             let changed = false;
             
-            // Ачивка за стиль
             const stylist = userProfileData.achievements.find(a => a.id === 'stylist');
             if (stylist && !stylist.unlocked && userProfileData.styleChangesCount >= 5) {
                 stylist.unlocked = true; changed = true;
                 if(tg.showAlert) tg.showAlert("🏆 Открыто достижение: Стиляга!");
             }
 
-            // Ачивка за баланс
             const currentBalance = parseInt(document.getElementById('userBalance').innerText || "0");
             const rich = userProfileData.achievements.find(a => a.id === 'rich');
             if (rich && !rich.unlocked && currentBalance >= 500) {
@@ -693,7 +753,6 @@
                  if(tg.showAlert) tg.showAlert("🏆 Открыто достижение: Богатей!");
             }
 
-            // Ачивка за инвентарь маркеров
             const collector = userProfileData.achievements.find(a => a.id === 'collector');
             if (collector && !collector.unlocked && userInventory && userInventory.length >= 10) {
                  collector.unlocked = true; changed = true;
@@ -705,7 +764,38 @@
                 localStorage.setItem('user_profile_data_v2', JSON.stringify(userProfileData));
             }
         }
-        // --- КОНЕЦ ЛОГИКИ АВАТАРОВ ---
+
+        function renderQuests() {
+            const container = document.getElementById('questsListContainer');
+            let quests = weeklyQuestsDB[currentUserStatus] || weeklyQuestsDB["Без статуса"];
+
+            if (!quests || quests.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--gray); padding: 20px;">Нет заданий для вашего статуса.</div>`;
+                return;
+            }
+
+            container.innerHTML = quests.map(quest => `
+                <div class="quest-card">
+                    <div class="quest-header">
+                        <span class="quest-status-badge">Статус: ${currentUserStatus}</span>
+                        <span class="quest-xp">+${quest.xp} XP</span>
+                    </div>
+                    <div class="quest-title">${quest.title}</div>
+                    <div style="font-size: 12px; color: var(--gray);">${quest.desc}</div>
+                    <button class="buy-btn" style="padding: 10px; border-radius: 12px; font-size: 13px; margin-top: 5px;" onclick="sendQuestReport('${quest.id}')">Отправить отчет</button>
+                </div>
+            `).join('');
+        }
+
+        function sendQuestReport(questId) {
+            tg.showConfirm("Отправить отчет о выполнении администратору?", (confirm) => {
+                if (confirm) {
+                    tg.showAlert("✅ Отчет успешно отправлен! Администратор начислит XP после проверки.");
+                    // Здесь в будущем будет отправка данных боту (tg.sendData)
+                }
+            });
+        }
+        // --- КОНЕЦ ЛОГИКИ АВАТАРОВ И ЗАДАНИЙ ---
 
         // -- ЛОГИКА ОРГАНАЙЗЕРОВ НАЧАЛО --
         let organizers = JSON.parse(localStorage.getItem('marker_organizers')) || [];
@@ -1524,7 +1614,12 @@
             const params = new URLSearchParams(window.location.search);
             document.getElementById('userBalance').innerText = params.get('balance') || 0;
             
-            // Вывод ID и Username в шапке профиля
+            // Если в URL передан статус от админа (например, ?status=Проспиртованный)
+            if (params.get('status')) {
+                currentUserStatus = params.get('status');
+            }
+            document.getElementById('userStatusDisplay').innerText = currentUserStatus;
+            
             const userId = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
             document.getElementById('userIdDisplay').innerText = userId;
             
@@ -1539,9 +1634,9 @@
                 document.getElementById('displayUsername').innerText = `ID: ${userId}`;
             }
 
-            // Загружаем профиль, аватара и достижения
             loadProfileData(); 
-            checkAchievements(); // Проверяем ачивку за баланс сразу при загрузке
+            checkAchievements(); 
+            renderQuests();
 
             initAI();
             renderBooks();

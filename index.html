@@ -354,14 +354,14 @@ text-transform: uppercase;
   <div id="profile" class="page">
     <div class="header" style="text-align: center;">Профиль</div>
 
-    <div class="profile-hero" style="display: flex; align-items: flex-start; gap: 20px; padding: 15px; margin-bottom: 10px;">
+    <div class="profile-hero" style="display: flex; align-items: center; gap: 20px; padding: 15px; margin-bottom: 10px;">
         <div class="avatar-container" style="flex-shrink: 0;">
-            <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()" style="width: 85px; height: 85px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent); cursor: pointer;">
+            <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()" style="width: 85px; height: 85px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent); cursor: pointer; position: relative;">
                 <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
         </div>
         
-        <div class="profile-info-holder" style="padding-top: 5px;">
+        <div class="profile-info-holder">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <h2 class="profile-username" id="displayUsername" style="margin: 0; font-size: 22px;">Без имени</h2>
                 <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
@@ -370,11 +370,11 @@ text-transform: uppercase;
         </div>
     </div>
 
-    <div class="avatar-editor" id="avatarEditorBlock" style="display:none; margin: 0 15px 20px; background: var(--secondary); padding: 15px; border-radius: 20px;">
+    <div class="avatar-editor" id="avatarEditorBlock" style="display:none; margin: 0 15px 20px; background: var(--secondary); padding: 15px; border-radius: 20px; animation: slideDown 0.3s ease-out;">
         <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
         <div style="text-align: center; margin-bottom: 15px;">
             <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
-            <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
+            <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px; width: auto;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
         </div>
         <div class="avatar-grid-presets" id="avatarPresetsGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
         <button class="buy-btn rounded-pill" style="margin-top: 15px;" onclick="toggleAvatarEditor()">Готово</button>
@@ -387,32 +387,32 @@ text-transform: uppercase;
             
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
                 <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:12px;" onclick="toggleAccordion('rewards-section')">Потратить ашетики 🎁</button>
-                <div id="rewards-section" style="display:none; background: var(--bg); border-radius: 12px; padding: 15px; margin-top: 5px; text-align: left;">
+                <div id="rewards-section" style="display:none; background: var(--bg); border-radius: 12px; padding: 15px; margin-top: 5px; text-align: left; color: var(--text);">
                     <div class="reward-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div class="reward-card-mini" style="background: var(--secondary); padding: 10px; border-radius: 10px; text-align: center;">
                             <img src="bonusi/b1.png" style="width: 50px; height: 50px; object-fit: contain;">
-                            <div style="font-size: 10px; color: var(--text); margin: 5px 0; font-weight: bold; height: 30px;">Закладка Hachette</div>
-                            <button class="spend-btn" style="width: 100%; font-size: 11px;" onclick="buyReward('Закладка', 750)">750 <i class="fas fa-book-open"></i></button>
+                            <div style="font-size: 10px; margin: 5px 0; font-weight: bold; height: 30px;">Закладка Hachette</div>
+                            <button class="spend-btn" style="width: 100%; font-size: 11px; padding: 5px;" onclick="buyReward('Закладка', 750)">750 <i class="fas fa-book-open"></i></button>
                         </div>
                         <div class="reward-card-mini" style="background: var(--secondary); padding: 10px; border-radius: 10px; text-align: center;">
                             <img src="bonusi/b4.png" style="width: 50px; height: 50px; object-fit: contain;">
-                            <div style="font-size: 10px; color: var(--text); margin: 5px 0; font-weight: bold; height: 30px;">Раскраска</div>
-                            <button class="spend-btn" style="width: 100%; font-size: 11px;" onclick="buyReward('Раскраска', 1250)">1250 <i class="fas fa-book-open"></i></button>
+                            <div style="font-size: 10px; margin: 5px 0; font-weight: bold; height: 30px;">Раскраска</div>
+                            <button class="spend-btn" style="width: 100%; font-size: 11px; padding: 5px;" onclick="buyReward('Раскраска', 1250)">1250 <i class="fas fa-book-open"></i></button>
                         </div>
                     </div>
                 </div>
 
                 <button class="buy-btn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.5); border-radius:12px; padding:12px;" onclick="toggleAccordion('loyalty-info')">Заработать ашетики 🚀</button>
-                <div id="loyalty-info" style="display:none; background: var(--bg); border-radius: 12px; padding: 15px; margin-top: 5px; text-align: left; color: var(--text);">
-                    <div class="row-item" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 0; display: flex; justify-content: space-between;"><span>Приветственный бонус</span><b>+100</b></div>
-                    <div class="row-item" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 0; display: flex; justify-content: space-between;"><span>Отзыв</span><b>+25</b></div>
-                    <div class="row-item" style="padding: 8px 0; display: flex; justify-content: space-between;"><span>1 место в челлендже</span><b>+150</b></div>
+                <div id="loyalty-info" style="display:none; background: var(--bg); border-radius: 12px; padding: 15px; margin-top: 5px; text-align: left; color: var(--text); font-size: 13px;">
+                    <div style="display:flex; justify-content:space-between; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05);"><span>Приветственный бонус</span><b>+100</b></div>
+                    <div style="display:flex; justify-content:space-between; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05);"><span>Отзыв</span><b>+25</b></div>
+                    <div style="display:flex; justify-content:space-between; padding: 8px 0;"><span>1 место в челлендже</span><b>+150</b></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="category-title" style="text-align: center;">Задания</div>
+    <div class="category-title" style="text-align: center; margin-bottom: 15px;">Задания</div>
     <div id="questsContainer" style="padding: 0 15px; margin-bottom: 25px;">
         <div class="quest-item" style="background: var(--secondary); padding: 15px; border-radius: 15px; margin-bottom: 10px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: bold;">
@@ -420,7 +420,7 @@ text-transform: uppercase;
                 <span id="q-progress-val">0/5</span>
             </div>
             <div style="width: 100%; height: 8px; background: #ddd; border-radius: 4px; overflow: hidden;">
-                <div id="q-progress-bar" style="width: 20%; height: 100%; background: var(--accent);"></div>
+                <div id="q-progress-bar" style="width: 0%; height: 100%; background: var(--accent); transition: 0.3s;"></div>
             </div>
         </div>
     </div>
@@ -428,7 +428,7 @@ text-transform: uppercase;
     <div style="padding: 0 15px; margin-bottom: 30px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <div class="category-title" style="margin:0;">Достижения</div>
-            <button onclick="openTop3Selector()" style="background: none; border: none; color: var(--accent); font-weight: bold; font-size: 12px;">Выбрать ТОП-3</button>
+            <button onclick="openTop3Selector()" style="background: none; border: none; color: var(--accent); font-weight: bold; font-size: 12px; cursor: pointer;">Выбрать ТОП-3</button>
         </div>
         
         <div id="top3Achievements" style="display: flex; justify-content: center; gap: 15px; background: var(--secondary); padding: 15px; border-radius: 18px; margin-bottom: 15px;">
@@ -445,126 +445,170 @@ text-transform: uppercase;
 </div>
 
 <script>
-    // --- ПЕРЕМЕННЫЕ И ДАННЫЕ ---
-    let userProfileData = {
-        customName: null,
-        customStatus: null,
-        avatar: { seed: 'av1.jpg', customImage: null },
-        achievements: [
-            { id: 'hello_name', title: 'Hello, my name is', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach1.png', desc: 'Смените имя в профиле.', unlocked: false },
-            { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach2.png', desc: 'Измените стиль 5 раз.', unlocked: false },
-            { id: 'gold_master', title: 'Золотой статус', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach3.png', desc: 'Достигните золотого уровня в любом пути.', unlocked: false }
-        ],
-        top3: [null, null, null],
-        styleChangesCount: 0,
-        statusProgress: { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 }
+// --- ОБЯЗАТЕЛЬНО: Проверь, что этот скрипт ОДИН и находится в конце файла ---
+
+let userProfileData = {
+    customName: null,
+    customStatus: null,
+    avatar: { seed: 'av1.jpg', customImage: null },
+    achievements: [
+        { id: 'hello_name', title: 'Hello, my name is', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach1.png', desc: 'Вы получили это за смену имени!', unlocked: false },
+        { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach2.png', desc: 'Измените аватар 5 раз.', unlocked: false },
+        { id: 'first_steps', title: 'Первые шаги', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach3.png', desc: 'Старт в приложении.', unlocked: true }
+    ],
+    top3: [null, null, null],
+    statusProgress: { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 }
+};
+
+const avatarBaseURL = "https://raw.githubusercontent.com/HachetteLittleHeroes/ColoriagesWithAI/main/avatars/";
+const avatarPresets = ["av1.jpg", "av2.jpg", "av3.jpg", "av4.jpg", "av5.jpg", "av6.jpg", "av7.jpg", "av8.jpg"];
+
+// 1. ЛОГИКА ИМЕНИ И СТАТУСА (ИЗ ТВОИХ СКРИНШОТОВ)
+function updateNameDisplay() {
+    const displayEl = document.getElementById('displayUsername');
+    if (userProfileData.customName) {
+        displayEl.innerText = userProfileData.customName;
+    } else {
+        const username = tg.initDataUnsafe?.user?.username;
+        const firstName = tg.initDataUnsafe?.user?.first_name;
+        displayEl.innerText = username ? `@${username}` : (firstName || "Без имени");
+    }
+}
+
+function changeUserName() {
+    const current = document.getElementById('displayUsername').innerText;
+    const name = prompt("Введите ваше имя:", current === "Без имени" ? "" : current);
+    if (name !== null && name.trim() !== "") {
+        userProfileData.customName = name.trim();
+        unlockAchievement('hello_name'); // Выдаем достижение
+        saveProfileData();
+        updateNameDisplay();
+        if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    }
+}
+
+function hasGoldStatus() {
+    // Проверяем, есть ли хотя бы один статус 3 уровня (Золотой)
+    // Уровень 3 обычно соответствует значению прогресса >= 50 или как у тебя в логике
+    return Object.values(userProfileData.statusProgress).some(level => level >= 3); 
+}
+
+function changeCustomStatus() {
+    if (!hasGoldStatus()) {
+        alert("🔒 Смена статуса доступна только обладателям Золотого статуса!");
+        return;
+    }
+    const status = prompt("Ваш новый статус:", userProfileData.customStatus || "");
+    if (status !== null) {
+        userProfileData.customStatus = status.trim();
+        saveProfileData();
+        document.getElementById('userStatusDisplay').innerText = userProfileData.customStatus;
+    }
+}
+
+// 2. ГАРМОШКА БОНУСОВ
+function toggleAccordion(id) {
+    const el = document.getElementById(id);
+    const isOpen = el.style.display === 'block';
+    document.getElementById('rewards-section').style.display = 'none';
+    document.getElementById('loyalty-info').style.display = 'none';
+    el.style.display = isOpen ? 'none' : 'block';
+}
+
+// 3. АВАТАРЫ
+function toggleAvatarEditor() {
+    const block = document.getElementById('avatarEditorBlock');
+    block.style.display = (block.style.display === 'none') ? 'block' : 'none';
+    if(block.style.display === 'block') renderAvatarPresets();
+}
+
+function renderAvatarPresets() {
+    const grid = document.getElementById('avatarPresetsGrid');
+    grid.innerHTML = avatarPresets.map(img => `
+        <div onclick="selectPreset('${img}')" style="cursor:pointer; border-radius:50%; overflow:hidden; border: 2px solid ${userProfileData.avatar.seed === img ? 'var(--accent)' : 'transparent'}">
+            <img src="${avatarBaseURL}${img}" style="width:100%; display:block;">
+        </div>
+    `).join('');
+}
+
+function selectPreset(img) {
+    userProfileData.avatar.seed = img;
+    userProfileData.avatar.customImage = null;
+    saveProfileData();
+    updateAvatarImage();
+    renderAvatarPresets();
+}
+
+function handleCustomAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        userProfileData.avatar.customImage = e.target.result;
+        saveProfileData();
+        updateAvatarImage();
+        toggleAvatarEditor();
     };
+    reader.readAsDataURL(file);
+}
 
-    // --- ФУНКЦИИ ПРОФИЛЯ ---
+function updateAvatarImage() {
+    const imgEl = document.getElementById('user-avatar');
+    imgEl.src = userProfileData.avatar.customImage || (avatarBaseURL + userProfileData.avatar.seed);
+}
 
-    function changeUserName() {
-        const name = prompt("Введите ваше имя:", userProfileData.customName || "");
-        if (name && name.trim() !== "") {
-            userProfileData.customName = name.trim();
-            // Выдаем достижение
-            unlockAchievement('hello_name');
-            saveProfileData();
-            updateUI();
-        }
-    }
-
-    function changeCustomStatus() {
-        // Проверка на Золотой Уровень (например, если XP в любом пути >= 300)
-        const isGold = Object.values(userProfileData.statusProgress).some(val => val >= 300);
-        
-        if (!isGold) {
-            alert("🔒 Установка статуса доступна только пользователям с Золотым Уровнем!");
-            return;
-        }
-
-        const status = prompt("Ваш новый статус:", userProfileData.customStatus || "");
-        if (status !== null) {
-            userProfileData.customStatus = status.trim();
-            saveProfileData();
-            updateUI();
-        }
-    }
-
-    function toggleAccordion(id) {
-        const el = document.getElementById(id);
-        const isOpen = el.style.display === 'block';
-        
-        // Закрываем все
-        document.getElementById('rewards-section').style.display = 'none';
-        document.getElementById('loyalty-info').style.display = 'none';
-        
-        // Открываем нужное
-        el.style.display = isOpen ? 'none' : 'block';
-        if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-    }
-
-    function unlockAchievement(id) {
-        const ach = userProfileData.achievements.find(a => a.id === id);
-        if (ach && !ach.unlocked) {
-            ach.unlocked = true;
-            alert(`🎉 Достижение получено: ${ach.title}`);
-        }
-    }
-
-    function toggleAvatarEditor() {
-        const block = document.getElementById('avatarEditorBlock');
-        block.style.display = (block.style.display === 'none') ? 'block' : 'none';
-    }
-
-    function updateUI() {
-        document.getElementById('displayUsername').innerText = userProfileData.customName || "Без имени";
-        document.getElementById('userStatusDisplay').innerText = userProfileData.customStatus || "Без статуса";
-        
-        const imgEl = document.getElementById('user-avatar');
-        imgEl.src = userProfileData.avatar.customImage || (avatarBaseURL + userProfileData.avatar.seed);
-        
+// 4. ДОСТИЖЕНИЯ
+function unlockAchievement(id) {
+    const ach = userProfileData.achievements.find(a => a.id === id);
+    if (ach && !ach.unlocked) {
+        ach.unlocked = true;
+        saveProfileData();
         renderAchievementsCarousel();
-        renderTop3Slots();
     }
+}
 
-    function renderAchievementsCarousel() {
-        const container = document.getElementById('achievementsCarousel');
-        container.innerHTML = userProfileData.achievements.map(ach => `
-            <div class="ach-card" style="min-width: 100px; text-align: center; opacity: ${ach.unlocked ? '1' : '0.3'}; scroll-snap-align: center;" onclick="alert('${ach.title}: ${ach.desc}')">
-                <img src="${ach.img}" style="width: 60px; height: 60px;">
-                <div style="font-size: 10px; font-weight: bold; margin-top: 5px; color: var(--text);">${ach.title}</div>
-            </div>
-        `).join('');
+function renderAchievementsCarousel() {
+    const container = document.getElementById('achievementsCarousel');
+    container.innerHTML = userProfileData.achievements.map(ach => `
+        <div class="ach-card" style="min-width: 100px; text-align: center; opacity: ${ach.unlocked ? '1' : '0.3'}; flex-shrink:0;">
+            <img src="${ach.img}" style="width: 60px; height: 60px; border-radius:10px;">
+            <div style="font-size: 10px; font-weight: bold; margin-top: 5px; color: var(--text);">${ach.title}</div>
+        </div>
+    `).join('');
+}
+
+// 5. ЗАГРУЗКА И СОХРАНЕНИЕ
+function saveProfileData() {
+    localStorage.setItem('user_profile_data_v4', JSON.stringify(userProfileData));
+}
+
+function loadProfileData() {
+    const saved = localStorage.getItem('user_profile_data_v4');
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        userProfileData = {...userProfileData, ...parsed};
     }
-
-    function renderTop3Slots() {
-        const container = document.getElementById('top3Achievements');
-        container.innerHTML = userProfileData.top3.map(achIdx => {
-            if (achIdx === null) return `<div class="top-slot" style="width: 50px; height: 50px; background: rgba(0,0,0,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center;">❓</div>`;
-            const ach = userProfileData.achievements[achIdx];
-            return `<img src="${ach.img}" style="width: 50px; height: 50px; border-radius: 50%;">`;
-        }).join('');
+    updateNameDisplay();
+    updateAvatarImage();
+    renderAchievementsCarousel();
+    document.getElementById('userStatusDisplay').innerText = userProfileData.customStatus || "Без статуса";
+    if (tg.initDataUnsafe?.user) {
+        document.getElementById('userIdDisplay').innerText = tg.initDataUnsafe.user.id;
     }
+}
 
-    // Сохранение и загрузка
-    function saveProfileData() {
-        localStorage.setItem('user_profile_data_v4', JSON.stringify(userProfileData));
-    }
-
-    function loadProfileData() {
-        const saved = localStorage.getItem('user_profile_data_v4');
-        if (saved) userProfileData = JSON.parse(saved);
-        updateUI();
-    }
-
-    window.onload = loadProfileData;
+window.addEventListener('DOMContentLoaded', loadProfileData);
 </script>
 
 <style>
-    .top-slot { font-size: 20px; color: var(--gray); }
-    .ach-card { flex-shrink: 0; transition: 0.3s; }
-    #achievementsCarousel::-webkit-scrollbar { display: none; }
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.ach-card { transition: 0.3s; }
+#achievementsCarousel::-webkit-scrollbar { display: none; }
 </style>
+
 
         // --- ЛОГИКА КАСТОМНОГО ИМЕНИ И СТАТУСА ---
         function updateNameDisplay() {

@@ -231,7 +231,7 @@
         .edit-avatar-btn { position: absolute; bottom: -5px; right: -5px; background: var(--bg); border: 2px solid var(--accent); color: var(--accent); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 12px; }
         .profile-info-right { display: flex; flex-direction: column; justify-content: center; flex-grow: 1; }
         .profile-username { font-size: 20px; font-weight: 800; margin: 0; color: var(--text); }
-        .profile-status { font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--gray); padding: 4px 10px; background: var(--secondary); border-radius: 12px; display: inline-block; width: fit-content; }
+        .profile-status { font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--gray); padding: 4px 10px; background: var(--secondary); border-radius: 12px; display: inline-block; width: fit-content; cursor: pointer; }
 
         .avatar-editor { display: none; background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid rgba(128,128,128,0.2); width: 100%; box-sizing: border-box; margin-bottom: 20px; animation: slideDown 0.3s ease-out; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -351,8 +351,11 @@
                 <div class="edit-avatar-btn" onclick="toggleAvatarEditor()"><i class="fas fa-pen"></i></div>
             </div>
             <div class="profile-info-right">
-                <h2 class="profile-username" id="displayUsername">@username</h2>
-                <div class="profile-status" id="userStatusDisplay">Без статуса</div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <h2 class="profile-username" id="displayUsername">Без имени</h2>
+                    <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
+                </div>
+                <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()">Без статуса</div>
             </div>
         </div>
         
@@ -584,12 +587,11 @@
 
         // --- ЛОГИКА АВАТАРОВ, ПРОФИЛЯ И СТАТУСОВ ---
         let isEditingAvatar = false;
-        let currentUserStatus = "Без статуса"; // Дефолтный статус
 
         // Пресеты аватаров (готовые)
         const avatarPresets = ['Felix', 'Aneka', 'Mimi', 'Jasper', 'Ryker', 'Leo', 'Zoe', 'Max'];
 
-        // База путей развития статусов (убрали иконки из бейджей, оставили только логику уровней)
+        // База путей развития статусов 
         const statusPaths = {
             "Спиртесса": {
                 title: "Спиртесса",
@@ -618,7 +620,9 @@
         };
 
         let userProfileData = {
-            avatar: { seed: 'Felix' }, // Теперь просто один seed
+            customName: null,
+            customStatus: null,
+            avatar: { seed: 'Felix' }, 
             achievements: [
                 { id: 'first_steps', title: 'Первые шаги', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach1.png', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
                 { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach2.png', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: false },
@@ -654,12 +658,71 @@
             renderAchievements();
             renderStatusAwards();
             renderStatusQuests();
+            updateNameDisplay();
+            updateStatusDisplay();
         }
 
         function saveProfileData() {
             localStorage.setItem('user_profile_data_v4', JSON.stringify(userProfileData));
             checkAchievements();
         }
+
+        // --- ЛОГИКА КАСТОМНОГО ИМЕНИ И СТАТУСА ---
+        function updateNameDisplay() {
+            if (userProfileData.customName) {
+                document.getElementById('displayUsername').innerText = userProfileData.customName;
+            } else {
+                const username = tg.initDataUnsafe?.user?.username;
+                const firstName = tg.initDataUnsafe?.user?.first_name;
+                if (username) {
+                    document.getElementById('displayUsername').innerText = `@${username}`;
+                } else if (firstName) {
+                    document.getElementById('displayUsername').innerText = firstName;
+                } else {
+                    document.getElementById('displayUsername').innerText = "Без имени";
+                }
+            }
+        }
+
+        function changeUserName() {
+            const currentName = document.getElementById('displayUsername').innerText;
+            const newName = prompt("Введите ваше имя:", currentName === "Без имени" ? "" : currentName);
+            if (newName !== null && newName.trim() !== "") {
+                userProfileData.customName = newName.trim();
+                saveProfileData();
+                updateNameDisplay();
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        function hasGoldStatus() {
+            // Проверяем, есть ли хотя бы один статус 3 уровня (Золотой)
+            return Object.values(userProfileData.statusProgress).some(level => level >= 3);
+        }
+
+        function updateStatusDisplay() {
+            const display = document.getElementById('userStatusDisplay');
+            if (hasGoldStatus() && userProfileData.customStatus) {
+                display.innerHTML = userProfileData.customStatus + ' <i class="fas fa-pen" style="font-size:10px; margin-left:4px;"></i>';
+            } else {
+                display.innerHTML = 'Без статуса' + (hasGoldStatus() ? ' <i class="fas fa-pen" style="font-size:10px; margin-left:4px;"></i>' : '');
+            }
+        }
+
+        function changeCustomStatus() {
+            if (hasGoldStatus()) {
+                const newStatus = prompt("Введите ваш новый статус:", userProfileData.customStatus || "");
+                if (newStatus !== null) {
+                    userProfileData.customStatus = newStatus.trim() || null;
+                    saveProfileData();
+                    updateStatusDisplay();
+                    if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                }
+            } else {
+                tg.showAlert("🌟 Возможность установить свой статус откроется после достижения Золотого уровня (Ур. 3) в любом из направлений!");
+            }
+        }
+        // --- КОНЕЦ ЛОГИКИ КАСТОМНОГО ИМЕНИ И СТАТУСА ---
 
         function toggleAvatarEditor() {
             isEditingAvatar = !isEditingAvatar;
@@ -833,11 +896,17 @@
         function submitStatusLevel(statusName, targetLevel) {
             tg.showConfirm(`Отправить заявку на получение ${targetLevel} уровня в статусе "${statusName}"?`, (confirm) => {
                 if (confirm) {
+                    const workLink = prompt("Пожалуйста, вставьте ссылку на пост, альбом или сообщение с вашими выполненными работами для проверки:");
+                    if (!workLink) {
+                        tg.showAlert("❌ Заявка отменена. Ссылка на работы обязательна для проверки администратором!");
+                        return;
+                    }
+
                     const userId = document.getElementById('userIdDisplay').innerText;
-                    const msg = `Заявка от ID${userId}\nПретендует на ${targetLevel} уровень статуса "${statusName}"`;
+                    const msg = `Заявка от ID${userId}\nПретендует на ${targetLevel} уровень статуса "${statusName}"\nСсылка на работы: ${workLink}`;
                     
                     // Отправляем данные боту (для админки)
-                    tg.sendData(JSON.stringify({ action: 'submit_level', status: statusName, level: targetLevel, message: msg }));
+                    tg.sendData(JSON.stringify({ action: 'submit_level', status: statusName, level: targetLevel, link: workLink, message: msg }));
                     tg.showAlert("✅ Заявка успешно отправлена! Администратор начислит XP и выдаст статус после проверки.");
                     
                     // Скрытая фича для админа (для мгновенного теста)
@@ -846,6 +915,7 @@
                         saveProfileData();
                         renderStatusAwards();
                         renderStatusQuests();
+                        updateStatusDisplay();
                         tg.showAlert("🔧 [Админ] Уровень мгновенно выдан для теста.");
                     }
                 }
@@ -1673,17 +1743,6 @@
             const userId = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
             document.getElementById('userIdDisplay').innerText = userId;
             
-            const username = tg.initDataUnsafe?.user?.username;
-            const firstName = tg.initDataUnsafe?.user?.first_name;
-            
-            if (username) {
-                document.getElementById('displayUsername').innerText = `@${username}`;
-            } else if (firstName) {
-                document.getElementById('displayUsername').innerText = firstName;
-            } else {
-                document.getElementById('displayUsername').innerText = `ID: ${userId}`;
-            }
-
             loadProfileData(); 
 
             initAI();

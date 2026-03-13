@@ -351,95 +351,97 @@ text-transform: uppercase;
             <div id="brandInventoryList" class="inventory-grid"></div>
         </div>
     </div>
-  <div id="profile" class="page">
+<div id="profile" class="page">
     <div class="header" style="text-align: center;">Профиль</div>
 
-    <div class="profile-hero" style="display: flex; align-items: center; gap: 20px; padding: 0 10px; margin-bottom: 20px;">
-        <div class="avatar-container" style="flex-shrink: 0;">
-            <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
-                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg">
+    <div class="profile-hero" style="display: flex; align-items: center; gap: 20px; padding: 10px; margin-bottom: 10px;">
+        <div class="avatar-container" style="flex-shrink: 0; position: relative;">
+            <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent);">
+                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
-            <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
+            <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="position: absolute; bottom: 0; right: 0; background: var(--accent); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 2px solid var(--bg);">
+                <i class="fas fa-pen"></i>
+            </div>
         </div>
         
         <div class="profile-info-holder">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <h2 class="profile-username" id="displayUsername" style="margin: 0; font-size: 22px;">Без имени</h2>
+                <h2 class="profile-username" id="displayUsername" style="margin: 0; font-size: 20px; color: white;">Без имени</h2>
                 <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
             </div>
-            <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()" style="margin-top: 5px; font-size: 14px; color: var(--gray);">Без статуса</div>
+            <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()" style="margin-top: 5px; font-size: 13px; color: var(--gray); background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 10px; display: inline-block;">Без статуса</div>
         </div>
     </div>
 
-    <div class="avatar-editor" id="avatarEditorBlock" style="display:none; margin-bottom: 20px;">
+    <div class="avatar-editor" id="avatarEditorBlock" style="display:none; margin: 0 10px 20px 10px; background: var(--secondary); padding: 15px; border-radius: 18px;">
         <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
         <div style="text-align: center; margin-bottom: 15px;">
             <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
-            <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
+            <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px; width: 100%;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
         </div>
         <div class="avatar-grid-presets" id="avatarPresetsGrid"></div>
-        <button class="buy-btn rounded-pill" style="margin-top: 10px;" onclick="toggleAvatarEditor()">Готово</button>
+        <button class="buy-btn rounded-pill" style="margin-top: 10px; width: 100%;" onclick="toggleAvatarEditor()">Готово</button>
     </div>
 
-    <div id="loyaltyBlock" style="width: 100%; margin-bottom: 20px;"> 
-        <div class="balance-card" style="margin-top:0; width: 100%; box-sizing: border-box;">
-            <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
-            <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
-            <p style="margin:0; font-weight: 500; margin-bottom: 10px;">ашетиков накоплено</p>
+    <div id="loyaltyBlock" style="padding: 0 10px; margin-bottom: 20px;"> 
+        <div class="balance-card" style="background: linear-gradient(135deg, #ff8c00 0%, #ed6a1d 100%); padding: 20px; border-radius: 20px; color: white; text-align: center; width: 100%; box-sizing: border-box;">
+            <p style="margin:0; opacity:0.8; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;">Ваш баланс</p>
+            <div class="balance-amount" style="font-size: 36px; font-weight: bold; margin: 5px 0;">
+                <span id="userBalance">0</span> <i class="fas fa-book-open" style="color: #ffe082;"></i>
+            </div>
+            <p style="margin:0 0 15px 0; font-size: 14px;">ашетиков накоплено</p>
             
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:8px;" onclick="toggleRewardsInline()">Потратить ашетики 🎁</button>
-                <button class="buy-btn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.4); border-radius:12px; padding:8px;" onclick="toggleLoyaltyInfo()">Заработать ашетики 🚀</button>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:10px; color: white; font-weight: 600;" onclick="toggleRewardsInline()">Потратить ашетики 🎁</button>
+                <button class="buy-btn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.4); border-radius:12px; padding:10px; color: white; font-weight: 600;" onclick="toggleLoyaltyInfo()">Заработать ашетики 🚀</button>
             </div>
 
-            <div id="rewards-section-inline" style="display:none; margin-top:20px;">
+            <div id="rewards-section-inline" style="display:none; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
                 <div class="reward-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="reward-card" style="background: white; padding: 10px; border-radius: 12px; text-align: center;">
-                        <img src="bonusi/b1.png" style="width: 100%; border-radius: 8px;">
-                        <div class="reward-info" style="font-size: 11px; color: #333; margin: 5px 0;"><b>Закладка Hachette</b></div>
-                        <button class="spend-btn" style="width: 100%; font-size: 12px;" onclick="buyReward('Закладка Hachette', 750)">750 <i class="fas fa-book-open"></i></button>
+                    <div style="background: white; padding: 8px; border-radius: 12px; color: #333;">
+                        <img src="bonusi/b1.png" style="width: 100%; border-radius: 8px; margin-bottom: 5px;">
+                        <div style="font-size: 10px; font-weight: bold;">Закладка</div>
+                        <button class="spend-btn" style="width:100%; margin-top:5px; font-size:11px;" onclick="buyReward('Закладка', 750)">750 <i class="fas fa-book-open"></i></button>
                     </div>
-                    <div class="reward-card" style="background: white; padding: 10px; border-radius: 12px; text-align: center;">
-                        <img src="bonusi/b2.png" style="width: 100%; border-radius: 8px;">
-                        <div class="reward-info" style="font-size: 11px; color: #333; margin: 5px 0;"><b>Petites Poupees</b></div>
-                        <button class="spend-btn" style="width: 100%; font-size: 12px;" onclick="buyReward('Petites Poupees', 950)">950 <i class="fas fa-book-open"></i></button>
+                    <div style="background: white; padding: 8px; border-radius: 12px; color: #333;">
+                        <img src="bonusi/b2.png" style="width: 100%; border-radius: 8px; margin-bottom: 5px;">
+                        <div style="font-size: 10px; font-weight: bold;">Petites Poupees</div>
+                        <button class="spend-btn" style="width:100%; margin-top:5px; font-size:11px;" onclick="buyReward('Poupees', 950)">950 <i class="fas fa-book-open"></i></button>
                     </div>
                 </div>
-                <button class="buy-btn" style="background:none; color:white; width: 100%; margin-top: 10px; border:none;" onclick="toggleRewardsInline()">← Свернуть</button>
             </div>
 
-            <div id="loyalty-info" style="display:none; margin-top:20px; text-align: left;">
-                <div class="category-title" style="margin-top:0; color: white; text-align: left; font-size: 16px;">Как получить ашетики?</div>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;"><span>🎁 Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
-                    <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;"><span>📝 Отзыв о книге</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
-                    <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;"><span>🛒 Покупка от 3000₽</span><b class="gold-book">+20 <i class="fas fa-book-open"></i></b></div>
-                    <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">
-                        <div style="display:flex; flex-direction:column;">
-                            <span>🛍️ Крупные покупки</span>
-                            <small style="color:rgba(255,255,255,0.7); font-size:10px;">от 5к: +30 / от 7.5к: +40 / от 10к: +50</small>
-                        </div>
-                        <b class="gold-book"><i class="fas fa-book-open"></i></b>
-                    </div>
-                    <div class="row-item" style="color: white; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;"><span>👶 Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
-                    <div class="row-item" style="color: white; padding-bottom: 5px;"><span>🏆 1 место в челлендже</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
+            <div id="loyalty-info" style="display:none; margin-top: 20px; text-align: left; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #ffe082; text-align: center;">Как получить ашетики?</div>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span>Приветственный бонус</span><b>+100</b></div>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span>Отзыв о книге</span><b>+25</b></div>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span>Покупка от 3000₽</span><b>+20</b></div>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span>От 5000₽ / 7500₽ / 10000₽</span><b>+30 / 40 / 50</b></div>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span>Событие «Baby Boom»</span><b>+50</b></div>
+                    <div style="display:flex; justify-content:space-between;"><span>1 место в челлендже</span><b>+150</b></div>
                 </div>
-                <button class="buy-btn" style="background:none; color:white; width: 100%; margin-top: 10px; border:none;" onclick="toggleLoyaltyInfo()">← Свернуть</button>
             </div>
         </div>
     </div>
 
-    <div class="brand-button" onclick="toggleBlock('questsListContainer', this)" style="margin-bottom: 15px;">
-        <span>📋 Задания статусов ✨</span>
-        <span class="brand-counter">Развернуть</span>
+    <div style="padding: 0 10px; margin-bottom: 15px;">
+        <div class="brand-button" onclick="toggleBlock('questsListContainer', this)" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--secondary); border-radius: 15px;">
+            <span>📋 Задания ✨</span>
+            <span class="brand-counter" style="background: var(--accent); padding: 2px 10px; border-radius: 10px; font-size: 12px;">Развернуть</span>
+        </div>
+        <div id="questsListContainer" style="display:none; margin-top: 10px; background: var(--secondary); border-radius: 15px; padding: 10px;">
+            </div>
     </div>
-    <div id="questsListContainer" style="display:none; margin-bottom: 20px;"></div>
 
-    <div class="category-title" style="margin-top: 10px; text-align: center;">Достижения</div>
-    <div id="achievementsGrid" class="achievements-grid" style="margin-bottom: 25px;"></div>
-    
-    <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-        <div class="profile-id" style="opacity: 0.5; font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
+    <div style="padding: 0 10px; margin-bottom: 30px;">
+        <div class="category-title" style="text-align: center; margin-bottom: 15px;">Достижения</div>
+        <div id="achievementsGrid" class="achievements-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 80px; opacity: 0.3; font-size: 10px;">
+        ID: <span id="userIdDisplay">---</span>
     </div>
 </div>
 

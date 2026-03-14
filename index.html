@@ -456,43 +456,22 @@ text-transform: uppercase;
             <div class="profile-id" style="opacity: 0.5; font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
         </div>
     </div>
-
-
-        <div id="loyalty-info">
-            <div class="category-title" style="margin-top:25px;">Программа лояльности</div>
-            <div class="row-item"><span>Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>Бонус за отзыв</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>Бонус за покупку от 3000₽</span><b class="gold-book">+20 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item">
-                <div style="display:flex; flex-direction:column;">
-                    <span>Бонусы за крупные покупки</span>
-                    <small style="color:var(--gray); font-size:11px;">от 5к - 30 / от 7.5к - 40 / от 10к - 50</small>
-                </div>
-                <b class="gold-book"><i class="fas fa-book-open"></i></b>
-            </div>
-            <div class="row-item"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
-            <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
+<div id="loyalty-info" style="display: none; margin-top: 15px;">
+    <div class="category-title" style="margin-top:25px;">Программа лояльности</div>
+    <div class="row-item"><span>Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
+    <div class="row-item"><span>Бонус за отзыв</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
+    <div class="row-item"><span>Бонус за покупку от 3000₽</span><b class="gold-book">+20 <i class="fas fa-book-open"></i></b></div>
+    <div class="row-item">
+        <div style="display:flex; flex-direction:column;">
+            <span>Бонусы за крупные покупки</span>
+            <small style="color:var(--gray); font-size:11px;">от 5к - 30 / от 7.5к - 40 / от 10к - 50</small>
         </div>
-
-        <div id="adminTaskPanel" style="display:none; margin-top:30px; border: 2px solid var(--accent); padding: 15px; border-radius: 18px;">
-            <div class="category-title" style="margin-top:0; color: var(--accent);">🛠 Админ: Проверка заданий</div>
-            <div id="adminTaskRequests"></div>
-        </div>
-
-        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
-            <div class="profile-id" style="opacity: 0.5; font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
-        </div>
+        <b class="gold-book"><i class="fas fa-book-open"></i></b>
     </div>
-
-
-    <div id="achievementModal" class="custom-modal-overlay">
-        <div class="custom-modal" style="text-align: center; max-width: 300px; padding: 30px 20px;">
-            <img id="achModalIconImg" class="achievement-icon-large-img" src="">
-            <h3 id="achModalTitle" style="margin: 0 0 10px; font-size: 20px;">Название</h3>
-            <p id="achModalDesc" style="color: var(--gray); font-size: 14px; margin: 0 0 25px; line-height: 1.4;">Описание достижения</p>
-            <button class="buy-btn rounded-pill" onclick="closeAchievementModal()">Потрясающе!</button>
-        </div>
-    </div>
+    <div class="row-item"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
+    <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
+    <button class="buy-btn" style="background:none; color:var(--gray); margin-top:10px; font-size: 12px;" onclick="document.getElementById('loyalty-info').style.display='none'">[ скрыть ]</button>
+</div>
 
     <div id="aipalette" class="page">
         <div class="header">ИИ Палитра ✨</div>

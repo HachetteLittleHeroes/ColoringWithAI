@@ -2010,6 +2010,46 @@ function showAchDescription(title, desc, img) {
     document.getElementById('achModalIconImg').src = img;
     modal.style.display = 'flex';
 }
+// --- ЛОГИКА ВЫБОРА ДОСТИЖЕНИЙ В ТОП-3 ---
+let currentSlot = null;
+
+function openAchievementPicker(slotIndex) {
+    currentSlot = slotIndex;
+    const list = document.getElementById('fullAchievementsList');
+    if (list) {
+        list.style.display = 'block';
+        list.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function closePicker() {
+    const list = document.getElementById('fullAchievementsList');
+    if (list) list.style.display = 'none';
+    currentSlot = null;
+}
+
+function selectForTop(achId) {
+    if (currentSlot === null) return;
+    
+    const ach = userProfileData.achievements.find(a => a.id === achId);
+    if (!ach || !ach.unlocked) {
+        tg.showAlert("Сначала нужно получить это достижение!");
+        return;
+    }
+
+    const slot = document.getElementById(`slot-${currentSlot}`);
+    if (slot) {
+        slot.innerHTML = `
+            <div onclick="showAchievement('${ach.id}')" style="cursor: pointer;">
+                <img src="${ach.img}" style="width: 60px; height: 60px; border-radius: 15px; object-fit: cover; border: 2px solid var(--accent);">
+                <div style="font-size: 10px; color: white; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 60px; margin: 0 auto;">${ach.title}</div>
+            </div>
+            <div onclick="openAchievementPicker(${currentSlot})" style="font-size: 9px; color: var(--accent); margin-top: 2px; cursor: pointer;">Изменить</div>
+        `;
+    }
+    closePicker();
+}
+
 
     </script>
 </body>

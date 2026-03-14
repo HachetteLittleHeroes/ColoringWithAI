@@ -1920,6 +1920,47 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             renderBooks();
             renderOrganizers(); 
         };
+        let currentSlot = null; // Запоминаем, в какой слот хотим поставить достижение
+
+// Открывает список всех достижений для выбора
+function openAchievementPicker(slotIndex) {
+    currentSlot = slotIndex;
+    const list = document.getElementById('fullAchievementsList');
+    list.style.display = 'block';
+    list.scrollIntoView({ behavior: 'smooth' });
+}
+
+function closePicker() {
+    document.getElementById('fullAchievementsList').style.display = 'none';
+}
+
+// Функция, которую мы вызываем при клике на иконку в списке всех достижений
+function selectForTop(achId, achImg, achTitle, achDesc) {
+    if (currentSlot !== null) {
+        const slot = document.getElementById(`slot-${currentSlot}`);
+        
+        // Обновляем внешний вид слота
+        slot.innerHTML = `
+            <div onclick="showAchDescription('${achTitle}', '${achDesc}', '${achImg}')" style="cursor: pointer;">
+                <img src="${achImg}" style="width: 60px; height: 60px; border-radius: 15px; object-fit: cover; border: 2px solid var(--accent);">
+                <div style="font-size: 10px; color: white; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${achTitle}</div>
+            </div>
+            <div onclick="openAchievementPicker(${currentSlot})" style="font-size: 9px; color: var(--accent); margin-top: 2px;">Изменить</div>
+        `;
+        
+        closePicker();
+    }
+}
+
+// Функция для показа описания (используем твой существующий модал)
+function showAchDescription(title, desc, img) {
+    const modal = document.getElementById('achievementModal');
+    document.getElementById('achModalTitle').innerText = title;
+    document.getElementById('achModalDesc').innerText = desc;
+    document.getElementById('achModalIconImg').src = img;
+    modal.style.display = 'flex';
+}
+
     </script>
 </body>
 </html>

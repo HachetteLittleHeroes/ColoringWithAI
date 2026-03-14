@@ -987,7 +987,7 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             tg.showAlert(info);
         }
 
-        // Рендер квестов на получение уровней
+               // Рендер квестов на получение уровней
         function renderStatusQuests() {
             const container = document.getElementById('questsListContainer');
             container.innerHTML = Object.keys(statusPaths).map(key => {
@@ -1916,50 +1916,163 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             
             loadProfileData(); 
 
+            // После загрузки профиля, восстанавливаем витрину ачивок (ТОП-3)
+            setTimeout(() => {
+                if (typeof userProfileData !== 'undefined' && userProfileData.topAchievements) {
+                    userProfileData.topAchievements.forEach((ach, index) => {
+                        if (ach) updateSlotUI(index, ach.achImg, ach.achTitle, ach.achDesc);
+                    });
+                }
+            }, 100);
+
             initAI();
             renderBooks();
             renderOrganizers(); 
         };
+
+        // --- ЛОГИКА ДОСТИЖЕНИЙ (ВИЗУАЛ, РЕЕСТР, ТОП-3) ---
         let currentSlot = null; // Запоминаем, в какой слот хотим поставить достижение
 
-// Открывает список всех достижений для выбора
-function openAchievementPicker(slotIndex) {
-    currentSlot = slotIndex;
-    const list = document.getElementById('fullAchievementsList');
-    list.style.display = 'block';
-    list.scrollIntoView({ behavior: 'smooth' });
-}
+        // Единый реестр всех достижений в игре
+        const achievementsConfig = [
+            { 
+                id: 'painter_1', 
+                title: 'Новичок', 
+                desc: 'Выдано за 1-й уровень рисования', 
+                requirementText: 'Нужно получить 1 уровень в статусе "Рисование"',
+                icon: 'img/ach1.png', 
+                check: (data) => (data.statusProgress && data.statusProgress['Рисование']) >= 1 
+            },
+            { 
+                id: 'painter_2', 
+                title: 'Опытный', 
+                desc: 'Выдано за 3-й уровень рисования', 
+                requirementText: 'Нужно получить максимальный 3 уровень в статусе "Рисование"',
+                icon: 'img/ach2.png', 
+                check: (data) => (data.statusProgress && data.statusProgress['Рисование']) >= 3 
+            },
+            { 
+                id: 'collector_1', 
+                title: 'Запасливый', 
+                desc: 'В инвентаре более 50 маркеров', 
+                requirementText: 'Добавьте в свой список "Мои маркеры" более 50 штук любых брендов',
+                icon: 'img/ach3.png', 
+                check: (data) => typeof userInventory !== 'undefined' && userInventory.length >= 50 
+            }
+            // Чтобы добавить новое достижение — просто скопируй блок выше и поменяй данные
+        ];
 
-function closePicker() {
-    document.getElementById('fullAchievementsList').style.display = 'none';
-}
+        // Отрисовывает весь список достижений (открытые и закрытые)
+        function renderFullAchievementsList() {
+            const listContainer = document.getElementById('fullAchievementsList');
+            
+            listContainer.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid var(--secondary);">
+                    <b style="color:var(--text);">Все достижения</b>
+                    <span onclick="closePicker()" style="color:var(--accent); font-weight:bold; cursor:pointer;">Закрыть</span>
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; padding:15px; max-height:400px; overflow-y:auto;">
+                    ${achievementsConfig.map(ach => {
+                        const isEarned = ach.check(typeof userProfileData !== 'undefined' ? userProfileData : { statusProgress: {} });
+                        
+                        // Стили для закрытых ачивок
+                        const filterStyle = isEarned ? '' : 'filter: grayscale(1) opacity(0.4);';
+                        const borderStyle = isEarned ? 'border:1px solid var(--accent);' : 'border:1px solid rgba(128,128,128,0.2);';
+                        
+                        // Действие по клику (выбрать в ТОП или показать условие)
+                        const clickAction = isEarned 
+                            ? `selectForTop('${ach.id}', '${ach.icon}', '${ach.title}', '${ach.desc}')`
+                            : `showLockedAchievement('${ach.title}', '${ach.requirementText}', '${ach.icon}')`;
 
-// Функция, которую мы вызываем при клике на иконку в списке всех достижений
-function selectForTop(achId, achImg, achTitle, achDesc) {
-    if (currentSlot !== null) {
-        const slot = document.getElementById(`slot-${currentSlot}`);
-        
-        // Обновляем внешний вид слота
-        slot.innerHTML = `
-            <div onclick="showAchDescription('${achTitle}', '${achDesc}', '${achImg}')" style="cursor: pointer;">
-                <img src="${achImg}" style="width: 60px; height: 60px; border-radius: 15px; object-fit: cover; border: 2px solid var(--accent);">
-                <div style="font-size: 10px; color: white; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${achTitle}</div>
-            </div>
-            <div onclick="openAchievementPicker(${currentSlot})" style="font-size: 9px; color: var(--accent); margin-top: 2px;">Изменить</div>
-        `;
-        
-        closePicker();
-    }
-}
+                        return `
+                        <div class="ach-item-picker" onclick="${clickAction}"
+                             style="text-align:center; background:var(--secondary); padding:10px; border-radius:15px; ${borderStyle} transition: 0.3s; cursor:pointer;">
+                            <div style="position:relative; width:50px; height:50px; margin: 0 auto 5px;">
+                                <img src="${ach.icon}" style="width:100%; height:100%; border-radius:12px; object-fit:cover; ${filterStyle}">
+                                ${!isEarned ? '<div style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:white; font-size:18px;">🔒</div>' : ''}
+                            </div>
+                            <div style="font-size:10px; color:${isEarned ? 'var(--text)' : 'var(--gray)'}; line-height:1.2; font-weight:500;">${ach.title}</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
+        }
 
-// Функция для показа описания (используем твой существующий модал)
-function showAchDescription(title, desc, img) {
-    const modal = document.getElementById('achievementModal');
-    document.getElementById('achModalTitle').innerText = title;
-    document.getElementById('achModalDesc').innerText = desc;
-    document.getElementById('achModalIconImg').src = img;
-    modal.style.display = 'flex';
-}
+        // Открывает список всех достижений для выбора слота
+        function openAchievementPicker(slotIndex) {
+            currentSlot = slotIndex;
+            renderFullAchievementsList();
+            const list = document.getElementById('fullAchievementsList');
+            list.style.display = 'block';
+            list.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closePicker() {
+            document.getElementById('fullAchievementsList').style.display = 'none';
+        }
+
+        // Сохраняет выбранную ачивку в профиль и отображает в витрине
+        function selectForTop(achId, achImg, achTitle, achDesc) {
+            if (currentSlot !== null) {
+                if (!userProfileData.topAchievements) {
+                    userProfileData.topAchievements = [null, null, null];
+                }
+
+                // Сохраняем в объект профиля
+                userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
+                
+                // Обновляем визуал слота
+                updateSlotUI(currentSlot, achImg, achTitle, achDesc);
+                
+                // Сохраняем на устройство/сервер
+                if(typeof saveProfileData === 'function') saveProfileData();
+                closePicker();
+                
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        // Вспомогательная функция для обновления интерфейса слота (используется при выборе и при загрузке)
+        function updateSlotUI(index, img, title, desc) {
+            const slot = document.getElementById(`slot-${index}`);
+            if(slot) {
+                slot.innerHTML = `
+                    <div onclick="showAchDescription('${title}', '${desc}', '${img}')" style="cursor: pointer; text-align:center;">
+                        <img src="${img}" style="width: 60px; height: 60px; border-radius: 18px; object-fit: cover; border: 2px solid var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                        <div style="font-size: 10px; color: white; margin-top: 5px; font-weight:bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</div>
+                    </div>
+                    <div onclick="openAchievementPicker(${index})" style="font-size: 9px; color: var(--accent); margin-top: 4px; opacity:0.8; cursor:pointer;">Изменить</div>
+                `;
+            }
+        }
+
+        // Показывает условия получения закрытого достижения
+        function showLockedAchievement(title, req, icon) {
+            const modal = document.getElementById('achievementModal');
+            document.getElementById('achModalTitle').innerText = title;
+            document.getElementById('achModalDesc').innerHTML = `<b style="color:var(--accent);">Как получить:</b><br>${req}`;
+            
+            const imgElement = document.getElementById('achModalIconImg');
+            imgElement.src = icon;
+            imgElement.style.filter = "grayscale(1) opacity(0.7)"; // Обесцвечиваем иконку в модалке
+            
+            modal.style.display = 'flex';
+            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+        }
+
+        // Функция для показа описания полученного достижения
+        function showAchDescription(title, desc, img) {
+            const modal = document.getElementById('achievementModal');
+            document.getElementById('achModalTitle').innerText = title;
+            document.getElementById('achModalDesc').innerText = desc;
+            
+            const imgElement = document.getElementById('achModalIconImg');
+            imgElement.src = img;
+            imgElement.style.filter = "none"; // Сбрасываем фильтры на всякий случай
+            
+            modal.style.display = 'flex';
+        }
+        // --- КОНЕЦ ЛОГИКИ ДОСТИЖЕНИЙ ---
 
     </script>
 </body>

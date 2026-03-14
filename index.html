@@ -942,113 +942,178 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
         }
 
         // Рендер наград со статусами (только текстовые плашки)
-        function renderStatusAwards() {
-            const container = document.getElementById('statusAwardsContainer');
-            let maxLevelFound = 0;
-            let highestColorClass = "";
+                // --- НОВАЯ СИСТЕМА ДОСТИЖЕНИЙ И СТАТУСОВ ---
 
-            container.innerHTML = Object.keys(statusPaths).map(key => {
-                const path = statusPaths[key];
-                const currentLevel = userProfileData.statusProgress[key] || 0;
-                
-                if (currentLevel > maxLevelFound) {
-                    maxLevelFound = currentLevel;
-                    highestColorClass = path.levels[currentLevel - 1].colorClass;
-                }
+        // Единый реестр всех достижений в игре
+        const achievementsConfig = [
+            { 
+                id: 'pokemon_master', 
+                title: 'Великий мастер', 
+                desc: 'Статус: Мастер Покемонов', 
+                req: 'Раскрасить 30 картинок с покемонами (фото ДО и ПОСЛЕ)',
+                target: 30,
+                type: 'admin_check',
+                statKey: 'pokemonPics',
+                icon: 'img/ach_poke.png'
+            },
+            { 
+                id: 'ai_teacher', 
+                title: 'Училка', 
+                desc: 'Статус: Эксперт ИИ', 
+                req: 'Внести 500 одобренных правок в ИИ палитру',
+                target: 500,
+                type: 'admin_check',
+                statKey: 'aiCorrections',
+                icon: 'img/ach_teacher.png'
+            },
+            { 
+                id: 'scrooge', 
+                title: 'Скрудж', 
+                desc: 'Статус: Богатей', 
+                req: 'Накопить 2500 ашетиков на балансе',
+                target: 2500,
+                type: 'auto_balance',
+                icon: 'img/ach_gold.png'
+            },
+            { 
+                id: 'not_like_others', 
+                title: 'Нетакуся', 
+                desc: 'Статус: Творец', 
+                req: 'Раскрасить 30 картинок из авторской раскраски',
+                target: 30,
+                type: 'admin_check',
+                statKey: 'authorPics',
+                icon: 'img/ach_art.png'
+            },
+            { 
+                id: 'alcohol_queen', 
+                title: 'Спиртесса', 
+                desc: 'Статус: Мастер спирта', 
+                req: 'Раскрасить 100 картинок спиртовыми маркерами',
+                target: 100,
+                type: 'admin_check',
+                statKey: 'alcoholPics',
+                icon: 'img/ach_spirit.png'
+            },
+            { 
+                id: 'benefactor', 
+                title: 'Благодетель', 
+                desc: 'Статус: Меценат', 
+                req: 'Поддержать наш проект (на проверку админу)',
+                target: 1,
+                type: 'admin_check',
+                statKey: 'supported',
+                icon: 'img/ach_heart.png'
+            },
+            { 
+                id: 'name_changer', 
+                title: 'My name is', 
+                desc: 'Достижение: Маскировка', 
+                req: 'Сменить никнейм в профиле',
+                target: 1,
+                type: 'auto_name',
+                icon: 'img/ach_id.png'
+            }
+        ];
 
-                let borderClass = currentLevel > 0 ? path.levels[currentLevel - 1].colorClass : "";
-                
-                return `<div class="status-pill ${borderClass}" onclick="showStatusInfo('${key}')">${key}</div>`;
-            }).join('');
-
-            // Применяем рамку к главному аватару
-            const avatarPreview = document.getElementById('mainAvatarPreview');
-            avatarPreview.className = 'avatar-preview'; 
-            if (highestColorClass) {
-                avatarPreview.classList.add(highestColorClass);
+        // Инициализация статистики, если её нет в профиле
+        function initUserStats() {
+            if (!userProfileData.stats) {
+                userProfileData.stats = {
+                    pokemonPics: 0,
+                    aiCorrections: 0,
+                    authorPics: 0,
+                    alcoholPics: 0,
+                    supported: 0,
+                    nameChanged: 0
+                };
             }
         }
 
-        function showStatusInfo(key) {
-            const path = statusPaths[key];
-            const currentLevel = userProfileData.statusProgress[key] || 0;
-            
-            let info = `📌 Статус: ${key}\n\n`;
-            if (currentLevel === 0) {
-                info += `У вас пока нет этого статуса.\nДля получения первого уровня нужно нарисовать ${path.levels[0].req} работ!`;
-            } else {
-                info += `Текущий уровень: ${currentLevel} (${path.levels[currentLevel - 1].name})\n\n`;
-                if (currentLevel < path.levels.length) {
-                    info += `Следующий уровень: ${currentLevel + 1}\nОсталось нарисовать: ${path.levels[currentLevel].req} работ.`;
-                } else {
-                    info += `🌟 Вы достигли максимального уровня в этом статусе!`;
-                }
-            }
-            tg.showAlert(info);
-        }
-
-               // Рендер квестов на получение уровней
+        // Рендер новых заданий на получение статусов
         function renderStatusQuests() {
+            initUserStats();
             const container = document.getElementById('questsListContainer');
-            container.innerHTML = Object.keys(statusPaths).map(key => {
-                const path = statusPaths[key];
-                const currentLevel = userProfileData.statusProgress[key] || 0;
-                
-                if (currentLevel >= 3) {
-                    return `
-                    <div class="quest-card">
-                        <div class="quest-header">
-                            <span class="quest-status-badge border-lvl-3" style="color:#000;">${key} (Макс)</span>
-                            <span class="quest-xp">Выполнено 🌟</span>
-                        </div>
-                        <div class="quest-title" style="color:var(--gray); font-size:12px;">Все 3 уровня пройдены! Вы мастер в этом направлении.</div>
-                    </div>`;
-                }
+            const userBalance = parseInt(document.getElementById('userBalance').innerText) || 0;
 
-                const nextTier = path.levels[currentLevel];
+            container.innerHTML = achievementsConfig.map(ach => {
+                let current = 0;
                 
+                // Логика определения текущего прогресса
+                if (ach.type === 'admin_check') current = userProfileData.stats[ach.statKey] || 0;
+                if (ach.type === 'auto_balance') current = userBalance;
+                if (ach.type === 'auto_name') current = userProfileData.stats.nameChanged || 0;
+
+                const isDone = current >= ach.target;
+                const progressPercent = Math.min(100, (current / ach.target) * 100);
+
                 return `
-                <div class="quest-card">
+                <div class="quest-card" style="${isDone ? 'border: 1px solid var(--accent); opacity: 0.9;' : ''}">
                     <div class="quest-header">
-                        <span class="quest-status-badge" style="background:var(--secondary);">${key} • Ур. ${currentLevel + 1}</span>
-                        <span class="quest-xp">+${nextTier.xp} XP</span>
+                        <span class="quest-status-badge">${isDone ? '✅ Выполнено' : '🔥 В процессе'}</span>
+                        <span class="quest-xp">${current} / ${ach.target}</span>
                     </div>
-                    <div class="quest-title">Нарисовать работ: ${nextTier.req}</div>
-                    <div style="font-size: 12px; color: var(--gray);">Наберите нужное количество работ для проверки, чтобы получить рамку цвета: <b style="color:var(--text);">${nextTier.name}</b>.</div>
-                    <button class="buy-btn" style="padding: 10px; border-radius: 12px; font-size: 13px; margin-top: 5px;" onclick="submitStatusLevel('${key}', ${currentLevel + 1})">Отправить на проверку</button>
+                    <div class="quest-title">${ach.title}</div>
+                    <div style="font-size: 12px; color: var(--gray); margin-bottom: 10px;">${ach.req}</div>
+                    
+                    <div style="width: 100%; height: 6px; background: var(--secondary); border-radius: 3px; margin-bottom: 10px; overflow: hidden;">
+                        <div style="width: ${progressPercent}%; height: 100%; background: var(--accent); transition: 0.5s;"></div>
+                    </div>
+
+                    ${!isDone && ach.type === 'admin_check' ? `
+                        <button class="buy-btn" style="padding: 8px; font-size: 12px;" onclick="sendAchievementRequest('${ach.id}', '${ach.title}')">
+                            Отправить фото на проверку
+                        </button>
+                    ` : ''}
+                    ${isDone ? `<div style="color:var(--accent); font-size: 11px; font-weight: bold;">Достижение и статус разблокированы!</div>` : ''}
                 </div>`;
             }).join('');
         }
 
-        // Заявка на статус админу (обновленная: без ссылок)
-        function submitStatusLevel(statusName, targetLevel) {
-            tg.showConfirm(`Отправить заявку на получение ${targetLevel} уровня в статусе "${statusName}"?`, (confirm) => {
+        // Отправка заявки админу
+        function sendAchievementRequest(id, title) {
+            tg.showConfirm(`Отправить на проверку выполнение: "${title}"? Убедитесь, что у вас готовы фото ДО и ПОСЛЕ.`, (confirm) => {
                 if (confirm) {
                     const userId = document.getElementById('userIdDisplay').innerText;
-                    const msg = `Заявка от ID${userId}\nПретендует на ${targetLevel} уровень статуса "${statusName}"\nПроверьте работы пользователя!`;
+                    const msg = `🏆 ЗАЯВКА НА ДОСТИЖЕНИЕ\nОт: ID${userId}\nЗадание: ${title}\nНужна проверка фото работ пользователя.`;
                     
-                    // Отправляем данные боту (для админки)
-                    tg.sendData(JSON.stringify({ action: 'submit_level', status: statusName, level: targetLevel, message: msg }));
-                    tg.showAlert("✅ Заявка успешно отправлена! Администратор начислит XP и выдаст статус после проверки ваших работ.");
+                    tg.sendData(JSON.stringify({ 
+                        action: 'check_achievement', 
+                        achievementId: id, 
+                        message: msg 
+                    }));
                     
-                    // Скрытая фича для админа (для мгновенного теста)
+                    tg.showAlert("Заявка отправлена! Администратор проверит ваши работы и начислит прогресс.");
+                    
+                    // Админ-тест для мгновенного начисления
                     if(userId === "496779756") {
-                        userProfileData.statusProgress[statusName] = targetLevel;
+                        const ach = achievementsConfig.find(a => a.id === id);
+                        userProfileData.stats[ach.statKey]++;
                         saveProfileData();
-                        renderStatusAwards();
                         renderStatusQuests();
-                        updateStatusDisplay();
-                        tg.showAlert("🔧 [Админ] Уровень мгновенно выдан для теста.");
+                        tg.showAlert("🔧 [Админ] Прогресс +1 мгновенно выдан для теста.");
                     }
                 }
             });
         }
-        // --- КОНЕЦ ЛОГИКИ АВАТАРОВ И СТАТУСОВ ---
 
-        // --- Добавлено: Функции для Админки заданий ---
+        // Функция смены ника (автоматическое достижение)
+        function changeNickname() {
+            const newName = prompt("Введите новый никнейм:");
+            if (newName && newName.trim().length > 1) {
+                userProfileData.name = newName;
+                userProfileData.stats.nameChanged = 1; 
+                document.getElementById('userName').innerText = newName;
+                saveProfileData();
+                renderStatusQuests();
+                tg.showAlert("Никнейм изменен! Достижение 'My name is' получено.");
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        // --- ЛОГИКА АДМИНКИ ЗАДАНИЙ ---
         async function loadAdminTasks() {
             try {
-                // Мокаем запрос на бэкенд или вызываем настоящий API
                 let res = await fetch(`${API_URL}/pending_tasks`);
                 let tasks = await res.json();
                 let container = document.getElementById('adminTaskRequests');
@@ -1059,7 +1124,7 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
                 container.innerHTML = tasks.map(t => `
                     <div class="row-item" style="flex-direction:column; align-items:flex-start;">
                         <b style="font-size:14px;">Пользователь ID: ${t.user_id}</b>
-                        <span style="font-size:13px; color:var(--gray);">Статус: ${t.statusName} (Ур. ${t.level})</span>
+                        <span style="font-size:13px; color:var(--gray);">Задание: ${t.statusName} (Ур. ${t.level})</span>
                         <div style="display:flex; gap:10px; margin-top:10px; width:100%;">
                             <button class="buy-btn" style="flex:1; background:#34c759; padding:8px; border-radius:8px;" onclick="approveTask(${t.id}, '${t.user_id}', '${t.statusName}', ${t.level})">Одобрить</button>
                             <button class="buy-btn" style="flex:1; background:#ff3b30; padding:8px; border-radius:8px;" onclick="rejectTask(${t.id})">Отклонить</button>
@@ -1090,7 +1155,6 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
                 console.error("Ошибка при отклонении задания:", e);
             }
         }
-        // --- КОНЕЦ ЛОГИКИ Админки заданий ---
 
         // -- ЛОГИКА ОРГАНАЙЗЕРОВ НАЧАЛО --
         let organizers = JSON.parse(localStorage.getItem('marker_organizers')) || [];
@@ -1373,7 +1437,7 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             renderBooks(bookNames.filter(name => name.toLowerCase().includes(query)));
         }
 
-           async function loadMarkers() {
+        async function loadMarkers() {
             const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
             try {
                 const res = await fetch(csvUrl);
@@ -1584,80 +1648,80 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             renderBrandsList();
         }
 
-     function renderBrandInventory() {
-        if (!currentViewingBrand) return;
-        const container = document.getElementById('brandInventoryList');
-        const query = document.getElementById('brandSearchInput').value.toLowerCase();
-        
-        let trainedMarkersForBrand = aiDB
-            .filter(item => item.brand === currentViewingBrand.name)
-            .map(item => item.marker); 
+        function renderBrandInventory() {
+            if (!currentViewingBrand) return;
+            const container = document.getElementById('brandInventoryList');
+            const query = document.getElementById('brandSearchInput').value.toLowerCase();
+            
+            let trainedMarkersForBrand = aiDB
+                .filter(item => item.brand === currentViewingBrand.name)
+                .map(item => item.marker); 
 
-        let allMarkers = [...new Set(trainedMarkersForBrand)];
-        let filtered = allMarkers.filter(m => m.toLowerCase().includes(query));
+            let allMarkers = [...new Set(trainedMarkersForBrand)];
+            let filtered = allMarkers.filter(m => m.toLowerCase().includes(query));
 
-        if (filtered.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: span 3; text-align:center; color:var(--gray); padding: 20px;">
-                    В этом бренде еще нет обученных цветов.<br>
-                    <small>Номера появятся после обучения в разделе ИИ.</small>
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: span 3; text-align:center; color:var(--gray); padding: 20px;">
+                        В этом бренде еще нет обученных цветов.<br>
+                        <small>Номера появятся после обучения в разделе ИИ.</small>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(markerNum => {
+                let mId = `${currentViewingBrand.name}_${markerNum}`;
+                let isOwned = userInventory.includes(mId);
+                return `
+                <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})">
+                    ${markerNum}
                 </div>`;
-            return;
+            }).join('');
         }
-
-        container.innerHTML = filtered.map(markerNum => {
-            let mId = `${currentViewingBrand.name}_${markerNum}`;
-            let isOwned = userInventory.includes(mId);
-            return `
-            <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})">
-                ${markerNum}
-            </div>`;
-        }).join('');
-    }
 
         function filterBrandInventory() { renderBrandInventory(); }
 
-       async function massToggle(isAdded) {
-        if (!currentViewingBrand) return;
-        
-        const actionText = isAdded ? "Добавить все обученные маркеры?" : "Убрать все маркеры этого бренда?";
-        
-        tg.showConfirm(actionText, async (confirm) => {
-            if (confirm) {
-                let trainedIds = aiDB
-                    .filter(item => item.brand === currentViewingBrand.name)
-                    .map(item => `${currentViewingBrand.name}_${item.marker}`);
+        async function massToggle(isAdded) {
+            if (!currentViewingBrand) return;
+            
+            const actionText = isAdded ? "Добавить все обученные маркеры?" : "Убрать все маркеры этого бренда?";
+            
+            tg.showConfirm(actionText, async (confirm) => {
+                if (confirm) {
+                    let trainedIds = aiDB
+                        .filter(item => item.brand === currentViewingBrand.name)
+                        .map(item => `${currentViewingBrand.name}_${item.marker}`);
 
-                if (isAdded) {
-                    userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
-                } else {
-                    userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
-                    
-                    organizers.forEach(org => {
-                        org.cells.forEach(cell => {
-                            cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+                    if (isAdded) {
+                        userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
+                    } else {
+                        userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+                        
+                        organizers.forEach(org => {
+                            org.cells.forEach(cell => {
+                                cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
+                            });
                         });
+                        saveOrganizers();
+                        renderOrganizers();
+                    }
+
+                    let userId = document.getElementById('userIdDisplay').innerText;
+                    await fetch(`${API_URL}/inventory_mass`, {
+                        method: 'POST', 
+                        body: JSON.stringify({ 
+                            user_id: userId, 
+                            brand: currentViewingBrand.name, 
+                            action: isAdded ? "add_all" : "remove_all" 
+                        })
                     });
-                    saveOrganizers();
-                    renderOrganizers();
+
+                    renderBrandInventory();
+                    // checkAchievements() - вызов убран, так как логика ачивок теперь переделана
+                    if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 }
-
-                let userId = document.getElementById('userIdDisplay').innerText;
-                await fetch(`${API_URL}/inventory_mass`, {
-                    method: 'POST', 
-                    body: JSON.stringify({ 
-                        user_id: userId, 
-                        brand: currentViewingBrand.name, 
-                        action: isAdded ? "add_all" : "remove_all" 
-                    })
-                });
-
-                renderBrandInventory();
-                checkAchievements(); 
-                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            }
-        });
-    }
+            });
+        }
 
         function tab(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1711,7 +1775,6 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             }
             
             renderBrandInventory();
-            checkAchievements(); 
             if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 
             let userId = document.getElementById('userIdDisplay').innerText;
@@ -1740,9 +1803,9 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             
             if (document.getElementById('userIdDisplay').innerText == "496779756") {
                 document.getElementById('aiAdminPanel').style.display = "block";
-                document.getElementById('adminTaskPanel').style.display = "block"; // Показываем админку заданий
+                document.getElementById('adminTaskPanel').style.display = "block"; 
                 loadQuarantine();
-                loadAdminTasks(); // Загружаем задания
+                loadAdminTasks(); 
             }
         }
 
@@ -1907,18 +1970,105 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             initAI(); loadQuarantine();
         }
 
+        // --- ЛОГИКА ДОСТИЖЕНИЙ В ПРОФИЛЕ ---
+        let currentSlot = null;
+
+        function renderFullAchievementsList() {
+            const listContainer = document.getElementById('fullAchievementsList');
+            const userBalance = parseInt(document.getElementById('userBalance').innerText) || 0;
+            
+            listContainer.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid var(--secondary);">
+                    <b style="color:var(--text);">Все достижения</b>
+                    <span onclick="closePicker()" style="color:var(--accent); font-weight:bold; cursor:pointer;">Закрыть</span>
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; padding:15px; max-height:400px; overflow-y:auto;">
+                    ${achievementsConfig.map(ach => {
+                        let current = 0;
+                        if (ach.type === 'admin_check') current = userProfileData.stats[ach.statKey] || 0;
+                        if (ach.type === 'auto_balance') current = userBalance;
+                        if (ach.type === 'auto_name') current = userProfileData.stats.nameChanged || 0;
+                        
+                        const isEarned = current >= ach.target;
+                        const filterStyle = isEarned ? '' : 'filter: grayscale(1) opacity(0.4);';
+                        const clickAction = isEarned 
+                            ? `selectForTop('${ach.id}', '${ach.icon}', '${ach.title}', '${ach.desc}')`
+                            : `showLockedAchievement('${ach.title}', '${ach.req}', '${ach.icon}')`;
+
+                        return `
+                        <div class="ach-item-picker" onclick="${clickAction}" style="text-align:center; background:var(--secondary); padding:10px; border-radius:15px; cursor:pointer;">
+                            <div style="position:relative; width:50px; height:50px; margin: 0 auto 5px;">
+                                <img src="${ach.icon}" style="width:100%; height:100%; border-radius:12px; object-fit:cover; ${filterStyle}">
+                                ${!isEarned ? '<div style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:white; font-size:18px;">🔒</div>' : ''}
+                            </div>
+                            <div style="font-size:10px; color:${isEarned ? 'var(--text)' : 'var(--gray)'}; font-weight:500;">${ach.title}</div>
+                        </div>`;
+                    }).join('')}
+                </div>`;
+        }
+
+        function openAchievementPicker(slotIndex) {
+            currentSlot = slotIndex;
+            renderFullAchievementsList();
+            document.getElementById('fullAchievementsList').style.display = 'block';
+            document.getElementById('fullAchievementsList').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closePicker() { document.getElementById('fullAchievementsList').style.display = 'none'; }
+
+        function selectForTop(achId, achImg, achTitle, achDesc) {
+            if (currentSlot !== null) {
+                if (!userProfileData.topAchievements) userProfileData.topAchievements = [null, null, null];
+                userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
+                updateSlotUI(currentSlot, achImg, achTitle, achDesc);
+                saveProfileData(); closePicker();
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        function updateSlotUI(index, img, title, desc) {
+            const slot = document.getElementById(`slot-${index}`);
+            if(slot) {
+                slot.innerHTML = `
+                    <div onclick="showAchDescription('${title}', '${desc}', '${img}')" style="cursor: pointer; text-align:center;">
+                        <img src="${img}" style="width: 60px; height: 60px; border-radius: 18px; object-fit: cover; border: 2px solid var(--accent);">
+                        <div style="font-size: 10px; color: white; margin-top: 5px; font-weight:bold; overflow: hidden; text-overflow: ellipsis;">${title}</div>
+                    </div>
+                    <div onclick="openAchievementPicker(${index})" style="font-size: 9px; color: var(--accent); margin-top: 4px; cursor:pointer;">Изменить</div>
+                `;
+            }
+        }
+
+        function showLockedAchievement(title, req, icon) {
+            const modal = document.getElementById('achievementModal');
+            document.getElementById('achModalTitle').innerText = title;
+            document.getElementById('achModalDesc').innerHTML = `<b style="color:var(--accent);">Условия получения:</b><br>${req}`;
+            const img = document.getElementById('achModalIconImg');
+            img.src = icon; img.style.filter = "grayscale(1) opacity(0.7)";
+            modal.style.display = 'flex';
+        }
+
+        function showAchDescription(title, desc, img) {
+            const modal = document.getElementById('achievementModal');
+            document.getElementById('achModalTitle').innerText = title;
+            document.getElementById('achModalDesc').innerText = desc;
+            const imgEl = document.getElementById('achModalIconImg');
+            imgEl.src = img; imgEl.style.filter = "none";
+            modal.style.display = 'flex';
+        }
+
         window.onload = () => {
             const params = new URLSearchParams(window.location.search);
             document.getElementById('userBalance').innerText = params.get('balance') || 0;
-            
             const userId = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
             document.getElementById('userIdDisplay').innerText = userId;
             
             loadProfileData(); 
-
-            // После загрузки профиля, восстанавливаем витрину ачивок (ТОП-3)
+            initUserStats(); 
+            
             setTimeout(() => {
-                if (typeof userProfileData !== 'undefined' && userProfileData.topAchievements) {
+                renderStatusQuests(); 
+                if (userProfileData.topAchievements) {
                     userProfileData.topAchievements.forEach((ach, index) => {
                         if (ach) updateSlotUI(index, ach.achImg, ach.achTitle, ach.achDesc);
                     });
@@ -1929,150 +2079,6 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             renderBooks();
             renderOrganizers(); 
         };
-
-        // --- ЛОГИКА ДОСТИЖЕНИЙ (ВИЗУАЛ, РЕЕСТР, ТОП-3) ---
-        let currentSlot = null; // Запоминаем, в какой слот хотим поставить достижение
-
-        // Единый реестр всех достижений в игре
-        const achievementsConfig = [
-            { 
-                id: 'painter_1', 
-                title: 'Новичок', 
-                desc: 'Выдано за 1-й уровень рисования', 
-                requirementText: 'Нужно получить 1 уровень в статусе "Рисование"',
-                icon: 'img/ach1.png', 
-                check: (data) => (data.statusProgress && data.statusProgress['Рисование']) >= 1 
-            },
-            { 
-                id: 'painter_2', 
-                title: 'Опытный', 
-                desc: 'Выдано за 3-й уровень рисования', 
-                requirementText: 'Нужно получить максимальный 3 уровень в статусе "Рисование"',
-                icon: 'img/ach2.png', 
-                check: (data) => (data.statusProgress && data.statusProgress['Рисование']) >= 3 
-            },
-            { 
-                id: 'collector_1', 
-                title: 'Запасливый', 
-                desc: 'В инвентаре более 50 маркеров', 
-                requirementText: 'Добавьте в свой список "Мои маркеры" более 50 штук любых брендов',
-                icon: 'img/ach3.png', 
-                check: (data) => typeof userInventory !== 'undefined' && userInventory.length >= 50 
-            }
-            // Чтобы добавить новое достижение — просто скопируй блок выше и поменяй данные
-        ];
-
-        // Отрисовывает весь список достижений (открытые и закрытые)
-        function renderFullAchievementsList() {
-            const listContainer = document.getElementById('fullAchievementsList');
-            
-            listContainer.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid var(--secondary);">
-                    <b style="color:var(--text);">Все достижения</b>
-                    <span onclick="closePicker()" style="color:var(--accent); font-weight:bold; cursor:pointer;">Закрыть</span>
-                </div>
-                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; padding:15px; max-height:400px; overflow-y:auto;">
-                    ${achievementsConfig.map(ach => {
-                        const isEarned = ach.check(typeof userProfileData !== 'undefined' ? userProfileData : { statusProgress: {} });
-                        
-                        // Стили для закрытых ачивок
-                        const filterStyle = isEarned ? '' : 'filter: grayscale(1) opacity(0.4);';
-                        const borderStyle = isEarned ? 'border:1px solid var(--accent);' : 'border:1px solid rgba(128,128,128,0.2);';
-                        
-                        // Действие по клику (выбрать в ТОП или показать условие)
-                        const clickAction = isEarned 
-                            ? `selectForTop('${ach.id}', '${ach.icon}', '${ach.title}', '${ach.desc}')`
-                            : `showLockedAchievement('${ach.title}', '${ach.requirementText}', '${ach.icon}')`;
-
-                        return `
-                        <div class="ach-item-picker" onclick="${clickAction}"
-                             style="text-align:center; background:var(--secondary); padding:10px; border-radius:15px; ${borderStyle} transition: 0.3s; cursor:pointer;">
-                            <div style="position:relative; width:50px; height:50px; margin: 0 auto 5px;">
-                                <img src="${ach.icon}" style="width:100%; height:100%; border-radius:12px; object-fit:cover; ${filterStyle}">
-                                ${!isEarned ? '<div style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:white; font-size:18px;">🔒</div>' : ''}
-                            </div>
-                            <div style="font-size:10px; color:${isEarned ? 'var(--text)' : 'var(--gray)'}; line-height:1.2; font-weight:500;">${ach.title}</div>
-                        </div>`;
-                    }).join('')}
-                </div>
-            `;
-        }
-
-        // Открывает список всех достижений для выбора слота
-        function openAchievementPicker(slotIndex) {
-            currentSlot = slotIndex;
-            renderFullAchievementsList();
-            const list = document.getElementById('fullAchievementsList');
-            list.style.display = 'block';
-            list.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function closePicker() {
-            document.getElementById('fullAchievementsList').style.display = 'none';
-        }
-
-        // Сохраняет выбранную ачивку в профиль и отображает в витрине
-        function selectForTop(achId, achImg, achTitle, achDesc) {
-            if (currentSlot !== null) {
-                if (!userProfileData.topAchievements) {
-                    userProfileData.topAchievements = [null, null, null];
-                }
-
-                // Сохраняем в объект профиля
-                userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
-                
-                // Обновляем визуал слота
-                updateSlotUI(currentSlot, achImg, achTitle, achDesc);
-                
-                // Сохраняем на устройство/сервер
-                if(typeof saveProfileData === 'function') saveProfileData();
-                closePicker();
-                
-                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            }
-        }
-
-        // Вспомогательная функция для обновления интерфейса слота (используется при выборе и при загрузке)
-        function updateSlotUI(index, img, title, desc) {
-            const slot = document.getElementById(`slot-${index}`);
-            if(slot) {
-                slot.innerHTML = `
-                    <div onclick="showAchDescription('${title}', '${desc}', '${img}')" style="cursor: pointer; text-align:center;">
-                        <img src="${img}" style="width: 60px; height: 60px; border-radius: 18px; object-fit: cover; border: 2px solid var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                        <div style="font-size: 10px; color: white; margin-top: 5px; font-weight:bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</div>
-                    </div>
-                    <div onclick="openAchievementPicker(${index})" style="font-size: 9px; color: var(--accent); margin-top: 4px; opacity:0.8; cursor:pointer;">Изменить</div>
-                `;
-            }
-        }
-
-        // Показывает условия получения закрытого достижения
-        function showLockedAchievement(title, req, icon) {
-            const modal = document.getElementById('achievementModal');
-            document.getElementById('achModalTitle').innerText = title;
-            document.getElementById('achModalDesc').innerHTML = `<b style="color:var(--accent);">Как получить:</b><br>${req}`;
-            
-            const imgElement = document.getElementById('achModalIconImg');
-            imgElement.src = icon;
-            imgElement.style.filter = "grayscale(1) opacity(0.7)"; // Обесцвечиваем иконку в модалке
-            
-            modal.style.display = 'flex';
-            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
-        }
-
-        // Функция для показа описания полученного достижения
-        function showAchDescription(title, desc, img) {
-            const modal = document.getElementById('achievementModal');
-            document.getElementById('achModalTitle').innerText = title;
-            document.getElementById('achModalDesc').innerText = desc;
-            
-            const imgElement = document.getElementById('achModalIconImg');
-            imgElement.src = img;
-            imgElement.style.filter = "none"; // Сбрасываем фильтры на всякий случай
-            
-            modal.style.display = 'flex';
-        }
-        // --- КОНЕЦ ЛОГИКИ ДОСТИЖЕНИЙ ---
 
     </script>
 </body>

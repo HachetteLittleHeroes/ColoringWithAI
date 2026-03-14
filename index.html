@@ -997,7 +997,6 @@ function saveOrganizers() {
        // Инициализация Telegram WebApp
 const tg = window.Telegram.WebApp;
 tg.expand();
-
 // Глобальные переменные данных
 let organizers = JSON.parse(localStorage.getItem('organizers')) || [];
 let currentOrgId = null;
@@ -1437,9 +1436,7 @@ const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 
 
         function filterMarkers() { renderMarkers(markersData); }
 
-        const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io/api";
-        let aiDB = [];
-        let userInventory = [];
+        // ИСПРАВЛЕНИЕ: Был удален дубликат объявления констант (API_URL, aiDB, userInventory)
 
         async function initAI() {
             try {
@@ -1459,7 +1456,7 @@ const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 
                 if (document.getElementById('aiAdminPanel')) document.getElementById('aiAdminPanel').style.display = "block";
                 if (document.getElementById('adminTaskPanel')) document.getElementById('adminTaskPanel').style.display = "block"; 
                 loadQuarantine();
-                if (typeof loadAdminTasks === 'function') loadAdminTasks(); // Безопасный вызов админки
+                if (typeof loadAdminTasks === 'function') loadAdminTasks();
             }
         }
 
@@ -1535,7 +1532,9 @@ const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 
             let confidence = Math.max(0, (1 - (minDist / 441.67)) * 100).toFixed(1);
 
             const mId = `${bestMatch.brand}_${bestMatch.marker}`;
-            const locationInfo = findMarkerLocation(mId);
+            
+            // ИСПРАВЛЕНИЕ: Добавлена безопасная проверка вызова findMarkerLocation
+            const locationInfo = (typeof findMarkerLocation === 'function') ? findMarkerLocation(mId) : null;
 
             const locationLabel = locationInfo 
                 ? `<div style="margin-top:8px; color:#34c759; font-weight:bold; font-size:13px;">📍 Находится: ${locationInfo}</div>
@@ -1560,6 +1559,15 @@ const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 
                     </div>
                 </div>
             `;
+        }
+
+        // ИСПРАВЛЕНИЕ: Заглушка для функции locateAndFlash, чтобы избежать ошибки при клике
+        function locateAndFlash(mId) {
+            if (typeof tg !== 'undefined' && tg.showAlert) {
+                tg.showAlert("Функция показа в органайзере пока недоступна.");
+            } else {
+                alert("Функция показа в органайзере пока недоступна.");
+            }
         }
 
         function showCorrectionBlock(index) {
@@ -1641,39 +1649,39 @@ const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 
             initAI(); loadQuarantine();
         }
 
-        // Ключевой блок: обернут в try-catch и проверяет Telegram WebApp, чтобы меню не пропадало из-за фатальных ошибок
         window.onload = async () => {
-    try {
-        const params = new URLSearchParams(window.location.search);
-        const balanceEl = document.getElementById('userBalance');
-        if (balanceEl) balanceEl.innerText = params.get('balance') || 0;
-        
-        let tgid = "---";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            tgid = tg.initDataUnsafe.user.id;
-        }
-        
-        const userId = params.get('id') || tgid || "---";
-        const userIdDisplayEl = document.getElementById('userIdDisplay');
-        if (userIdDisplayEl) userIdDisplayEl.innerText = userId;
-        
-        // Запускаем асинхронную загрузку данных
-        await initAI();
-        
-        if (typeof renderBooks === 'function') renderBooks();
-        if (typeof renderBrandsList === 'function') renderBrandsList();
-        if (typeof renderOrganizers === 'function') renderOrganizers(); 
-        
-        // Если есть админ-панель
-        if (userId == "496779756") {
-            const adminTask = document.getElementById('adminTaskPanel');
-            if (adminTask) adminTask.style.display = "block";
-        }
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const balanceEl = document.getElementById('userBalance');
+                if (balanceEl) balanceEl.innerText = params.get('balance') || 0;
+                
+                let tgid = "---";
+                // Безопасная проверка наличия объекта tg
+                if (typeof tg !== 'undefined' && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    tgid = tg.initDataUnsafe.user.id;
+                }
+                
+                const userId = params.get('id') || tgid || "---";
+                const userIdDisplayEl = document.getElementById('userIdDisplay');
+                if (userIdDisplayEl) userIdDisplayEl.innerText = userId;
+                
+                // Запускаем асинхронную загрузку данных
+                await initAI();
+                
+                if (typeof renderBooks === 'function') renderBooks();
+                if (typeof renderBrandsList === 'function') renderBrandsList();
+                if (typeof renderOrganizers === 'function') renderOrganizers(); 
+                
+                // Если есть админ-панель
+                if (userId == "496779756") {
+                    const adminTask = document.getElementById('adminTaskPanel');
+                    if (adminTask) adminTask.style.display = "block";
+                }
 
-    } catch (error) {
-        console.error("Ошибка при инициализации: ", error);
-    }
-};
+            } catch (error) {
+                console.error("Ошибка при инициализации: ", error);
+            }
+        };
 
     </script>
 </body>

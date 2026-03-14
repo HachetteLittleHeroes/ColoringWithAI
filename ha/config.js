@@ -18,3 +18,14 @@ let userProfileData = {
 };
 
 let isEditingAvatar = false;
+// js/config.js
+let organizers = JSON.parse(localStorage.getItem('organizers')) || [];
+let currentOrgId = null;
+let currentCellIndex = null;
+let modalSelectedBrand = null;
+let markersData = [];
+let cart = [];
+let markersLoaded = false;
+let aiDB = [];
+let userInventory = [];
+const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io/api";

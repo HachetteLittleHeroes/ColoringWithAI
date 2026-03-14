@@ -338,13 +338,17 @@ text-transform: uppercase;
             <div id="brandInventoryList" class="inventory-grid"></div>
         </div>
     </div>
+    //Блок отображения профиля
     <div id="profile" class="page">
+        //Надпись "Профиль", ее расположение
         <div class="header" style="text-align: center;">Профиль</div>
-
-        <div class="profile-hero">
+//Устанавливаем 2 колонки в свмом верху: аватар+текст
+        <div class="profile-hero"
+            style="display: flex; align-item:center; gap: 20px; padding: 20px;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
             <div class="avatar-container">
               <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
-               <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/avatars/av2.jpg">
+               <img id="user-avatar" src=".   https://hachettelittleheroes.github.io/ColoringWithAI/main/avatars/av2.jpg">
                 </div>
                 <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
             </div>

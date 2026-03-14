@@ -289,19 +289,6 @@ text-transform: uppercase;
         <div id="booksGrid" class="grid"></div>
     </div>
 
-    <div id="palettes" class="page">
-        <div class="header">Палитры</div>
-        <div class="category-title">GuangNa</div>
-        <div class="row-item"><span>GuangNa 120</span><button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="tg.openLink('https://hachettelittleheroes.github.io/HachetteLittleHeroesBot/palitri/guangna120.pdf')">PDF</button></div>
-        <div class="row-item"><span>GuangNa 168</span><button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="tg.openLink('https://hachettelittleheroes.github.io/HachetteLittleHeroesBot/palitri/guangna168.pdf')">PDF</button></div>
-        <div class="row-item"><span>GuangNa 240</span><button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="tg.openLink('https://hachettelittleheroes.github.io/HachetteLittleHeroesBot/palitri/guangna240.pdf')">PDF</button></div>
-        <div class="row-item"><span>GuangNa 360</span><button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="tg.openLink('https://hachettelittleheroes.github.io/HachetteLittleHeroesBot/palitri/guangna360.pdf')">PDF</button></div>
-        <div class="category-title">Другие</div>
-        <div class="row-item"><span>Tooli-Art</span><button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="tg.openLink('https://hachettelittleheroes.github.io/HachetteLittleHeroesBot/palitri/tooliart.pdf')">PDF</button></div>
-        <div class="row-item"><span>Grasp 168</span><button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="tg.openLink('https://hachettelittleheroes.github.io/HachetteLittleHeroesBot/palitri/grasp168.pdf')">PDF</button></div>
-        <div class="row-item"><span>Zibeef 240</span><button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="tg.openLink('https://hachettelittleheroes.github.io/HachetteLittleHeroesBot/palitri/zibeef240.pdf')">PDF</button></div>
-    </div>
-
     <div id="shop" class="page">
         <div class="header">Маркеры</div>
         <div class="category-title" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px;">
@@ -357,7 +344,7 @@ text-transform: uppercase;
         <div class="profile-hero">
             <div class="avatar-container">
               <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
-               <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/avatars/av1.jpg">
+               <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/avatars/av2.jpg">
                 </div>
                 <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
             </div>
@@ -662,10 +649,10 @@ const avatarBaseURL =
             customStatus: null,
             avatar: { seed: 'av2.jpg', customImage: null }, // Добавлено customImage
             achievements: [
-                { id: 'first_steps', title: 'Первые шаги', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach1.png', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
-                { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach2.png', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: false },
-                { id: 'rich', title: 'Богатей', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach3.png', desc: 'Накопите 500 ашетиков на балансе лояльности.', unlocked: false },
-                { id: 'collector', title: 'Коллекционер', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/HachetteLittleHeroesBot/main/achievements/ach4.png', desc: 'Соберите 10 любых маркеров в своем инвентаре.', unlocked: false }
+                { id: 'first_steps', title: 'Первые шаги', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/achievements/ach1.png', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
+                { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/achievements/ach2.png', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: false },
+                { id: 'rich', title: 'Богатей', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/achievements/ach3.png', desc: 'Накопите 500 ашетиков на балансе лояльности.', unlocked: false },
+                { id: 'collector', title: 'Коллекционер', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/achievements/ach4.png', desc: 'Соберите 10 любых маркеров в своем инвентаре.', unlocked: false }
             ],
             styleChangesCount: 0,
             statusProgress: { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 }

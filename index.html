@@ -338,31 +338,19 @@ text-transform: uppercase;
             <div id="brandInventoryList" class="inventory-grid"></div>
         </div>
     </div>
-       <div id="profile" class="page">
+         <div id="profile" class="page">
         <div class="header" style="text-align: center;">Профиль</div>
 
-        <div class="profile-hero" style="display: flex; align-items: flex-start; gap: 20px; padding: 20px;">
+        <div class="profile-hero" style="display: flex; align-items: center; gap: 20px; padding: 20px 20px 10px 20px;">
             
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1;">
-                
-                <div class="avatar-container" style="margin: 0;">
-                    <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
-                        <img id="user-avatar" src="https://hachettelittleheroes.github.io/ColoringWithAI/main/avatars/av2.jpg" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
-                    </div>
-                    <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
+            <div class="avatar-container" style="margin: 0;">
+                <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
+                    <img id="user-avatar" src="https://hachettelittleheroes.github.io/ColoringWithAI/main/avatars/av2.jpg" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
                 </div>
-
-                <div id="loyaltyBlock" style="width: 100%;"> 
-                    <div class="balance-card" style="margin-top:0; padding: 15px; border-radius: 20px;">
-                        <p style="margin:0; opacity:0.9; font-size: 11px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
-                        <div class="balance-amount" style="font-size: 24px;"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
-                        <p style="margin:0; font-weight: 500; font-size: 12px; margin-bottom: 10px;">ашетиков</p>
-                        <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:10px; padding:5px; font-size: 12px; width: 100%;" onclick="toggleRewards()">Потратить 🎁</button>
-                    </div>
-                </div>
+                <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
             </div>
 
-            <div class="profile-info-right" style="flex: 1.5; padding-top: 10px;">
+            <div class="profile-info-right" style="flex-grow: 1;">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                     <h2 class="profile-username" id="displayUsername" style="margin:0; font-size: 20px;">Без имени</h2>
                     <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
@@ -370,6 +358,15 @@ text-transform: uppercase;
                 <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()" style="background: rgba(255,255,255,0.08); padding: 5px 10px; border-radius: 10px; font-size: 13px; color: #b3b3b3; width: fit-content;">
                     Без статуса
                 </div>
+            </div>
+        </div>
+
+        <div id="loyaltyBlock" style="width: 100%; padding: 0 20px; box-sizing: border-box;"> 
+            <div class="balance-card" style="margin-top:0; padding: 20px; border-radius: 20px;">
+                <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
+                <div class="balance-amount" style="font-size: 32px; margin: 10px 0;"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
+                <p style="margin:0; font-weight: 500; font-size: 14px; margin-bottom: 15px;">ашетиков накоплено</p>
+                <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:10px; width: 100%; font-size: 14px;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
             </div>
         </div>
 

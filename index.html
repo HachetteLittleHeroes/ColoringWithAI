@@ -887,26 +887,14 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
 }
 
         function renderAchievements() {
-    const grid = document.getElementById('achievementsGrid');
-    grid.innerHTML = userProfileData.achievements.map(ach => `
-        <div class="achieve-card ${ach.unlocked ? 'unlocked' : ''}" 
-             onclick="handleAchClick('${ach.id}')">
-            <img class="achieve-icon-img" src="${ach.img}" onerror="this.src='https://placehold.co/100x100/eeeeee/8e8e93?text=Ach'">
-            <div class="achieve-title">${ach.title}</div>
-        </div>
-    `).join('');
-}
-
-// Умная функция клика
-function handleAchClick(id) {
-    const picker = document.getElementById('fullAchievementsList');
-    if (picker && picker.style.display === 'block') {
-        selectForTop(id);
-    } else {
-        showAchievement(id);
-    }
-}
-
+            const grid = document.getElementById('achievementsGrid');
+            grid.innerHTML = userProfileData.achievements.map(ach => `
+                <div class="achieve-card ${ach.unlocked ? 'unlocked' : ''}" onclick="showAchievement('${ach.id}')">
+                    <img class="achieve-icon-img" src="${ach.img}" onerror="this.src='https://placehold.co/100x100/eeeeee/8e8e93?text=Ach'">
+                    <div class="achieve-title">${ach.title}</div>
+                </div>
+            `).join('');
+        }
 
         function showAchievement(id) {
             const ach = userProfileData.achievements.find(a => a.id === id);
@@ -1031,44 +1019,6 @@ function handleAchClick(id) {
                 </div>`;
             }).join('');
         }
-        // Переменная для хранения текущего слота
-let currentSlot = null;
-
-// Функция открытия списка всех достижений
-function openAchievementPicker(slotIndex) {
-    currentSlot = slotIndex;
-    const list = document.getElementById('fullAchievementsList');
-    list.style.display = 'block';
-    list.scrollIntoView({ behavior: 'smooth' });
-}
-
-// Функция закрытия
-function closePicker() {
-    document.getElementById('fullAchievementsList').style.display = 'none';
-    currentSlot = null;
-}
-
-// Функция выбора достижения в слот
-function selectForTop(achId) {
-    if (currentSlot === null) return;
-    
-    const ach = userProfileData.achievements.find(a => a.id === achId);
-    if (!ach || !ach.unlocked) {
-        tg.showAlert("Сначала нужно получить это достижение!");
-        return;
-    }
-
-    const slot = document.getElementById(`slot-${currentSlot}`);
-    slot.innerHTML = `
-        <div onclick="showAchievement('${ach.id}')" style="cursor: pointer;">
-            <img src="${ach.img}" style="width: 60px; height: 60px; border-radius: 15px; object-fit: cover; border: 2px solid var(--accent);">
-            <div style="font-size: 10px; color: white; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 60px;">${ach.title}</div>
-        </div>
-        <div onclick="openAchievementPicker(${currentSlot})" style="font-size: 9px; color: var(--accent); margin-top: 2px; cursor: pointer;">Изменить</div>
-    `;
-    closePicker();
-}
-
 
         // Заявка на статус админу (обновленная: без ссылок)
         function submitStatusLevel(statusName, targetLevel) {
@@ -2010,46 +1960,6 @@ function showAchDescription(title, desc, img) {
     document.getElementById('achModalIconImg').src = img;
     modal.style.display = 'flex';
 }
-// --- ЛОГИКА ВЫБОРА ДОСТИЖЕНИЙ В ТОП-3 ---
-let currentSlot = null;
-
-function openAchievementPicker(slotIndex) {
-    currentSlot = slotIndex;
-    const list = document.getElementById('fullAchievementsList');
-    if (list) {
-        list.style.display = 'block';
-        list.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-function closePicker() {
-    const list = document.getElementById('fullAchievementsList');
-    if (list) list.style.display = 'none';
-    currentSlot = null;
-}
-
-function selectForTop(achId) {
-    if (currentSlot === null) return;
-    
-    const ach = userProfileData.achievements.find(a => a.id === achId);
-    if (!ach || !ach.unlocked) {
-        tg.showAlert("Сначала нужно получить это достижение!");
-        return;
-    }
-
-    const slot = document.getElementById(`slot-${currentSlot}`);
-    if (slot) {
-        slot.innerHTML = `
-            <div onclick="showAchievement('${ach.id}')" style="cursor: pointer;">
-                <img src="${ach.img}" style="width: 60px; height: 60px; border-radius: 15px; object-fit: cover; border: 2px solid var(--accent);">
-                <div style="font-size: 10px; color: white; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 60px; margin: 0 auto;">${ach.title}</div>
-            </div>
-            <div onclick="openAchievementPicker(${currentSlot})" style="font-size: 9px; color: var(--accent); margin-top: 2px; cursor: pointer;">Изменить</div>
-        `;
-    }
-    closePicker();
-}
-
 
     </script>
 </body>

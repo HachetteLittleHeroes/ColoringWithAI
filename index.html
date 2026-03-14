@@ -997,7 +997,10 @@ function saveOrganizers() {
        // Инициализация Telegram WebApp
 const tg = window.Telegram.WebApp;
 tg.expand();
-// Глобальные переменные данных
+// --- ВНИМАНИЕ: БЛОК ГЛОБАЛЬНЫХ ПЕРЕМЕННЫХ ЗАКОММЕНТИРОВАН ---
+// Если эти переменные УЖЕ есть в первой части скрипта, их повторное 
+// объявление здесь вызывало "черный экран". 
+/*
 let organizers = JSON.parse(localStorage.getItem('organizers')) || [];
 let currentOrgId = null;
 let currentCellIndex = null;
@@ -1008,6 +1011,7 @@ let markersLoaded = false;
 let aiDB = [];
 let userInventory = [];
 const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io/api";
+*/
 
 // Списки брендов и книг
 const markerBrandsList = [
@@ -1027,662 +1031,663 @@ const markerBrandsList = [
 
 const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 3", "Vitraux tome 2", "Trompe L'oeil Babies", "Trompe L'oeil Grand Bloc", "Stitch Au numero", "Sous L'Ocean", "Saisons", "Romantasy", "Princesses tome 1", "Princesses tome 2", "Princes&Heros", "Portraits De Famille", "Pokemon", "Pixar", "Petites Princesses", "Petites Betes", "Mondes Fantastiques", "Mickey, Donald&Co", "Mechants", "Marsupilami", "Love Stories", "Looney Tunes tome 3", "Lilo Et Stitch", "Les Grands Classiques Special Debutants tome 1", "Les Grands Classiques Special Debutants tome 2", "Les Grands Classiques Au numero", "La Petite Sirene", "Les Schtroumpfs tome 1", "Les Schtroumpfs tome 2", "L'age Glace", "Hiver", "Heros&Mechants La Battle", "Grands Classiques Grand Bloc", "Les Grands Classiques Coliector", "Girl Power", "Fees, Sorciers Et Magiciens", "Famille", "Escapades Merveilleuses Douce France", "Chiots&Chiens", "Chevaux", "Bisounours tome 1", "Best Of Pixar", "Best Of Les Grands Classiques", "La Belle Et La Bete", "Bestiaire", "Best Of Heroines"];
 
+function renderBooks(list = bookNames) {
+    const grid = document.getElementById('booksGrid');
+    if(!grid) return;
+    grid.innerHTML = list.map((name) => {
+        const originalId = bookNames.indexOf(name) + 1;
+        const safeName = name.replace(/'/g, "\\'");
+        const itemInCart = cart.find(c => c.key === 'Раскраска-' + originalId);
+        const btnText = itemInCart ? `В корзине: ${itemInCart.qty}` : 'В корзину';
+        return `
+        <div class="card">
+            <img src="img/t${originalId}.png" onclick="startBook(${originalId}, 26)">
+            <div class="card-label">${name}<br><span style="color:var(--accent); font-weight:bold;">2890 руб.</span><br><small style="color:var(--gray);">📦 Под заказ</small></div>
+            <button class="buy-btn" onclick="addToCart('Раскраска', '${safeName}', ${originalId}, 99, 2890)">${btnText}</button>
+        </div>`;
+    }).join('');
+}
 
-        function renderBooks(list = bookNames) {
-            const grid = document.getElementById('booksGrid');
-            if(!grid) return;
-            grid.innerHTML = list.map((name) => {
-                const originalId = bookNames.indexOf(name) + 1;
-                const safeName = name.replace(/'/g, "\\'");
-                const itemInCart = cart.find(c => c.key === 'Раскраска-' + originalId);
-                const btnText = itemInCart ? `В корзине: ${itemInCart.qty}` : 'В корзину';
-                return `
-                <div class="card">
-                    <img src="img/t${originalId}.png" onclick="startBook(${originalId}, 26)">
-                    <div class="card-label">${name}<br><span style="color:var(--accent); font-weight:bold;">2890 руб.</span><br><small style="color:var(--gray);">📦 Под заказ</small></div>
-                    <button class="buy-btn" onclick="addToCart('Раскраска', '${safeName}', ${originalId}, 99, 2890)">${btnText}</button>
-                </div>`;
-            }).join('');
-        }
+function filterBooks() {
+    const query = document.getElementById('bookSearch').value.toLowerCase();
+    renderBooks(bookNames.filter(name => name.toLowerCase().includes(query)));
+}
 
-        function filterBooks() {
-            const query = document.getElementById('bookSearch').value.toLowerCase();
-            renderBooks(bookNames.filter(name => name.toLowerCase().includes(query)));
-        }
-
-        async function loadMarkers() {
-          const csvUrl = 'https://script.google.com/macros/s/AKfycbwNzGJlazpBtq9gtnGkF7c6zMoSh-gnse4XkL6GWEaIirV0mF8ZliIw48HT6A7oV4cqyw/exec';
-            try {
-                const res = await fetch(csvUrl);
-                const text = await res.text();
-                const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, '').trim()));
-                let temp = [];
-                rows.forEach(row => {
-                    for (let i = 0; i < row.length; i++) {
-                        let num = row[i];
-                        if (num && !isNaN(num) && parseInt(num) > 10) {
-                            let stock = parseInt(row[i+1] || row[i+2] || "0");
-                            temp.push({ number: num, stock: stock });
-                            i++;
-                        }
-                    }
-                });
-                markersData = temp.filter((v, i, a) => a.findIndex(t => (t.number === v.number)) === i);
-                cart.forEach(item => {
-                    if (item.type === 'Маркер') {
-                        const m = markersData.find(md => md.number == item.id);
-                        if (m) { item.max = m.stock; if (item.qty > m.stock) item.qty = m.stock; }
-                    }
-                });
-                markersLoaded = true;
-                renderMarkers(markersData);
-                updateUI();
-            } catch (e) { console.error(e); }
-        }
-
-        function renderMarkers(data) {
-            const list = document.getElementById('markersList');
-            if(!list) return;
-            const searchEl = document.getElementById('markerSearch');
-            const q = searchEl ? searchEl.value.toLowerCase() : "";
-            const filtered = data.filter(m => m.number.includes(q)).sort((a, b) => a.number - b.number);
-            list.innerHTML = filtered.map(m => {
-                const cartIndex = cart.findIndex(c => c.key === 'Маркер-' + m.number);
-                const currentQty = cartIndex > -1 ? cart[cartIndex].qty : 0;
-                const canAdd = currentQty < m.stock;
-                let color = m.stock >= 2 ? "#34c759" : (m.stock === 1 ? "#ff9500" : "#ff3b30");
-                return `
-                <div class="row-item">
-                    <div class="item-info">
-                        <span class="marker-num">№ ${m.number}</span>
-                        <span class="stock-badge" style="color:${color}">${m.stock >= 1 ? `В наличии: ${m.stock} шт.` : "Нет в наличии"}</span>
-                    </div>
-                    <div class="item-controls">
-                        ${m.stock > 0 ? (currentQty > 0 ? `
-                            <button class="btn-qty-sm" onclick="changeQty(${cartIndex}, -1)">-</button>
-                            <span class="marker-qty">${currentQty}</span>
-                            <button class="btn-qty-sm" ${!canAdd ? 'disabled' : ''} onclick="changeQty(${cartIndex}, 1)">+</button>
-                        ` : `<button class="btn-qty-sm" onclick="addToCart('Маркер', '${m.number}', ${m.number}, ${m.stock}, 75)">+</button>`) : ''}
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        function addToCart(type, name, id, max, price) {
-            const key = type + '-' + id;
-            const existing = cart.find(i => i.key === key);
-            if (existing) { if (existing.qty < max) existing.qty++; else return; }
-            else { cart.push({ key, type, name, id, qty: 1, max, price }); }
-            updateUI();
-            if(type === 'Маркер') renderMarkers(markersData);
-            if(type === 'Раскраска') renderBooks();
-            if(typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
-
-        function updateUI() {
-            const total = cart.reduce((sum, i) => sum + i.qty, 0);
-            const badge = document.getElementById('cartBadge');
-            const orderBtn = document.getElementById('mainOrderBtn');
-            if(badge) {
-                badge.innerText = total;
-                badge.style.display = total > 0 ? 'block' : 'none';
-            }
-            if(orderBtn) orderBtn.style.display = total > 0 ? 'block' : 'none';
-        }
-
-        function renderCart() {
-            const list = document.getElementById('cartList');
-            if (!list) return;
-            if (cart.length === 0) { list.innerHTML = '<div style="text-align:center; padding:50px; color:var(--gray)">Корзина пуста</div>'; return; }
-            const totalSum = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            
-            let bonus = 0;
-            if (totalSum >= 3000 && totalSum < 5000) bonus = 20;
-            else if (totalSum >= 5000 && totalSum < 7500) bonus = 30;
-            else if (totalSum >= 7500 && totalSum < 10000) bonus = 40;
-            else if (totalSum >= 10000) bonus = 50;
-
-            list.innerHTML = cart.map((item, index) => `
-                <div class="row-item">
-                    <div class="item-info"><b>${item.type === 'Маркер' ? '№ ' : ''}${item.name}</b><div style="font-size:12px; color:var(--gray)">${item.price} руб./шт.</div></div>
-                    <div class="item-controls">
-                        <button class="btn-qty" onclick="changeQty(${index}, -1)">-</button>
-                        <span class="qty-num">${item.qty}</span>
-                        <button class="btn-qty" ${item.qty >= item.max ? 'disabled' : ''} onclick="changeQty(${index}, 1)">+</button>
-                    </div>
-                </div>`).join('') + `
-                <div style="margin-top:20px; padding:15px; background:var(--secondary); border-radius:15px; text-align:right;">
-                    <span style="color:var(--gray); font-size:14px;">Итого к оплате:</span>
-                    <div style="font-size:20px; font-weight:800; color:var(--accent);">${totalSum} руб.</div>
-                    <div class="bonus-badge" style="color:#E65100">Будет начислено: +${bonus} <i class="fas fa-book-open"></i></div>
-                </div>`;
-        }
-
-        function changeQty(index, delta) {
-            const item = cart[index];
-            if (delta > 0 && item.qty >= item.max) return;
-            item.qty += delta;
-            if (item.qty <= 0) cart.splice(index, 1);
-            updateUI();
-            
-            const cartEl = document.getElementById('cart');
-            const shopEl = document.getElementById('shop');
-            
-            if (cartEl && cartEl.classList.contains('active')) renderCart();
-            if (shopEl && shopEl.classList.contains('active')) renderMarkers(markersData);
-        }
-
-        function checkout() {
-            if (cart.length === 0) return;
-            let markersCount = 0;
-            cart.forEach(item => { if (item.type === 'Маркер') markersCount += item.qty; });
-            if (markersCount > 0 && markersCount < 3) {
-                if (typeof tg !== 'undefined') tg.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук.");
-                return;
-            }
-            let totalSum = 0, hasPreorder = false;
-            let details = `🛍 **ДЕТАЛИ ЗАКАЗА:**\n`;
-            cart.forEach(item => {
-                const sum = item.price * item.qty; 
-                totalSum += sum;
-                if (item.type === 'Раскраска') hasPreorder = true;
-                details += `▪️ ${item.type} ${item.type === 'Маркер' ? '№' : '"'}${item.name}${item.type === 'Маркер' ? '' : '"'}\n   - ${item.qty} шт. x ${item.price} = ${sum} руб.\n`;
-            });
-
-            let bonusToEarn = 0;
-            if (totalSum >= 3000 && totalSum < 5000) bonusToEarn = 20;
-            else if (totalSum >= 5000 && totalSum < 7500) bonusToEarn = 30;
-            else if (totalSum >= 7500 && totalSum < 10000) bonusToEarn = 40;
-            else if (totalSum >= 10000) bonusToEarn = 50;
-            
-            const userBalEl = document.getElementById('userBalance');
-            details += `\n💰 **ИТОГО: ${totalSum} руб.**`;
-            details += `\n📖 **БОНУС К НАЧИСЛЕНИЮ: ${bonusToEarn}**`;
-            details += `\n👤 **ТЕКУЩИЙ БАЛАНС ЮЗЕРА: ${userBalEl ? userBalEl.innerText : '0'}**`;
-            
-            if (typeof tg !== 'undefined') {
-                if (hasPreorder) {
-                    tg.showConfirm("В вашем заказе есть раскраски (ПОД ЗАКАЗ). Оформить?", (c) => { 
-                        if(c) { tg.sendData(JSON.stringify({ details: details })); tg.close(); }
-                    });
-                } else { 
-                    tg.sendData(JSON.stringify({ details: details })); tg.close(); 
+async function loadMarkers() {
+    const csvUrl = 'https://script.google.com/macros/s/AKfycbwNzGJlazpBtq9gtnGkF7c6zMoSh-gnse4XkL6GWEaIirV0mF8ZliIw48HT6A7oV4cqyw/exec';
+    try {
+        const res = await fetch(csvUrl);
+        const text = await res.text();
+        const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, '').trim()));
+        let temp = [];
+        rows.forEach(row => {
+            for (let i = 0; i < row.length; i++) {
+                let num = row[i];
+                if (num && !isNaN(num) && parseInt(num) > 10) {
+                    let stock = parseInt(row[i+1] || row[i+2] || "0");
+                    temp.push({ number: num, stock: stock });
+                    i++;
                 }
             }
-        }
-
-        function toggleRewards() {
-            const rewardsSection = document.getElementById('rewards-section');
-            const loyaltyInfo = document.getElementById('loyalty-info');
-            if(!rewardsSection || !loyaltyInfo) return;
-            
-            if (rewardsSection.style.display === 'block') {
-                rewardsSection.style.display = 'none';
-                loyaltyInfo.style.display = 'block';
-            } else {
-                rewardsSection.style.display = 'block';
-                loyaltyInfo.style.display = 'none';
+        });
+        markersData = temp.filter((v, i, a) => a.findIndex(t => (t.number === v.number)) === i);
+        cart.forEach(item => {
+            if (item.type === 'Маркер') {
+                const m = markersData.find(md => md.number == item.id);
+                if (m) { item.max = m.stock; if (item.qty > m.stock) item.qty = m.stock; }
             }
-            if(typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-        }
+        });
+        markersLoaded = true;
+        renderMarkers(markersData);
+        updateUI();
+    } catch (e) { console.error(e); }
+}
 
-        function buyReward(name, price) {
-            const balanceEl = document.getElementById('userBalance');
-            const currentBalance = balanceEl ? parseInt(balanceEl.innerText) : 0;
-            
-            if (currentBalance < price) {
-                if (typeof tg !== 'undefined') tg.showAlert("❌ Недостаточно ашетиков для этого товара!");
-                return;
+function renderMarkers(data) {
+    const list = document.getElementById('markersList');
+    if(!list) return;
+    const searchEl = document.getElementById('markerSearch');
+    const q = searchEl ? searchEl.value.toLowerCase() : "";
+    const filtered = data.filter(m => m.number.includes(q)).sort((a, b) => a.number - b.number);
+    list.innerHTML = filtered.map(m => {
+        const cartIndex = cart.findIndex(c => c.key === 'Маркер-' + m.number);
+        const currentQty = cartIndex > -1 ? cart[cartIndex].qty : 0;
+        const canAdd = currentQty < m.stock;
+        let color = m.stock >= 2 ? "#34c759" : (m.stock === 1 ? "#ff9500" : "#ff3b30");
+        return `
+        <div class="row-item">
+            <div class="item-info">
+                <span class="marker-num">№ ${m.number}</span>
+                <span class="stock-badge" style="color:${color}">${m.stock >= 1 ? `В наличии: ${m.stock} шт.` : "Нет в наличии"}</span>
+            </div>
+            <div class="item-controls">
+                ${m.stock > 0 ? (currentQty > 0 ? `
+                    <button class="btn-qty-sm" onclick="changeQty(${cartIndex}, -1)">-</button>
+                    <span class="marker-qty">${currentQty}</span>
+                    <button class="btn-qty-sm" ${!canAdd ? 'disabled' : ''} onclick="changeQty(${cartIndex}, 1)">+</button>
+                ` : `<button class="btn-qty-sm" onclick="addToCart('Маркер', '${m.number}', ${m.number}, ${m.stock}, 75)">+</button>`) : ''}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function addToCart(type, name, id, max, price) {
+    const key = type + '-' + id;
+    const existing = cart.find(i => i.key === key);
+    if (existing) { if (existing.qty < max) existing.qty++; else return; }
+    else { cart.push({ key, type, name, id, qty: 1, max, price }); }
+    updateUI();
+    if(type === 'Маркер') renderMarkers(markersData);
+    if(type === 'Раскраска') renderBooks();
+    if(typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+}
+
+function updateUI() {
+    const total = cart.reduce((sum, i) => sum + i.qty, 0);
+    const badge = document.getElementById('cartBadge');
+    const orderBtn = document.getElementById('mainOrderBtn');
+    if(badge) {
+        badge.innerText = total;
+        badge.style.display = total > 0 ? 'block' : 'none';
+    }
+    if(orderBtn) orderBtn.style.display = total > 0 ? 'block' : 'none';
+}
+
+function renderCart() {
+    const list = document.getElementById('cartList');
+    if (!list) return;
+    if (cart.length === 0) { list.innerHTML = '<div style="text-align:center; padding:50px; color:var(--gray)">Корзина пуста</div>'; return; }
+    const totalSum = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    
+    let bonus = 0;
+    if (totalSum >= 3000 && totalSum < 5000) bonus = 20;
+    else if (totalSum >= 5000 && totalSum < 7500) bonus = 30;
+    else if (totalSum >= 7500 && totalSum < 10000) bonus = 40;
+    else if (totalSum >= 10000) bonus = 50;
+
+    list.innerHTML = cart.map((item, index) => `
+        <div class="row-item">
+            <div class="item-info"><b>${item.type === 'Маркер' ? '№ ' : ''}${item.name}</b><div style="font-size:12px; color:var(--gray)">${item.price} руб./шт.</div></div>
+            <div class="item-controls">
+                <button class="btn-qty" onclick="changeQty(${index}, -1)">-</button>
+                <span class="qty-num">${item.qty}</span>
+                <button class="btn-qty" ${item.qty >= item.max ? 'disabled' : ''} onclick="changeQty(${index}, 1)">+</button>
+            </div>
+        </div>`).join('') + `
+        <div style="margin-top:20px; padding:15px; background:var(--secondary); border-radius:15px; text-align:right;">
+            <span style="color:var(--gray); font-size:14px;">Итого к оплате:</span>
+            <div style="font-size:20px; font-weight:800; color:var(--accent);">${totalSum} руб.</div>
+            <div class="bonus-badge" style="color:#E65100">Будет начислено: +${bonus} <i class="fas fa-book-open"></i></div>
+        </div>`;
+}
+
+function changeQty(index, delta) {
+    const item = cart[index];
+    if (delta > 0 && item.qty >= item.max) return;
+    item.qty += delta;
+    if (item.qty <= 0) cart.splice(index, 1);
+    updateUI();
+    
+    const cartEl = document.getElementById('cart');
+    const shopEl = document.getElementById('shop');
+    
+    if (cartEl && cartEl.classList.contains('active')) renderCart();
+    if (shopEl && shopEl.classList.contains('active')) renderMarkers(markersData);
+}
+
+function checkout() {
+    if (cart.length === 0) return;
+    let markersCount = 0;
+    cart.forEach(item => { if (item.type === 'Маркер') markersCount += item.qty; });
+    if (markersCount > 0 && markersCount < 3) {
+        if (typeof tg !== 'undefined') tg.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук.");
+        return;
+    }
+    let totalSum = 0, hasPreorder = false;
+    let details = `🛍 **ДЕТАЛИ ЗАКАЗА:**\n`;
+    cart.forEach(item => {
+        const sum = item.price * item.qty; 
+        totalSum += sum;
+        if (item.type === 'Раскраска') hasPreorder = true;
+        details += `▪️ ${item.type} ${item.type === 'Маркер' ? '№' : '"'}${item.name}${item.type === 'Маркер' ? '' : '"'}\n   - ${item.qty} шт. x ${item.price} = ${sum} руб.\n`;
+    });
+
+    let bonusToEarn = 0;
+    if (totalSum >= 3000 && totalSum < 5000) bonusToEarn = 20;
+    else if (totalSum >= 5000 && totalSum < 7500) bonusToEarn = 30;
+    else if (totalSum >= 7500 && totalSum < 10000) bonusToEarn = 40;
+    else if (totalSum >= 10000) bonusToEarn = 50;
+    
+    const userBalEl = document.getElementById('userBalance');
+    details += `\n💰 **ИТОГО: ${totalSum} руб.**`;
+    details += `\n📖 **БОНУС К НАЧИСЛЕНИЮ: ${bonusToEarn}**`;
+    details += `\n👤 **ТЕКУЩИЙ БАЛАНС ЮЗЕРА: ${userBalEl ? userBalEl.innerText : '0'}**`;
+    
+    if (typeof tg !== 'undefined') {
+        if (hasPreorder) {
+            tg.showConfirm("В вашем заказе есть раскраски (ПОД ЗАКАЗ). Оформить?", (c) => { 
+                if(c) { tg.sendData(JSON.stringify({ details: details })); tg.close(); }
+            });
+        } else { 
+            tg.sendData(JSON.stringify({ details: details })); tg.close(); 
+        }
+    }
+}
+
+function toggleRewards() {
+    const rewardsSection = document.getElementById('rewards-section');
+    const loyaltyInfo = document.getElementById('loyalty-info');
+    if(!rewardsSection || !loyaltyInfo) return;
+    
+    if (rewardsSection.style.display === 'block') {
+        rewardsSection.style.display = 'none';
+        loyaltyInfo.style.display = 'block';
+    } else {
+        rewardsSection.style.display = 'block';
+        loyaltyInfo.style.display = 'none';
+    }
+    if(typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+}
+
+function buyReward(name, price) {
+    const balanceEl = document.getElementById('userBalance');
+    const currentBalance = balanceEl ? parseInt(balanceEl.innerText) : 0;
+    
+    if (currentBalance < price) {
+        if (typeof tg !== 'undefined') tg.showAlert("❌ Недостаточно ашетиков для этого товара!");
+        return;
+    }
+    if (typeof tg !== 'undefined') {
+        tg.showConfirm(`Вы действительно хотите обменять ${price} ашетиков на "${name}"?`, (confirm) => {
+            if (confirm) {
+                const userDisplay = document.getElementById('userIdDisplay');
+                tg.sendData(JSON.stringify({
+                    action: 'buy_reward',
+                    reward: name,
+                    price: price,
+                    user_id: userDisplay ? userDisplay.innerText : ''
+                }));
+                tg.close();
             }
-            if (typeof tg !== 'undefined') {
-                tg.showConfirm(`Вы действительно хотите обменять ${price} ашетиков на "${name}"?`, (confirm) => {
-                    if (confirm) {
-                        const userDisplay = document.getElementById('userIdDisplay');
-                        tg.sendData(JSON.stringify({
-                            action: 'buy_reward',
-                            reward: name,
-                            price: price,
-                            user_id: userDisplay ? userDisplay.innerText : ''
-                        }));
-                        tg.close();
-                    }
-                });
-            }
-        }
+        });
+    }
+}
 
-        let currentViewingBrand = null;
+let currentViewingBrand = null;
 
-        function renderBrandsList() {
-            const container = document.getElementById('brandsGridContainer');
-            if(!container) return;
-            container.innerHTML = markerBrandsList.map(brand => {
-                const ownedCount = userInventory.filter(id => id.startsWith(brand.name + "_")).length;
-                return `
-                <div class="brand-button" onclick="openBrandView('${brand.name}')">
-                    <span>${brand.name}</span>
-                    <span class="brand-counter">${ownedCount} / ${brand.total}</span>
-                </div>`;
-            }).join('');
-        }
+function renderBrandsList() {
+    const container = document.getElementById('brandsGridContainer');
+    if(!container) return;
+    container.innerHTML = markerBrandsList.map(brand => {
+        const ownedCount = userInventory.filter(id => id.startsWith(brand.name + "_")).length;
+        return `
+        <div class="brand-button" onclick="openBrandView('${brand.name}')">
+            <span>${brand.name}</span>
+            <span class="brand-counter">${ownedCount} / ${brand.total}</span>
+        </div>`;
+    }).join('');
+}
 
-        function openBrandView(brandName) {
-            currentViewingBrand = markerBrandsList.find(b => b.name === brandName);
-            document.getElementById('brandsMainView').style.display = 'none';
-            document.getElementById('brandDetailView').style.display = 'block';
-            document.getElementById('currentBrandTitle').innerText = brandName;
-            document.getElementById('brandSearchInput').value = '';
-            renderBrandInventory();
-        }
+function openBrandView(brandName) {
+    currentViewingBrand = markerBrandsList.find(b => b.name === brandName);
+    document.getElementById('brandsMainView').style.display = 'none';
+    document.getElementById('brandDetailView').style.display = 'block';
+    document.getElementById('currentBrandTitle').innerText = brandName;
+    document.getElementById('brandSearchInput').value = '';
+    renderBrandInventory();
+}
 
-        function closeBrandView() {
-            currentViewingBrand = null;
-            document.getElementById('brandsMainView').style.display = 'block';
-            document.getElementById('brandDetailView').style.display = 'none';
-            renderBrandsList();
-        }
+function closeBrandView() {
+    currentViewingBrand = null;
+    document.getElementById('brandsMainView').style.display = 'block';
+    document.getElementById('brandDetailView').style.display = 'none';
+    renderBrandsList();
+}
 
-     function renderBrandInventory() {
-        if (!currentViewingBrand) return;
-        const container = document.getElementById('brandInventoryList');
-        if (!container) return;
-        
-        const searchInput = document.getElementById('brandSearchInput');
-        const query = searchInput ? searchInput.value.toLowerCase() : "";
-        
-        let trainedMarkersForBrand = aiDB
-            .filter(item => item.brand === currentViewingBrand.name)
-            .map(item => item.marker); 
+function renderBrandInventory() {
+    if (!currentViewingBrand) return;
+    const container = document.getElementById('brandInventoryList');
+    if (!container) return;
+    
+    const searchInput = document.getElementById('brandSearchInput');
+    const query = searchInput ? searchInput.value.toLowerCase() : "";
+    
+    let trainedMarkersForBrand = aiDB
+        .filter(item => item.brand === currentViewingBrand.name)
+        .map(item => item.marker); 
 
-        let allMarkers = [...new Set(trainedMarkersForBrand)];
-        let filtered = allMarkers.filter(m => m.toLowerCase().includes(query));
+    let allMarkers = [...new Set(trainedMarkersForBrand)];
+    let filtered = allMarkers.filter(m => m.toLowerCase().includes(query));
 
-        if (filtered.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: span 3; text-align:center; color:var(--gray); padding: 20px;">
-                    В этом бренде еще нет обученных цветов.<br>
-                    <small>Номера появятся после обучения в разделе ИИ.</small>
-                </div>`;
-            return;
-        }
-
-        container.innerHTML = filtered.map(markerNum => {
-            let mId = `${currentViewingBrand.name}_${markerNum}`;
-            let isOwned = userInventory.includes(mId);
-            return `
-            <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})">
-                ${markerNum}
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: span 3; text-align:center; color:var(--gray); padding: 20px;">
+                В этом бренде еще нет обученных цветов.<br>
+                <small>Номера появятся после обучения в разделе ИИ.</small>
             </div>`;
-        }).join('');
+        return;
     }
 
-        function filterBrandInventory() { renderBrandInventory(); }
+    container.innerHTML = filtered.map(markerNum => {
+        let mId = `${currentViewingBrand.name}_${markerNum}`;
+        let isOwned = userInventory.includes(mId);
+        return `
+        <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})">
+            ${markerNum}
+        </div>`;
+    }).join('');
+}
 
-       async function massToggle(isAdded) {
-        if (!currentViewingBrand) return;
-        
-        const actionText = isAdded ? "Добавить все обученные маркеры?" : "Убрать все маркеры этого бренда?";
-        
-        if (typeof tg !== 'undefined') {
-            tg.showConfirm(actionText, async (confirm) => {
-                if (confirm) {
-                    let trainedIds = aiDB
-                        .filter(item => item.brand === currentViewingBrand.name)
-                        .map(item => `${currentViewingBrand.name}_${item.marker}`);
+function filterBrandInventory() { renderBrandInventory(); }
 
-                    if (isAdded) {
-                        userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
-                    } else {
-                        userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
-                        
-                        organizers.forEach(org => {
-                            org.cells.forEach(cell => {
-                                cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
-                            });
-                        });
-                        if (typeof saveOrganizers === 'function') saveOrganizers();
-                        if (typeof renderOrganizers === 'function') renderOrganizers();
-                    }
+async function massToggle(isAdded) {
+    if (!currentViewingBrand) return;
+    
+    const actionText = isAdded ? "Добавить все обученные маркеры?" : "Убрать все маркеры этого бренда?";
+    
+    if (typeof tg !== 'undefined') {
+        tg.showConfirm(actionText, async (confirm) => {
+            if (confirm) {
+                let trainedIds = aiDB
+                    .filter(item => item.brand === currentViewingBrand.name)
+                    .map(item => `${currentViewingBrand.name}_${item.marker}`);
 
-                    let userIdEl = document.getElementById('userIdDisplay');
-                    let userId = userIdEl ? userIdEl.innerText : '';
+                if (isAdded) {
+                    userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
+                } else {
+                    userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
                     
-                    try {
-                        await fetch(`${API_URL}/inventory_mass`, {
-                            method: 'POST', 
-                            body: JSON.stringify({ 
-                                user_id: userId, 
-                                brand: currentViewingBrand.name, 
-                                action: isAdded ? "add_all" : "remove_all" 
-                            })
+                    organizers.forEach(org => {
+                        org.cells.forEach(cell => {
+                            cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
                         });
-                    } catch (e) { console.error(e); }
-
-                    renderBrandInventory();
-                    if (typeof checkAchievements === 'function') checkAchievements(); 
-                    if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                }
-            });
-        }
-    }
-
-        function tab(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
-            const targetPage = document.getElementById(id);
-            if (targetPage) targetPage.classList.add('active');
-            
-            const targetBtn = document.getElementById('btn-' + id);
-            if(targetBtn) {
-                targetBtn.classList.add('active');
-            }
-            
-            if (id === 'shop') loadMarkers();
-            if (id === 'cart') renderCart();
-            if (id === 'mymarkers') {
-                closeBrandView();
-                renderBrandsList();
-                if (typeof renderOrganizers === 'function') renderOrganizers(); 
-            }
-        }
-
-        let currentVol, currentPage, maxPages, touchStartX, touchStartY;
-        function startBook(v, m) { currentVol = v; maxPages = m; currentPage = 1; document.getElementById('viewer').style.display = 'block'; updatePage(); }
-        function closeBook() { document.getElementById('viewer').style.display = 'none'; }
-        function updatePage() {
-            const img = document.getElementById('current-page'), counter = document.getElementById('page-counter'), formats = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG'];
-            let fIndex = 0;
-            function tryLoad() { if(img) img.src = `otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; }
-            if(img) {
-                img.onerror = () => { fIndex++; if (fIndex < formats.length) tryLoad(); };
-            }
-            tryLoad(); 
-            if(counter) counter.innerText = `${currentPage} / ${maxPages}`;
-        }
-
-        function handleTouchStart(e) { touchStartX = e.touches[0].screenX; touchStartY = e.touches[0].screenY; }
-        function handleTouchEnd(e) {
-            let dx = touchStartX - e.changedTouches[0].screenX, dy = touchStartY - e.changedTouches[0].screenY;
-            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-                if (dx > 0 && currentPage < maxPages) { currentPage++; updatePage(); }
-                else if (dx < 0 && currentPage > 1) { currentPage--; updatePage(); }
-            }
-        }
-
-        async function toggleInventory(brand, marker, isAdded) {
-            let mId = `${brand}_${marker}`;
-            if(isAdded && !userInventory.includes(mId)) userInventory.push(mId);
-            if(!isAdded) {
-                userInventory = userInventory.filter(id => id !== mId);
-                organizers.forEach(org => {
-                    org.cells.forEach(cell => {
-                        cell.markers = cell.markers.filter(id => id !== mId);
                     });
-                });
-                if (typeof saveOrganizers === 'function') saveOrganizers();
-                if (typeof renderOrganizers === 'function') renderOrganizers(); 
-            }
-            
-            renderBrandInventory();
-            if (typeof checkAchievements === 'function') checkAchievements(); 
-            if(typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                    if (typeof saveOrganizers === 'function') saveOrganizers();
+                    if (typeof renderOrganizers === 'function') renderOrganizers();
+                }
 
-            let userIdEl = document.getElementById('userIdDisplay');
-            let userId = userIdEl ? userIdEl.innerText : '';
-            fetch(`${API_URL}/inventory`, {
-                method: 'POST', body: JSON.stringify({ user_id: userId, marker_id: mId, action: isAdded ? "add" : "remove" })
-            }).catch(e => console.error("Ошибка сохранения инвентаря", e));
-        }
-
-        function filterMarkers() { renderMarkers(markersData); }
-
-        // ИСПРАВЛЕНИЕ: Был удален дубликат объявления констант (API_URL, aiDB, userInventory)
-
-        async function initAI() {
-            try {
-                let res = await fetch(`${API_URL}/ai_db`);
-                aiDB = await res.json();
-                
                 let userIdEl = document.getElementById('userIdDisplay');
                 let userId = userIdEl ? userIdEl.innerText : '';
-                if(userId && userId !== "---") {
-                    let invRes = await fetch(`${API_URL}/inventory?user_id=${userId}`);
-                    userInventory = await invRes.json();
-                }
-            } catch(e) { console.error("Ошибка загрузки БД ИИ или инвентаря", e); }
-            
-            let adminPanel = document.getElementById('userIdDisplay');
-            if (adminPanel && adminPanel.innerText == "496779756") {
-                if (document.getElementById('aiAdminPanel')) document.getElementById('aiAdminPanel').style.display = "block";
-                if (document.getElementById('adminTaskPanel')) document.getElementById('adminTaskPanel').style.display = "block"; 
-                loadQuarantine();
-                if (typeof loadAdminTasks === 'function') loadAdminTasks();
-            }
-        }
-
-        function processAI(event) {
-            const files = event.target.files;
-            if(!files || files.length === 0) return;
-            
-            const container = document.getElementById('aiMultipleResultsContainer');
-            if (!container) return;
-            container.innerHTML = ''; 
-            
-            Array.from(files).forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        const scale = Math.min(300 / img.width, 300 / img.height);
-                        canvas.width = img.width * scale; canvas.height = img.height * scale;
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        
-                        const imgB64 = canvas.toDataURL('image/jpeg', 0.5);
-                        const sx = Math.max(0, (canvas.width/2)-25), sy = Math.max(0, (canvas.height/2)-25);
-                        const imgData = ctx.getImageData(sx, sy, 50, 50).data;
-                        let r=0, g=0, b=0, count=0;
-                        for(let i=0; i<imgData.length; i+=4) { r+=imgData[i]; g+=imgData[i+1]; b+=imgData[i+2]; count++; }
-                        let rgb = [Math.round(r/count), Math.round(g/count), Math.round(b/count)];
-                        
-                        let resDiv = document.createElement('div');
-                        resDiv.style.marginTop = "15px";
-                        resDiv.style.background = "var(--secondary)";
-                        resDiv.style.padding = "15px";
-                        resDiv.style.borderRadius = "12px";
-                        resDiv.id = `aiResBlock_${index}`;
-                        
-                        container.appendChild(canvas);
-                        canvas.style.maxWidth = "100%";
-                        canvas.style.borderRadius = "12px";
-                        canvas.style.marginTop = "15px";
-                        canvas.style.border = "1px solid rgba(128,128,128,0.2)";
-                        
-                        predictColorMultiple(rgb, imgB64, resDiv, index);
-                        container.appendChild(resDiv);
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function predictColorMultiple(rgb, imgB64, resDiv, index) {
-            if(aiDB.length === 0) { resDiv.innerHTML = "<p>База ИИ пуста.</p>"; return; }
-            let searchBrandEl = document.getElementById('aiSearchBrand');
-            let searchBrand = searchBrandEl ? searchBrandEl.value : 'All';
-            let useInventoryEl = document.getElementById('aiUseInventoryOnly');
-            let useInventory = useInventoryEl ? useInventoryEl.checked : false;
-            
-            let filteredDB = aiDB.filter(item => {
-                if (searchBrand !== "All" && item.brand !== searchBrand) return false;
-                if (useInventory && !userInventory.includes(`${item.brand}_${item.marker}`)) return false;
-                return true;
-            });
-
-            if(filteredDB.length === 0) { resDiv.innerHTML = "<p style='color:var(--gray);'>Совпадений в вашей палитре не найдено.</p>"; return; }
-
-            let bestMatch = null, minDist = Infinity;
-            filteredDB.forEach(item => {
-                let dist = Math.sqrt(Math.pow(item.rgb[0]-rgb[0], 2) + Math.pow(item.rgb[1]-rgb[1], 2) + Math.pow(item.rgb[2]-rgb[2], 2));
-                if(dist < minDist) { minDist = dist; bestMatch = item; }
-            });
-
-            let confidence = Math.max(0, (1 - (minDist / 441.67)) * 100).toFixed(1);
-
-            const mId = `${bestMatch.brand}_${bestMatch.marker}`;
-            
-            // ИСПРАВЛЕНИЕ: Добавлена безопасная проверка вызова findMarkerLocation
-            const locationInfo = (typeof findMarkerLocation === 'function') ? findMarkerLocation(mId) : null;
-
-            const locationLabel = locationInfo 
-                ? `<div style="margin-top:8px; color:#34c759; font-weight:bold; font-size:13px;">📍 Находится: ${locationInfo}</div>
-                   <button class="buy-btn" style="margin-top:10px; background:var(--secondary); color:var(--accent); font-size:12px; border:1px solid var(--accent); padding:8px; border-radius:8px;" 
-                    onclick="locateAndFlash('${mId}')">
-                    📍 Показать в органайзере
-                   </button>`
-                : `<div style="margin-top:8px; color:var(--gray); font-size:12px;">📍 Местоположение в органайзере не указано</div>`;
-
-            resDiv.innerHTML = `
-                <h3 style="margin:0 0 5px 0;">Рекомендация: ${bestMatch.brand} <span style="color:var(--accent);">${bestMatch.marker}</span></h3>
-                <p style="margin:0 0 5px 0; font-size:12px; color:var(--gray);">Это максимально подходящий цвет из имеющихся у вас в наличии.</p>
-                <div style="background: rgba(241, 196, 15, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 8px; margin-bottom: 10px; display: inline-block;">
-                    <span style="font-weight:bold; font-size:13px; color: var(--gold);">⚡ Точность совпадения: ${confidence}%</span>
-                </div>
-                ${locationLabel}
-                <div id="aiFeedbackBlock_${index}" style="margin-top:10px;">
-                    <p style="margin:0 0 10px 0; font-weight:bold; font-size:14px;">Подошло?</p>
-                    <div style="display:flex; gap:10px;">
-                        <button class="buy-btn" style="background:#34c759; border-radius:8px;" onclick="document.getElementById('aiFeedbackBlock_${index}').style.display='none'">Да, отлично!</button>
-                        <button class="buy-btn" style="background:#ff3b30; border-radius:8px;" onclick="showCorrectionBlock(${index})">Нет, нужен другой</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ИСПРАВЛЕНИЕ: Заглушка для функции locateAndFlash, чтобы избежать ошибки при клике
-        function locateAndFlash(mId) {
-            if (typeof tg !== 'undefined' && tg.showAlert) {
-                tg.showAlert("Функция показа в органайзере пока недоступна.");
-            } else {
-                alert("Функция показа в органайзере пока недоступна.");
-            }
-        }
-
-        function showCorrectionBlock(index) {
-            let el = document.getElementById(`aiFeedbackBlock_${index}`);
-            if(el) el.style.display = 'none';
-        }
-
-        function toggleCorrectionSet(index) {
-            const brandEl = document.getElementById(`aiBrandSelect_${index}`);
-            const setEl = document.getElementById(`aiCorrectionSet_${index}`);
-            if(brandEl && setEl) {
-                setEl.style.display = (brandEl.value === 'Tooli-Art') ? 'block' : 'none';
-            }
-        }
-
-        function toggleAdminSet() {
-            const brandEl = document.getElementById('adminTrainBrand');
-            const setEl = document.getElementById('adminTrainSet');
-            if(brandEl && setEl) {
-                setEl.style.display = (brandEl.value === 'Tooli-Art') ? 'block' : 'none';
-            }
-        }
-
-        function trainAI(event) {
-            const brandEl = document.getElementById('adminTrainBrand');
-            const numEl = document.getElementById('adminTrainNum');
-            if(!brandEl || !numEl) return;
-            
-            const brand = brandEl.value;
-            let num = numEl.value.trim();
-            if(!num) return;
-            
-            if(brand === 'Tooli-Art') {
-                let setVal = document.getElementById('adminTrainSet').value;
-                num = setVal + " " + num; 
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = async function() {
-                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                    canvas.width = img.width; canvas.height = img.height; ctx.drawImage(img,0,0);
-                    const imgData = ctx.getImageData(0,0, canvas.width, canvas.height).data;
-                    let r=0,g=0,b=0,c=0; for(let i=0; i<imgData.length; i+=4){ r+=imgData[i]; g+=imgData[i+1]; b+=imgData[i+2]; c++; }
-                    await fetch(`${API_URL}/train`, {
-                        method: 'POST', body: JSON.stringify({ brand: brand, marker: num, rgb: [Math.round(r/c), Math.round(g/c), Math.round(b/c)] })
+                
+                // Проверка API_URL перед запросом
+                let apiUrlBase = (typeof API_URL !== 'undefined') ? API_URL : "https://hlhbot-hachettelittleheroes.amvera.io/api";
+                
+                try {
+                    await fetch(`${apiUrlBase}/inventory_mass`, {
+                        method: 'POST', 
+                        body: JSON.stringify({ 
+                            user_id: userId, 
+                            brand: currentViewingBrand.name, 
+                            action: isAdded ? "add_all" : "remove_all" 
+                        })
                     });
-                    initAI();
-                }; img.src = e.target.result;
-            }; reader.readAsDataURL(event.target.files[0]);
-        }
+                } catch (e) { console.error(e); }
 
-        async function loadQuarantine() {
-            try {
-                let res = await fetch(`${API_URL}/quarantine_list`);
-                let data = await res.json();
-                let html = data.length === 0 ? "<p>Пусто.</p>" : "";
-                data.forEach(q => {
-                    html += `<div class="row-item" style="align-items:center;">
-                        <img src="${q.image}" style="width:50px; border-radius:8px; margin-right:10px; object-fit:cover;"> 
-                        <div style="flex:1;">
-                            <b>${q.brand}</b><br>
-                            <span style="font-size:14px; color:var(--accent);">№ ${q.correct_marker}</span>
-                        </div>
-                        <div style="display:flex; flex-direction:column; gap:5px;">
-                            <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#34c759;" onclick="resolveQ(${q.id}, 'approve')">Одобрить</button>
-                            <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#ff3b30;" onclick="resolveQ(${q.id}, 'reject')">Отвергнуть</button>
-                        </div>
-                    </div>`;
-                });
-                let qList = document.getElementById('adminQuarantineList');
-                if (qList) qList.innerHTML = html;
-            } catch (e) { console.error(e); }
-        }
-
-        async function resolveQ(id, action) {
-            await fetch(`${API_URL}/quarantine_resolve`, { method: 'POST', body: JSON.stringify({ id: id, action: action }) });
-            initAI(); loadQuarantine();
-        }
-
-        window.onload = async () => {
-            try {
-                const params = new URLSearchParams(window.location.search);
-                const balanceEl = document.getElementById('userBalance');
-                if (balanceEl) balanceEl.innerText = params.get('balance') || 0;
-                
-                let tgid = "---";
-                // Безопасная проверка наличия объекта tg
-                if (typeof tg !== 'undefined' && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    tgid = tg.initDataUnsafe.user.id;
-                }
-                
-                const userId = params.get('id') || tgid || "---";
-                const userIdDisplayEl = document.getElementById('userIdDisplay');
-                if (userIdDisplayEl) userIdDisplayEl.innerText = userId;
-                
-                // Запускаем асинхронную загрузку данных
-                await initAI();
-                
-                if (typeof renderBooks === 'function') renderBooks();
-                if (typeof renderBrandsList === 'function') renderBrandsList();
-                if (typeof renderOrganizers === 'function') renderOrganizers(); 
-                
-                // Если есть админ-панель
-                if (userId == "496779756") {
-                    const adminTask = document.getElementById('adminTaskPanel');
-                    if (adminTask) adminTask.style.display = "block";
-                }
-
-            } catch (error) {
-                console.error("Ошибка при инициализации: ", error);
+                renderBrandInventory();
+                if (typeof checkAchievements === 'function') checkAchievements(); 
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
-        };
+        });
+    }
+}
 
-    </script>
+function tab(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    const targetPage = document.getElementById(id);
+    if (targetPage) targetPage.classList.add('active');
+    
+    const targetBtn = document.getElementById('btn-' + id);
+    if(targetBtn) {
+        targetBtn.classList.add('active');
+    }
+    
+    if (id === 'shop') loadMarkers();
+    if (id === 'cart') renderCart();
+    if (id === 'mymarkers') {
+        closeBrandView();
+        renderBrandsList();
+        if (typeof renderOrganizers === 'function') renderOrganizers(); 
+    }
+}
+
+let currentVol, currentPage, maxPages, touchStartX, touchStartY;
+function startBook(v, m) { currentVol = v; maxPages = m; currentPage = 1; document.getElementById('viewer').style.display = 'block'; updatePage(); }
+function closeBook() { document.getElementById('viewer').style.display = 'none'; }
+function updatePage() {
+    const img = document.getElementById('current-page'), counter = document.getElementById('page-counter'), formats = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG'];
+    let fIndex = 0;
+    function tryLoad() { if(img) img.src = `otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; }
+    if(img) {
+        img.onerror = () => { fIndex++; if (fIndex < formats.length) tryLoad(); };
+    }
+    tryLoad(); 
+    if(counter) counter.innerText = `${currentPage} / ${maxPages}`;
+}
+
+function handleTouchStart(e) { touchStartX = e.touches[0].screenX; touchStartY = e.touches[0].screenY; }
+function handleTouchEnd(e) {
+    let dx = touchStartX - e.changedTouches[0].screenX, dy = touchStartY - e.changedTouches[0].screenY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+        if (dx > 0 && currentPage < maxPages) { currentPage++; updatePage(); }
+        else if (dx < 0 && currentPage > 1) { currentPage--; updatePage(); }
+    }
+}
+
+async function toggleInventory(brand, marker, isAdded) {
+    let mId = `${brand}_${marker}`;
+    if(isAdded && !userInventory.includes(mId)) userInventory.push(mId);
+    if(!isAdded) {
+        userInventory = userInventory.filter(id => id !== mId);
+        organizers.forEach(org => {
+            org.cells.forEach(cell => {
+                cell.markers = cell.markers.filter(id => id !== mId);
+            });
+        });
+        if (typeof saveOrganizers === 'function') saveOrganizers();
+        if (typeof renderOrganizers === 'function') renderOrganizers(); 
+    }
+    
+    renderBrandInventory();
+    if (typeof checkAchievements === 'function') checkAchievements(); 
+    if(typeof tg !== 'undefined' && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+
+    let userIdEl = document.getElementById('userIdDisplay');
+    let userId = userIdEl ? userIdEl.innerText : '';
+    let apiUrlBase = (typeof API_URL !== 'undefined') ? API_URL : "https://hlhbot-hachettelittleheroes.amvera.io/api";
+    
+    fetch(`${apiUrlBase}/inventory`, {
+        method: 'POST', body: JSON.stringify({ user_id: userId, marker_id: mId, action: isAdded ? "add" : "remove" })
+    }).catch(e => console.error("Ошибка сохранения инвентаря", e));
+}
+
+function filterMarkers() { renderMarkers(markersData); }
+
+async function initAI() {
+    try {
+        let apiUrlBase = (typeof API_URL !== 'undefined') ? API_URL : "https://hlhbot-hachettelittleheroes.amvera.io/api";
+        let res = await fetch(`${apiUrlBase}/ai_db`);
+        aiDB = await res.json();
+        
+        let userIdEl = document.getElementById('userIdDisplay');
+        let userId = userIdEl ? userIdEl.innerText : '';
+        if(userId && userId !== "---") {
+            let invRes = await fetch(`${apiUrlBase}/inventory?user_id=${userId}`);
+            userInventory = await invRes.json();
+        }
+    } catch(e) { console.error("Ошибка загрузки БД ИИ или инвентаря", e); }
+    
+    let adminPanel = document.getElementById('userIdDisplay');
+    if (adminPanel && adminPanel.innerText == "496779756") {
+        if (document.getElementById('aiAdminPanel')) document.getElementById('aiAdminPanel').style.display = "block";
+        if (document.getElementById('adminTaskPanel')) document.getElementById('adminTaskPanel').style.display = "block"; 
+        loadQuarantine();
+        if (typeof loadAdminTasks === 'function') loadAdminTasks();
+    }
+}
+
+function processAI(event) {
+    const files = event.target.files;
+    if(!files || files.length === 0) return;
+    
+    const container = document.getElementById('aiMultipleResultsContainer');
+    if (!container) return;
+    container.innerHTML = ''; 
+    
+    Array.from(files).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const scale = Math.min(300 / img.width, 300 / img.height);
+                canvas.width = img.width * scale; canvas.height = img.height * scale;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                const imgB64 = canvas.toDataURL('image/jpeg', 0.5);
+                const sx = Math.max(0, (canvas.width/2)-25), sy = Math.max(0, (canvas.height/2)-25);
+                const imgData = ctx.getImageData(sx, sy, 50, 50).data;
+                let r=0, g=0, b=0, count=0;
+                for(let i=0; i<imgData.length; i+=4) { r+=imgData[i]; g+=imgData[i+1]; b+=imgData[i+2]; count++; }
+                let rgb = [Math.round(r/count), Math.round(g/count), Math.round(b/count)];
+                
+                let resDiv = document.createElement('div');
+                resDiv.style.marginTop = "15px";
+                resDiv.style.background = "var(--secondary)";
+                resDiv.style.padding = "15px";
+                resDiv.style.borderRadius = "12px";
+                resDiv.id = `aiResBlock_${index}`;
+                
+                container.appendChild(canvas);
+                canvas.style.maxWidth = "100%";
+                canvas.style.borderRadius = "12px";
+                canvas.style.marginTop = "15px";
+                canvas.style.border = "1px solid rgba(128,128,128,0.2)";
+                
+                predictColorMultiple(rgb, imgB64, resDiv, index);
+                container.appendChild(resDiv);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function predictColorMultiple(rgb, imgB64, resDiv, index) {
+    if(aiDB.length === 0) { resDiv.innerHTML = "<p>База ИИ пуста.</p>"; return; }
+    let searchBrandEl = document.getElementById('aiSearchBrand');
+    let searchBrand = searchBrandEl ? searchBrandEl.value : 'All';
+    let useInventoryEl = document.getElementById('aiUseInventoryOnly');
+    let useInventory = useInventoryEl ? useInventoryEl.checked : false;
+    
+    let filteredDB = aiDB.filter(item => {
+        if (searchBrand !== "All" && item.brand !== searchBrand) return false;
+        if (useInventory && !userInventory.includes(`${item.brand}_${item.marker}`)) return false;
+        return true;
+    });
+
+    if(filteredDB.length === 0) { resDiv.innerHTML = "<p style='color:var(--gray);'>Совпадений в вашей палитре не найдено.</p>"; return; }
+
+    let bestMatch = null, minDist = Infinity;
+    filteredDB.forEach(item => {
+        let dist = Math.sqrt(Math.pow(item.rgb[0]-rgb[0], 2) + Math.pow(item.rgb[1]-rgb[1], 2) + Math.pow(item.rgb[2]-rgb[2], 2));
+        if(dist < minDist) { minDist = dist; bestMatch = item; }
+    });
+
+    let confidence = Math.max(0, (1 - (minDist / 441.67)) * 100).toFixed(1);
+
+    const mId = `${bestMatch.brand}_${bestMatch.marker}`;
+    const locationInfo = (typeof findMarkerLocation === 'function') ? findMarkerLocation(mId) : null;
+
+    const locationLabel = locationInfo 
+        ? `<div style="margin-top:8px; color:#34c759; font-weight:bold; font-size:13px;">📍 Находится: ${locationInfo}</div>
+           <button class="buy-btn" style="margin-top:10px; background:var(--secondary); color:var(--accent); font-size:12px; border:1px solid var(--accent); padding:8px; border-radius:8px;" 
+            onclick="locateAndFlash('${mId}')">
+            📍 Показать в органайзере
+           </button>`
+        : `<div style="margin-top:8px; color:var(--gray); font-size:12px;">📍 Местоположение в органайзере не указано</div>`;
+
+    resDiv.innerHTML = `
+        <h3 style="margin:0 0 5px 0;">Рекомендация: ${bestMatch.brand} <span style="color:var(--accent);">${bestMatch.marker}</span></h3>
+        <p style="margin:0 0 5px 0; font-size:12px; color:var(--gray);">Это максимально подходящий цвет из имеющихся у вас в наличии.</p>
+        <div style="background: rgba(241, 196, 15, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 8px; margin-bottom: 10px; display: inline-block;">
+            <span style="font-weight:bold; font-size:13px; color: var(--gold);">⚡ Точность совпадения: ${confidence}%</span>
+        </div>
+        ${locationLabel}
+        <div id="aiFeedbackBlock_${index}" style="margin-top:10px;">
+            <p style="margin:0 0 10px 0; font-weight:bold; font-size:14px;">Подошло?</p>
+            <div style="display:flex; gap:10px;">
+                <button class="buy-btn" style="background:#34c759; border-radius:8px;" onclick="document.getElementById('aiFeedbackBlock_${index}').style.display='none'">Да, отлично!</button>
+                <button class="buy-btn" style="background:#ff3b30; border-radius:8px;" onclick="showCorrectionBlock(${index})">Нет, нужен другой</button>
+            </div>
+        </div>
+    `;
+}
+
+function locateAndFlash(mId) {
+    if (typeof tg !== 'undefined' && tg.showAlert) {
+        tg.showAlert("Функция показа в органайзере пока недоступна.");
+    } else {
+        alert("Функция показа в органайзере пока недоступна.");
+    }
+}
+
+function showCorrectionBlock(index) {
+    let el = document.getElementById(`aiFeedbackBlock_${index}`);
+    if(el) el.style.display = 'none';
+}
+
+function toggleCorrectionSet(index) {
+    const brandEl = document.getElementById(`aiBrandSelect_${index}`);
+    const setEl = document.getElementById(`aiCorrectionSet_${index}`);
+    if(brandEl && setEl) {
+        setEl.style.display = (brandEl.value === 'Tooli-Art') ? 'block' : 'none';
+    }
+}
+
+function toggleAdminSet() {
+    const brandEl = document.getElementById('adminTrainBrand');
+    const setEl = document.getElementById('adminTrainSet');
+    if(brandEl && setEl) {
+        setEl.style.display = (brandEl.value === 'Tooli-Art') ? 'block' : 'none';
+    }
+}
+
+function trainAI(event) {
+    const brandEl = document.getElementById('adminTrainBrand');
+    const numEl = document.getElementById('adminTrainNum');
+    if(!brandEl || !numEl) return;
+    
+    const brand = brandEl.value;
+    let num = numEl.value.trim();
+    if(!num) return;
+    
+    if(brand === 'Tooli-Art') {
+        let setVal = document.getElementById('adminTrainSet').value;
+        num = setVal + " " + num; 
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = async function() {
+            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+            canvas.width = img.width; canvas.height = img.height; ctx.drawImage(img,0,0);
+            const imgData = ctx.getImageData(0,0, canvas.width, canvas.height).data;
+            let r=0,g=0,b=0,c=0; for(let i=0; i<imgData.length; i+=4){ r+=imgData[i]; g+=imgData[i+1]; b+=imgData[i+2]; c++; }
+            
+            let apiUrlBase = (typeof API_URL !== 'undefined') ? API_URL : "https://hlhbot-hachettelittleheroes.amvera.io/api";
+            await fetch(`${apiUrlBase}/train`, {
+                method: 'POST', body: JSON.stringify({ brand: brand, marker: num, rgb: [Math.round(r/c), Math.round(g/c), Math.round(b/c)] })
+            });
+            initAI();
+        }; img.src = e.target.result;
+    }; reader.readAsDataURL(event.target.files[0]);
+}
+
+async function loadQuarantine() {
+    try {
+        let apiUrlBase = (typeof API_URL !== 'undefined') ? API_URL : "https://hlhbot-hachettelittleheroes.amvera.io/api";
+        let res = await fetch(`${apiUrlBase}/quarantine_list`);
+        let data = await res.json();
+        let html = data.length === 0 ? "<p>Пусто.</p>" : "";
+        data.forEach(q => {
+            html += `<div class="row-item" style="align-items:center;">
+                <img src="${q.image}" style="width:50px; border-radius:8px; margin-right:10px; object-fit:cover;"> 
+                <div style="flex:1;">
+                    <b>${q.brand}</b><br>
+                    <span style="font-size:14px; color:var(--accent);">№ ${q.correct_marker}</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#34c759;" onclick="resolveQ(${q.id}, 'approve')">Одобрить</button>
+                    <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#ff3b30;" onclick="resolveQ(${q.id}, 'reject')">Отвергнуть</button>
+                </div>
+            </div>`;
+        });
+        let qList = document.getElementById('adminQuarantineList');
+        if (qList) qList.innerHTML = html;
+    } catch (e) { console.error(e); }
+}
+
+async function resolveQ(id, action) {
+    let apiUrlBase = (typeof API_URL !== 'undefined') ? API_URL : "https://hlhbot-hachettelittleheroes.amvera.io/api";
+    await fetch(`${apiUrlBase}/quarantine_resolve`, { method: 'POST', body: JSON.stringify({ id: id, action: action }) });
+    initAI(); loadQuarantine();
+}
+
+// Заменяем window.onload на слушатель, чтобы не убить код из первой части
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const balanceEl = document.getElementById('userBalance');
+        if (balanceEl) balanceEl.innerText = params.get('balance') || 0;
+        
+        let tgid = "---";
+        if (typeof tg !== 'undefined' && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            tgid = tg.initDataUnsafe.user.id;
+        }
+        
+        const userId = params.get('id') || tgid || "---";
+        const userIdDisplayEl = document.getElementById('userIdDisplay');
+        if (userIdDisplayEl) userIdDisplayEl.innerText = userId;
+        
+        await initAI();
+        
+        if (typeof renderBooks === 'function') renderBooks();
+        if (typeof renderBrandsList === 'function') renderBrandsList();
+        if (typeof renderOrganizers === 'function') renderOrganizers(); 
+        
+        if (userId == "496779756") {
+            const adminTask = document.getElementById('adminTaskPanel');
+            if (adminTask) adminTask.style.display = "block";
+        }
+
+    } catch (error) {
+        console.error("Ошибка при инициализации: ", error);
+    }
+});
+</script>
 </body>
 </html>

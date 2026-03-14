@@ -338,7 +338,7 @@ text-transform: uppercase;
             <div id="brandInventoryList" class="inventory-grid"></div>
         </div>
     </div>
-              <div id="profile" class="page">
+    <div id="profile" class="page">
         <div class="header" style="text-align: left; padding-left: 20px; font-weight: 800; font-size: 24px;">Профиль</div>
 
         <div class="profile-hero" style="display: flex; align-items: center; gap: 20px; padding: 20px 20px 10px 20px;">
@@ -360,6 +360,16 @@ text-transform: uppercase;
             </div>
         </div>
 
+        <div class="avatar-editor" id="avatarEditorBlock" style="display:none; padding: 0 10px; margin-bottom: 15px;">
+            <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
+                <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
+            </div>
+            <div class="avatar-grid-presets" id="avatarPresetsGrid"></div>
+            <button class="buy-btn rounded-pill" style="margin-top: 10px;" onclick="toggleAvatarEditor()">Готово</button>
+        </div>
+
         <div id="loyaltyBlock" style="width: 100%; padding: 0 5px; box-sizing: border-box;"> 
             <div class="balance-card" style="margin-top:0; padding: 25px 20px; border-radius: 20px; width: 100%; box-sizing: border-box;">
                 <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
@@ -368,7 +378,7 @@ text-transform: uppercase;
                 
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <button class="buy-btn" style="background:rgba(255,255,255,0.25); border:1px solid white; border-radius:12px; padding:12px; width: 100%; font-size: 14px; font-weight: bold; color: white;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
-                    <button class="buy-btn" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.5); border-radius:12px; padding:12px; width: 100%; font-size: 14px; font-weight: bold; color: white;" onclick="toggleBlock('loyalty-info', this)">Заработать ашетики 💰</button>
+                    <button class="buy-btn" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.5); border-radius:12px; padding:12px; width: 100%; font-size: 14px; font-weight: bold; color: white;" onclick="toggleBlock('real-loyalty-info', this)">Заработать ашетики 💰</button>
                 </div>
             </div>
         </div>
@@ -405,7 +415,7 @@ text-transform: uppercase;
             <button class="buy-btn" style="background:none; color:var(--gray); margin-top:15px; font-size: 14px;" onclick="toggleRewards()">← Скрыть магазин</button>
         </div>
 
-        <div id="loyalty-info" style="display:none; margin-top: 15px; padding: 0 10px; animation: slideDown 0.3s ease-out;">
+        <div id="real-loyalty-info" style="display:none; margin-top: 15px; padding: 0 10px; animation: slideDown 0.3s ease-out;">
             <div class="category-title" style="margin-top:10px;">Программа лояльности</div>
             <div class="row-item"><span>Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
             <div class="row-item"><span>Бонус за отзыв</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
@@ -421,6 +431,8 @@ text-transform: uppercase;
             <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
         </div>
 
+        <div id="loyalty-info" style="display: none !important;"></div>
+
         <div class="brand-button" onclick="toggleBlock('questsListContainer', this)" style="margin-top: 25px; margin-bottom: 20px;">
             <span>📋 Задания статусов ✨</span>
             <span class="brand-counter">Развернуть</span>
@@ -429,16 +441,6 @@ text-transform: uppercase;
 
         <div class="category-title" style="margin-top: 10px; text-align: center;">Достижения</div>
         <div id="achievementsGrid" class="achievements-grid"></div>
-
-        <div class="avatar-editor" id="avatarEditorBlock" style="display:none;">
-            <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
-            <div style="text-align: center; margin-bottom: 15px;">
-                <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
-                <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
-            </div>
-            <div class="avatar-grid-presets" id="avatarPresetsGrid"></div>
-            <button class="buy-btn rounded-pill" style="margin-top: 10px;" onclick="toggleAvatarEditor()">Готово</button>
-        </div>
 
         <div style="display: none;">
             <div class="category-title" style="margin-top: 0; text-align: center;">Награды (Статусы)</div>

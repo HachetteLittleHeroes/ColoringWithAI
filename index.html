@@ -447,7 +447,9 @@ text-transform: uppercase;
 <script>
 // --- ОБЯЗАТЕЛЬНО: Проверь, что этот скрипт ОДИН и находится в конце файла ---
 var tg = window.Telegram.WebApp;
-
+tg.expand();
+tg.ready();
+let isEditingAvatar = false;
 let userProfileData = {
     customName: null,
     customStatus: null,
@@ -994,9 +996,6 @@ function removeMarkerFromCell(mId) {
 function saveOrganizers() {
     localStorage.setItem('organizers', JSON.stringify(organizers));
 }
-       // Инициализация Telegram WebApp
-const tg = window.Telegram.WebApp;
-tg.expand();
 // --- ВНИМАНИЕ: БЛОК ГЛОБАЛЬНЫХ ПЕРЕМЕННЫХ ЗАКОММЕНТИРОВАН ---
 // Если эти переменные УЖЕ есть в первой части скрипта, их повторное 
 // объявление здесь вызывало "черный экран". 

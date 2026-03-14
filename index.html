@@ -1331,8 +1331,8 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
             renderBooks(bookNames.filter(name => name.toLowerCase().includes(query)));
         }
 
-        async function loadMarkers() {
-          const csvUrl = 'https://script.google.com/macros/s/AKfycbwNzGJlazpBtq9gtnGkF7c6zMoSh-gnse4XkL6GWEaIirV0mF8ZliIw48HT6A7oV4cqyw/exec';
+           async function loadMarkers() {
+            const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
             try {
                 const res = await fetch(csvUrl);
                 const text = await res.text();

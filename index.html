@@ -978,254 +978,213 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
 
         // Единый реестр всех достижений в игре
        // ================= ДОСТИЖЕНИЯ И СТАТУСЫ =================
-
 const achievementsConfig = [
 {
-    id: 'pokemon_master',
-    title: 'Великий мастер',
-    desc: 'Статус: Мастер Покемонов',
-    req: 'Раскрасить 30 картинок с покемонами (фото ДО и ПОСЛЕ)',
-    target: 30,
-    type: 'admin_check',
-    statKey: 'pokemonPics',
-    icon: 'img/ach_poke.png'
+id:'pokemon_master',
+title:'Великий мастер',
+desc:'Статус: Мастер Покемонов',
+req:'Раскрасить 30 картинок с покемонами (фото ДО и ПОСЛЕ)',
+target:30,
+type:'admin_check',
+statKey:'pokemonPics',
+icon:'img/ach_poke.png'
 },
 {
-    id: 'ai_teacher',
-    title: 'Училка',
-    desc: 'Статус: Эксперт ИИ',
-    req: 'Внести 500 одобренных правок в ИИ палитру',
-    target: 500,
-    type: 'admin_check',
-    statKey: 'aiCorrections',
-    icon: 'img/ach_teacher.png'
+id:'ai_teacher',
+title:'Училка',
+desc:'Статус: Эксперт ИИ',
+req:'Внести 500 одобренных правок в ИИ палитру',
+target:500,
+type:'admin_check',
+statKey:'aiCorrections',
+icon:'img/ach_teacher.png'
 },
 {
-    id: 'scrooge',
-    title: 'Скрудж',
-    desc: 'Статус: Богатей',
-    req: 'Накопить 2500 ашетиков на балансе',
-    target: 2500,
-    type: 'auto_balance',
-    icon: 'img/ach_gold.png'
+id:'scrooge',
+title:'Скрудж',
+desc:'Статус: Богатей',
+req:'Накопить 2500 ашетиков на балансе',
+target:2500,
+type:'auto_balance',
+icon:'img/ach_gold.png'
 },
 {
-    id: 'not_like_others',
-    title: 'Нетакуся',
-    desc: 'Статус: Творец',
-    req: 'Раскрасить 30 картинок из авторской раскраски',
-    target: 30,
-    type: 'admin_check',
-    statKey: 'authorPics',
-    icon: 'img/ach_art.png'
+id:'not_like_others',
+title:'Нетакуся',
+desc:'Статус: Творец',
+req:'Раскрасить 30 картинок из авторской раскраски',
+target:30,
+type:'admin_check',
+statKey:'authorPics',
+icon:'img/ach_art.png'
 },
 {
-    id: 'alcohol_queen',
-    title: 'Спиртесса',
-    desc: 'Статус: Мастер спирта',
-    req: 'Раскрасить 100 картинок спиртовыми маркерами',
-    target: 100,
-    type: 'admin_check',
-    statKey: 'alcoholPics',
-    icon: 'img/ach_spirit.png'
+id:'alcohol_queen',
+title:'Спиртесса',
+desc:'Статус: Мастер спирта',
+req:'Раскрасить 100 картинок спиртовыми маркерами',
+target:100,
+type:'admin_check',
+statKey:'alcoholPics',
+icon:'img/ach_spirit.png'
 },
 {
-    id: 'benefactor',
-    title: 'Благодетель',
-    desc: 'Статус: Меценат',
-    req: 'Поддержать наш проект (на проверку админу)',
-    target: 1,
-    type: 'admin_check',
-    statKey: 'supported',
-    icon: 'img/ach_heart.png'
+id:'benefactor',
+title:'Благодетель',
+desc:'Статус: Меценат',
+req:'Поддержать наш проект',
+target:1,
+type:'admin_check',
+statKey:'supported',
+icon:'img/ach_heart.png'
 },
 {
-    id: 'name_changer',
-    title: 'My name is',
-    desc: 'Достижение: Маскировка',
-    req: 'Сменить никнейм в профиле',
-    target: 1,
-    type: 'auto_name',
-    icon: 'img/ach_id.png'
+id:'name_changer',
+title:'My name is',
+desc:'Достижение: Маскировка',
+req:'Сменить никнейм',
+target:1,
+type:'auto_name',
+icon:'img/ach_id.png'
 }
 ];
 
+function initUserStats(){
 
-// --- ИНИЦИАЛИЗАЦИЯ СТАТИСТИКИ ПОЛЬЗОВАТЕЛЯ ---
+if(typeof userProfileData==="undefined"){
+window.userProfileData={};
+}
 
-function initUserStats() {
+if(!userProfileData.stats){
 
-if (!userProfileData.stats) {
-    userProfileData.stats = {
-        pokemonPics: 0,
-        aiCorrections: 0,
-        authorPics: 0,
-        alcoholPics: 0,
-        supported: 0,
-        nameChanged: 0
-    };
+userProfileData.stats={
+pokemonPics:0,
+aiCorrections:0,
+authorPics:0,
+alcoholPics:0,
+supported:0,
+nameChanged:0
+};
+
 }
 
 }
 
+function getAchievementProgress(ach){
 
-// --- ОПРЕДЕЛЕНИЕ ПРОГРЕССА ДОСТИЖЕНИЯ ---
+let balance=0;
 
-function getAchievementProgress(ach, userBalance) {
+const balanceEl=document.getElementById('userBalance');
+if(balanceEl) balance=parseInt(balanceEl.innerText)||0;
 
-if (ach.type === 'admin_check') {
-    return userProfileData.stats[ach.statKey] || 0;
+if(ach.type==='admin_check'){
+return userProfileData.stats?.[ach.statKey]||0;
 }
 
-if (ach.type === 'auto_balance') {
-    return userBalance;
+if(ach.type==='auto_balance'){
+return balance;
 }
 
-if (ach.type === 'auto_name') {
-    return userProfileData.stats.nameChanged || 0;
+if(ach.type==='auto_name'){
+return userProfileData.stats?.nameChanged||0;
 }
 
 return 0;
 
 }
 
-
-// --- РЕНДЕР ЗАДАНИЙ НА СТАТУСЫ ---
-
-function renderStatusQuests() {
+function renderStatusQuests(){
 
 initUserStats();
 
-const container = document.getElementById('questsListContainer');
+const container=document.getElementById('questsListContainer');
+if(!container) return;
 
-const userBalance = parseInt(document.getElementById('userBalance').innerText) || 0;
+container.innerHTML=achievementsConfig.map(ach=>{
 
+let current=getAchievementProgress(ach);
+let isDone=current>=ach.target;
+let percent=Math.min(100,(current/ach.target)*100);
 
-container.innerHTML = achievementsConfig.map(ach => {
+return `
+<div class="quest-card" style="${isDone?'border:1px solid var(--accent);opacity:0.9;':''}">
 
-    const current = getAchievementProgress(ach, userBalance);
+<div class="quest-header">
+<span class="quest-status-badge">${isDone?'✅ Выполнено':'🔥 В процессе'}</span>
+<span class="quest-xp">${current} / ${ach.target}</span>
+</div>
 
-    const isDone = current >= ach.target;
+<div class="quest-title">${ach.title}</div>
 
-    const progressPercent = Math.min(100, (current / ach.target) * 100);
+<div style="font-size:12px;color:var(--gray);margin-bottom:10px;">
+${ach.req}
+</div>
 
+<div style="width:100%;height:6px;background:var(--secondary);border-radius:3px;margin-bottom:10px;overflow:hidden;">
+<div style="width:${percent}%;height:100%;background:var(--accent);transition:0.5s;"></div>
+</div>
 
-    return `
-    <div class="quest-card" style="${isDone ? 'border:1px solid var(--accent); opacity:0.9;' : ''}">
+${!isDone && ach.type==='admin_check'
+?`<button class="buy-btn" style="padding:8px;font-size:12px;" onclick="sendAchievementRequest('${ach.id}','${ach.title}')">
+Отправить фото на проверку
+</button>`
+:''}
 
-        <div class="quest-header">
-            <span class="quest-status-badge">
-                ${isDone ? '✅ Выполнено' : '🔥 В процессе'}
-            </span>
+${isDone
+?`<div style="color:var(--accent);font-size:11px;font-weight:bold;">
+Достижение разблокировано!
+</div>`
+:''}
 
-            <span class="quest-xp">
-                ${current} / ${ach.target}
-            </span>
-        </div>
-
-        <div class="quest-title">${ach.title}</div>
-
-        <div style="font-size:12px;color:var(--gray);margin-bottom:10px;">
-            ${ach.req}
-        </div>
-
-        <div style="width:100%;height:6px;background:var(--secondary);border-radius:3px;margin-bottom:10px;overflow:hidden;">
-            <div style="width:${progressPercent}%;height:100%;background:var(--accent);transition:0.5s;"></div>
-        </div>
-
-        ${!isDone && ach.type === 'admin_check' ? `
-            <button class="buy-btn" style="padding:8px;font-size:12px;"
-                onclick="sendAchievementRequest('${ach.id}','${ach.title}')">
-                Отправить фото на проверку
-            </button>
-        ` : ''}
-
-        ${isDone ? `
-        <div style="color:var(--accent);font-size:11px;font-weight:bold;">
-            Достижение и статус разблокированы!
-        </div>` : ''}
-
-    </div>
-    `;
+</div>
+`;
 
 }).join('');
 
 }
 
-
-// --- ОТПРАВКА ЗАЯВКИ АДМИНУ ---
-
-function sendAchievementRequest(id, title) {
+function sendAchievementRequest(id,title){
 
 tg.showConfirm(
-`Отправить на проверку выполнение: "${title}"?\nУбедитесь, что у вас готовы фото ДО и ПОСЛЕ.`,
+`Отправить на проверку выполнение "${title}"?`,
 (confirm)=>{
 
 if(!confirm) return;
 
-const userId = document.getElementById('userIdDisplay').innerText;
-
-const msg = `🏆 ЗАЯВКА НА ДОСТИЖЕНИЕ
-От: ID${userId}
-Задание: ${title}
-Нужна проверка фото работ пользователя.`;
+let userId=document.getElementById('userIdDisplay')?.innerText||"0";
 
 tg.sendData(JSON.stringify({
 action:'check_achievement',
 achievementId:id,
-message:msg
+user:userId
 }));
 
-tg.showAlert("Заявка отправлена! Администратор проверит ваши работы.");
-
-
-// --- АДМИН ТЕСТ (только для тебя) ---
-
-if(userId === "496779756"){
-
-const ach = achievementsConfig.find(a => a.id === id);
-
-if(ach && ach.statKey){
-
-userProfileData.stats[ach.statKey]++;
-
-saveProfileData();
-
-renderStatusQuests();
-
-tg.showAlert("🔧 [Админ тест] Прогресс +1 выдан.");
-
-}
-
-}
+tg.showAlert("Заявка отправлена админу");
 
 });
 
 }
 
-
-// --- СМЕНА НИКА (АВТОДОСТИЖЕНИЕ) ---
-
 function changeNickname(){
 
-const newName = prompt("Введите новый никнейм:");
+initUserStats();
 
-if(!newName || newName.trim().length < 2) return;
+let newName=prompt("Введите новый никнейм");
 
-userProfileData.name = newName;
+if(!newName||newName.length<2) return;
 
-userProfileData.stats.nameChanged = 1;
+userProfileData.name=newName;
 
-document.getElementById('userName').innerText = newName;
+userProfileData.stats.nameChanged=1;
 
-saveProfileData();
+const nameEl=document.getElementById('userName');
+if(nameEl) nameEl.innerText=newName;
+
+saveProfileData?.();
 
 renderStatusQuests();
 
-tg.showAlert("Никнейм изменён! Достижение «My name is» получено.");
-
-if(tg.HapticFeedback)
-tg.HapticFeedback.notificationOccurred('success');
+tg.showAlert("Никнейм изменён");
 
 }
 

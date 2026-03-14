@@ -339,8 +339,26 @@ text-transform: uppercase;
         </div>
     </div>
     <div id="profile" class="page">
-        <div class="header" style="text-align: center;">Профиль</div>
+        <div class="profile-header" style="display: flex; align-items: flex-start; gap: 15px; padding: 20px 0;">
+    
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 30px;">
+            👤
+        </div>
+        
+        <div style="margin-top: 10px; font-weight: 800; color: #E65100; background: var(--secondary); padding: 5px 12px; border-radius: 12px; font-size: 14px; text-align: center;">
+            <i class="fas fa-gem"></i> <span id="userBalance">0</span>
+        </div>
+    </div>
 
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 70px;">
+        <div style="font-size: 18px; font-weight: bold;">
+            User <span id="userIdDisplay">---</span> </div>
+        <div style="font-size: 14px; color: var(--gray); margin-top: 4px;">
+            Статус: <span id="userStatusDisplay">Без статуса</span>
+        </div>
+    </div>
+</div>
         <div class="profile-hero">
             <div class="avatar-container">
               <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">

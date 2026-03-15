@@ -2007,17 +2007,38 @@ tg.showAlert("Никнейм изменён");
             }
         }
 
-        function toggleRewards() {
+        function toggleRewards(target) {
             const rewardsSection = document.getElementById('rewards-section');
             const loyaltyInfo = document.getElementById('loyalty-info');
-            if (rewardsSection.style.display === 'block') {
-                rewardsSection.style.display = 'none';
-                loyaltyInfo.style.display = 'block';
-            } else {
+            
+            if (!rewardsSection || !loyaltyInfo) return; 
+
+            if (target === 'earn') {
                 rewardsSection.style.display = 'block';
                 loyaltyInfo.style.display = 'none';
+            } else if (target === 'quests') {
+                rewardsSection.style.display = 'none';
+                loyaltyInfo.style.display = 'block';
+                renderStatusQuests(); 
+            } else {
+                if (rewardsSection.style.display === 'block') {
+                    rewardsSection.style.display = 'none';
+                    loyaltyInfo.style.display = 'block';
+                    renderStatusQuests();
+                } else {
+                    rewardsSection.style.display = 'block';
+                    loyaltyInfo.style.display = 'none';
+                }
             }
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            if(window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function showEarn() {
+            toggleRewards('earn');
+        }
+
+        function showQuests() {
+            toggleRewards('quests');
         }
 
         function buyReward(name, price) {
@@ -2147,10 +2168,12 @@ tg.showAlert("Никнейм изменён");
         function tab(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(document.getElementById('btn-' + id)) {
-                document.getElementById('btn-' + id).classList.add('active');
-            }
+            
+            const targetPage = document.getElementById(id);
+            if(targetPage) targetPage.classList.add('active');
+            
+            const targetBtn = document.getElementById('btn-' + id);
+            if(targetBtn) targetBtn.classList.add('active');
             
             if (id === 'shop') loadMarkers();
             if (id === 'cart') renderCart();
@@ -2158,6 +2181,10 @@ tg.showAlert("Никнейм изменён");
                 closeBrandView();
                 renderBrandsList();
                 renderOrganizers(); 
+            }
+            // Подгружаем задания, если открывается профиль
+            if (id === 'profile' || id === 'quests') {
+                renderStatusQuests();
             }
         }
 

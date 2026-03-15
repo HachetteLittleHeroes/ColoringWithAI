@@ -255,90 +255,268 @@
         .brand-btn { background: var(--secondary); border: 2px solid transparent; padding: 12px 5px; border-radius: 12px; font-weight: bold; cursor: pointer; color: var(--text); font-size: 14px; text-align: center; transition: 0.2s; }
         .brand-btn.active { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); color: var(--accent); }
 
-                /* --- СТИЛИ ДЛЯ АВАТАРА И ПРОФИЛЯ (ИСПРАВЛЕНО) --- */
-        .profile-hero { display: flex; flex-direction: row; align-items: center; gap: 20px; margin-bottom: 25px; padding: 0 10px; }
-        
-        .avatar-container { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
-        
-        /* Главный аватар: только круг и оранжевый контур */
+                    /* --- СТИЛИ ДЛЯ АВАТАРА И ПРОФИЛЯ --- */
+        .profile-hero { 
+            display: flex; 
+            flex-direction: row; 
+            align-items: center; 
+            gap: 20px; 
+            margin-bottom: 25px; 
+            padding: 0 10px; 
+        }
+
+        .avatar-container { 
+            position: relative; 
+            width: 90px; 
+            height: 90px; 
+            flex-shrink: 0; 
+        }
+
+        /* Главная иконка: строгий круг, оранжевая обводка, картинка навылет */
         .avatar-preview { 
             width: 100%; 
             height: 100%; 
             border-radius: 50%; 
             overflow: hidden; 
-            border: 4px solid var(--accent); /* Оранжевый контур */
+            border: 4px solid #ff9500 !important; 
             box-sizing: border-box; 
-            box-shadow: 0 6px 12px rgba(255,149,0,0.2); 
-            background: none; /* Убираем подложку */
+            background: none !important; /* Убираем белую подложку */
+            box-shadow: 0 4px 12px rgba(255, 149, 0, 0.2);
         }
-        
+
         .avatar-preview img { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover; /* Растягиваем на всю площадь без полей */
+            object-fit: cover !important; /* Картинка заполняет весь круг */
             display: block;
         }
 
-        .edit-avatar-btn { position: absolute; bottom: -5px; right: -5px; background: var(--bg); border: 2px solid var(--accent); color: var(--accent); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 12px; z-index: 10; }
-        
-        .profile-info-right { display: flex; flex-direction: column; justify-content: center; flex-grow: 1; }
-        .profile-username { font-size: 20px; font-weight: 800; margin: 0; color: var(--text); }
-        .profile-status { font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--gray); padding: 4px 10px; background: var(--secondary); border-radius: 12px; display: inline-block; width: fit-content; cursor: pointer; }
+        .edit-avatar-btn { 
+            position: absolute; 
+            bottom: -2px; 
+            right: -2px; 
+            background: var(--bg); 
+            border: 2px solid #ff9500 !important; 
+            color: #ff9500 !important; 
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            font-size: 12px; 
+            z-index: 5;
+        }
 
-        /* Окно выбора аватарок (убрана оранжевая рамка со всего блока) */
+        .profile-info-right { 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            flex-grow: 1; 
+        }
+
+        .profile-username { 
+            font-size: 20px; 
+            font-weight: 800; 
+            margin: 0; 
+            color: var(--text); 
+        }
+
+        .profile-status { 
+            font-size: 13px; 
+            font-weight: 600; 
+            margin-top: 4px; 
+            color: var(--gray); 
+            padding: 4px 10px; 
+            background: var(--secondary); 
+            border-radius: 12px; 
+            display: inline-block; 
+            width: fit-content; 
+            cursor: pointer; 
+        }
+
+        /* Окно выбора аватарок: теперь без оранжевой рамки вокруг всего блока */
         .avatar-editor { 
             display: none; 
             background: var(--card-bg); 
             padding: 20px; 
             border-radius: 20px; 
-            border: 1px solid rgba(128,128,128,0.2); /* Нейтральная серая рамка */
+            border: 1px solid rgba(128,128,128,0.2); 
             width: 100%; 
             box-sizing: border-box; 
             margin-bottom: 20px; 
             animation: slideDown 0.3s ease-out; 
         }
 
-        .avatar-grid-presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+        @keyframes slideDown { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .avatar-grid-presets { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
 
-        /* Иконки выбора: круглые, с оранжевым контуром, без подложки */
+        /* Круглые кнопки выбора аватара */
         .avatar-preset-btn { 
             width: 100%; 
             aspect-ratio: 1; 
             border-radius: 50%; 
-            border: 2px solid var(--accent); /* Всегда оранжевый контур */
+            border: 2px solid #ff9500 !important; 
             overflow: hidden; 
-            background: none; 
-            padding: 0; 
+            background: none !important; 
             cursor: pointer; 
             transition: 0.2s; 
+            padding: 0;
             box-sizing: border-box;
         }
 
         .avatar-preset-btn img { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover; /* Картинка на весь круг */
+            object-fit: cover !important; 
             display: block;
         }
 
         .avatar-preset-btn.active { 
+            border-width: 4px !important; 
             transform: scale(1.1); 
-            border-width: 3px; 
-            box-shadow: 0 0 10px rgba(255,149,0,0.4); 
+            box-shadow: 0 0 10px rgba(255, 149, 0, 0.4);
         }
 
-        /* Достижения и задания */
-        .achievements-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px;}
-        .achieve-card { background: var(--card-bg); border-radius: 16px; padding: 15px 5px; text-align: center; border: 2px solid rgba(128,128,128,0.1); filter: grayscale(1); opacity: 0.5; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
-        .achieve-card.unlocked { filter: grayscale(0); opacity: 1; border-color: var(--gold); background: rgba(241, 196, 15, 0.05); box-shadow: 0 4px 10px rgba(241, 196, 15, 0.1); transform: scale(1); }
+        /* Достижения: теперь с оранжевой обводкой при открытии */
+        .achievements-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
+            margin-bottom: 25px;
+        }
+
+        .achieve-card { 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            padding: 15px 5px; 
+            text-align: center; 
+            border: 2px solid rgba(128,128,128,0.1); 
+            filter: grayscale(1); 
+            opacity: 0.5; 
+            transition: 0.3s; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+        }
+
+        .achieve-card.unlocked { 
+            filter: grayscale(0); 
+            opacity: 1; 
+            border: 2px solid #ff9500 !important; 
+            background: rgba(255, 149, 0, 0.05); 
+            box-shadow: 0 4px 10px rgba(255, 149, 0, 0.15); 
+        }
+
+        .achieve-card.unlocked:active { 
+            transform: scale(0.95); 
+        }
         
-        .achieve-icon-img { width: 45px; height: 45px; margin-bottom: 8px; object-fit: contain; border-radius: 8px; }
-        .achieve-title { font-size: 11px; font-weight: 800; line-height: 1.2; color: var(--text); }
+        .achieve-icon-img { 
+            width: 45px; 
+            height: 45px; 
+            margin-bottom: 8px; 
+            object-fit: contain; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); 
+            border-radius: 8px; 
+        }
+
+        .achieve-title { 
+            font-size: 11px; 
+            font-weight: 800; 
+            line-height: 1.2; 
+            color: var(--text); 
+        }
+
+        .achievement-icon-large-img { 
+            width: 80px; 
+            height: 80px; 
+            margin-bottom: 15px; 
+            object-fit: contain; 
+            filter: drop-shadow(0 4px 10px rgba(255,149,0,0.3)); 
+        }
         
-        .status-pill { padding: 6px 10px; border-radius: 14px; font-size: 11px; font-weight: 800; cursor: pointer; border: 2px solid transparent; text-align: center; transition: 0.2s; background: var(--secondary); color: var(--gray); text-transform: uppercase; }
+        /* Задания */
+        .quest-card { 
+            background: var(--card-bg); 
+            border: 1px solid rgba(128,128,128,0.2); 
+            padding: 15px; 
+            border-radius: 16px; 
+            margin-bottom: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            transition: all 0.3s ease;
+        }
+
+        .quest-card:hover { 
+            transform: scale(1.02); 
+        }
+
+        .quest-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+
+        .quest-status-badge { 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            padding: 4px 8px; 
+            border-radius: 8px; 
+            color: var(--text); 
+        }
+
+        .quest-xp { 
+            font-weight: bold; 
+            color: #f1c40f; 
+            font-size: 14px; 
+        }
+
+        .quest-title { 
+            font-size: 14px; 
+            font-weight: 600; 
+            line-height: 1.4; 
+            color: var(--text); 
+        }
+
+        /* Статусы-плашки */
+        .status-pill {
+            padding: 6px 10px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-align: center;
+            transition: 0.2s;
+            background: var(--secondary);
+            color: var(--gray);
+            text-transform: uppercase;
+        }
+
         .status-pill.border-lvl-1 { border-color: #2ecc71; color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
         .status-pill.border-lvl-2 { border-color: #9b59b6; color: #9b59b6; background: rgba(155, 89, 182, 0.1); }
         .status-pill.border-lvl-3 { border-color: #f1c40f; color: #f1c40f; background: rgba(241, 196, 15, 0.1); }
+        
+        .border-lvl-1 { border-color: #2ecc71 !important; box-shadow: 0 0 12px rgba(46, 204, 113, 0.4); }
+        .border-lvl-2 { border-color: #9b59b6 !important; box-shadow: 0 0 12px rgba(155, 89, 182, 0.4); }
+        .border-lvl-3 { border-color: #f1c40f !important; box-shadow: 0 0 12px rgba(241, 196, 15, 0.4); }
+
 
     </style>
 </head>

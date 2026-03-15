@@ -592,26 +592,26 @@
         <div class="header" style="text-align: left; padding-left: 20px; font-weight: 800; font-size: 24px;">Профиль</div>
 
         <div class="profile-hero" style="display: flex; align-items: center; gap: 20px; padding: 20px 20px 10px 20px;">
-            <div class="avatar-container" style="margin: 0;">
-                <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
-                   <img id="user-avatar" 
-     src="src="https://hachettelittleheroes.github.io/ColoringWithAI/avatars/av2.png"
-     style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
-
-                </div>
-                <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
-            </div>
-
-            <div class="profile-info-right" style="flex-grow: 1;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <h2 class="profile-username" id="displayUsername" style="margin:0; font-size: 20px;">Без имени</h2>
-                    <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
-                </div>
-                <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()" style="background: rgba(255,255,255,0.08); padding: 5px 10px; border-radius: 10px; font-size: 13px; color: #b3b3b3; width: fit-content;">
-                    Без статуса
-                </div>
-            </div>
+    <div class="avatar-container" style="margin: 0;">
+        <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
+            <img id="user-avatar" 
+                 src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/avatars/av2.png"
+                 style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; z-index: 5;">
         </div>
+        <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
+    </div>
+
+    <div class="profile-info-right" style="flex-grow: 1;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <h2 class="profile-username" id="displayUsername" style="margin:0; font-size: 20px;">Без имени</h2>
+            <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
+        </div>
+        <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()" style="background: rgba(255,255,255,0.08); padding: 5px 10px; border-radius: 10px; font-size: 13px; color: #b3b3b3; width: fit-content;">
+            Без статуса
+        </div>
+    </div>
+</div>
+
 
         <div class="avatar-editor" id="avatarEditorBlock" style="display:none; padding: 0 10px; margin-bottom: 15px;">
             <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
@@ -907,105 +907,209 @@
         tg.ready();
         tg.expand();
 
-        // --- ЛОГИКА АВАТАРОВ, ПРОФИЛЯ И СТАТУСОВ ---
-        let isEditingAvatar = false;
+        // =========================================================
+// --- ЛОГИКА АВАТАРОВ, ПРОФИЛЯ И СТАТУСОВ ---
+// =========================================================
 
-        // Пресеты аватаров (готовые)
-const avatarBaseURL =
-"https://raw.githubusercontent.com/HachetteLittleHeroes/ColoriagesWithAI/main/avatars/";
-  const avatarPresets = [
-"av1.png",
-"av2.png",
-"av3.png",
-"av4.png",
-"av5.png",
-"av6.png",
-"av7.png",
-"av8.png"
+let isEditingAvatar = false;
+
+// Правильный URL репозитория: ColoringWithAI
+const avatarBaseURL = "https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/avatars/";
+const avatarPresets = [
+    "av1.png", "av2.png", "av3.png", "av4.png", 
+    "av5.png", "av6.png", "av7.png", "av8.png"
 ];
 
-        // База путей развития статусов 
-        const statusPaths = {
-            "Спиртесса": {
-                title: "Спиртесса",
-                levels: [
-                    { req: 5, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
-                    { req: 20, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
-                    { req: 50, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
-                ]
-            },
-            "Графиня Линеров": {
-                title: "Графиня Линеров",
-                levels: [
-                    { req: 10, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
-                    { req: 30, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
-                    { req: 70, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
-                ]
-            },
-            "Аквамаринка": {
-                title: "Аквамаринка",
-                levels: [
-                    { req: 5, xp: 50, colorClass: "border-lvl-1", name: "Зеленый" },
-                    { req: 15, xp: 150, colorClass: "border-lvl-2", name: "Фиолетовый" },
-                    { req: 40, xp: 300, colorClass: "border-lvl-3", name: "Золотой" }
-                ]
-            }
-        };
-
-        let userProfileData = {
-            customName: null,
-            customStatus: null,
-            avatar: { seed: 'av2.png', customImage: null }, // Добавлено customImage
-            achievements: [
-                { id: 'first_steps', title: 'Первые шаги', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/achievements/ach1.png', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
-                { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/achievements/ach2.png', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: false },
-                { id: 'rich', title: 'Богатей', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/achievements/ach3.png', desc: 'Накопите 500 ашетиков на балансе лояльности.', unlocked: false },
-                { id: 'collector', title: 'Коллекционер', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/achievements/ach4.png', desc: 'Соберите 10 любых маркеров в своем инвентаре.', unlocked: false }
-            ],
-            styleChangesCount: 0,
-            statusProgress: { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 }
-        };
-
-        function toggleBlock(id, btn) {
-            const el = document.getElementById(id);
-            if(el.style.display === 'none') {
-                el.style.display = 'block';
-                btn.querySelector('.brand-counter').innerText = 'Свернуть';
-            } else {
-                el.style.display = 'none';
-                btn.querySelector('.brand-counter').innerText = 'Развернуть';
-            }
-            if(tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-        }
-
-        function loadProfileData() {
-            const saved = localStorage.getItem('user_profile_data_v4'); 
-            if (saved) {
-                userProfileData = JSON.parse(saved);
-                if (!userProfileData.avatar || !userProfileData.avatar.seed)
-userProfileData.avatar = { seed: 'av2.png', customImage: null };
-                if (!userProfileData.statusProgress) userProfileData.statusProgress = { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 };
-            }
-            
-            renderAvatarPresets();
-            updateAvatarImage();
-            renderAchievements();
-if (typeof renderStatusAwards === "function") {
-    renderStatusAwards();
+// Глобальный объект профиля пользователя (инициализация по умолчанию)
+if (typeof window.userProfileData === "undefined") {
+    window.userProfileData = {
+        name: "Без имени",
+        status: "Без статуса",
+        styleChangesCount: 0,
+        avatar: {
+            seed: "av2.png",
+            customImage: null
+        },
+        stats: {
+            pokemonPics: 0,
+            aiCorrections: 0,
+            authorPics: 0,
+            alcoholPics: 0,
+            supported: 0,
+            nameChanged: 0
+        },
+        unlockedAchievements: [],
+        topAchievements: [null, null, null]
+    };
 }
 
-if (typeof renderStatusQuests === "function") {
-    renderStatusQuests();
+// Открытие/закрытие панели редактирования аватара
+function toggleAvatarEditor() {
+    isEditingAvatar = !isEditingAvatar;
+    const editor = document.getElementById('avatarEditorBlock');
+    if (editor) {
+        editor.style.display = isEditingAvatar ? 'block' : 'none';
+    }
+    if (typeof tg !== 'undefined' && tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred('light');
+    }
 }
 
-updateNameDisplay();
-            updateStatusDisplay();
-        }
+// Обработка загрузки кастомного фото с устройства
+function handleCustomAvatar(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        userProfileData.avatar.customImage = e.target.result;
+        userProfileData.styleChangesCount++;
+        saveProfileData();
+        updateAvatarImage();
+        
+        // Убираем рамки выделения с дефолтных пресетов
+        document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('active'));
+    };
+    reader.readAsDataURL(file);
+}
 
-        function saveProfileData() {
-            localStorage.setItem('user_profile_data_v4', JSON.stringify(userProfileData));
-            checkAchievements();
+// Отрисовка сетки дефолтных аватарок из GitHub
+function renderAvatarPresets() {
+    const grid = document.getElementById('avatarPresetsGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = avatarPresets.map(file => {
+        // Проверяем, активен ли этот пресет (и нет ли кастомного фото)
+        const isActive = (userProfileData.avatar.seed === file && !userProfileData.avatar.customImage) ? 'active' : '';
+        return `
+        <div class="avatar-preset-btn ${isActive}" onclick="setPresetAvatar('${file}', this)">
+            <img src="${avatarBaseURL}${file}" onerror="this.src='https://placehold.co/100x100/333333/ff9500?text=?'">
+        </div>
+        `;
+    }).join('');
+}
+
+// Установка выбранного пресета по клику
+function setPresetAvatar(file, btnElem) {
+    userProfileData.avatar.seed = file;
+    userProfileData.avatar.customImage = null; // Обязательно сбрасываем кастомное фото
+
+    // Обновляем визуальное выделение кнопок (оранжевая рамка)
+    document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('active'));
+    if (btnElem) {
+        btnElem.classList.add('active');
+    }
+
+    updateAvatarImage();
+    saveProfileData();
+    
+    if (typeof tg !== 'undefined' && tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+    }
+}
+
+// Главная функция обновления картинки аватара в шапке профиля
+function updateAvatarImage() {
+    const avatarImg = document.getElementById('user-avatar');
+    if (!avatarImg) return;
+
+    // 1. Приоритет: кастомное фото
+    if (userProfileData.avatar.customImage) {
+        avatarImg.src = userProfileData.avatar.customImage;
+        return;
+    }
+
+    // 2. Иначе: пресет из базы GitHub
+    avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
+    
+    // 3. Подстраховка на случай сбоя сети
+    avatarImg.onerror = function() {
+        this.src = 'https://placehold.co/100x100/333333/ff9500?text=Avatar';
+    };
+}
+
+// --- ЛОГИКА ТЕКСТОВЫХ ПОЛЕЙ ПРОФИЛЯ ---
+
+// Смена имени пользователя
+function changeUserName() {
+    let currentName = userProfileData.name !== "Без имени" ? userProfileData.name : "";
+    let newName = prompt("Введите ваше имя/никнейм:", currentName);
+    
+    if (!newName || newName.trim().length < 2) return;
+    
+    userProfileData.name = newName.trim();
+    
+    // Интеграция с вашей системой ачивок (ачивка "My name is")
+    if (typeof initUserStats === "function") initUserStats();
+    if (!userProfileData.stats) userProfileData.stats = {};
+    userProfileData.stats.nameChanged = 1;
+    
+    const nameEl = document.getElementById('displayUsername');
+    if (nameEl) nameEl.innerText = userProfileData.name;
+    
+    saveProfileData();
+    
+    // Обновляем квесты, чтобы ачивка сразу засчиталась визуально
+    if (typeof renderStatusQuests === "function") {
+        renderStatusQuests();
+    }
+    
+    if (typeof tg !== 'undefined' && tg.showAlert) {
+        tg.showAlert("Никнейм успешно изменён!");
+    }
+}
+
+// Смена кастомного статуса
+function changeCustomStatus() {
+    let currentStatus = userProfileData.status !== "Без статуса" ? userProfileData.status : "";
+    let newStatus = prompt("Введите ваш статус:", currentStatus);
+    
+    if (newStatus !== null) {
+        userProfileData.status = newStatus.trim() || "Без статуса";
+        const statusEl = document.getElementById('userStatusDisplay');
+        if (statusEl) statusEl.innerText = userProfileData.status;
+        saveProfileData();
+    }
+}
+
+// --- СИСТЕМА СОХРАНЕНИЯ И ЗАГРУЗКИ (LocalStorage) ---
+
+function saveProfileData() {
+    try {
+        localStorage.setItem('hlh_user_profile', JSON.stringify(userProfileData));
+    } catch (e) {
+        console.error("Ошибка сохранения профиля:", e);
+    }
+}
+
+function loadProfileData() {
+    try {
+        const saved = localStorage.getItem('hlh_user_profile');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            // Безопасное слияние данных (чтобы не затереть новые поля при обновлениях)
+            userProfileData = { ...userProfileData, ...parsed };
+            if (parsed.avatar) userProfileData.avatar = { ...userProfileData.avatar, ...parsed.avatar };
+            if (parsed.stats) userProfileData.stats = { ...userProfileData.stats, ...parsed.stats };
         }
+    } catch (e) {
+        console.error("Ошибка загрузки профиля:", e);
+    }
+    
+    // Обновляем весь интерфейс профиля после загрузки данных
+    updateAvatarImage();
+    renderAvatarPresets();
+    
+    const nameEl = document.getElementById('displayUsername');
+    if (nameEl) nameEl.innerText = userProfileData.name;
+    
+    const statusEl = document.getElementById('userStatusDisplay');
+    if (statusEl) statusEl.innerText = userProfileData.status;
+}
+// =========================================================
+// КОНЕЦ БЛОКА АВАТАРОВ И ПРОФИЛЯ
+// =========================================================
+
 
         // --- ЛОГИКА КАСТОМНОГО ИМЕНИ И СТАТУСА ---
         function updateNameDisplay() {

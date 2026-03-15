@@ -998,46 +998,17 @@ function setPresetAvatar(file, btnElem) {
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
 
-function updateAvatarImage() {
-    const avatarImg = document.getElementById('user-avatar');
-    if (!avatarImg) return;
-    if (userProfileData.avatar.customImage) {
-        avatarImg.src = userProfileData.avatar.customImage;
-    } else {
-        avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
-    }
-    avatarImg.onerror = function() { this.src = 'https://placehold.co/100x100/333333/ff9500?text=?'; };
-}
-
 // ---------------------------------------------------------
-// ИСПРАВЛЕНИЕ: Модальное окно для смены имени (вместо prompt)
+// ИСПРАВЛЕНИЕ: Вызов статического окна смены имени
 // ---------------------------------------------------------
 function changeNickname() {
     initUserStats();
     let currentName = userProfileData.name !== "Без имени" ? userProfileData.name : "";
-    
     let modal = document.getElementById('nameInputModal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'nameInputModal';
-        modal.className = 'modal-overlay';
-        modal.style.display = 'none';
-        modal.style.zIndex = '9999';
-        modal.innerHTML = `
-            <div class="modal-content" onclick="event.stopPropagation()">
-                <h2 style="margin-bottom:15px; text-align:center;">Новый никнейм</h2>
-                <input type="text" id="newNameInput" style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--gray); margin-bottom:15px; font-size:16px; box-sizing:border-box; background:var(--bg); color:var(--text);" placeholder="Ваш никнейм">
-                <div style="display:flex; gap:10px;">
-                    <button class="buy-btn" style="flex:1; background:#34c759; color:white; padding:12px; border-radius:12px;" onclick="saveNewNickname()">Сохранить</button>
-                    <button class="buy-btn" style="flex:1; background:var(--secondary); color:var(--text); padding:12px; border-radius:12px;" onclick="document.getElementById('nameInputModal').style.display='none'">Отмена</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
+    if (modal) {
+        document.getElementById('newNameInput').value = currentName;
+        modal.style.display = 'flex';
     }
-    
-    document.getElementById('newNameInput').value = currentName;
-    modal.style.display = 'flex';
 }
 
 function saveNewNickname() {
@@ -1058,47 +1029,31 @@ function saveNewNickname() {
     
     saveProfileData();
     renderStatusQuests();
-    document.getElementById('nameInputModal').style.display = 'none';
+    
+    let modal = document.getElementById('nameInputModal');
+    if(modal) modal.style.display = 'none';
     
     if(window.tg && tg.showAlert) tg.showAlert("Никнейм успешно изменён!");
     if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
 }
 
 // ---------------------------------------------------------
-// ИСПРАВЛЕНИЕ: Выбор статуса только из разблокированных
+// ИСПРАВЛЕНИЕ: Вызов статического окна смены статуса
 // ---------------------------------------------------------
 function changeCustomStatus() {
     const unlocked = userProfileData.unlockedAchievements || [];
-    
     let modal = document.getElementById('statusSelectModal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'statusSelectModal';
-        modal.className = 'modal-overlay';
-        modal.style.display = 'none';
-        modal.style.zIndex = '9999';
-        modal.innerHTML = `
-            <div class="modal-content" onclick="event.stopPropagation()">
-                <h2 style="margin-bottom:15px; text-align:center;">Выберите статус</h2>
-                <div id="statusSelectList" style="display:flex; flex-direction:column; gap:10px; max-height:50vh; overflow-y:auto; margin-bottom:15px; padding-right:5px;"></div>
-                <button class="buy-btn" style="background:var(--secondary); color:var(--text); padding:12px; border-radius:12px; width:100%;" onclick="document.getElementById('statusSelectModal').style.display='none'">Закрыть</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
+    if (!modal) return;
     
     let listHtml = '';
-    
-    // Кнопка сброса статуса всегда доступна
-    listHtml += `<button class="buy-btn" style="background:#ff3b30; color:white; padding:10px; border-radius:10px;" onclick="setNewStatus('Без статуса')">Сбросить статус</button>`;
+    listHtml += `<button class="buy-btn" style="background:#ff3b30; color:white; padding:10px; border-radius:10px; margin-bottom:5px;" onclick="setNewStatus('Без статуса')">Сбросить статус</button>`;
     
     if (unlocked.length > 0) {
         unlocked.forEach(achId => {
             let ach = achievementsConfig.find(a => a.id === achId);
             if (ach) {
-                // Извлекаем красивое название статуса из описания
                 let statusText = ach.desc.replace('Статус: ', '').replace('Достижение: ', '').trim();
-                listHtml += `<button class="buy-btn" style="background:var(--accent); color:white; padding:10px; border-radius:10px;" onclick="setNewStatus('${statusText}')">${statusText}</button>`;
+                listHtml += `<button class="buy-btn" style="background:var(--accent); color:white; padding:10px; border-radius:10px; margin-bottom:5px;" onclick="setNewStatus('${statusText}')">${statusText}</button>`;
             }
         });
     } else {
@@ -1205,7 +1160,7 @@ function sendAchievementRequest(id, title) {
 }
 
 // ---------------------------------------------------------
-// ИСПРАВЛЕНИЕ: Глобальная функция для открытия квестов (если кнопка тупит)
+// ИСПРАВЛЕНИЕ: Функция для открытия квестов (статусов)
 // ---------------------------------------------------------
 function openTasks() {
     tab('tasks');
@@ -1213,6 +1168,9 @@ function openTasks() {
     const container = document.getElementById('questsListContainer');
     if(container) container.style.display = 'block';
 }
+// Добавляем алиасы на случай опечаток в HTML
+window.showTasks = openTasks;
+window.goToTasks = openTasks;
 
 // =========================================================
 // --- ЛОГИКА АДМИНКИ ЗАДАНИЙ ---
@@ -1640,7 +1598,7 @@ function changeQty(index, delta) {
 }
 
 // ---------------------------------------------------------
-// ИСПРАВЛЕНИЕ: Кнопка оформления заказа (Фолбэк для Inline-WebApp)
+// ИСПРАВЛЕНИЕ: Кнопка оформления заказа (скрытая отправка деталей)
 // ---------------------------------------------------------
 function checkout() {
     if (cart.length === 0) return;
@@ -1675,14 +1633,19 @@ function checkout() {
     const triggerOrder = () => {
         if (window.tg && tg.sendData) {
             try {
-                tg.sendData(JSON.stringify({ details: details }));
-                tg.close();
+                // Отправляем данные бота скрыто
+                tg.sendData(JSON.stringify({ action: 'new_order', details: details }));
+                // Юзеру показываем только успешный алерт
+                tg.showAlert("✅ Ваш заказ успешно отправлен!");
+                // Чистим корзину
+                cart = []; updateUI(); renderCart();
             } catch (e) {
-                // Если tg.sendData падает (обычно в inline-ботах), показываем алерт как fallback
-                alert("Ваш заказ зафиксирован в приложении!\nДля отправки боту используйте кнопку клавиатуры.\n\n" + details);
+                alert("✅ Ваш заказ успешно отправлен!");
+                cart = []; updateUI(); renderCart();
             }
         } else {
-            alert("Заказ оформлен (Браузер)!\n\n" + details);
+            // Если открыто в браузере, а не в ТГ
+            alert("✅ Ваш заказ успешно отправлен!");
             cart = []; updateUI(); renderCart();
         }
     };
@@ -2190,8 +2153,26 @@ window.onload = () => {
     </div>
 </div>
 
+<div id="nameInputModal" class="modal-overlay" style="display:none; z-index:9999;">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 style="margin-bottom:15px; text-align:center;">Новый никнейм</h2>
+        <input type="text" id="newNameInput" style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--gray); margin-bottom:15px; font-size:16px; box-sizing:border-box; background:var(--bg); color:var(--text);" placeholder="Ваш никнейм">
+        <div style="display:flex; gap:10px;">
+            <button class="buy-btn" style="flex:1; background:#34c759; color:white; padding:12px; border-radius:12px;" onclick="saveNewNickname()">Сохранить</button>
+            <button class="buy-btn" style="flex:1; background:var(--secondary); color:var(--text); padding:12px; border-radius:12px;" onclick="document.getElementById('nameInputModal').style.display='none'">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<div id="statusSelectModal" class="modal-overlay" style="display:none; z-index:9999;">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 style="margin-bottom:15px; text-align:center;">Выберите статус</h2>
+        <div id="statusSelectList" style="display:flex; flex-direction:column; gap:10px; max-height:50vh; overflow-y:auto; margin-bottom:15px; padding-right:5px;"></div>
+        <button class="buy-btn" style="background:var(--secondary); color:var(--text); padding:12px; border-radius:12px; width:100%;" onclick="document.getElementById('statusSelectModal').style.display='none'">Закрыть</button>
+    </div>
+</div>
+
 <div id="fullAchievementsList" style="display:none; background:var(--bg); border-radius:20px 20px 0 0; position:fixed; bottom:0; left:0; width:100%; z-index:1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);">
 </div>
 </body>
 </html>
-

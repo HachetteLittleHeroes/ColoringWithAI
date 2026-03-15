@@ -1005,7 +1005,7 @@ function setPresetAvatar(file, btnElem) {
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
 function updateAvatarImage() {
-    const avatarImg = document.getElementById('profileAvatar');
+    const avatarImg = document.getElementById('user-avatar');
     if (!avatarImg) return;
 
     if (window.userProfileData.avatar.customImage) {

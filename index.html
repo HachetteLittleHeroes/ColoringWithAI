@@ -254,8 +254,7 @@
         .brand-grid-modal { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
         .brand-btn { background: var(--secondary); border: 2px solid transparent; padding: 12px 5px; border-radius: 12px; font-weight: bold; cursor: pointer; color: var(--text); font-size: 14px; text-align: center; transition: 0.2s; }
         .brand-btn.active { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); color: var(--accent); }
-
-                          /* --- СТИЛИ ДЛЯ АВАТАРА И ПРОФИЛЯ: ОКОНЧАТЕЛЬНОЕ ИСПРАВЛЕНИЕ КОНТУРА --- */
+        /* --- СТИЛИ ДЛЯ АВАТАРА И ПРОФИЛЯ: ГАРАНТИРОВАННОЕ ИСПРАВЛЕНИЕ УЕХАВШЕГО КОНТУРА --- */
         
         .avatar-container { 
             position: relative; 
@@ -264,17 +263,19 @@
             flex-shrink: 0; 
         }
 
-        /* Главная иконка: теперь без границы, чтобы картинка была навылет */
+        /* Обертка для картинки: строгий круг, оранжевая обводка ПОВЕРХ картинки */
         .avatar-preview { 
             width: 100%; 
             height: 100%; 
             border-radius: 50%; 
-            overflow: hidden; 
-            /* БОЛЬШЕ НЕТ border У `.avatar-preview` */
+            overflow: hidden; /* Обрезает края картинки под круг */
             box-sizing: border-box; 
-            background: none !important; 
+            background: none !important; /* Убираем белую подложку */
             box-shadow: 0 4px 12px rgba(255, 149, 0, 0.2);
             position: relative; /* Для позиционирования псевдоэлемента */
+            display: flex; /* Чтобы картинка центрировалась внутри */
+            align-items: center; 
+            justify-content: center;
         }
 
         /* Добавляем оранжевую рамку поверх изображения с помощью псевдоэлемента */
@@ -288,16 +289,16 @@
             border: 4px solid #ff9500; /* Оранжевая обводка */
             border-radius: 50%;
             box-sizing: border-box;
-            z-index: 1; /* Чтобы рамка была выше картинки */
+            z-index: 10; /* Чтобы рамка была выше картинки */
             pointer-events: none; /* Чтобы клики проходили сквозь рамку */
         }
 
         .avatar-preview img { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover !important; 
+            object-fit: cover !important; /* Картинка заполняет весь круг */
             display: block;
-            z-index: 0; /* Картинка ниже рамки */
+            z-index: 5; /* Картинка ниже рамки */
         }
 
 

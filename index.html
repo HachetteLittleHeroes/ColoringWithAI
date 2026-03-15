@@ -601,20 +601,15 @@
         <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
     </div>
 
-   <div class="profile-info-right" style="flex-grow: 1;">
-    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-        <h2 class="profile-username" id="displayUsername"
-            style="margin:0; font-size:20px; cursor:pointer;"
-            onclick="changeNickname()">
-            Без имени
-        </h2>
-
-        <i class="fas fa-pen"
-           style="color:var(--gray); font-size:14px; cursor:pointer;"
-           onclick="changeNickname()">
-        </i>
+    <div class="profile-info-right" style="flex-grow: 1;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <h2 class="profile-username" id="displayUsername" style="margin:0; font-size: 20px;">Без имени</h2>
+            <i class="fas fa-pen" style="color: var(--gray); font-size: 14px; cursor: pointer;" onclick="changeUserName()"></i>
+        </div>
+        <div class="profile-status" id="userStatusDisplay" onclick="changeCustomStatus()" style="background: rgba(255,255,255,0.08); padding: 5px 10px; border-radius: 10px; font-size: 13px; color: #b3b3b3; width: fit-content;">
+            Без статуса
+        </div>
     </div>
-</div>
 </div>
 
 
@@ -636,9 +631,7 @@
                 
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <button class="buy-btn" style="background:rgba(255,255,255,0.25); border:1px solid white; border-radius:12px; padding:12px; width: 100%; font-size: 14px; font-weight: bold; color: white;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
-                  <button class="buy-btn" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.5); border-radius:12px; padding:12px; width:100%; font-size:14px; font-weight:bold; color:white;" onclick="openTasks()">
-Заработать ашетики 💰
-</button>
+                    <button class="buy-btn" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.5); border-radius:12px; padding:12px; width: 100%; font-size: 14px; font-weight: bold; color: white;" onclick="toggleBlock('real-loyalty-info', this)">Заработать ашетики 💰</button>
                 </div>
             </div>
         </div>
@@ -908,28 +901,6 @@
         </button> 
         <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Профиль</button>
     </nav>
-<div class="profile-header" style="text-align: center; padding: 20px;">
-    <div id="user-avatar-container" onclick="toggleAvatarEditor()">
-        <img id="user-avatar" src="" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--accent);">
-    </div>
-
-    <h2 id="userName" style="margin: 10px 0 2px 0;">Без имени</h2>
-
-    <div id="userStatusDisplay" onclick="changeCustomStatus()" style="font-size: 14px; margin-bottom: 15px; font-weight: 500; transition: color 0.3s;">
-        Без статуса
-    </div>
-
-    <div style="display: flex; gap: 10px; justify-content: center;">
-        <button class="buy-btn" onclick="openLoyaltyProgram()" style="flex: 1;">
-            Заработать ашетики
-        </button>
-        
-        <button class="buy-btn" onclick="openTasks()" style="flex: 1; background: var(--secondary); color: var(--text);">
-            Задания статусов
-        </button>
-    </div>
-</div>
-
 <script>
 // =========================================================
 // --- БАЗОВЫЕ НАСТРОЙКИ, ПРОФИЛЬ И АВАТАРЫ ---
@@ -957,27 +928,8 @@ if (typeof window.userProfileData === "undefined") {
 }
 
 function saveProfileData() {
-    try { localStorage.setItem('hlh_user_profile', JSON.stringify(window.userProfileData)); } 
+    try { localStorage.setItem('hlh_user_profile', JSON.stringify(userProfileData)); } 
     catch (e) { console.error("Ошибка сохранения профиля:", e); }
-}
-
-function updateStatusUI() {
-    const statusEl = document.getElementById('userStatusDisplay');
-    if (statusEl) {
-        statusEl.innerText = window.userProfileData.status || "Без статуса";
-        
-        // Делаем статус кликабельным и подсвечиваем, если есть доступные статусы
-        const unlocked = window.userProfileData.unlockedAchievements || [];
-        if (unlocked.length > 0) {
-            statusEl.style.color = "var(--accent)"; 
-            statusEl.style.cursor = "pointer";
-            statusEl.onclick = changeCustomStatus;
-        } else {
-            statusEl.style.color = "var(--gray)";
-            statusEl.style.cursor = "default";
-            statusEl.onclick = null;
-        }
-    }
 }
 
 function loadProfileData() {
@@ -985,22 +937,22 @@ function loadProfileData() {
         const saved = localStorage.getItem('hlh_user_profile');
         if (saved) {
             const parsed = JSON.parse(saved);
-            window.userProfileData = { ...window.userProfileData, ...parsed };
-            if (parsed.avatar) window.userProfileData.avatar = { ...window.userProfileData.avatar, ...parsed.avatar };
-            if (parsed.stats) window.userProfileData.stats = { ...window.userProfileData.stats, ...parsed.stats };
+            userProfileData = { ...userProfileData, ...parsed };
+            if (parsed.avatar) userProfileData.avatar = { ...userProfileData.avatar, ...parsed.avatar };
+            if (parsed.stats) userProfileData.stats = { ...userProfileData.stats, ...parsed.stats };
         }
     } catch (e) { console.error("Ошибка загрузки профиля:", e); }
     
-    if (typeof updateAvatarImage === "function") updateAvatarImage();
+    updateAvatarImage();
     renderAvatarPresets();
     
     const nameEl = document.getElementById('displayUsername');
-    if (nameEl) nameEl.innerText = window.userProfileData.name;
+    if (nameEl) nameEl.innerText = userProfileData.name;
     const nameProfileEl = document.getElementById('userName'); 
-    if (nameProfileEl) nameProfileEl.innerText = window.userProfileData.name;
+    if (nameProfileEl) nameProfileEl.innerText = userProfileData.name;
     
-    // Обновляем UI статуса
-    updateStatusUI();
+    const statusEl = document.getElementById('userStatusDisplay');
+    if (statusEl) statusEl.innerText = userProfileData.status;
 }
 
 function toggleAvatarEditor() {
@@ -1015,10 +967,10 @@ function handleCustomAvatar(event) {
     if(!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
-        window.userProfileData.avatar.customImage = e.target.result;
-        window.userProfileData.styleChangesCount++;
+        userProfileData.avatar.customImage = e.target.result;
+        userProfileData.styleChangesCount++;
         saveProfileData();
-        if (typeof updateAvatarImage === "function") updateAvatarImage();
+        updateAvatarImage();
         document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('active'));
     };
     reader.readAsDataURL(file);
@@ -1028,7 +980,7 @@ function renderAvatarPresets() {
     const grid = document.getElementById('avatarPresetsGrid');
     if(!grid) return;
     grid.innerHTML = avatarPresets.map(file => {
-        const isActive = (window.userProfileData.avatar.seed === file && !window.userProfileData.avatar.customImage) ? 'active' : '';
+        const isActive = (userProfileData.avatar.seed === file && !userProfileData.avatar.customImage) ? 'active' : '';
         return `
         <div class="avatar-preset-btn ${isActive}" onclick="setPresetAvatar('${file}', this)">
             <img src="${avatarBaseURL}${file}" onerror="this.src='https://placehold.co/100x100/333333/ff9500?text=?'">
@@ -1037,32 +989,21 @@ function renderAvatarPresets() {
 }
 
 function setPresetAvatar(file, btnElem) {
-    window.userProfileData.avatar.seed = file;
-    window.userProfileData.avatar.customImage = null;
+    userProfileData.avatar.seed = file;
+    userProfileData.avatar.customImage = null;
     document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('active'));
     if (btnElem) btnElem.classList.add('active');
-    if (typeof updateAvatarImage === "function") updateAvatarImage();
+    updateAvatarImage();
     saveProfileData();
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
 
-function updateAvatarImage() {
-    const avatarImg = document.getElementById('user-avatar');
-    if (!avatarImg) return;
-
-    if (window.userProfileData.avatar.customImage) {
-        avatarImg.src = window.userProfileData.avatar.customImage;
-    } else {
-        avatarImg.src = avatarBaseURL + window.userProfileData.avatar.seed;
-    }
-}
-
 // ---------------------------------------------------------
-// Смена имени
+// ИСПРАВЛЕНИЕ: Вызов статического окна смены имени
 // ---------------------------------------------------------
 function changeNickname() {
     initUserStats();
-    let currentName = window.userProfileData.name !== "Без имени" ? window.userProfileData.name : "";
+    let currentName = userProfileData.name !== "Без имени" ? userProfileData.name : "";
     let modal = document.getElementById('nameInputModal');
     if (modal) {
         document.getElementById('newNameInput').value = currentName;
@@ -1078,8 +1019,8 @@ function saveNewNickname() {
         return;
     }
     
-    window.userProfileData.name = newName;
-    window.userProfileData.stats.nameChanged = 1;
+    userProfileData.name = newName;
+    userProfileData.stats.nameChanged = 1;
     
     const nameEl = document.getElementById('userName');
     if(nameEl) nameEl.innerText = newName;
@@ -1088,7 +1029,6 @@ function saveNewNickname() {
     
     saveProfileData();
     renderStatusQuests();
-    updateStatusUI();
     
     let modal = document.getElementById('nameInputModal');
     if(modal) modal.style.display = 'none';
@@ -1098,42 +1038,36 @@ function saveNewNickname() {
 }
 
 // ---------------------------------------------------------
-// Смена статуса
+// ИСПРАВЛЕНИЕ: Вызов статического окна смены статуса
 // ---------------------------------------------------------
 function changeCustomStatus() {
-    const unlocked = window.userProfileData.unlockedAchievements || [];
-    
-    // Блокируем открытие, если нет доступных статусов
-    if (unlocked.length === 0) {
-        if (window.tg && tg.showAlert) {
-            tg.showAlert("У вас пока нет разблокированных статусов. Выполняйте задания, чтобы получить их!");
-        } else {
-            alert("У вас пока нет разблокированных статусов. Выполняйте задания, чтобы получить их!");
-        }
-        return;
-    }
-
+    const unlocked = userProfileData.unlockedAchievements || [];
     let modal = document.getElementById('statusSelectModal');
     if (!modal) return;
     
     let listHtml = '';
     listHtml += `<button class="buy-btn" style="background:#ff3b30; color:white; padding:10px; border-radius:10px; margin-bottom:5px;" onclick="setNewStatus('Без статуса')">Сбросить статус</button>`;
     
-    unlocked.forEach(achId => {
-        let ach = achievementsConfig.find(a => a.id === achId);
-        if (ach) {
-            let statusText = ach.desc.replace('Статус: ', '').replace('Достижение: ', '').trim();
-            listHtml += `<button class="buy-btn" style="background:var(--accent); color:white; padding:10px; border-radius:10px; margin-bottom:5px;" onclick="setNewStatus('${statusText}')">${statusText}</button>`;
-        }
-    });
+    if (unlocked.length > 0) {
+        unlocked.forEach(achId => {
+            let ach = achievementsConfig.find(a => a.id === achId);
+            if (ach) {
+                let statusText = ach.desc.replace('Статус: ', '').replace('Достижение: ', '').trim();
+                listHtml += `<button class="buy-btn" style="background:var(--accent); color:white; padding:10px; border-radius:10px; margin-bottom:5px;" onclick="setNewStatus('${statusText}')">${statusText}</button>`;
+            }
+        });
+    } else {
+        listHtml += `<div style="text-align:center; color:var(--gray); font-size:14px; margin-top:10px; margin-bottom:10px;">У вас пока нет разблокированных статусов. Выполняйте задания, чтобы получить их!</div>`;
+    }
     
     document.getElementById('statusSelectList').innerHTML = listHtml;
     modal.style.display = 'flex';
 }
 
 function setNewStatus(newStatus) {
-    window.userProfileData.status = newStatus;
-    updateStatusUI();
+    userProfileData.status = newStatus;
+    const statusEl = document.getElementById('userStatusDisplay');
+    if (statusEl) statusEl.innerText = userProfileData.status;
     saveProfileData();
     document.getElementById('statusSelectModal').style.display = 'none';
     if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -1154,11 +1088,11 @@ const achievementsConfig = [
 ];
 
 function initUserStats() {
-    if(typeof window.userProfileData === "undefined") {
+    if(typeof userProfileData === "undefined") {
         window.userProfileData = {};
     }
-    if(!window.userProfileData.stats) {
-        window.userProfileData.stats = { pokemonPics:0, aiCorrections:0, authorPics:0, alcoholPics:0, supported:0, nameChanged:0 };
+    if(!userProfileData.stats) {
+        userProfileData.stats = { pokemonPics:0, aiCorrections:0, authorPics:0, alcoholPics:0, supported:0, nameChanged:0 };
     }
 }
 
@@ -1167,9 +1101,9 @@ function getAchievementProgress(ach) {
     const balanceEl = document.getElementById('userBalance');
     if(balanceEl) balance = parseInt(balanceEl.innerText) || 0;
     
-    if(ach.type === 'admin_check') return window.userProfileData.stats?.[ach.statKey] || 0;
+    if(ach.type === 'admin_check') return userProfileData.stats?.[ach.statKey] || 0;
     if(ach.type === 'auto_balance') return balance;
-    if(ach.type === 'auto_name') return window.userProfileData.stats?.nameChanged || 0;
+    if(ach.type === 'auto_name') return userProfileData.stats?.nameChanged || 0;
     return 0;
 }
 
@@ -1181,13 +1115,12 @@ function renderStatusQuests() {
     container.innerHTML = achievementsConfig.map(ach => {
         let current = getAchievementProgress(ach);
         let isDone = current >= ach.target;
-        let wasDone = window.userProfileData.unlockedAchievements?.includes(ach.id);
+        let wasDone = userProfileData.unlockedAchievements?.includes(ach.id);
         let percent = Math.min(100, (current / ach.target) * 100);
         
         if(isDone && !wasDone) {
-            if(!window.userProfileData.unlockedAchievements) window.userProfileData.unlockedAchievements = [];
-            window.userProfileData.unlockedAchievements.push(ach.id);
-            updateStatusUI(); // Обновляем статусы при получении нового достижения
+            if(!userProfileData.unlockedAchievements) userProfileData.unlockedAchievements = [];
+            userProfileData.unlockedAchievements.push(ach.id);
             setTimeout(() => {
                 if(window.tg && tg.showAlert) tg.showAlert(`🏆 Новое достижение!\n${ach.title}`);
             }, 300);
@@ -1227,43 +1160,15 @@ function sendAchievementRequest(id, title) {
 }
 
 // ---------------------------------------------------------
-// ОТКРЫТИЕ ЛОЯЛЬНОСТИ И ЗАДАНИЙ
+// ИСПРАВЛЕНИЕ: Функция для открытия квестов (статусов)
 // ---------------------------------------------------------
-function openLoyaltyProgram() {
-    const loyaltyInfo = document.getElementById('loyalty-info');
-    const rewardsSection = document.getElementById('rewards-section');
-    const tasksContainer = document.getElementById('questsListContainer');
-
-    if (tasksContainer) tasksContainer.style.display = 'none'; 
-    
-    if (loyaltyInfo) {
-        loyaltyInfo.style.display = 'block'; 
-        if (rewardsSection) rewardsSection.style.display = 'none'; 
-    }
-
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-}
-window.openLoyaltyProgram = openLoyaltyProgram;
-
 function openTasks() {
-    const tasksContainer = document.getElementById('questsListContainer');
-    const loyaltyInfo = document.getElementById('loyalty-info');
-
-    if (loyaltyInfo) loyaltyInfo.style.display = 'none';
-
-    if(tasksContainer){
-        if(tasksContainer.style.display === 'block'){
-            tasksContainer.style.display = 'none';
-        }else{
-            tasksContainer.style.display = 'block';
-            renderStatusQuests();
-        }
-    }
-
-    if (window.tg && tg.HapticFeedback){
-        tg.HapticFeedback.impactOccurred('light');
-    }
+    tab('tasks');
+    renderStatusQuests();
+    const container = document.getElementById('questsListContainer');
+    if(container) container.style.display = 'block';
 }
+// Добавляем алиасы на случай опечаток в HTML
 window.showTasks = openTasks;
 window.goToTasks = openTasks;
 
@@ -1693,7 +1598,7 @@ function changeQty(index, delta) {
 }
 
 // ---------------------------------------------------------
-// Кнопка оформления заказа
+// ИСПРАВЛЕНИЕ: Кнопка оформления заказа (скрытая отправка деталей)
 // ---------------------------------------------------------
 function checkout() {
     if (cart.length === 0) return;
@@ -1728,14 +1633,18 @@ function checkout() {
     const triggerOrder = () => {
         if (window.tg && tg.sendData) {
             try {
+                // Отправляем данные бота скрыто
                 tg.sendData(JSON.stringify({ action: 'new_order', details: details }));
+                // Юзеру показываем только успешный алерт
                 tg.showAlert("✅ Ваш заказ успешно отправлен!");
+                // Чистим корзину
                 cart = []; updateUI(); renderCart();
             } catch (e) {
                 alert("✅ Ваш заказ успешно отправлен!");
                 cart = []; updateUI(); renderCart();
             }
         } else {
+            // Если открыто в браузере, а не в ТГ
             alert("✅ Ваш заказ успешно отправлен!");
             cart = []; updateUI(); renderCart();
         }
@@ -1905,14 +1814,7 @@ function updatePage() {
     const img = document.getElementById('current-page'), counter = document.getElementById('page-counter'), formats = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG'];
     let fIndex = 0;
     function tryLoad() { img.src = `otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; }
-    img.onerror = () => { 
-        fIndex++; 
-        if (fIndex < formats.length) {
-            tryLoad(); 
-        } else {
-            img.onerror = null; 
-        }
-    };
+    img.onerror = () => { fIndex++; if (fIndex < formats.length) tryLoad(); };
     tryLoad(); counter.innerText = `${currentPage} / ${maxPages}`;
 }
 
@@ -2133,9 +2035,9 @@ function renderFullAchievementsList() {
         <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; padding:15px; max-height:400px; overflow-y:auto;">
             ${achievementsConfig.map(ach => {
                 let current = 0;
-                if (ach.type === 'admin_check') current = window.userProfileData.stats[ach.statKey] || 0;
+                if (ach.type === 'admin_check') current = userProfileData.stats[ach.statKey] || 0;
                 if (ach.type === 'auto_balance') current = userBalance;
-                if (ach.type === 'auto_name') current = window.userProfileData.stats.nameChanged || 0;
+                if (ach.type === 'auto_name') current = userProfileData.stats.nameChanged || 0;
                 
                 const isEarned = current >= ach.target;
                 const filterStyle = isEarned ? '' : 'filter: grayscale(1) opacity(0.4);';
@@ -2172,8 +2074,8 @@ function closePicker() {
 
 function selectForTop(achId, achImg, achTitle, achDesc) {
     if (currentSlot !== null) {
-        if (!window.userProfileData.topAchievements) window.userProfileData.topAchievements = [null, null, null];
-        window.userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
+        if (!userProfileData.topAchievements) userProfileData.topAchievements = [null, null, null];
+        userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
         updateSlotUI(currentSlot, achImg, achTitle, achDesc);
         saveProfileData(); closePicker();
         if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -2229,8 +2131,8 @@ window.onload = () => {
     
     setTimeout(() => {
         renderStatusQuests(); 
-        if (window.userProfileData.topAchievements) {
-            window.userProfileData.topAchievements.forEach((ach, index) => {
+        if (userProfileData.topAchievements) {
+            userProfileData.topAchievements.forEach((ach, index) => {
                 if (ach) updateSlotUI(index, ach.achImg, ach.achTitle, ach.achDesc);
             });
         }
@@ -2272,6 +2174,5 @@ window.onload = () => {
 
 <div id="fullAchievementsList" style="display:none; background:var(--bg); border-radius:20px 20px 0 0; position:fixed; bottom:0; left:0; width:100%; z-index:1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);">
 </div>
-</script>
 </body>
 </html>

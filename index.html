@@ -901,8 +901,7 @@
         </button> 
         <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Профиль</button>
     </nav>
-
- <script>
+<script>
 // =========================================================
 // --- БАЗОВЫЕ НАСТРОЙКИ, ПРОФИЛЬ И АВАТАРЫ ---
 // =========================================================
@@ -949,7 +948,7 @@ function loadProfileData() {
     
     const nameEl = document.getElementById('displayUsername');
     if (nameEl) nameEl.innerText = userProfileData.name;
-    const nameProfileEl = document.getElementById('userName'); // Для совместимости со старым кодом
+    const nameProfileEl = document.getElementById('userName'); 
     if (nameProfileEl) nameProfileEl.innerText = userProfileData.name;
     
     const statusEl = document.getElementById('userStatusDisplay');
@@ -1010,12 +1009,44 @@ function updateAvatarImage() {
     avatarImg.onerror = function() { this.src = 'https://placehold.co/100x100/333333/ff9500?text=?'; };
 }
 
+// ---------------------------------------------------------
+// ИСПРАВЛЕНИЕ: Модальное окно для смены имени (вместо prompt)
+// ---------------------------------------------------------
 function changeNickname() {
     initUserStats();
     let currentName = userProfileData.name !== "Без имени" ? userProfileData.name : "";
-    let newName = prompt("Введите новый никнейм:", currentName);
     
-    if(!newName || newName.length < 2) return;
+    let modal = document.getElementById('nameInputModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'nameInputModal';
+        modal.className = 'modal-overlay';
+        modal.style.display = 'none';
+        modal.style.zIndex = '9999';
+        modal.innerHTML = `
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h2 style="margin-bottom:15px; text-align:center;">Новый никнейм</h2>
+                <input type="text" id="newNameInput" style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--gray); margin-bottom:15px; font-size:16px; box-sizing:border-box; background:var(--bg); color:var(--text);" placeholder="Ваш никнейм">
+                <div style="display:flex; gap:10px;">
+                    <button class="buy-btn" style="flex:1; background:#34c759; color:white; padding:12px; border-radius:12px;" onclick="saveNewNickname()">Сохранить</button>
+                    <button class="buy-btn" style="flex:1; background:var(--secondary); color:var(--text); padding:12px; border-radius:12px;" onclick="document.getElementById('nameInputModal').style.display='none'">Отмена</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    document.getElementById('newNameInput').value = currentName;
+    modal.style.display = 'flex';
+}
+
+function saveNewNickname() {
+    let newName = document.getElementById('newNameInput').value.trim();
+    if(!newName || newName.length < 2) {
+        if(window.tg && tg.showAlert) tg.showAlert("Никнейм должен содержать минимум 2 символа");
+        else alert("Слишком короткий никнейм");
+        return;
+    }
     
     userProfileData.name = newName;
     userProfileData.stats.nameChanged = 1;
@@ -1027,18 +1058,64 @@ function changeNickname() {
     
     saveProfileData();
     renderStatusQuests();
-    if(window.tg && tg.showAlert) tg.showAlert("Никнейм изменён");
+    document.getElementById('nameInputModal').style.display = 'none';
+    
+    if(window.tg && tg.showAlert) tg.showAlert("Никнейм успешно изменён!");
+    if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
 }
 
+// ---------------------------------------------------------
+// ИСПРАВЛЕНИЕ: Выбор статуса только из разблокированных
+// ---------------------------------------------------------
 function changeCustomStatus() {
-    let currentStatus = userProfileData.status !== "Без статуса" ? userProfileData.status : "";
-    let newStatus = prompt("Введите ваш статус:", currentStatus);
-    if (newStatus !== null) {
-        userProfileData.status = newStatus.trim() || "Без статуса";
-        const statusEl = document.getElementById('userStatusDisplay');
-        if (statusEl) statusEl.innerText = userProfileData.status;
-        saveProfileData();
+    const unlocked = userProfileData.unlockedAchievements || [];
+    
+    let modal = document.getElementById('statusSelectModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'statusSelectModal';
+        modal.className = 'modal-overlay';
+        modal.style.display = 'none';
+        modal.style.zIndex = '9999';
+        modal.innerHTML = `
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h2 style="margin-bottom:15px; text-align:center;">Выберите статус</h2>
+                <div id="statusSelectList" style="display:flex; flex-direction:column; gap:10px; max-height:50vh; overflow-y:auto; margin-bottom:15px; padding-right:5px;"></div>
+                <button class="buy-btn" style="background:var(--secondary); color:var(--text); padding:12px; border-radius:12px; width:100%;" onclick="document.getElementById('statusSelectModal').style.display='none'">Закрыть</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
     }
+    
+    let listHtml = '';
+    
+    // Кнопка сброса статуса всегда доступна
+    listHtml += `<button class="buy-btn" style="background:#ff3b30; color:white; padding:10px; border-radius:10px;" onclick="setNewStatus('Без статуса')">Сбросить статус</button>`;
+    
+    if (unlocked.length > 0) {
+        unlocked.forEach(achId => {
+            let ach = achievementsConfig.find(a => a.id === achId);
+            if (ach) {
+                // Извлекаем красивое название статуса из описания
+                let statusText = ach.desc.replace('Статус: ', '').replace('Достижение: ', '').trim();
+                listHtml += `<button class="buy-btn" style="background:var(--accent); color:white; padding:10px; border-radius:10px;" onclick="setNewStatus('${statusText}')">${statusText}</button>`;
+            }
+        });
+    } else {
+        listHtml += `<div style="text-align:center; color:var(--gray); font-size:14px; margin-top:10px; margin-bottom:10px;">У вас пока нет разблокированных статусов. Выполняйте задания, чтобы получить их!</div>`;
+    }
+    
+    document.getElementById('statusSelectList').innerHTML = listHtml;
+    modal.style.display = 'flex';
+}
+
+function setNewStatus(newStatus) {
+    userProfileData.status = newStatus;
+    const statusEl = document.getElementById('userStatusDisplay');
+    if (statusEl) statusEl.innerText = userProfileData.status;
+    saveProfileData();
+    document.getElementById('statusSelectModal').style.display = 'none';
+    if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
 }
 
 // =========================================================
@@ -1125,6 +1202,16 @@ function sendAchievementRequest(id, title) {
             tg.showAlert("Заявка отправлена админу");
         });
     }
+}
+
+// ---------------------------------------------------------
+// ИСПРАВЛЕНИЕ: Глобальная функция для открытия квестов (если кнопка тупит)
+// ---------------------------------------------------------
+function openTasks() {
+    tab('tasks');
+    renderStatusQuests();
+    const container = document.getElementById('questsListContainer');
+    if(container) container.style.display = 'block';
 }
 
 // =========================================================
@@ -1552,14 +1639,19 @@ function changeQty(index, delta) {
     if (shopEl && shopEl.classList.contains('active')) renderMarkers(markersData);
 }
 
+// ---------------------------------------------------------
+// ИСПРАВЛЕНИЕ: Кнопка оформления заказа (Фолбэк для Inline-WebApp)
+// ---------------------------------------------------------
 function checkout() {
     if (cart.length === 0) return;
     let markersCount = 0;
     cart.forEach(item => { if (item.type === 'Маркер') markersCount += item.qty; });
     if (markersCount > 0 && markersCount < 3) {
         if(window.tg && tg.showAlert) tg.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук.");
+        else alert("⚠️ Минимальный заказ маркеров — от 3 штук.");
         return;
     }
+    
     let totalSum = 0, hasPreorder = false;
     let details = `🛍 **ДЕТАЛИ ЗАКАЗА:**\n`;
     cart.forEach(item => {
@@ -1579,13 +1671,28 @@ function checkout() {
     details += `\n📖 **БОНУС К НАЧИСЛЕНИЮ: ${bonusToEarn}**`;
     let balEl = document.getElementById('userBalance');
     details += `\n👤 **ТЕКУЩИЙ БАЛАНС ЮЗЕРА: ${balEl ? balEl.innerText : 0}**`;
+
+    const triggerOrder = () => {
+        if (window.tg && tg.sendData) {
+            try {
+                tg.sendData(JSON.stringify({ details: details }));
+                tg.close();
+            } catch (e) {
+                // Если tg.sendData падает (обычно в inline-ботах), показываем алерт как fallback
+                alert("Ваш заказ зафиксирован в приложении!\nДля отправки боту используйте кнопку клавиатуры.\n\n" + details);
+            }
+        } else {
+            alert("Заказ оформлен (Браузер)!\n\n" + details);
+            cart = []; updateUI(); renderCart();
+        }
+    };
     
     if (hasPreorder && window.tg && tg.showConfirm) {
         tg.showConfirm("В вашем заказе есть раскраски (ПОД ЗАКАЗ). Оформить?", (c) => { 
-            if(c) { tg.sendData(JSON.stringify({ details: details })); tg.close(); }
+            if(c) triggerOrder();
         });
-    } else if(window.tg && tg.sendData) { 
-        tg.sendData(JSON.stringify({ details: details })); tg.close(); 
+    } else {
+        triggerOrder();
     }
 }
 
@@ -1718,7 +1825,7 @@ async function massToggle(isAdded) {
     }
 }
 
-// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК (ИСПРАВЛЕННАЯ)
+// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
 function tab(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -2087,5 +2194,4 @@ window.onload = () => {
 </div>
 </body>
 </html>
-
 

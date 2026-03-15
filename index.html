@@ -595,7 +595,7 @@
             <div class="avatar-container" style="margin: 0;">
                 <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
                    <img id="user-avatar" 
-     src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/avatars/av2.jpg" 
+     src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/avatars/av2.png" 
      style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
 
                 </div>
@@ -914,14 +914,14 @@
 const avatarBaseURL =
 "https://raw.githubusercontent.com/HachetteLittleHeroes/ColoriagesWithAI/main/avatars/";
   const avatarPresets = [
-"av1.jpg",
-"av2.jpg",
-"av3.jpg",
-"av4.jpg",
-"av5.jpg",
-"av6.jpg",
-"av7.jpg",
-"av8.jpg"
+"av1.png",
+"av2.png",
+"av3.png",
+"av4.png",
+"av5.png",
+"av6.png",
+"av7.png",
+"av8.png"
 ];
 
         // База путей развития статусов 
@@ -955,7 +955,7 @@ const avatarBaseURL =
         let userProfileData = {
             customName: null,
             customStatus: null,
-            avatar: { seed: 'av2.jpg', customImage: null }, // Добавлено customImage
+            avatar: { seed: 'av2.png', customImage: null }, // Добавлено customImage
             achievements: [
                 { id: 'first_steps', title: 'Первые шаги', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/achievements/ach1.png', desc: 'Выдается автоматически за первый запуск приложения.', unlocked: true },
                 { id: 'stylist', title: 'Стиляга', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/achievements/ach2.png', desc: 'Измените стиль своего персонажа 5 раз.', unlocked: false },
@@ -983,7 +983,7 @@ const avatarBaseURL =
             if (saved) {
                 userProfileData = JSON.parse(saved);
                 if (!userProfileData.avatar || !userProfileData.avatar.seed)
-userProfileData.avatar = { seed: 'av2.jpg', customImage: null };
+userProfileData.avatar = { seed: 'av2.png', customImage: null };
                 if (!userProfileData.statusProgress) userProfileData.statusProgress = { "Спиртесса": 0, "Графиня Линеров": 0, "Аквамаринка": 0 };
             }
             

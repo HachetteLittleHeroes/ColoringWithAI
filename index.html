@@ -984,11 +984,12 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
 
         // Единый реестр всех достижений в игре
        // ================= ДОСТИЖЕНИЯ И СТАТУСЫ =================
+<script>
 const achievementsConfig = [
 {
 id:'pokemon_master',
-title:'Великий мастер',
-desc:'Статус: Мастер Покемонов',
+title:'Великий тренер',
+desc:'Статус: Великий мастер',
 req:'Раскрасить 30 картинок с покемонами (фото ДО и ПОСЛЕ)',
 target:30,
 type:'admin_check',
@@ -998,7 +999,7 @@ icon:'img/ach_poke.png'
 {
 id:'ai_teacher',
 title:'Училка',
-desc:'Статус: Эксперт ИИ',
+desc:'Статус: Училка',
 req:'Внести 500 одобренных правок в ИИ палитру',
 target:500,
 type:'admin_check',
@@ -1008,7 +1009,7 @@ icon:'img/ach_teacher.png'
 {
 id:'scrooge',
 title:'Скрудж',
-desc:'Статус: Богатей',
+desc:'Статус: Скрудж',
 req:'Накопить 2500 ашетиков на балансе',
 target:2500,
 type:'auto_balance',
@@ -1017,8 +1018,8 @@ icon:'img/ach_gold.png'
 {
 id:'not_like_others',
 title:'Нетакуся',
-desc:'Статус: Творец',
-req:'Раскрасить 30 картинок из авторской раскраски',
+desc:'Статус: Нетакуся',
+req:'Раскрасить 30 картинок из авторской раскраски (фото ДО и ПОСЛЕ)',
 target:30,
 type:'admin_check',
 statKey:'authorPics',
@@ -1027,8 +1028,8 @@ icon:'img/ach_art.png'
 {
 id:'alcohol_queen',
 title:'Спиртесса',
-desc:'Статус: Мастер спирта',
-req:'Раскрасить 100 картинок спиртовыми маркерами',
+desc:'Статус: Спиртесса',
+req:'Раскрасить 100 картинок спиртовыми маркерами (фото ДО и ПОСЛЕ)',
 target:100,
 type:'admin_check',
 statKey:'alcoholPics',
@@ -1037,21 +1038,12 @@ icon:'img/ach_spirit.png'
 {
 id:'benefactor',
 title:'Благодетель',
-desc:'Статус: Меценат',
+desc:'Статус: Благодетель',
 req:'Поддержать наш проект',
 target:1,
 type:'admin_check',
 statKey:'supported',
 icon:'img/ach_heart.png'
-},
-{
-id:'name_changer',
-title:'My name is',
-desc:'Достижение: Маскировка',
-req:'Сменить никнейм',
-target:1,
-type:'auto_name',
-icon:'img/ach_id.png'
 }
 ];
 
@@ -1068,8 +1060,7 @@ pokemonPics:0,
 aiCorrections:0,
 authorPics:0,
 alcoholPics:0,
-supported:0,
-nameChanged:0
+supported:0
 };
 
 }
@@ -1089,10 +1080,6 @@ return userProfileData.stats?.[ach.statKey]||0;
 
 if(ach.type==='auto_balance'){
 return balance;
-}
-
-if(ach.type==='auto_name'){
-return userProfileData.stats?.nameChanged||0;
 }
 
 return 0;
@@ -1181,8 +1168,6 @@ if(!newName||newName.length<2) return;
 
 userProfileData.name=newName;
 
-userProfileData.stats.nameChanged=1;
-
 const nameEl=document.getElementById('userName');
 if(nameEl) nameEl.innerText=newName;
 
@@ -1254,6 +1239,33 @@ tg.showAlert("Никнейм изменён");
 
         function saveOrganizers() {
             localStorage.setItem('marker_organizers', JSON.stringify(organizers));
+            
+            const userId = document.getElementById('userIdDisplay')?.innerText;
+            if (userId && userId !== "0" && userId !== "---") {
+                fetch(`${API_URL}/save_organizers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, organizers: organizers })
+                }).catch(e => console.error("Ошибка синхронизации органайзеров", e));
+            }
+        }
+
+        async function loadServerOrganizers() {
+            const userId = document.getElementById('userIdDisplay')?.innerText;
+            if (!userId || userId === "0" || userId === "---") return;
+            try {
+                let res = await fetch(`${API_URL}/get_organizers?user_id=${userId}`);
+                if (res.ok) {
+                    let data = await res.json();
+                    if (data && data.length > 0) {
+                        organizers = data;
+                        localStorage.setItem('marker_organizers', JSON.stringify(organizers));
+                        renderOrganizers();
+                    }
+                }
+            } catch (e) {
+                console.log("Серверные органайзеры не загружены, используем локальные");
+            }
         }
 
         function showAddOrganizer() {
@@ -1800,7 +1812,6 @@ tg.showAlert("Никнейм изменён");
                     });
 
                     renderBrandInventory();
-                    // checkAchievements() - вызов убран, так как логика ачивок теперь переделана
                     if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 }
             });
@@ -2070,7 +2081,6 @@ tg.showAlert("Никнейм изменён");
                         let current = 0;
                         if (ach.type === 'admin_check') current = userProfileData.stats[ach.statKey] || 0;
                         if (ach.type === 'auto_balance') current = userBalance;
-                        if (ach.type === 'auto_name') current = userProfileData.stats.nameChanged || 0;
                         
                         const isEarned = current >= ach.target;
                         const filterStyle = isEarned ? '' : 'filter: grayscale(1) opacity(0.4);';
@@ -2114,10 +2124,10 @@ tg.showAlert("Никнейм изменён");
             if(slot) {
                 slot.innerHTML = `
                     <div onclick="showAchDescription('${title}', '${desc}', '${img}')" style="cursor: pointer; text-align:center;">
-                        <img src="${img}" style="width: 60px; height: 60px; border-radius: 18px; object-fit: cover; border: 2px solid var(--accent);">
+                        <img src="${img}" style="width: 60px; height: 60px; border-radius: 18px; object-fit: cover; border: 2px solid #FF9500;">
                         <div style="font-size: 10px; color: white; margin-top: 5px; font-weight:bold; overflow: hidden; text-overflow: ellipsis;">${title}</div>
                     </div>
-                    <div onclick="openAchievementPicker(${index})" style="font-size: 9px; color: var(--accent); margin-top: 4px; cursor:pointer;">Изменить</div>
+                    <div onclick="openAchievementPicker(${index})" style="font-size: 9px; color: #FF9500; margin-top: 4px; cursor:pointer;">Изменить</div>
                 `;
             }
         }
@@ -2140,7 +2150,7 @@ tg.showAlert("Никнейм изменён");
             modal.style.display = 'flex';
         }
 
-        window.onload = () => {
+        window.onload = async () => {
             const params = new URLSearchParams(window.location.search);
             document.getElementById('userBalance').innerText = params.get('balance') || 0;
             const userId = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
@@ -2148,6 +2158,9 @@ tg.showAlert("Никнейм изменён");
             
             loadProfileData(); 
             initUserStats(); 
+            
+            await initAI();
+            await loadServerOrganizers(); 
             
             setTimeout(() => {
                 renderStatusQuests(); 
@@ -2158,7 +2171,6 @@ tg.showAlert("Никнейм изменён");
                 }
             }, 100);
 
-            initAI();
             renderBooks();
             renderOrganizers(); 
         };
@@ -2173,8 +2185,9 @@ tg.showAlert("Никнейм изменён");
 </div>
 
 <div id="fullAchievementsList" style="display:none; background:var(--bg); border-radius:20px 20px 0 0; position:fixed; bottom:0; left:0; width:100%; z-index:1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);">
-    </div>
+</div>
 
-    </script>
 </body>
 </html>
+
+        

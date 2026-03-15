@@ -1004,7 +1004,16 @@ function setPresetAvatar(file, btnElem) {
     saveProfileData();
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
+function updateAvatarImage() {
+    const avatarImg = document.getElementById('profileAvatar');
+    if (!avatarImg) return;
 
+    if (window.userProfileData.avatar.customImage) {
+        avatarImg.src = window.userProfileData.avatar.customImage;
+    } else {
+        avatarImg.src = avatarBaseURL + window.userProfileData.avatar.seed;
+    }
+}
 // ---------------------------------------------------------
 // ИСПРАВЛЕНИЕ: Вызов статического окна смены имени
 // ---------------------------------------------------------

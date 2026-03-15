@@ -1179,10 +1179,19 @@ function sendAchievementRequest(id, title) {
 // ИСПРАВЛЕНИЕ: Функция для открытия квестов (статусов)
 // ---------------------------------------------------------
 function openTasks() {
-    tab('tasks');
-    renderStatusQuests();
     const container = document.getElementById('questsListContainer');
-    if(container) container.style.display = 'block';
+    if(!container) return;
+
+    if(container.style.display === 'block'){
+        container.style.display = 'none';
+    }else{
+        container.style.display = 'block';
+        renderStatusQuests();
+    }
+
+    if (window.tg && tg.HapticFeedback){
+        tg.HapticFeedback.impactOccurred('light');
+    }
 }
 // Добавляем алиасы на случай опечаток в HTML
 window.showTasks = openTasks;

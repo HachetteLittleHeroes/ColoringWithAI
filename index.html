@@ -928,7 +928,7 @@ if (typeof window.userProfileData === "undefined") {
 }
 
 function saveProfileData() {
-    try { localStorage.setItem('hlh_user_profile', JSON.stringify(userProfileData)); } 
+    try { localStorage.setItem('hlh_user_profile', JSON.stringify(window.userProfileData)); } 
     catch (e) { console.error("Ошибка сохранения профиля:", e); }
 }
 
@@ -937,22 +937,22 @@ function loadProfileData() {
         const saved = localStorage.getItem('hlh_user_profile');
         if (saved) {
             const parsed = JSON.parse(saved);
-            userProfileData = { ...userProfileData, ...parsed };
-            if (parsed.avatar) userProfileData.avatar = { ...userProfileData.avatar, ...parsed.avatar };
-            if (parsed.stats) userProfileData.stats = { ...userProfileData.stats, ...parsed.stats };
+            window.userProfileData = { ...window.userProfileData, ...parsed };
+            if (parsed.avatar) window.userProfileData.avatar = { ...window.userProfileData.avatar, ...parsed.avatar };
+            if (parsed.stats) window.userProfileData.stats = { ...window.userProfileData.stats, ...parsed.stats };
         }
     } catch (e) { console.error("Ошибка загрузки профиля:", e); }
     
-    updateAvatarImage();
+    if (typeof updateAvatarImage === "function") updateAvatarImage();
     renderAvatarPresets();
     
     const nameEl = document.getElementById('displayUsername');
-    if (nameEl) nameEl.innerText = userProfileData.name;
+    if (nameEl) nameEl.innerText = window.userProfileData.name;
     const nameProfileEl = document.getElementById('userName'); 
-    if (nameProfileEl) nameProfileEl.innerText = userProfileData.name;
+    if (nameProfileEl) nameProfileEl.innerText = window.userProfileData.name;
     
     const statusEl = document.getElementById('userStatusDisplay');
-    if (statusEl) statusEl.innerText = userProfileData.status;
+    if (statusEl) statusEl.innerText = window.userProfileData.status;
 }
 
 function toggleAvatarEditor() {
@@ -967,10 +967,10 @@ function handleCustomAvatar(event) {
     if(!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
-        userProfileData.avatar.customImage = e.target.result;
-        userProfileData.styleChangesCount++;
+        window.userProfileData.avatar.customImage = e.target.result;
+        window.userProfileData.styleChangesCount++;
         saveProfileData();
-        updateAvatarImage();
+        if (typeof updateAvatarImage === "function") updateAvatarImage();
         document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('active'));
     };
     reader.readAsDataURL(file);
@@ -980,7 +980,7 @@ function renderAvatarPresets() {
     const grid = document.getElementById('avatarPresetsGrid');
     if(!grid) return;
     grid.innerHTML = avatarPresets.map(file => {
-        const isActive = (userProfileData.avatar.seed === file && !userProfileData.avatar.customImage) ? 'active' : '';
+        const isActive = (window.userProfileData.avatar.seed === file && !window.userProfileData.avatar.customImage) ? 'active' : '';
         return `
         <div class="avatar-preset-btn ${isActive}" onclick="setPresetAvatar('${file}', this)">
             <img src="${avatarBaseURL}${file}" onerror="this.src='https://placehold.co/100x100/333333/ff9500?text=?'">
@@ -989,11 +989,11 @@ function renderAvatarPresets() {
 }
 
 function setPresetAvatar(file, btnElem) {
-    userProfileData.avatar.seed = file;
-    userProfileData.avatar.customImage = null;
+    window.userProfileData.avatar.seed = file;
+    window.userProfileData.avatar.customImage = null;
     document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('active'));
     if (btnElem) btnElem.classList.add('active');
-    updateAvatarImage();
+    if (typeof updateAvatarImage === "function") updateAvatarImage();
     saveProfileData();
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
@@ -1003,7 +1003,7 @@ function setPresetAvatar(file, btnElem) {
 // ---------------------------------------------------------
 function changeNickname() {
     initUserStats();
-    let currentName = userProfileData.name !== "Без имени" ? userProfileData.name : "";
+    let currentName = window.userProfileData.name !== "Без имени" ? window.userProfileData.name : "";
     let modal = document.getElementById('nameInputModal');
     if (modal) {
         document.getElementById('newNameInput').value = currentName;
@@ -1019,8 +1019,8 @@ function saveNewNickname() {
         return;
     }
     
-    userProfileData.name = newName;
-    userProfileData.stats.nameChanged = 1;
+    window.userProfileData.name = newName;
+    window.userProfileData.stats.nameChanged = 1;
     
     const nameEl = document.getElementById('userName');
     if(nameEl) nameEl.innerText = newName;
@@ -1041,7 +1041,7 @@ function saveNewNickname() {
 // ИСПРАВЛЕНИЕ: Вызов статического окна смены статуса
 // ---------------------------------------------------------
 function changeCustomStatus() {
-    const unlocked = userProfileData.unlockedAchievements || [];
+    const unlocked = window.userProfileData.unlockedAchievements || [];
     let modal = document.getElementById('statusSelectModal');
     if (!modal) return;
     
@@ -1065,9 +1065,9 @@ function changeCustomStatus() {
 }
 
 function setNewStatus(newStatus) {
-    userProfileData.status = newStatus;
+    window.userProfileData.status = newStatus;
     const statusEl = document.getElementById('userStatusDisplay');
-    if (statusEl) statusEl.innerText = userProfileData.status;
+    if (statusEl) statusEl.innerText = window.userProfileData.status;
     saveProfileData();
     document.getElementById('statusSelectModal').style.display = 'none';
     if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -1088,11 +1088,11 @@ const achievementsConfig = [
 ];
 
 function initUserStats() {
-    if(typeof userProfileData === "undefined") {
+    if(typeof window.userProfileData === "undefined") {
         window.userProfileData = {};
     }
-    if(!userProfileData.stats) {
-        userProfileData.stats = { pokemonPics:0, aiCorrections:0, authorPics:0, alcoholPics:0, supported:0, nameChanged:0 };
+    if(!window.userProfileData.stats) {
+        window.userProfileData.stats = { pokemonPics:0, aiCorrections:0, authorPics:0, alcoholPics:0, supported:0, nameChanged:0 };
     }
 }
 
@@ -1101,9 +1101,9 @@ function getAchievementProgress(ach) {
     const balanceEl = document.getElementById('userBalance');
     if(balanceEl) balance = parseInt(balanceEl.innerText) || 0;
     
-    if(ach.type === 'admin_check') return userProfileData.stats?.[ach.statKey] || 0;
+    if(ach.type === 'admin_check') return window.userProfileData.stats?.[ach.statKey] || 0;
     if(ach.type === 'auto_balance') return balance;
-    if(ach.type === 'auto_name') return userProfileData.stats?.nameChanged || 0;
+    if(ach.type === 'auto_name') return window.userProfileData.stats?.nameChanged || 0;
     return 0;
 }
 
@@ -1115,12 +1115,12 @@ function renderStatusQuests() {
     container.innerHTML = achievementsConfig.map(ach => {
         let current = getAchievementProgress(ach);
         let isDone = current >= ach.target;
-        let wasDone = userProfileData.unlockedAchievements?.includes(ach.id);
+        let wasDone = window.userProfileData.unlockedAchievements?.includes(ach.id);
         let percent = Math.min(100, (current / ach.target) * 100);
         
         if(isDone && !wasDone) {
-            if(!userProfileData.unlockedAchievements) userProfileData.unlockedAchievements = [];
-            userProfileData.unlockedAchievements.push(ach.id);
+            if(!window.userProfileData.unlockedAchievements) window.userProfileData.unlockedAchievements = [];
+            window.userProfileData.unlockedAchievements.push(ach.id);
             setTimeout(() => {
                 if(window.tg && tg.showAlert) tg.showAlert(`🏆 Новое достижение!\n${ach.title}`);
             }, 300);
@@ -1814,7 +1814,14 @@ function updatePage() {
     const img = document.getElementById('current-page'), counter = document.getElementById('page-counter'), formats = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG'];
     let fIndex = 0;
     function tryLoad() { img.src = `otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; }
-    img.onerror = () => { fIndex++; if (fIndex < formats.length) tryLoad(); };
+    img.onerror = () => { 
+        fIndex++; 
+        if (fIndex < formats.length) {
+            tryLoad(); 
+        } else {
+            img.onerror = null; // Предотвращаем бесконечный цикл, если ни один формат не подошел
+        }
+    };
     tryLoad(); counter.innerText = `${currentPage} / ${maxPages}`;
 }
 
@@ -2035,9 +2042,9 @@ function renderFullAchievementsList() {
         <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; padding:15px; max-height:400px; overflow-y:auto;">
             ${achievementsConfig.map(ach => {
                 let current = 0;
-                if (ach.type === 'admin_check') current = userProfileData.stats[ach.statKey] || 0;
+                if (ach.type === 'admin_check') current = window.userProfileData.stats[ach.statKey] || 0;
                 if (ach.type === 'auto_balance') current = userBalance;
-                if (ach.type === 'auto_name') current = userProfileData.stats.nameChanged || 0;
+                if (ach.type === 'auto_name') current = window.userProfileData.stats.nameChanged || 0;
                 
                 const isEarned = current >= ach.target;
                 const filterStyle = isEarned ? '' : 'filter: grayscale(1) opacity(0.4);';
@@ -2074,8 +2081,8 @@ function closePicker() {
 
 function selectForTop(achId, achImg, achTitle, achDesc) {
     if (currentSlot !== null) {
-        if (!userProfileData.topAchievements) userProfileData.topAchievements = [null, null, null];
-        userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
+        if (!window.userProfileData.topAchievements) window.userProfileData.topAchievements = [null, null, null];
+        window.userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
         updateSlotUI(currentSlot, achImg, achTitle, achDesc);
         saveProfileData(); closePicker();
         if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -2131,8 +2138,8 @@ window.onload = () => {
     
     setTimeout(() => {
         renderStatusQuests(); 
-        if (userProfileData.topAchievements) {
-            userProfileData.topAchievements.forEach((ach, index) => {
+        if (window.userProfileData.topAchievements) {
+            window.userProfileData.topAchievements.forEach((ach, index) => {
                 if (ach) updateSlotUI(index, ach.achImg, ach.achTitle, ach.achDesc);
             });
         }

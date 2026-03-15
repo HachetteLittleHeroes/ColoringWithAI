@@ -1004,7 +1004,16 @@ function setPresetAvatar(file, btnElem) {
     saveProfileData();
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
+function updateAvatarImage() {
+    const avatarImg = document.getElementById('user-avatar');
+    if (!avatarImg) return;
 
+    if (window.userProfileData.avatar.customImage) {
+        avatarImg.src = window.userProfileData.avatar.customImage;
+    } else {
+        avatarImg.src = avatarBaseURL + window.userProfileData.avatar.seed;
+    }
+}
 // ---------------------------------------------------------
 // ИСПРАВЛЕНИЕ: Вызов статического окна смены имени
 // ---------------------------------------------------------
@@ -1170,10 +1179,19 @@ function sendAchievementRequest(id, title) {
 // ИСПРАВЛЕНИЕ: Функция для открытия квестов (статусов)
 // ---------------------------------------------------------
 function openTasks() {
-    tab('tasks');
-    renderStatusQuests();
     const container = document.getElementById('questsListContainer');
-    if(container) container.style.display = 'block';
+    if(!container) return;
+
+    if(container.style.display === 'block'){
+        container.style.display = 'none';
+    }else{
+        container.style.display = 'block';
+        renderStatusQuests();
+    }
+
+    if (window.tg && tg.HapticFeedback){
+        tg.HapticFeedback.impactOccurred('light');
+    }
 }
 // Добавляем алиасы на случай опечаток в HTML
 window.showTasks = openTasks;

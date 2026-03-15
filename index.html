@@ -769,9 +769,15 @@ userProfileData.avatar = { seed: 'av2.jpg', customImage: null };
             renderAvatarPresets();
             updateAvatarImage();
             renderAchievements();
-            renderStatusAwards();
-            renderStatusQuests();
-            updateNameDisplay();
+if (typeof renderStatusAwards === "function") {
+    renderStatusAwards();
+}
+
+if (typeof renderStatusQuests === "function") {
+    renderStatusQuests();
+}
+
+updateNameDisplay();
             updateStatusDisplay();
         }
 

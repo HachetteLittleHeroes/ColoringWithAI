@@ -971,9 +971,11 @@ function updateStatusUI() {
         if (unlocked.length > 0) {
             statusEl.style.color = "var(--accent)"; 
             statusEl.style.cursor = "pointer";
+            statusEl.onclick = changeCustomStatus;
         } else {
             statusEl.style.color = "var(--gray)";
             statusEl.style.cursor = "default";
+            statusEl.onclick = null;
         }
     }
 }
@@ -1043,6 +1045,7 @@ function setPresetAvatar(file, btnElem) {
     saveProfileData();
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
+
 function updateAvatarImage() {
     const avatarImg = document.getElementById('user-avatar');
     if (!avatarImg) return;
@@ -1053,6 +1056,7 @@ function updateAvatarImage() {
         avatarImg.src = avatarBaseURL + window.userProfileData.avatar.seed;
     }
 }
+
 // ---------------------------------------------------------
 // Смена имени
 // ---------------------------------------------------------
@@ -1223,18 +1227,18 @@ function sendAchievementRequest(id, title) {
 }
 
 // ---------------------------------------------------------
-// ОТКРЫТИЕ ЛОЯЛЬНОСТИ И ЗАДАНИЙ (НОВАЯ ЛОГИКА)
+// ОТКРЫТИЕ ЛОЯЛЬНОСТИ И ЗАДАНИЙ
 // ---------------------------------------------------------
 function openLoyaltyProgram() {
     const loyaltyInfo = document.getElementById('loyalty-info');
     const rewardsSection = document.getElementById('rewards-section');
     const tasksContainer = document.getElementById('questsListContainer');
 
-    if (tasksContainer) tasksContainer.style.display = 'none'; // Скрываем квесты
+    if (tasksContainer) tasksContainer.style.display = 'none'; 
     
     if (loyaltyInfo) {
-        loyaltyInfo.style.display = 'block'; // Показываем лояльность
-        if (rewardsSection) rewardsSection.style.display = 'none'; // Скрываем товары за баллы
+        loyaltyInfo.style.display = 'block'; 
+        if (rewardsSection) rewardsSection.style.display = 'none'; 
     }
 
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
@@ -1245,7 +1249,7 @@ function openTasks() {
     const tasksContainer = document.getElementById('questsListContainer');
     const loyaltyInfo = document.getElementById('loyalty-info');
 
-    if (loyaltyInfo) loyaltyInfo.style.display = 'none'; // Скрываем лояльность
+    if (loyaltyInfo) loyaltyInfo.style.display = 'none';
 
     if(tasksContainer){
         if(tasksContainer.style.display === 'block'){
@@ -1724,18 +1728,14 @@ function checkout() {
     const triggerOrder = () => {
         if (window.tg && tg.sendData) {
             try {
-                // Отправляем данные бота скрыто
                 tg.sendData(JSON.stringify({ action: 'new_order', details: details }));
-                // Юзеру показываем только успешный алерт
                 tg.showAlert("✅ Ваш заказ успешно отправлен!");
-                // Чистим корзину
                 cart = []; updateUI(); renderCart();
             } catch (e) {
                 alert("✅ Ваш заказ успешно отправлен!");
                 cart = []; updateUI(); renderCart();
             }
         } else {
-            // Если открыто в браузере, а не в ТГ
             alert("✅ Ваш заказ успешно отправлен!");
             cart = []; updateUI(); renderCart();
         }
@@ -1910,7 +1910,7 @@ function updatePage() {
         if (fIndex < formats.length) {
             tryLoad(); 
         } else {
-            img.onerror = null; // Предотвращаем бесконечный цикл, если ни один формат не подошел
+            img.onerror = null; 
         }
     };
     tryLoad(); counter.innerText = `${currentPage} / ${maxPages}`;
@@ -2272,5 +2272,6 @@ window.onload = () => {
 
 <div id="fullAchievementsList" style="display:none; background:var(--bg); border-radius:20px 20px 0 0; position:fixed; bottom:0; left:0; width:100%; z-index:1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);">
 </div>
+</script>
 </body>
 </html>

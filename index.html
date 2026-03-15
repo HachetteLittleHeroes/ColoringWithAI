@@ -985,6 +985,40 @@ avatarImg.src = avatarBaseURL + userProfileData.avatar.seed;
         // Единый реестр всех достижений в игре
        // ================= ДОСТИЖЕНИЯ И СТАТУСЫ =================
 <script>
+// --- ОБЯЗАТЕЛЬНЫЕ БАЗОВЫЕ ФУНКЦИИ (Чтобы код не падал) ---
+let userProfileData = {
+    name: "Пользователь",
+    stats: { pokemonPics: 0, aiCorrections: 0, authorPics: 0, alcoholPics: 0, supported: 0 },
+    topAchievements: [null, null, null]
+};
+
+function saveProfileData() {
+    localStorage.setItem('userProfile', JSON.stringify(userProfileData));
+    // Здесь можно добавить отправку профиля на сервер, если нужно
+}
+
+function loadProfileData() {
+    const saved = localStorage.getItem('userProfile');
+    if (saved) {
+        try {
+            userProfileData = JSON.parse(saved);
+            if (userProfileData.name) {
+                const nameEl = document.getElementById('userName');
+                if (nameEl) nameEl.innerText = userProfileData.name;
+            }
+        } catch (e) { console.error("Ошибка загрузки профиля", e); }
+    }
+}
+
+// Инициализация Telegram объекта (если его нет)
+const tg = window.Telegram?.WebApp || { 
+    showAlert: (m) => alert(m), 
+    showConfirm: (m, c) => c(confirm(m)),
+    sendData: (d) => console.log("TG Data:", d),
+    HapticFeedback: { impactOccurred: () => {}, notificationOccurred: () => {}, selectionChanged: () => {} }
+};
+if (window.Telegram?.WebApp) tg.expand();
+
 const achievementsConfig = [
 {
 id:'pokemon_master',

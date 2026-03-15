@@ -255,16 +255,8 @@
         .brand-btn { background: var(--secondary); border: 2px solid transparent; padding: 12px 5px; border-radius: 12px; font-weight: bold; cursor: pointer; color: var(--text); font-size: 14px; text-align: center; transition: 0.2s; }
         .brand-btn.active { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); color: var(--accent); }
 
-                    /* --- СТИЛИ ДЛЯ АВАТАРА И ПРОФИЛЯ --- */
-        .profile-hero { 
-            display: flex; 
-            flex-direction: row; 
-            align-items: center; 
-            gap: 20px; 
-            margin-bottom: 25px; 
-            padding: 0 10px; 
-        }
-
+                          /* --- СТИЛИ ДЛЯ АВАТАРА И ПРОФИЛЯ: ОКОНЧАТЕЛЬНОЕ ИСПРАВЛЕНИЕ КОНТУРА --- */
+        
         .avatar-container { 
             position: relative; 
             width: 90px; 
@@ -272,24 +264,42 @@
             flex-shrink: 0; 
         }
 
-        /* Главная иконка: строгий круг, оранжевая обводка, картинка навылет */
+        /* Главная иконка: теперь без границы, чтобы картинка была навылет */
         .avatar-preview { 
             width: 100%; 
             height: 100%; 
             border-radius: 50%; 
             overflow: hidden; 
-            border: 4px solid #ff9500 !important; 
+            /* БОЛЬШЕ НЕТ border У `.avatar-preview` */
             box-sizing: border-box; 
-            background: none !important; /* Убираем белую подложку */
+            background: none !important; 
             box-shadow: 0 4px 12px rgba(255, 149, 0, 0.2);
+            position: relative; /* Для позиционирования псевдоэлемента */
+        }
+
+        /* Добавляем оранжевую рамку поверх изображения с помощью псевдоэлемента */
+        .avatar-preview::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 4px solid #ff9500; /* Оранжевая обводка */
+            border-radius: 50%;
+            box-sizing: border-box;
+            z-index: 1; /* Чтобы рамка была выше картинки */
+            pointer-events: none; /* Чтобы клики проходили сквозь рамку */
         }
 
         .avatar-preview img { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover !important; /* Картинка заполняет весь круг */
+            object-fit: cover !important; 
             display: block;
+            z-index: 0; /* Картинка ниже рамки */
         }
+
 
         .edit-avatar-btn { 
             position: absolute; 

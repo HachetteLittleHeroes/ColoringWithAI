@@ -1042,6 +1042,40 @@ async function loadProfileData() {
         renderStatusQuests();
     }
 }
+// Функция открытия/закрытия панели выбора аватарок
+function toggleAvatarPresets() {
+    const presetMenu = document.getElementById('avatar-presets');
+    if (!presetMenu) return;
+    
+    // Переключаем видимость
+    if (presetMenu.style.display === 'flex' || presetMenu.style.display === 'block') {
+        presetMenu.style.display = 'none';
+    } else {
+        presetMenu.style.display = 'flex'; // или block, в зависимости от вашей верстки
+        if (typeof renderAvatarPresets === "function") renderAvatarPresets();
+    }
+    
+    if(window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+}
+
+// Функция установки выбранной аватарки
+function selectAvatar(imgUrl) {
+    const avatarImg = document.getElementById('profileAvatar');
+    if (avatarImg) avatarImg.src = imgUrl;
+    
+    // Сохраняем в профиль
+    if (!window.userProfileData) window.userProfileData = {};
+    window.userProfileData.avatar = imgUrl;
+    
+    if (typeof saveProfileData === "function") saveProfileData();
+    
+    // Закрываем меню после выбора
+    const presetMenu = document.getElementById('avatar-presets');
+    if (presetMenu) presetMenu.style.display = 'none';
+    
+    if(window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
+}
+
 
 function toggleAvatarEditor() {
     isEditingAvatar = !isEditingAvatar;
@@ -1586,45 +1620,47 @@ async function approveTask(taskId, userId, statKey, points) {
         const response = await fetch(`${API_URL}/approve_task`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ taskId, userId, statKey, points })
+            body: JSON.stringify({ taskId: taskId, userId: userId, statKey: statKey, points: points })
         });
 
-        if (!response.ok) {
-            throw new Error("Ошибка сервера");
-        }
+        if (!response.ok) throw new Error("Ошибка сервера при одобрении");
         
-        const data = await response.json();
-        console.log("Task approved:", data);
-
-        // обновляем прогресс в мини аппе без перезагрузки
-        if (window.userProfileData && statKey) {
-            if (!window.userProfileData.stats) window.userProfileData.stats = {};
-            if (!window.userProfileData.stats[statKey]) window.userProfileData.stats[statKey] = 0;
-            window.userProfileData.stats[statKey] += Number(points);
-            
-            if (typeof renderStatusQuests === "function") renderStatusQuests();
-        }
-
-        // ИСПРАВЛЕНИЕ: Проверяем, себе ли админ одобрил задание
-        const currentUserId = document.getElementById('userIdDisplay')?.innerText;
-        if (currentUserId === String(userId)) {
-            // Скачиваем свежие данные с сервера, а не просто перерисовываем старые
-            if (typeof loadProfileData === "function") {
-                loadProfileData(); 
-            } else if (typeof renderStatusQuests === "function") {
-                renderStatusQuests();
-            }
-        }
+        if (window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
+        if (window.tg && window.tg.showAlert) window.tg.showAlert("✅ Задание одобрено!");
         
-        if (window.tg && tg.showAlert) {
-            tg.showAlert("✅ Задание успешно одобрено!");
-        }
+        // Удаляем карточку задания из интерфейса админа, чтобы не мешалась
+        const taskCard = document.getElementById(`admin-task-${taskId}`);
+        if (taskCard) taskCard.remove();
 
     } catch (err) {
         console.error("Approve task error:", err);
-        if (window.tg && tg.showAlert) tg.showAlert("❌ Ошибка при одобрении задания!");
+        if (window.tg && window.tg.showAlert) window.tg.showAlert("❌ Ошибка соединения!");
     }
 }
+
+async function rejectTask(taskId, userId) {
+    try {
+        const response = await fetch(`${API_URL}/reject_task`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ taskId: taskId, userId: userId })
+        });
+
+        if (!response.ok) throw new Error("Ошибка сервера при отклонении");
+        
+        if (window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('warning');
+        if (window.tg && window.tg.showAlert) window.tg.showAlert("🚫 Задание отклонено.");
+        
+        // Удаляем карточку задания из интерфейса админа
+        const taskCard = document.getElementById(`admin-task-${taskId}`);
+        if (taskCard) taskCard.remove();
+
+    } catch (err) {
+        console.error("Reject task error:", err);
+        if (window.tg && window.tg.showAlert) window.tg.showAlert("❌ Ошибка соединения!");
+    }
+}
+
 
 
 // =========================================================
@@ -2259,13 +2295,21 @@ function tab(id) {
     
     if (id === 'shop') loadMarkers();
     if (id === 'cart') renderCart();
-    if (id === 'mymarkers') { closeBrandView(); renderBrandsList(); renderOrganizers(); }
+    if (id === 'mymarkers') { 
+        closeBrandView(); 
+        renderBrandsList(); 
+        renderOrganizers(); 
+    }
     if (id === 'profile' || id === 'tasks') {
-    setTimeout(() => renderStatusQuests(), 50);
-}
+        // Убрали тормозящий setTimeout, рендерим сразу, если данные уже есть
+        if (typeof renderStatusQuests === "function" && window.userProfileData) {
+            renderStatusQuests();
+        }
+    }
     
     if(window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
+
 
 let currentVol, currentPage, maxPages, touchStartX, touchStartY;
 function startBook(v, m) { currentVol = v; maxPages = m; currentPage = 1; document.getElementById('viewer').style.display = 'block'; updatePage(); }
@@ -2674,7 +2718,24 @@ function closePicker() {
 
 function selectForTop(achId, achImg, achTitle, achDesc) {
     if (currentSlot !== null) {
-        if (!window.userProfileData.topAchievements) window.userProfileData.topAchievements = [null, null, null];
+        if (!window.userProfileData.topAchievements) {
+            window.userProfileData.topAchievements = [null, null, null];
+        }
+        
+        // ПРОВЕРКА НА ДУБЛИКАТЫ: Ищем, есть ли уже это достижение в другом слоте
+        const isDuplicate = window.userProfileData.topAchievements.some((ach, index) => {
+            return ach !== null && ach.achId === achId && index !== currentSlot;
+        });
+        
+        if (isDuplicate) {
+            if (window.tg && window.tg.showAlert) {
+                window.tg.showAlert("⚠️ Это достижение уже установлено в витрине!");
+            } else {
+                alert("⚠️ Это достижение уже установлено в витрине!");
+            }
+            return; // Прерываем выполнение, дубликаты запрещены
+        }
+
         window.userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
         updateSlotUI(currentSlot, achImg, achTitle, achDesc);
         
@@ -2684,6 +2745,7 @@ function selectForTop(achId, achImg, achTitle, achDesc) {
         if(window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
     }
 }
+
 
 function updateSlotUI(index, img, title, desc) {
     const slot = document.getElementById(`slot-${index}`);

@@ -1562,17 +1562,28 @@ async function loadAdminTasks() {
     }
 }
 
-async function approveTask(taskId, userId, statusName, points) {
+async function approveTask(taskId, userId, statKey, points) {
     try {
-        const response = await fetch(`${API_URL}/approve_task`, { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ taskId, userId, statusName, points: parseInt(points) }) 
+        const response = await fetch(`${API_URL}/approve_task`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                taskId: taskId,
+                userId: userId,
+                statKey: statKey,
+                points: points
+            })
         });
 
-        if(response.ok) {
-            if(window.tg && tg.showAlert) tg.showAlert(`✅ Успешно! Добавлено очков: ${points}`);
-            loadAdminTasks(); 
+        if (!response.ok) throw new Error("Ошибка сервера");
+        const data = await response.json();
+        console.log("Task approved:", data);
+    } catch (err) {
+        console.error("Approve task error:", err);
+    }
+}
             
             // ИСПРАВЛЕНИЕ: Проверяем, себе ли админ одобрил задание
             const currentUserId = document.getElementById('userIdDisplay')?.innerText;

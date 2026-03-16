@@ -16,26 +16,6 @@
             --card-bg: var(--tg-theme-secondary-bg-color, #f1f1f1);
             --gold: #f1c40f; 
         }
-        /* Жесткое управление видимостью вкладок */
-.page {
-    display: none !important; 
-}
-.page.active {
-    display: block !important; 
-    animation: fadeIn 0.4s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.page {
-    display: none; /* Все страницы скрыты по умолчанию */
-}
-.page.active {
-    display: block; /* Только активная страница показывается */
-}
 
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 100px; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .header { padding: 20px 15px; font-size: 24px; font-weight: 800; }
@@ -986,96 +966,28 @@ function saveProfileData() {
     catch (e) { console.error("Ошибка сохранения профиля:", e); }
 }
 
-async function loadProfileData() {
-    // 1. Сначала подгружаем то, что есть в памяти (для скорости)
+function loadProfileData() {
     try {
         const saved = localStorage.getItem('hlh_user_profile');
         if (saved) {
-            window.userProfileData = JSON.parse(saved);
+            const parsed = JSON.parse(saved);
+            window.userProfileData = { ...window.userProfileData, ...parsed };
+            if (parsed.avatar) window.userProfileData.avatar = { ...window.userProfileData.avatar, ...parsed.avatar };
+            if (parsed.stats) window.userProfileData.stats = { ...window.userProfileData.stats, ...parsed.stats };
         }
-    } catch (e) { console.error("Ошибка чтения localStorage:", e); }
-
-    // 2. Идем на сервер за свежими данными
-    const userId = document.getElementById('userIdDisplay')?.innerText || "0";
+    } catch (e) { console.error("Ошибка загрузки профиля:", e); }
     
-    if (userId !== "---" && userId !== "0") {
-        try {
-                        // Используем правильный эндпоинт /stats
-            const response = await fetch(`${API_URL}/stats?user_id=${userId}`);
-            
-            if (response.ok) {
-                const freshStats = await response.json();
-                
-                // Убедимся, что объект stats существует в профиле, чтобы не было ошибки
-                if (!window.userProfileData.stats) {
-                    window.userProfileData.stats = {};
-                }
-                
-                // Обновляем ТОЛЬКО статистику очков, чтобы не затереть имя и аватарку
-                window.userProfileData.stats = { ...window.userProfileData.stats, ...freshStats };
-                
-                // Сохраняем обновленный профиль в память браузера
-                localStorage.setItem('hlh_user_profile', JSON.stringify(window.userProfileData));
-                
-                console.log("Статистика успешно синхронизирована с сервером:", freshStats);
-            }
-        } catch (err) {
-            console.error("Не удалось обновить статистику с сервера:", err);
-        }
-    }
-
-    // 3. Обновляем UI (твоя старая логика + рендер квестов)
     if (typeof updateAvatarImage === "function") updateAvatarImage();
-    if (typeof renderAvatarPresets === "function") renderAvatarPresets();
+    renderAvatarPresets();
     
     const nameEl = document.getElementById('displayUsername');
-    if (nameEl) nameEl.innerText = window.userProfileData.name || "Пользователь";
-    
+    if (nameEl) nameEl.innerText = window.userProfileData.name;
     const nameProfileEl = document.getElementById('userName'); 
-    if (nameProfileEl) nameProfileEl.innerText = window.userProfileData.name || "Пользователь";
+    if (nameProfileEl) nameProfileEl.innerText = window.userProfileData.name;
     
     const statusEl = document.getElementById('currentStatus');
-    if (statusEl) statusEl.innerText = window.userProfileData.status || "Новичок";
-
-    // КРИТИЧЕСКИ ВАЖНО: вызываем отрисовку квестов с новыми данными
-    if (typeof renderStatusQuests === "function") {
-        renderStatusQuests();
-    }
+if (statusEl) statusEl.innerText = window.userProfileData.status;
 }
-// Функция открытия/закрытия панели выбора аватарок
-function toggleAvatarPresets() {
-    const presetMenu = document.getElementById('avatar-presets');
-    if (!presetMenu) return;
-    
-    // Переключаем видимость
-    if (presetMenu.style.display === 'flex' || presetMenu.style.display === 'block') {
-        presetMenu.style.display = 'none';
-    } else {
-        presetMenu.style.display = 'flex'; // или block, в зависимости от вашей верстки
-        if (typeof renderAvatarPresets === "function") renderAvatarPresets();
-    }
-    
-    if(window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-}
-
-// Функция установки выбранной аватарки
-function selectAvatar(imgUrl) {
-    const avatarImg = document.getElementById('profileAvatar');
-    if (avatarImg) avatarImg.src = imgUrl;
-    
-    // Сохраняем в профиль
-    if (!window.userProfileData) window.userProfileData = {};
-    window.userProfileData.avatar = imgUrl;
-    
-    if (typeof saveProfileData === "function") saveProfileData();
-    
-    // Закрываем меню после выбора
-    const presetMenu = document.getElementById('avatar-presets');
-    if (presetMenu) presetMenu.style.display = 'none';
-    
-    if(window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
-}
-
 
 function toggleAvatarEditor() {
     isEditingAvatar = !isEditingAvatar;
@@ -1108,11 +1020,6 @@ function renderAvatarPresets() {
             <img src="${avatarBaseURL}${file}" onerror="this.src='https://placehold.co/100x100/333333/ff9500?text=?'">
         </div>`;
     }).join('');
-}function refreshUserData() {
-    if (typeof loadProfileData === "function") {
-        loadProfileData(); 
-        // Внутри loadProfileData после fetch() нужно вызывать renderStatusQuests()
-    }
 }
 
 function setPresetAvatar(file, btnElem) {
@@ -1352,10 +1259,6 @@ function getAchievementProgress(ach) {
 
 // 2. Интеграция: делаем функцию асинхронной и запрашиваем данные перед рендером
 async function renderStatusQuests() {
-
-    if (typeof loadProfileData === "function") {
-        await loadProfileData();   // <-- обновляем профиль
-    }
     // Ждем получения свежих данных с сервера
     await fetchActualStats();
     
@@ -1615,52 +1518,34 @@ async function loadAdminTasks() {
         if(container) container.innerHTML = '<div style="color:var(--gray); font-size:12px; text-align:center;">Ошибка загрузки или нет заявок</div>';
     }
 }
-async function approveTask(taskId, userId, statKey, points) {
+
+async function approveTask(taskId, userId, statusName, points) {
     try {
-        const response = await fetch(`${API_URL}/approve_task`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ taskId: taskId, userId: userId, statKey: statKey, points: points })
+        const response = await fetch(`${API_URL}/approve_task`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                taskId: taskId, 
+                userId: userId, 
+                statusName: statusName, 
+                points: parseInt(points) // Передаем количество добавленных очков
+            }) 
         });
 
-        if (!response.ok) throw new Error("Ошибка сервера при одобрении");
-        
-        if (window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
-        if (window.tg && window.tg.showAlert) window.tg.showAlert("✅ Задание одобрено!");
-        
-        // Удаляем карточку задания из интерфейса админа, чтобы не мешалась
-        const taskCard = document.getElementById(`admin-task-${taskId}`);
-        if (taskCard) taskCard.remove();
-
-    } catch (err) {
-        console.error("Approve task error:", err);
-        if (window.tg && window.tg.showAlert) window.tg.showAlert("❌ Ошибка соединения!");
+        if(response.ok) {
+            if(window.tg && tg.showAlert) tg.showAlert(`✅ Успешно! Добавлено очков: ${points}`);
+            loadAdminTasks(); // Обновляем список у админа
+            
+            // Если это делает сам админ для себя, обновляем его прогресс-бары сразу
+            if (typeof renderStatusQuests === "function") renderStatusQuests();
+        } else {
+            throw new Error("Ошибка сервера");
+        }
+    } catch(e) { 
+        console.error("Ошибка при одобрении задания:", e);
+        if(window.tg && tg.showAlert) tg.showAlert("❌ Ошибка при отправке одобрения");
     }
 }
-
-async function rejectTask(taskId, userId) {
-    try {
-        const response = await fetch(`${API_URL}/reject_task`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ taskId: taskId, userId: userId })
-        });
-
-        if (!response.ok) throw new Error("Ошибка сервера при отклонении");
-        
-        if (window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('warning');
-        if (window.tg && window.tg.showAlert) window.tg.showAlert("🚫 Задание отклонено.");
-        
-        // Удаляем карточку задания из интерфейса админа
-        const taskCard = document.getElementById(`admin-task-${taskId}`);
-        if (taskCard) taskCard.remove();
-
-    } catch (err) {
-        console.error("Reject task error:", err);
-        if (window.tg && window.tg.showAlert) window.tg.showAlert("❌ Ошибка соединения!");
-    }
-}
-
 
 
 // =========================================================
@@ -2295,21 +2180,11 @@ function tab(id) {
     
     if (id === 'shop') loadMarkers();
     if (id === 'cart') renderCart();
-    if (id === 'mymarkers') { 
-        closeBrandView(); 
-        renderBrandsList(); 
-        renderOrganizers(); 
-    }
-    if (id === 'profile' || id === 'tasks') {
-        // Убрали тормозящий setTimeout, рендерим сразу, если данные уже есть
-        if (typeof renderStatusQuests === "function" && window.userProfileData) {
-            renderStatusQuests();
-        }
-    }
+    if (id === 'mymarkers') { closeBrandView(); renderBrandsList(); renderOrganizers(); }
+    if (id === 'profile' || id === 'tasks') renderStatusQuests(); 
     
     if(window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
-
 
 let currentVol, currentPage, maxPages, touchStartX, touchStartY;
 function startBook(v, m) { currentVol = v; maxPages = m; currentPage = 1; document.getElementById('viewer').style.display = 'block'; updatePage(); }
@@ -2718,24 +2593,7 @@ function closePicker() {
 
 function selectForTop(achId, achImg, achTitle, achDesc) {
     if (currentSlot !== null) {
-        if (!window.userProfileData.topAchievements) {
-            window.userProfileData.topAchievements = [null, null, null];
-        }
-        
-        // ПРОВЕРКА НА ДУБЛИКАТЫ: Ищем, есть ли уже это достижение в другом слоте
-        const isDuplicate = window.userProfileData.topAchievements.some((ach, index) => {
-            return ach !== null && ach.achId === achId && index !== currentSlot;
-        });
-        
-        if (isDuplicate) {
-            if (window.tg && window.tg.showAlert) {
-                window.tg.showAlert("⚠️ Это достижение уже установлено в витрине!");
-            } else {
-                alert("⚠️ Это достижение уже установлено в витрине!");
-            }
-            return; // Прерываем выполнение, дубликаты запрещены
-        }
-
+        if (!window.userProfileData.topAchievements) window.userProfileData.topAchievements = [null, null, null];
         window.userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
         updateSlotUI(currentSlot, achImg, achTitle, achDesc);
         
@@ -2745,7 +2603,6 @@ function selectForTop(achId, achImg, achTitle, achDesc) {
         if(window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
     }
 }
-
 
 function updateSlotUI(index, img, title, desc) {
     const slot = document.getElementById(`slot-${index}`);
@@ -2783,51 +2640,32 @@ function showAchDescription(title, desc, img) {
 // --- ИНИЦИАЛИЗАЦИЯ ПРИ ЗАПУСКЕ ---
 // =========================================================
 window.onload = () => {
-    // 1. БРОНЕБОЙНОЕ РЕШЕНИЕ: Включаем вкладку мгновенно, до любых проверок!
-    tab('profile');
-
     try {
-        // 2. Инициализация Telegram (убирает баги отображения в самом мессенджере)
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.ready();
-            tg.expand();
-        }
-
-        // 3. Сбор данных
         const params = new URLSearchParams(window.location.search);
-        const userId = params.get('id') || (tg?.initDataUnsafe?.user?.id) || "---";
+        let balEl = document.getElementById('userBalance');
+        if(balEl) balEl.innerText = params.get('balance') || 0;
         
-        const userIdEl = document.getElementById('userIdDisplay');
-        if (userIdEl) userIdEl.innerText = userId;
+        let userIdEl = document.getElementById('userIdDisplay');
+        const userId = params.get('id') || (window.tg && window.tg.initDataUnsafe?.user?.id) || "---";
+        if(userIdEl) userIdEl.innerText = userId;
         
-        const balanceEl = document.getElementById('userBalance');
-        if (balanceEl) balanceEl.innerText = params.get('balance') || 0;
-
-        // 4. Загрузка данных (ошибки здесь больше не сломают отображение экрана)
         if (typeof loadProfileData === "function") loadProfileData(); 
         if (typeof initUserStats === "function") initUserStats(); 
         
+        setTimeout(() => {
+            if (typeof renderStatusQuests === "function") renderStatusQuests(); 
+            if (window.userProfileData && window.userProfileData.topAchievements) {
+                window.userProfileData.topAchievements.forEach((ach, index) => {
+                    if (ach) updateSlotUI(index, ach.achImg, ach.achTitle, ach.achDesc);
+                });
+            }
+        }, 100);
+
         initAI();
         if (typeof renderBooks === "function") renderBooks();
         if (typeof renderOrganizers === "function") renderOrganizers(); 
-        if (typeof renderAvatarPresets === "function") renderAvatarPresets();
-
-        // 5. Отложенная загрузка достижений (чтобы не тормозить интерфейс)
-        setTimeout(() => {
-            if (typeof renderStatusQuests === "function") renderStatusQuests(); 
-            
-            if (window.userProfileData && window.userProfileData.topAchievements) {
-                window.userProfileData.topAchievements.forEach((ach, index) => {
-                    if (ach && typeof updateSlotUI === "function") {
-                        updateSlotUI(index, ach.achImg, ach.achTitle, ach.achDesc);
-                    }
-                });
-            }
-        }, 150);
-
     } catch (e) {
-        console.error("Ошибка при фоновой загрузке данных:", e);
+        console.error("Ошибка при инициализации окна:", e);
     }
 };
 </script>
@@ -2866,5 +2704,3 @@ window.onload = () => {
 <input type="file" id="achievementPhotoInput" multiple accept="image/*" style="display:none" onchange="handleAchievementPhotos(event)">
 </body>
 </html>
-
-

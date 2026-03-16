@@ -966,27 +966,61 @@ function saveProfileData() {
     catch (e) { console.error("Ошибка сохранения профиля:", e); }
 }
 
-function loadProfileData() {
+async function loadProfileData() {
+    // 1. Сначала подгружаем то, что есть в памяти (для скорости)
     try {
         const saved = localStorage.getItem('hlh_user_profile');
         if (saved) {
-            const parsed = JSON.parse(saved);
-            window.userProfileData = { ...window.userProfileData, ...parsed };
-            if (parsed.avatar) window.userProfileData.avatar = { ...window.userProfileData.avatar, ...parsed.avatar };
-            if (parsed.stats) window.userProfileData.stats = { ...window.userProfileData.stats, ...parsed.stats };
+            window.userProfileData = JSON.parse(saved);
         }
-    } catch (e) { console.error("Ошибка загрузки профиля:", e); }
+    } catch (e) { console.error("Ошибка чтения localStorage:", e); }
+
+    // 2. Идем на сервер за свежими данными
+    const userId = document.getElementById('userIdDisplay')?.innerText || "0";
     
+    if (userId !== "---" && userId !== "0") {
+        try {
+                        // Используем правильный эндпоинт /stats
+            const response = await fetch(`${API_URL}/stats?user_id=${userId}`);
+            
+            if (response.ok) {
+                const freshStats = await response.json();
+                
+                // Убедимся, что объект stats существует в профиле, чтобы не было ошибки
+                if (!window.userProfileData.stats) {
+                    window.userProfileData.stats = {};
+                }
+                
+                // Обновляем ТОЛЬКО статистику очков, чтобы не затереть имя и аватарку
+                window.userProfileData.stats = { ...window.userProfileData.stats, ...freshStats };
+                
+                // Сохраняем обновленный профиль в память браузера
+                localStorage.setItem('hlh_user_profile', JSON.stringify(window.userProfileData));
+                
+                console.log("Статистика успешно синхронизирована с сервером:", freshStats);
+            }
+        } catch (err) {
+            console.error("Не удалось обновить статистику с сервера:", err);
+        }
+    }
+
+    // 3. Обновляем UI (твоя старая логика + рендер квестов)
     if (typeof updateAvatarImage === "function") updateAvatarImage();
-    renderAvatarPresets();
+    if (typeof renderAvatarPresets === "function") renderAvatarPresets();
     
     const nameEl = document.getElementById('displayUsername');
-    if (nameEl) nameEl.innerText = window.userProfileData.name;
+    if (nameEl) nameEl.innerText = window.userProfileData.name || "Пользователь";
+    
     const nameProfileEl = document.getElementById('userName'); 
-    if (nameProfileEl) nameProfileEl.innerText = window.userProfileData.name;
+    if (nameProfileEl) nameProfileEl.innerText = window.userProfileData.name || "Пользователь";
     
     const statusEl = document.getElementById('currentStatus');
-if (statusEl) statusEl.innerText = window.userProfileData.status;
+    if (statusEl) statusEl.innerText = window.userProfileData.status || "Новичок";
+
+    // КРИТИЧЕСКИ ВАЖНО: вызываем отрисовку квестов с новыми данными
+    if (typeof renderStatusQuests === "function") {
+        renderStatusQuests();
+    }
 }
 
 function toggleAvatarEditor() {

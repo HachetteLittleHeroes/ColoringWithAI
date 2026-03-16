@@ -1581,7 +1581,6 @@ async function loadAdminTasks() {
         if(container) container.innerHTML = '<div style="color:var(--gray); font-size:12px; text-align:center;">Ошибка загрузки или нет заявок</div>';
     }
 }
-
 async function approveTask(taskId, userId, statKey, points) {
     try {
         const response = await fetch(`${API_URL}/approve_task`, {
@@ -1590,7 +1589,10 @@ async function approveTask(taskId, userId, statKey, points) {
             body: JSON.stringify({ taskId, userId, statKey, points })
         });
 
-        if (!response.ok) throw new Error("Ошибка сервера");
+        if (!response.ok) {
+            throw new Error("Ошибка сервера");
+        }
+        
         const data = await response.json();
         console.log("Task approved:", data);
 
@@ -1598,35 +1600,31 @@ async function approveTask(taskId, userId, statKey, points) {
         if (window.userProfileData && statKey) {
             if (!window.userProfileData.stats) window.userProfileData.stats = {};
             if (!window.userProfileData.stats[statKey]) window.userProfileData.stats[statKey] = 0;
-            window.userProfileData.stats[statKey] += points;
+            window.userProfileData.stats[statKey] += Number(points);
+            
             if (typeof renderStatusQuests === "function") renderStatusQuests();
+        }
+
+        // ИСПРАВЛЕНИЕ: Проверяем, себе ли админ одобрил задание
+        const currentUserId = document.getElementById('userIdDisplay')?.innerText;
+        if (currentUserId === String(userId)) {
+            // Скачиваем свежие данные с сервера, а не просто перерисовываем старые
+            if (typeof loadProfileData === "function") {
+                loadProfileData(); 
+            } else if (typeof renderStatusQuests === "function") {
+                renderStatusQuests();
+            }
+        }
+        
+        if (window.tg && tg.showAlert) {
+            tg.showAlert("✅ Задание успешно одобрено!");
         }
 
     } catch (err) {
         console.error("Approve task error:", err);
-        if (window.tg && tg.showAlert) tg.showAlert("Ошибка при одобрении задания!");
+        if (window.tg && tg.showAlert) tg.showAlert("❌ Ошибка при одобрении задания!");
     }
 }
-            
-            // ИСПРАВЛЕНИЕ: Проверяем, себе ли админ одобрил задание
-            const currentUserId = document.getElementById('userIdDisplay')?.innerText;
-            if (currentUserId === userId) {
-                // Скачиваем свежие данные с сервера, а не просто перерисовываем старые
-                if (typeof loadProfileData === "function") {
-                    loadProfileData(); 
-                } else if (typeof renderStatusQuests === "function") {
-                    renderStatusQuests();
-                }
-            }
-        } else {
-            throw new Error("Ошибка сервера");
-        }
-    } catch(e) { 
-        console.error("Ошибка при одобрении задания:", e);
-        if(window.tg && tg.showAlert) tg.showAlert("❌ Ошибка при отправке одобрения");
-    }
-}
-
 
 
 // =========================================================
@@ -2722,8 +2720,7 @@ function showAchDescription(title, desc, img) {
 // =========================================================
 // --- ИНИЦИАЛИЗАЦИЯ ПРИ ЗАПУСКЕ ---
 // =========================================================
-<script>
-    window.onload = () => {
+window.onload = () => {
     // 1. БРОНЕБОЙНОЕ РЕШЕНИЕ: Включаем вкладку мгновенно, до любых проверок!
     tab('profile');
 
@@ -2771,7 +2768,6 @@ function showAchDescription(title, desc, img) {
         console.error("Ошибка при фоновой загрузке данных:", e);
     }
 };
-
 </script>
 
 <div id="achievementModal" class="modal-overlay" style="display:none;" onclick="this.style.display='none'">
@@ -2808,4 +2804,5 @@ function showAchDescription(title, desc, img) {
 <input type="file" id="achievementPhotoInput" multiple accept="image/*" style="display:none" onchange="handleAchievementPhotos(event)">
 </body>
 </html>
+
 

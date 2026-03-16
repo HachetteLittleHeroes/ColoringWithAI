@@ -16,6 +16,20 @@
             --card-bg: var(--tg-theme-secondary-bg-color, #f1f1f1);
             --gold: #f1c40f; 
         }
+        /* Жесткое управление видимостью вкладок */
+.page {
+    display: none !important; 
+}
+.page.active {
+    display: block !important; 
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .page {
     display: none; /* Все страницы скрыты по умолчанию */
 }
@@ -2710,43 +2724,54 @@ function showAchDescription(title, desc, img) {
 // =========================================================
 <script>
     window.onload = () => {
-        try {
-            const params = new URLSearchParams(window.location.search);
-            const userId = params.get('id') || (window.tg && window.tg.initDataUnsafe?.user?.id) || "---";
-            
-            const userIdEl = document.getElementById('userIdDisplay');
-            if (userIdEl) userIdEl.innerText = userId;
-            
-            const balanceEl = document.getElementById('userBalance');
-            if (balanceEl) balanceEl.innerText = params.get('balance') || 0;
+    // 1. БРОНЕБОЙНОЕ РЕШЕНИЕ: Включаем вкладку мгновенно, до любых проверок!
+    tab('profile');
 
-            if (typeof loadProfileData === "function") loadProfileData(); 
-            if (typeof initUserStats === "function") initUserStats(); 
-            
-            initAI();
-            if (typeof renderBooks === "function") renderBooks();
-            if (typeof renderOrganizers === "function") renderOrganizers(); 
-            if (typeof renderAvatarPresets === "function") renderAvatarPresets();
-
-            setTimeout(() => {
-                if (typeof renderStatusQuests === "function") renderStatusQuests(); 
-                
-                if (window.userProfileData && window.userProfileData.topAchievements) {
-                    window.userProfileData.topAchievements.forEach((ach, index) => {
-                        if (ach && typeof updateSlotUI === "function") {
-                            updateSlotUI(index, ach.achImg, ach.achTitle, ach.achDesc);
-                        }
-                    });
-                }
-                
-                // Это "включает" свет в приложении
-                tab('profile'); 
-            }, 150);
-
-        } catch (e) {
-            console.error("Критическая ошибка при инициализации окна:", e);
+    try {
+        // 2. Инициализация Telegram (убирает баги отображения в самом мессенджере)
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
         }
-    };
+
+        // 3. Сбор данных
+        const params = new URLSearchParams(window.location.search);
+        const userId = params.get('id') || (tg?.initDataUnsafe?.user?.id) || "---";
+        
+        const userIdEl = document.getElementById('userIdDisplay');
+        if (userIdEl) userIdEl.innerText = userId;
+        
+        const balanceEl = document.getElementById('userBalance');
+        if (balanceEl) balanceEl.innerText = params.get('balance') || 0;
+
+        // 4. Загрузка данных (ошибки здесь больше не сломают отображение экрана)
+        if (typeof loadProfileData === "function") loadProfileData(); 
+        if (typeof initUserStats === "function") initUserStats(); 
+        
+        initAI();
+        if (typeof renderBooks === "function") renderBooks();
+        if (typeof renderOrganizers === "function") renderOrganizers(); 
+        if (typeof renderAvatarPresets === "function") renderAvatarPresets();
+
+        // 5. Отложенная загрузка достижений (чтобы не тормозить интерфейс)
+        setTimeout(() => {
+            if (typeof renderStatusQuests === "function") renderStatusQuests(); 
+            
+            if (window.userProfileData && window.userProfileData.topAchievements) {
+                window.userProfileData.topAchievements.forEach((ach, index) => {
+                    if (ach && typeof updateSlotUI === "function") {
+                        updateSlotUI(index, ach.achImg, ach.achTitle, ach.achDesc);
+                    }
+                });
+            }
+        }, 150);
+
+    } catch (e) {
+        console.error("Ошибка при фоновой загрузке данных:", e);
+    }
+};
+
 </script>
 
 <div id="achievementModal" class="modal-overlay" style="display:none;" onclick="this.style.display='none'">

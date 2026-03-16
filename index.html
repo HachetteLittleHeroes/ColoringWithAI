@@ -1020,6 +1020,11 @@ function renderAvatarPresets() {
             <img src="${avatarBaseURL}${file}" onerror="this.src='https://placehold.co/100x100/333333/ff9500?text=?'">
         </div>`;
     }).join('');
+}function refreshUserData() {
+    if (typeof loadProfileData === "function") {
+        loadProfileData(); 
+        // Внутри loadProfileData после fetch() нужно вызывать renderStatusQuests()
+    }
 }
 
 function setPresetAvatar(file, btnElem) {
@@ -1524,20 +1529,23 @@ async function approveTask(taskId, userId, statusName, points) {
         const response = await fetch(`${API_URL}/approve_task`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                taskId: taskId, 
-                userId: userId, 
-                statusName: statusName, 
-                points: parseInt(points) // Передаем количество добавленных очков
-            }) 
+            body: JSON.stringify({ taskId, userId, statusName, points: parseInt(points) }) 
         });
 
         if(response.ok) {
             if(window.tg && tg.showAlert) tg.showAlert(`✅ Успешно! Добавлено очков: ${points}`);
-            loadAdminTasks(); // Обновляем список у админа
+            loadAdminTasks(); 
             
-            // Если это делает сам админ для себя, обновляем его прогресс-бары сразу
-            if (typeof renderStatusQuests === "function") renderStatusQuests();
+            // ИСПРАВЛЕНИЕ: Проверяем, себе ли админ одобрил задание
+            const currentUserId = document.getElementById('userIdDisplay')?.innerText;
+            if (currentUserId === userId) {
+                // Скачиваем свежие данные с сервера, а не просто перерисовываем старые
+                if (typeof loadProfileData === "function") {
+                    loadProfileData(); 
+                } else if (typeof renderStatusQuests === "function") {
+                    renderStatusQuests();
+                }
+            }
         } else {
             throw new Error("Ошибка сервера");
         }
@@ -1546,6 +1554,7 @@ async function approveTask(taskId, userId, statusName, points) {
         if(window.tg && tg.showAlert) tg.showAlert("❌ Ошибка при отправке одобрения");
     }
 }
+
 
 
 // =========================================================

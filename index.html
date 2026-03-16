@@ -1293,20 +1293,19 @@ background:${i < level ? levelColors[i] : 'rgba(255,255,255,0.1)'};
     }).join('');
 }
 
+// 1. Убедись, что эта переменная в самом верху файла!
 let currentAchievementRequest = null;
 
 function sendAchievementRequest(id, title) {
-    // Сохраняем данные СРАЗУ при клике
-    currentAchievementRequest = {
-        id: id,
-        title: title
-    };
+    console.log("Клик по заданию:", id, title);
+    currentAchievementRequest = { id: id, title: title };
 
     const input = document.getElementById("achievementPhotoInput");
     if (input) {
         input.value = "";
-        // Теперь это сработает, так как это прямой результат клика по кнопке
-        input.click(); 
+        input.click();
+    } else {
+        if(window.tg) tg.showAlert("Ошибка: Элемент achievementPhotoInput не найден в HTML!");
     }
 }
 
@@ -1314,21 +1313,29 @@ async function handleAchievementPhotos(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    // Вот здесь уже можно спросить подтверждение, когда файлы выбраны
     if (window.tg && tg.showConfirm) {
         tg.showConfirm(`Отправить ${files.length} фото для задания "${currentAchievementRequest.title}"?`, async (confirm) => {
-            if (!confirm) return;
-            await uploadAchievement(files);
+            if (confirm) {
+                await uploadAchievement(files);
+            }
         });
     } else {
-        // Если открыто в браузере без TG
         await uploadAchievement(files);
     }
 }
 
-// Вынес логику отправки в отдельную функцию для удобства
 async function uploadAchievement(files) {
+    // Показываем лоадер, чтобы юзер видел, что процесс пошел
+    if (window.tg && tg.MainButton) {
+        tg.MainButton.setText("ОТПРАВКА...");
+        tg.MainButton.show();
+    }
+
     let userId = document.getElementById('userIdDisplay')?.innerText || "0";
+    
+    // ВНИМАНИЕ: Проверь, чтобы API_URL был прописан правильно (напр. https://имя.amvera.io)
+    // Мы добавляем /api/check_achievement, так как это прописано в твоем Python коде
+    const url = `${API_URL}/api/check_achievement`;
 
     const requestData = {
         action: 'check_achievement',
@@ -1338,29 +1345,35 @@ async function uploadAchievement(files) {
         photoCount: files.length
     };
 
+    console.log("Отправка данных:", requestData);
+
     try {
-        // ВАЖНО: Проверь, чтобы API_URL заканчивался БЕЗ слеша, 
-        // так как в роутере у нас "/api/check_achievement" (или добавь /api/ сюда)
-        const response = await fetch(`${API_URL}/api/check_achievement`, {
+        const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestData)
         });
 
+        const result = await response.json();
+        console.log("Ответ сервера:", result);
+
         if (response.ok) {
-            if (window.tg && tg.showAlert) {
-                tg.showAlert(`📷 Заявка отправлена! Фото на проверке: ${files.length}`);
+            if (window.tg) {
+                tg.showAlert(`✅ Успешно! Фото (${files.length} шт.) отправлены на проверку.`);
+                tg.MainButton.hide();
             }
         } else {
-            throw new Error('Ошибка сервера');
+            throw new Error(`Сервер вернул ошибку: ${response.status}`);
         }
     } catch (e) {
-        console.error("Ошибка при отправке ачивки:", e);
-        if (window.tg && tg.showAlert) tg.showAlert("❌ Не удалось отправить заявку на сервер.");
+        console.error("Ошибка при отправке:", e);
+        if (window.tg) {
+            tg.showAlert("❌ Ошибка соединения: " + e.message);
+            tg.MainButton.hide();
+        }
     }
 }
+
 
 
 

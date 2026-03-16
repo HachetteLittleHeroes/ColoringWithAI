@@ -705,7 +705,7 @@ onclick="toggleEarnAchetiki()">
         <div id="loyalty-info" style="display: none !important;"></div>
 
         <div class="brand-button" onclick="toggleBlock('questsListContainer', this)" style="margin-top: 25px; margin-bottom: 20px;">
-            <span>📋 Задания статусов ✨</span>
+            <span>📋 Задания ✨</span>
             <span class="brand-counter">Развернуть</span>
         </div>
         <div id="questsListContainer" style="display:none; margin-bottom: 25px; animation: slideDown 0.3s ease-out;"></div>
@@ -1121,13 +1121,89 @@ function setNewStatus(newStatus) {
 // =========================================================
 
 const achievementsConfig = [
-{ id:'pokemon_master', title:'Великий мастер', desc:'Статус: Мастер Покемонов', req:'Раскрасить 30 картинок с покемонами (фото ДО и ПОСЛЕ)', target:30, type:'admin_check', statKey:'pokemonPics', icon:'img/ach_poke.png' },
-{ id:'ai_teacher', title:'Училка', desc:'Статус: Эксперт ИИ', req:'Внести 500 одобренных правок в ИИ палитру', target:500, type:'admin_check', statKey:'aiCorrections', icon:'img/ach_teacher.png' },
-{ id:'scrooge', title:'Скрудж', desc:'Статус: Богатей', req:'Накопить 2500 ашетиков на балансе', target:2500, type:'auto_balance', icon:'img/ach_gold.png' },
-{ id:'not_like_others', title:'Нетакуся', desc:'Статус: Творец', req:'Раскрасить 30 картинок из авторской раскраски', target:30, type:'admin_check', statKey:'authorPics', icon:'img/ach_art.png' },
-{ id:'alcohol_queen', title:'Спиртесса', desc:'Статус: Мастер спирта', req:'Раскрасить 100 картинок спиртовыми маркерами', target:100, type:'admin_check', statKey:'alcoholPics', icon:'img/ach_spirit.png' },
-{ id:'benefactor', title:'Благодетель', desc:'Статус: Меценат', req:'Поддержать наш проект', target:1, type:'admin_check', statKey:'supported', icon:'img/ach_heart.png' },
-{ id:'name_changer', title:'My name is', desc:'Достижение: Маскировка', req:'Сменить никнейм', target:1, type:'auto_name', icon:'img/ach_id.png' }
+
+{
+id:'pokemon_master',
+title:'Великий мастер',
+desc:'Статус: Мастер Покемонов',
+req:'Раскрасить картинки с покемонами',
+levels:[5,10,15,20,30],
+type:'admin_check',
+statKey:'pokemonPics',
+icon:'img/ach_poke.png'
+},
+
+{
+id:'ai_teacher',
+title:'Училка',
+desc:'Статус: Эксперт ИИ',
+req:'Внести правки в ИИ палитру',
+levels:[50,100,200,350,500],
+type:'admin_check',
+statKey:'aiCorrections',
+icon:'img/ach_teacher.png'
+},
+
+{
+id:'scrooge',
+title:'Скрудж',
+desc:'Статус: Богатей',
+req:'Накопить 2500 ашетиков',
+target:2500,
+type:'auto_balance',
+icon:'img/ach_gold.png'
+},
+
+{
+id:'not_like_others',
+title:'Нетакуся',
+desc:'Статус: Творец',
+req:'Раскрасить авторские картинки',
+levels:[5,10,15,20,30],
+type:'admin_check',
+statKey:'authorPics',
+icon:'img/ach_art.png'
+},
+
+{
+id:'alcohol_queen',
+title:'Спиртесса',
+desc:'Статус: Мастер спирта',
+req:'Раскрасить картинки спиртовыми маркерами',
+levels:[10,25,50,75,100],
+type:'admin_check',
+statKey:'alcoholPics',
+icon:'img/ach_spirit.png'
+},
+
+{
+id:'benefactor',
+title:'Благодетель',
+desc:'Статус: Меценат',
+req:'Поддержать наш проект',
+levels:[1,2,3,4,5],
+type:'admin_check',
+statKey:'supported',
+icon:'img/ach_heart.png'
+},
+
+{
+id:'name_changer',
+title:'My name is',
+desc:'Достижение: Маскировка',
+req:'Сменить никнейм',
+levels:[1,2,3,4,5],
+type:'auto_name',
+icon:'img/ach_id.png'
+}
+
+];
+const levelColors = [
+"#9e9e9e",
+"#2196f3",
+"#4caf50",
+"#9c27b0",
+"#ffc107"
 ];
 
 function initUserStats() {
@@ -1157,9 +1233,23 @@ function renderStatusQuests() {
     
     container.innerHTML = achievementsConfig.map(ach => {
         let current = getAchievementProgress(ach);
-        let isDone = current >= ach.target;
-        let wasDone = window.userProfileData.unlockedAchievements?.includes(ach.id);
-        let percent = Math.min(100, (current / ach.target) * 100);
+
+// определяем цель (для уровней или обычных достижений)
+let target = ach.target || (ach.levels ? ach.levels[ach.levels.length-1] : 1);
+
+let percent = Math.min(100, (current / target) * 100);
+
+// определяем уровень
+let level = 0;
+if(ach.levels){
+    for(let i=0;i<ach.levels.length;i++){
+        if(current >= ach.levels[i]) level = i+1;
+    }
+}
+
+let isDone = current >= target;
+
+let wasDone = window.userProfileData.unlockedAchievements?.includes(ach.id);
         
         if(isDone && !wasDone) {
             if(!window.userProfileData.unlockedAchievements) window.userProfileData.unlockedAchievements = [];
@@ -1174,9 +1264,21 @@ function renderStatusQuests() {
         <div class="quest-card" style="${isDone ? 'border:1px solid var(--accent);opacity:0.9;' : ''}">
             <div class="quest-header">
                 <span class="quest-status-badge">${isDone ? '🏆 Выполнено' : '🔥 В процессе'}</span>
-                <span class="quest-xp">${current} / ${ach.target}</span>
+               <span class="quest-xp">${current} / ${target}</span>
             </div>
             <div class="quest-title">${ach.title}</div>
+            ${ach.levels ? `
+<div style="display:flex;gap:4px;margin-bottom:8px;">
+${ach.levels.map((lvl,i)=>`
+<div style="
+flex:1;
+height:6px;
+border-radius:3px;
+background:${i < level ? levelColors[i] : 'rgba(255,255,255,0.1)'};
+"></div>
+`).join('')}
+</div>
+` : ``}
             <div style="font-size:12px;color:var(--gray);margin-bottom:10px;">${ach.req}</div>
             <div style="width:100%;height:6px;background:var(--secondary);border-radius:3px;margin-bottom:10px;overflow:hidden;">
                 <div style="width:${percent}%;height:100%;background:var(--accent);transition:0.5s;"></div>

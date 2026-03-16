@@ -1298,10 +1298,6 @@ function getAchievementProgress(ach) {
 
 // 2. Интеграция: делаем функцию асинхронной и запрашиваем данные перед рендером
 async function renderStatusQuests() {
-
-    if (typeof loadProfileData === "function") {
-        await loadProfileData();   // <-- обновляем профиль
-    }
     // Ждем получения свежих данных с сервера
     await fetchActualStats();
     
@@ -1562,28 +1558,17 @@ async function loadAdminTasks() {
     }
 }
 
-async function approveTask(taskId, userId, statKey, points) {
+async function approveTask(taskId, userId, statusName, points) {
     try {
-        const response = await fetch(`${API_URL}/approve_task`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                taskId: taskId,
-                userId: userId,
-                statKey: statKey,
-                points: points
-            })
+        const response = await fetch(`${API_URL}/approve_task`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ taskId, userId, statusName, points: parseInt(points) }) 
         });
 
-        if (!response.ok) throw new Error("Ошибка сервера");
-        const data = await response.json();
-        console.log("Task approved:", data);
-    } catch (err) {
-        console.error("Approve task error:", err);
-    }
-}
+        if(response.ok) {
+            if(window.tg && tg.showAlert) tg.showAlert(`✅ Успешно! Добавлено очков: ${points}`);
+            loadAdminTasks(); 
             
             // ИСПРАВЛЕНИЕ: Проверяем, себе ли админ одобрил задание
             const currentUserId = document.getElementById('userIdDisplay')?.innerText;
@@ -2239,9 +2224,7 @@ function tab(id) {
     if (id === 'shop') loadMarkers();
     if (id === 'cart') renderCart();
     if (id === 'mymarkers') { closeBrandView(); renderBrandsList(); renderOrganizers(); }
-    if (id === 'profile' || id === 'tasks') {
-    setTimeout(() => renderStatusQuests(), 50);
-}
+    if (id === 'profile' || id === 'tasks') renderStatusQuests(); 
     
     if(window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }

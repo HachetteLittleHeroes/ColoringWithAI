@@ -2154,9 +2154,13 @@ function filterMarkers() { renderMarkers(markersData); }
 // --- СИСТЕМА ИСКУССТВЕННОГО ИНТЕЛЛЕКТА (AI) ---
 // =========================================================
 
-const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io/api";
+// Если API_URL уже объявлен выше, вторую строку с 'const' нужно удалить!
+// Оставляем только базовый адрес без /api и без слэша
+window.API_URL = "https://hlhbot-hachettelittleheroes.amvera.io"; 
+
 let aiDB = [];
 let userInventory = [];
+
 
 async function initAI() {
     try {

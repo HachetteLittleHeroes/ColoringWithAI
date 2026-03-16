@@ -1319,33 +1319,44 @@ function sendAchievementRequest(id, title) {
     }
 
 }
-function handleAchievementPhotos(event){
-
+async function handleAchievementPhotos(event) {
     const files = event.target.files;
-    if(!files || files.length === 0) return;
+    if (!files || files.length === 0) return;
 
     let userId = document.getElementById('userIdDisplay')?.innerText || "0";
 
-    const photoNames = [];
-
-    for(let i=0;i<files.length;i++){
-        photoNames.push(files[i].name);
-    }
-
-    tg.sendData(JSON.stringify({
-        action:'check_achievement',
+    // Собираем данные для отправки
+    const requestData = {
+        action: 'check_achievement',
         achievementId: currentAchievementRequest.id,
         title: currentAchievementRequest.title,
         user: userId,
-        photos: photoNames,
         photoCount: files.length
-    }));
+    };
 
-    if(window.tg && tg.showAlert){
-        tg.showAlert(`📷 Отправлено фото: ${files.length}`);
+    try {
+        // ОТПРАВЛЯЕМ НА СЕРВЕР
+        const response = await fetch(`${API_URL}/check_achievement`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        });
+
+        if (response.ok) {
+            if (window.tg && tg.showAlert) {
+                tg.showAlert(`📷 Заявка отправлена! Фото на проверке: ${files.length}`);
+            }
+        } else {
+            throw new Error('Ошибка сервера');
+        }
+    } catch (e) {
+        console.error("Ошибка при отправке ачивки:", e);
+        if (window.tg && tg.showAlert) tg.showAlert("❌ Не удалось отправить заявку на сервер.");
     }
-
 }
+
 
 // ---------------------------------------------------------
 // ИСПРАВЛЕНИЕ: Функция для открытия квестов (статусов)
@@ -1797,17 +1808,25 @@ function changeQty(index, delta) {
 // ---------------------------------------------------------
 // ИСПРАВЛЕНИЕ: Кнопка оформления заказа (скрытая отправка деталей)
 // ---------------------------------------------------------
-function checkout() {
+async function checkout() {
     if (cart.length === 0) return;
+    
+    // Проверка минимального количества маркеров
     let markersCount = 0;
     cart.forEach(item => { if (item.type === 'Маркер') markersCount += item.qty; });
+    
     if (markersCount > 0 && markersCount < 3) {
-        if(window.tg && tg.showAlert) tg.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук.");
+        if (window.tg && tg.showAlert) tg.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук.");
         else alert("⚠️ Минимальный заказ маркеров — от 3 штук.");
         return;
     }
     
-    let totalSum = 0, hasPreorder = false;
+    let totalSum = 0;
+    let hasPreorder = false;
+    let userId = document.getElementById('userIdDisplay')?.innerText || "0";
+    let currentBalance = document.getElementById('userBalance')?.innerText || "0";
+
+    // Собираем текстовое описание для админа (как у тебя и было)
     let details = `🛍 **ДЕТАЛИ ЗАКАЗА:**\n`;
     cart.forEach(item => {
         const sum = item.price * item.qty; 
@@ -1816,6 +1835,7 @@ function checkout() {
         details += `▪️ ${item.type} ${item.type === 'Маркер' ? '№' : '"'}${item.name}${item.type === 'Маркер' ? '' : '"'}\n   - ${item.qty} шт. x ${item.price} = ${sum} руб.\n`;
     });
 
+    // Расчет бонусов
     let bonusToEarn = 0;
     if (totalSum >= 3000 && totalSum < 5000) bonusToEarn = 20;
     else if (totalSum >= 5000 && totalSum < 7500) bonusToEarn = 30;
@@ -1824,37 +1844,66 @@ function checkout() {
     
     details += `\n💰 **ИТОГО: ${totalSum} руб.**`;
     details += `\n📖 **БОНУС К НАЧИСЛЕНИЮ: ${bonusToEarn}**`;
-    let balEl = document.getElementById('userBalance');
-    details += `\n👤 **ТЕКУЩИЙ БАЛАНС ЮЗЕРА: ${balEl ? balEl.innerText : 0}**`;
+    details += `\n👤 **ТЕКУЩИЙ БАЛАНС ЮЗЕРА: ${currentBalance}**`;
 
-    const triggerOrder = () => {
-        if (window.tg && tg.sendData) {
-            try {
-                // Отправляем данные бота скрыто
-                tg.sendData(JSON.stringify({ action: 'new_order', details: details }));
-                // Юзеру показываем только успешный алерт
-                tg.showAlert("✅ Ваш заказ успешно отправлен!");
-                // Чистим корзину
-                cart = []; updateUI(); renderCart();
-            } catch (e) {
-                alert("✅ Ваш заказ успешно отправлен!");
-                cart = []; updateUI(); renderCart();
+    // Функция отправки данных на сервер
+    const triggerOrder = async () => {
+        const orderPayload = {
+            action: 'new_order',
+            user_id: userId,
+            total_sum: totalSum,
+            bonus: bonusToEarn,
+            cart_items: cart,
+            text_details: details
+        };
+
+        try {
+            // Отправляем запрос на сервер через fetch
+            const response = await fetch(`${API_URL}/new_order`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderPayload)
+            });
+
+            if (response.ok) {
+                if (window.tg && tg.showAlert) {
+                    // Показываем алерт и закрываем приложение только после клика пользователя
+                    tg.showAlert("✅ Ваш заказ успешно отправлен!", () => {
+                        tg.close(); 
+                    });
+                } else {
+                    alert("✅ Ваш заказ успешно отправлен!");
+                }
+                
+                // Очистка корзины
+                cart = []; 
+                updateUI(); 
+                renderCart();
+            } else {
+                throw new Error("Ошибка сервера при оформлении заказа");
             }
-        } else {
-            // Если открыто в браузере, а не в ТГ
-            alert("✅ Ваш заказ успешно отправлен!");
-            cart = []; updateUI(); renderCart();
+        } catch (error) {
+            console.error("Ошибка:", error);
+            if (window.tg && tg.showAlert) {
+                tg.showAlert("❌ Ошибка соединения! Заказ не отправлен. Проверьте интернет.");
+            } else {
+                alert("❌ Ошибка соединения!");
+            }
         }
     };
     
+    // Проверка на наличие товаров "Под заказ"
     if (hasPreorder && window.tg && tg.showConfirm) {
-        tg.showConfirm("В вашем заказе есть раскраски (ПОД ЗАКАЗ). Оформить?", (c) => { 
-            if(c) triggerOrder();
+        tg.showConfirm("В вашем заказе есть раскраски (ПОД ЗАКАЗ). Оформить?", (confirm) => { 
+            if (confirm) triggerOrder();
         });
     } else {
         triggerOrder();
     }
 }
+
 
 // =========================================================
 // --- СИСТЕМА НАГРАД И НАВИГАЦИЯ ---

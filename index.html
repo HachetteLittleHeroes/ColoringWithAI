@@ -1566,22 +1566,25 @@ async function approveTask(taskId, userId, statKey, points) {
     try {
         const response = await fetch(`${API_URL}/approve_task`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                taskId: taskId,
-                userId: userId,
-                statKey: statKey,
-                points: points
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ taskId, userId, statKey, points })
         });
 
         if (!response.ok) throw new Error("Ошибка сервера");
         const data = await response.json();
         console.log("Task approved:", data);
+
+        // обновляем прогресс в мини аппе без перезагрузки
+        if (window.userProfileData && statKey) {
+            if (!window.userProfileData.stats) window.userProfileData.stats = {};
+            if (!window.userProfileData.stats[statKey]) window.userProfileData.stats[statKey] = 0;
+            window.userProfileData.stats[statKey] += points;
+            if (typeof renderStatusQuests === "function") renderStatusQuests();
+        }
+
     } catch (err) {
         console.error("Approve task error:", err);
+        if (window.tg && tg.showAlert) tg.showAlert("Ошибка при одобрении задания!");
     }
 }
             

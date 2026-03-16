@@ -1298,6 +1298,10 @@ function getAchievementProgress(ach) {
 
 // 2. Интеграция: делаем функцию асинхронной и запрашиваем данные перед рендером
 async function renderStatusQuests() {
+
+    if (typeof loadProfileData === "function") {
+        await loadProfileData();   // <-- обновляем профиль
+    }
     // Ждем получения свежих данных с сервера
     await fetchActualStats();
     
@@ -2224,7 +2228,9 @@ function tab(id) {
     if (id === 'shop') loadMarkers();
     if (id === 'cart') renderCart();
     if (id === 'mymarkers') { closeBrandView(); renderBrandsList(); renderOrganizers(); }
-    if (id === 'profile' || id === 'tasks') renderStatusQuests(); 
+    if (id === 'profile' || id === 'tasks') {
+    setTimeout(() => renderStatusQuests(), 50);
+}
     
     if(window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }

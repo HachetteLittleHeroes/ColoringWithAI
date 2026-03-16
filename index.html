@@ -1296,36 +1296,40 @@ background:${i < level ? levelColors[i] : 'rgba(255,255,255,0.1)'};
 let currentAchievementRequest = null;
 
 function sendAchievementRequest(id, title) {
+    // Сохраняем данные СРАЗУ при клике
+    currentAchievementRequest = {
+        id: id,
+        title: title
+    };
 
-    if(window.tg && tg.showConfirm) {
-
-        tg.showConfirm(`Отправить фото выполнения "${title}"?`, (confirm) => {
-
-            if(!confirm) return;
-
-            currentAchievementRequest = {
-                id:id,
-                title:title
-            };
-
-            const input = document.getElementById("achievementPhotoInput");
-            if(input){
-                input.value = "";
-                input.click();
-            }
-
-        });
-
+    const input = document.getElementById("achievementPhotoInput");
+    if (input) {
+        input.value = "";
+        // Теперь это сработает, так как это прямой результат клика по кнопке
+        input.click(); 
     }
-
 }
+
 async function handleAchievementPhotos(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
+    // Вот здесь уже можно спросить подтверждение, когда файлы выбраны
+    if (window.tg && tg.showConfirm) {
+        tg.showConfirm(`Отправить ${files.length} фото для задания "${currentAchievementRequest.title}"?`, async (confirm) => {
+            if (!confirm) return;
+            await uploadAchievement(files);
+        });
+    } else {
+        // Если открыто в браузере без TG
+        await uploadAchievement(files);
+    }
+}
+
+// Вынес логику отправки в отдельную функцию для удобства
+async function uploadAchievement(files) {
     let userId = document.getElementById('userIdDisplay')?.innerText || "0";
 
-    // Собираем данные для отправки
     const requestData = {
         action: 'check_achievement',
         achievementId: currentAchievementRequest.id,
@@ -1335,8 +1339,9 @@ async function handleAchievementPhotos(event) {
     };
 
     try {
-        // ОТПРАВЛЯЕМ НА СЕРВЕР
-        const response = await fetch(`${API_URL}/check_achievement`, {
+        // ВАЖНО: Проверь, чтобы API_URL заканчивался БЕЗ слеша, 
+        // так как в роутере у нас "/api/check_achievement" (или добавь /api/ сюда)
+        const response = await fetch(`${API_URL}/api/check_achievement`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1356,6 +1361,7 @@ async function handleAchievementPhotos(event) {
         if (window.tg && tg.showAlert) tg.showAlert("❌ Не удалось отправить заявку на сервер.");
     }
 }
+
 
 
 // ---------------------------------------------------------

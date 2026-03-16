@@ -1404,6 +1404,12 @@ async function uploadAchievementData(files) {
         }
     }
 }
+// Функция-прослойка для обработки выбора файлов
+function handleAchievementPhotos(event) {
+    if (event.target.files && event.target.files.length > 0) {
+        uploadAchievementData(event.target.files);
+    }
+}
 
 // ---------------------------------------------------------
 // ИСПРАВЛЕНИЕ: Функция для открытия квестов (статусов)
@@ -2308,101 +2314,68 @@ function toggleCorrectionSet(index) {
 }
 function toggleAdminSet() {
     const brand = document.getElementById('adminTrainBrand').value;
-    document.getElementById('adminTrainSet').style.display = (brand === 'Tooli-Art') ? 'block' : 'none';
+    const setElem = document.getElementById('adminTrainSet');
+    if (setElem) setElem.style.display = (brand === 'Tooli-Art') ? 'block' : 'none';
 }
 
-const brand = document.getElementById('adminTrainBrand').value;
-let num = document.getElementById('adminTrainNum').value.trim();
+// ЭТОТ БЛОК БЫЛ СЛОМАН (ДОБАВЛЕНА ФУНКЦИЯ trainAI)
+async function trainAI(event) {
+    const brand = document.getElementById('adminTrainBrand').value;
+    let num = document.getElementById('adminTrainNum').value.trim();
 
-if(!num){
-    if(window.tg && tg.showAlert){ tg.showAlert("Введите номер маркера"); }
-    return;
+    if (!num) {
+        if (window.tg && tg.showAlert) tg.showAlert("Введите номер маркера");
+        return;
+    }
+
+    if (!event.target.files || !event.target.files[0]) {
+        if (window.tg && tg.showAlert) tg.showAlert("Выберите фото маркера");
+        return;
+    }
+
+    if (brand === 'Tooli-Art') {
+        let setVal = document.getElementById('adminTrainSet').value;
+        num = setVal + " " + num;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = async function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            let r = 0, g = 0, b = 0, c = 0;
+            for (let i = 0; i < imgData.length; i += 4) {
+                r += imgData[i]; g += imgData[i + 1]; b += imgData[i + 2]; c++;
+            }
+
+            const rgb = [Math.round(r / c), Math.round(g / c), Math.round(b / c)];
+
+            try {
+                const res = await fetch(`${API_URL}/train`, {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ brand: brand, marker: num, rgb: rgb })
+                });
+
+                if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                if (window.tg && tg.showAlert) tg.showAlert("Маркер успешно добавлен в базу ИИ");
+                
+                if (typeof initAI === "function") initAI();
+            } catch (err) {
+                console.error("AI train error:", err);
+                if (window.tg && tg.showAlert) tg.showAlert("Ошибка обучения ИИ");
+            }
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
 }
-
-if(!event.target.files || !event.target.files[0]){
-    if(window.tg && tg.showAlert){ tg.showAlert("Выберите фото маркера"); }
-    return;
-}
-
-if(brand === 'Tooli-Art'){
-    let setVal = document.getElementById('adminTrainSet').value;
-    num = setVal + " " + num;
-}
-
-const reader = new FileReader();
-
-reader.onload = function(e) {
-
-    const img = new Image();
-
-    img.onload = async function() {
-
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        ctx.drawImage(img,0,0);
-
-        const imgData = ctx.getImageData(0,0, canvas.width, canvas.height).data;
-
-        let r=0;
-        let g=0;
-        let b=0;
-        let c=0;
-
-        for(let i=0; i<imgData.length; i+=4){
-            r+=imgData[i];
-            g+=imgData[i+1];
-            b+=imgData[i+2];
-            c++;
-        }
-
-        const rgb = [
-            Math.round(r/c),
-            Math.round(g/c),
-            Math.round(b/c)
-        ];
-
-        try{
-
-            const res = await fetch(`${API_URL}/train`, {
-                method: 'POST',
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body: JSON.stringify({
-                    brand: brand,
-                    marker: num,
-                    rgb: rgb
-                })
-            });
-
-            const data = await res.json();
-
-            console.log("AI train response:", data);
-
-            if(window.tg && tg.HapticFeedback){
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-
-            if(window.tg && tg.showAlert){
-                tg.showAlert("Маркер успешно добавлен в базу ИИ");
-            }
-
-            if(typeof initAI === "function"){
-                initAI();
-            }
-
-        }catch(err){
-
-            console.error("AI train error:", err);
-
-            if(window.tg && tg.showAlert){
-                tg.showAlert("Ошибка обучения ИИ. Проверьте API.");
-            }
-
         }
 
     };

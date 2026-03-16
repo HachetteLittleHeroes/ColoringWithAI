@@ -1192,7 +1192,7 @@ id:'name_changer',
 title:'My name is',
 desc:'Достижение: Маскировка',
 req:'Сменить никнейм',
-levels:[1,2,3,4,5],
+target:1,
 type:'auto_name',
 icon:'img/ach_id.png'
 }
@@ -1293,15 +1293,58 @@ background:${i < level ? levelColors[i] : 'rgba(255,255,255,0.1)'};
     }).join('');
 }
 
+let currentAchievementRequest = null;
+
 function sendAchievementRequest(id, title) {
+
     if(window.tg && tg.showConfirm) {
-        tg.showConfirm(`Отправить на проверку выполнение "${title}"?`, (confirm) => {
+
+        tg.showConfirm(`Отправить фото выполнения "${title}"?`, (confirm) => {
+
             if(!confirm) return;
-            let userId = document.getElementById('userIdDisplay')?.innerText || "0";
-            tg.sendData(JSON.stringify({ action:'check_achievement', achievementId:id, user:userId }));
-            tg.showAlert("Заявка отправлена админу");
+
+            currentAchievementRequest = {
+                id:id,
+                title:title
+            };
+
+            const input = document.getElementById("achievementPhotoInput");
+            if(input){
+                input.value = "";
+                input.click();
+            }
+
         });
+
     }
+
+}
+function handleAchievementPhotos(event){
+
+    const files = event.target.files;
+    if(!files || files.length === 0) return;
+
+    let userId = document.getElementById('userIdDisplay')?.innerText || "0";
+
+    const photoNames = [];
+
+    for(let i=0;i<files.length;i++){
+        photoNames.push(files[i].name);
+    }
+
+    tg.sendData(JSON.stringify({
+        action:'check_achievement',
+        achievementId: currentAchievementRequest.id,
+        title: currentAchievementRequest.title,
+        user: userId,
+        photos: photoNames,
+        photoCount: files.length
+    }));
+
+    if(window.tg && tg.showAlert){
+        tg.showAlert(`📷 Отправлено фото: ${files.length}`);
+    }
+
 }
 
 // ---------------------------------------------------------
@@ -2335,5 +2378,12 @@ window.onload = () => {
 
 <div id="fullAchievementsList" style="display:none; background:var(--bg); border-radius:20px 20px 0 0; position:fixed; bottom:0; left:0; width:100%; z-index:1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);">
 </div>
+<input 
+type="file" 
+id="achievementPhotoInput" 
+multiple 
+accept="image/*" 
+style="display:none"
+onchange="uploadAchievementPhotos(event)">
 </body>
 </html>

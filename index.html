@@ -978,8 +978,8 @@ function loadProfileData() {
     const nameProfileEl = document.getElementById('userName'); 
     if (nameProfileEl) nameProfileEl.innerText = window.userProfileData.name;
     
-    const statusEl = document.getElementById('userStatusDisplay');
-    if (statusEl) statusEl.innerText = window.userProfileData.status;
+    const statusEl = document.getElementById('currentStatus');
+if (statusEl) statusEl.innerText = window.userProfileData.status;
 }
 
 function toggleAvatarEditor() {
@@ -1099,14 +1099,21 @@ function changeCustomStatus() {
     document.getElementById('statusSelectList').innerHTML = listHtml;
     modal.style.display = 'flex';
 }
+function openStatusSelect(){
+    changeCustomStatus();
+}
 
 function setNewStatus(newStatus) {
     window.userProfileData.status = newStatus;
-    const statusEl = document.getElementById('userStatusDisplay');
-    if (statusEl) statusEl.innerText = window.userProfileData.status;
+
+    const statusEl = document.getElementById('currentStatus');
+    if (statusEl) statusEl.innerText = newStatus;
+
     saveProfileData();
     document.getElementById('statusSelectModal').style.display = 'none';
-    if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+
+    if(window.tg && tg.HapticFeedback) 
+        tg.HapticFeedback.notificationOccurred('success');
 }
 
 // =========================================================

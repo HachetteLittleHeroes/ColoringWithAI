@@ -1222,6 +1222,30 @@ function initUserStats() {
     }
 }
 
+// 1. Новая функция: запрашиваем актуальные очки с сервера
+async function fetchActualStats() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id') || document.getElementById('userIdDisplay')?.innerText || (window.tg && window.tg.initDataUnsafe?.user?.id) || "0";
+        
+        const response = await fetch(`${API_URL}/stats?user_id=${userId}`);
+        
+        if (response.ok) {
+            const serverStats = await response.json();
+            
+            initUserStats(); // Страховка, чтобы объект stats точно существовал
+            
+            // Сливаем старые данные с новыми (серверные в приоритете)
+            window.userProfileData.stats = { ...window.userProfileData.stats, ...serverStats };
+            console.log("✅ Очки успешно обновлены с сервера:", window.userProfileData.stats);
+        } else {
+            console.warn("⚠️ Сервер вернул ошибку при запросе очков:", response.status);
+        }
+    } catch (error) {
+        console.error("❌ Ошибка при запросе актуальных очков с сервера:", error);
+    }
+}
+
 function getAchievementProgress(ach) {
     let balance = 0;
     const balanceEl = document.getElementById('userBalance');
@@ -1233,7 +1257,11 @@ function getAchievementProgress(ach) {
     return 0;
 }
 
-function renderStatusQuests() {
+// 2. Интеграция: делаем функцию асинхронной и запрашиваем данные перед рендером
+async function renderStatusQuests() {
+    // Ждем получения свежих данных с сервера
+    await fetchActualStats();
+    
     initUserStats();
     const container = document.getElementById('questsListContainer');
     if(!container) return;
@@ -1241,22 +1269,22 @@ function renderStatusQuests() {
     container.innerHTML = achievementsConfig.map(ach => {
         let current = getAchievementProgress(ach);
 
-// определяем цель (для уровней или обычных достижений)
-let target = ach.target || (ach.levels ? ach.levels[ach.levels.length-1] : 1);
+        // определяем цель (для уровней или обычных достижений)
+        let target = ach.target || (ach.levels ? ach.levels[ach.levels.length-1] : 1);
 
-let percent = Math.min(100, (current / target) * 100);
+        let percent = Math.min(100, (current / target) * 100);
 
-// определяем уровень
-let level = 0;
-if(ach.levels){
-    for(let i=0;i<ach.levels.length;i++){
-        if(current >= ach.levels[i]) level = i+1;
-    }
-}
+        // определяем уровень
+        let level = 0;
+        if(ach.levels){
+            for(let i=0;i<ach.levels.length;i++){
+                if(current >= ach.levels[i]) level = i+1;
+            }
+        }
 
-let isDone = current >= target;
+        let isDone = current >= target;
 
-let wasDone = window.userProfileData.unlockedAchievements?.includes(ach.id);
+        let wasDone = window.userProfileData.unlockedAchievements?.includes(ach.id);
         
         if(isDone && !wasDone) {
             if(!window.userProfileData.unlockedAchievements) window.userProfileData.unlockedAchievements = [];
@@ -1264,7 +1292,7 @@ let wasDone = window.userProfileData.unlockedAchievements?.includes(ach.id);
             setTimeout(() => {
                 if(window.tg && tg.showAlert) tg.showAlert(`🏆 Новое достижение!\n${ach.title}`);
             }, 300);
-            saveProfileData();
+            if(typeof saveProfileData === "function") saveProfileData();
         }
         
         return `
@@ -1299,6 +1327,7 @@ background:${i < level ? levelColors[i] : 'rgba(255,255,255,0.1)'};
         </div>`;
     }).join('');
 }
+
 // Используем window, чтобы переменная была доступна из любой части кода
 window.currentAchievementRequest = null;
 

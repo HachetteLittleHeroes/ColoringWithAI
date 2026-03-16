@@ -1292,89 +1292,83 @@ background:${i < level ? levelColors[i] : 'rgba(255,255,255,0.1)'};
         </div>`;
     }).join('');
 }
+// Используем window, чтобы переменная была доступна из любой части кода
+window.currentAchievementRequest = null;
 
-// 1. Убедись, что эта переменная в самом верху файла!
-let currentAchievementRequest = null;
-
-function sendAchievementRequest(id, title) {
-    console.log("Клик по заданию:", id, title);
-    currentAchievementRequest = { id: id, title: title };
+window.sendAchievementRequest = function(id, title) {
+    console.log("Вызов sendAchievementRequest:", id, title);
+    
+    window.currentAchievementRequest = {
+        id: id,
+        title: title
+    };
 
     const input = document.getElementById("achievementPhotoInput");
     if (input) {
-        input.value = "";
+        input.value = ""; // Сброс, чтобы можно было выбрать те же фото
         input.click();
     } else {
-        if(window.tg) tg.showAlert("Ошибка: Элемент achievementPhotoInput не найден в HTML!");
+        if (window.tg) tg.showAlert("Ошибка: Инпут не найден в DOM");
     }
-}
+};
 
-async function handleAchievementPhotos(event) {
+window.handleAchievementPhotos = async function(event) {
+    console.log("Файлы выбраны");
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    if (window.tg && tg.showConfirm) {
-        tg.showConfirm(`Отправить ${files.length} фото для задания "${currentAchievementRequest.title}"?`, async (confirm) => {
+    if (!window.currentAchievementRequest) {
+        if (window.tg) tg.showAlert("Ошибка: Данные задания не найдены. Попробуйте нажать еще раз.");
+        return;
+    }
+
+    // Подтверждение через Telegram
+    if (window.tg && window.tg.showConfirm) {
+        window.tg.showConfirm(`Отправить ${files.length} фото для задания "${window.currentAchievementRequest.title}"?`, async (confirm) => {
             if (confirm) {
-                await uploadAchievement(files);
+                await uploadAchievementData(files);
             }
         });
     } else {
-        await uploadAchievement(files);
+        // Резервный вариант для браузера
+        if (confirm(`Отправить ${files.length} фото?`)) {
+            await uploadAchievementData(files);
+        }
     }
-}
+};
 
-async function uploadAchievement(files) {
-    // Показываем лоадер, чтобы юзер видел, что процесс пошел
-    if (window.tg && tg.MainButton) {
-        tg.MainButton.setText("ОТПРАВКА...");
-        tg.MainButton.show();
-    }
-
-    let userId = document.getElementById('userIdDisplay')?.innerText || "0";
+async function uploadAchievementData(files) {
+    const userIdDisplay = document.getElementById('userIdDisplay');
+    const userId = userIdDisplay ? userIdDisplay.innerText.replace(/[^0-9]/g, '') : "0";
     
-    // ВНИМАНИЕ: Проверь, чтобы API_URL был прописан правильно (напр. https://имя.amvera.io)
-    // Мы добавляем /api/check_achievement, так как это прописано в твоем Python коде
-    const url = `${API_URL}/api/check_achievement`;
-
-    const requestData = {
+    // Формируем данные
+    const payload = {
         action: 'check_achievement',
-        achievementId: currentAchievementRequest.id,
-        title: currentAchievementRequest.title,
+        achievementId: window.currentAchievementRequest.id,
+        title: window.currentAchievementRequest.title,
         user: userId,
         photoCount: files.length
     };
 
-    console.log("Отправка данных:", requestData);
-
     try {
-        const response = await fetch(url, {
+        // Убедись, что API_URL определен выше в коде
+        const response = await fetch(`${API_URL}/api/check_achievement`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestData)
+            body: JSON.stringify(payload)
         });
 
-        const result = await response.json();
-        console.log("Ответ сервера:", result);
-
         if (response.ok) {
-            if (window.tg) {
-                tg.showAlert(`✅ Успешно! Фото (${files.length} шт.) отправлены на проверку.`);
-                tg.MainButton.hide();
-            }
+            if (window.tg) tg.showAlert("✅ Успешно! Задание отправлено на проверку админу.");
         } else {
-            throw new Error(`Сервер вернул ошибку: ${response.status}`);
+            const errorMsg = await response.text();
+            throw new Error(errorMsg || "Ошибка сервера");
         }
     } catch (e) {
-        console.error("Ошибка при отправке:", e);
-        if (window.tg) {
-            tg.showAlert("❌ Ошибка соединения: " + e.message);
-            tg.MainButton.hide();
-        }
+        console.error("Ошибка отправки:", e);
+        if (window.tg) tg.showAlert("❌ Не удалось отправить: " + e.message);
     }
 }
-
-
 
 
 // ---------------------------------------------------------

@@ -16,6 +16,12 @@
             --card-bg: var(--tg-theme-secondary-bg-color, #f1f1f1);
             --gold: #f1c40f; 
         }
+.page {
+    display: none; /* Все страницы скрыты по умолчанию */
+}
+.page.active {
+    display: block; /* Только активная страница показывается */
+}
 
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 100px; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .header { padding: 20px 15px; font-size: 24px; font-weight: 800; }

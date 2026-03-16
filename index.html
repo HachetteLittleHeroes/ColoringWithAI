@@ -1336,77 +1336,54 @@ window.handleAchievementPhotos = async function(event) {
         }
     }
 };
-
 async function uploadAchievementData(files) {
-    console.log("Начинаю процесс отправки...");
-    if (window.tg && tg.MainButton) {
-        tg.MainButton.setText("ОТПРАВКА...");
-        tg.MainButton.show();
+    console.log("Выбрано файлов:", files ? files.length : 0);
+    
+    if (!files || files.length === 0) {
+        alert("Ошибка: Файлы не выбраны!");
+        return;
     }
 
     try {
-        // 1. Получаем ID пользователя
-        let userId = "0";
-        const userIdDisplay = document.getElementById('userIdDisplay');
-        if (userIdDisplay) {
-            userId = userIdDisplay.innerText.replace(/[^0-9]/g, '');
-        } else {
-            const urlParams = new URLSearchParams(window.location.search);
-            userId = urlParams.get('id') || "0";
-        }
-
-        // 2. Проверка API_URL
-        if (typeof API_URL === 'undefined' || !API_URL) {
-            alert("Критическая ошибка: Переменная API_URL не найдена!");
-            return;
-        }
-
-        // 3. ИСПРАВЛЕНИЕ: Формируем FormData вместо обычного JSON
         const formData = new FormData();
         formData.append('action', 'check_achievement');
-        formData.append('achievementId', window.currentAchievementRequest ? window.currentAchievementRequest.id : "unknown");
-        formData.append('title', window.currentAchievementRequest ? window.currentAchievementRequest.title : "Без названия");
+        formData.append('achievementId', window.currentAchievementRequest?.id || "unknown");
+        formData.append('title', window.currentAchievementRequest?.title || "Задание");
+        
+        // Получаем ID пользователя
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id') || "0";
         formData.append('user', userId);
         
-        // 4. Добавляем сами файлы в запрос
         for (let i = 0; i < files.length; i++) {
-            // 'photos' — это ключ, по которому твой бэкенд будет искать файлы
-            formData.append('photos', files[i]); 
+            formData.append('photos', files[i]);
         }
 
-        console.log("Отправляю запрос на:", `${API_URL}/api/check_achievement`);
+        // Показываем пользователю, что процесс пошел
+        if (window.tg) tg.MainButton.setText("ОТПРАВЛЯЕМ...").show();
 
-        // 5. САМ ЗАПРОС
         const response = await fetch(`${API_URL}/api/check_achievement`, {
             method: 'POST',
-            // ВАЖНО: Мы убрали 'Content-Type': 'application/json'. 
-            // При передаче FormData браузер сам установит нужный 'multipart/form-data'.
-            body: formData
+            body: formData,
+            // ВАЖНО: Никаких заголовков Content-Type вручную!
         });
 
-        // 6. ОБРАБОТКА ОТВЕТА
         if (response.ok) {
-            if (window.tg) tg.showAlert(`✅ Успешно!\nЗадание "${formData.get('title')}" отправлено на проверку.`);
-            console.log("Запрос успешно выполнен");
-            
-            // Очищаем инпут после успешной отправки, чтобы избежать дублей
-            const input = document.getElementById("achievementPhotoInput");
-            if(input) input.value = "";
-            
+            const result = await response.json();
+            alert("✅ Успешно отправлено!"); 
+            if (window.tg) tg.close(); // Закрываем мини-апп после успеха
         } else {
             const errorText = await response.text();
-            if (window.tg) tg.showAlert(`❌ Ошибка сервера ${response.status}: ${errorText}`);
+            alert(`❌ Ошибка сервера ${response.status}: ${errorText}`);
         }
 
     } catch (err) {
-        console.error("ПОЛНАЯ ОШИБКА:", err);
-        if (window.tg) tg.showAlert("❌ Произошел сбой: " + err.message);
+        console.error("Критический сбой:", err);
+        alert("❌ Ошибка сети: " + err.message);
     } finally {
-        if (window.tg && tg.MainButton) tg.MainButton.hide();
+        if (window.tg) tg.MainButton.hide();
     }
 }
-
-
 
 
 

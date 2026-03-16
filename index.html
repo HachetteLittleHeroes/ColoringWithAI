@@ -93,13 +93,6 @@
             margin-bottom: 12px;
             cursor: pointer;
         }
-        <input 
-type="file" 
-id="achievementPhotoInput" 
-accept="image/*" 
-multiple 
-style="display:none"
-onchange="handleAchievementPhotos(event)">
         .brand-counter {
             font-size: 14px;
             color: var(--accent);
@@ -2161,13 +2154,9 @@ function filterMarkers() { renderMarkers(markersData); }
 // --- СИСТЕМА ИСКУССТВЕННОГО ИНТЕЛЛЕКТА (AI) ---
 // =========================================================
 
-// Если API_URL уже объявлен выше, вторую строку с 'const' нужно удалить!
-// Оставляем только базовый адрес без /api и без слэша
-window.API_URL = "https://hlhbot-hachettelittleheroes.amvera.io"; 
-
+const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io/api";
 let aiDB = [];
 let userInventory = [];
-
 
 async function initAI() {
     try {
@@ -2286,197 +2275,47 @@ function toggleAdminSet() {
     document.getElementById('adminTrainSet').style.display = (brand === 'Tooli-Art') ? 'block' : 'none';
 }
 
-const brand = document.getElementById('adminTrainBrand').value;
-let num = document.getElementById('adminTrainNum').value.trim();
+function trainAI(event) {
+    const brand = document.getElementById('adminTrainBrand').value;
+    let num = document.getElementById('adminTrainNum').value.trim();
+    if(!num) return;
+    if(brand === 'Tooli-Art') { let setVal = document.getElementById('adminTrainSet').value; num = setVal + " " + num; }
 
-if(!num){
-    if(window.tg && tg.showAlert){ tg.showAlert("Введите номер маркера"); }
-    return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = async function() {
+            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+            canvas.width = img.width; canvas.height = img.height; ctx.drawImage(img,0,0);
+            const imgData = ctx.getImageData(0,0, canvas.width, canvas.height).data;
+            let r=0,g=0,b=0,c=0; for(let i=0; i<imgData.length; i+=4){ r+=imgData[i]; g+=imgData[i+1]; b+=imgData[i+2]; c++; }
+            await fetch(`${API_URL}/train`, { method: 'POST', body: JSON.stringify({ brand: brand, marker: num, rgb: [Math.round(r/c), Math.round(g/c), Math.round(b/c)] }) });
+            initAI();
+        }; img.src = e.target.result;
+    }; reader.readAsDataURL(event.target.files[0]);
 }
 
-if(!event.target.files || !event.target.files[0]){
-    if(window.tg && tg.showAlert){ tg.showAlert("Выберите фото маркера"); }
-    return;
-}
-
-if(brand === 'Tooli-Art'){
-    let setVal = document.getElementById('adminTrainSet').value;
-    num = setVal + " " + num;
-}
-
-const reader = new FileReader();
-
-reader.onload = function(e) {
-
-    const img = new Image();
-
-    img.onload = async function() {
-
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        ctx.drawImage(img,0,0);
-
-        const imgData = ctx.getImageData(0,0, canvas.width, canvas.height).data;
-
-        let r=0;
-        let g=0;
-        let b=0;
-        let c=0;
-
-        for(let i=0; i<imgData.length; i+=4){
-            r+=imgData[i];
-            g+=imgData[i+1];
-            b+=imgData[i+2];
-            c++;
-        }
-
-        const rgb = [
-            Math.round(r/c),
-            Math.round(g/c),
-            Math.round(b/c)
-        ];
-
-        try{
-
-            const res = await fetch(`${API_URL}/train`, {
-                method: 'POST',
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body: JSON.stringify({
-                    brand: brand,
-                    marker: num,
-                    rgb: rgb
-                })
-            });
-
-            const data = await res.json();
-
-            console.log("AI train response:", data);
-
-            if(window.tg && tg.HapticFeedback){
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-
-            if(window.tg && tg.showAlert){
-                tg.showAlert("Маркер успешно добавлен в базу ИИ");
-            }
-
-            if(typeof initAI === "function"){
-                initAI();
-            }
-
-        }catch(err){
-
-            console.error("AI train error:", err);
-
-            if(window.tg && tg.showAlert){
-                tg.showAlert("Ошибка обучения ИИ. Проверьте API.");
-            }
-
-        }
-
-    };
-
-    img.onerror = function(){
-        if(window.tg && tg.showAlert){
-            tg.showAlert("Ошибка загрузки изображения");
-        }
-    };
-
-    img.src = e.target.result;
-};
-
-reader.readAsDataURL(event.target.files[0]);
-}
 async function loadQuarantine() {
-    try{
-
     let res = await fetch(`${API_URL}/quarantine_list`);
-
-    if(!res.ok){
-        throw new Error("API error");
-    }
-
     let data = await res.json();
-
     let html = data.length === 0 ? "<p>Пусто.</p>" : "";
-
     data.forEach(q => {
-
         html += `<div class="row-item" style="align-items:center;">
-            <img src="${q.image}" style="width:50px; border-radius:8px; margin-right:10px; object-fit:cover;">
-            <div style="flex:1;">
-                <b>${q.brand}</b><br>
-                <span style="font-size:14px; color:var(--accent);">№ ${q.correct_marker}</span>
-            </div>
+            <img src="${q.image}" style="width:50px; border-radius:8px; margin-right:10px; object-fit:cover;"> 
+            <div style="flex:1;"><b>${q.brand}</b><br><span style="font-size:14px; color:var(--accent);">№ ${q.correct_marker}</span></div>
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#34c759;" onclick="resolveQ(${q.id}, 'approve')">Одобрить</button>
                 <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#ff3b30;" onclick="resolveQ(${q.id}, 'reject')">Отвергнуть</button>
             </div>
         </div>`;
-
     });
-
     let qList = document.getElementById('adminQuarantineList');
-
-    if(qList){
-        qList.innerHTML = html;
-    }
-
-}catch(err){
-
-    console.error("Quarantine load error:", err);
-
-    let qList = document.getElementById('adminQuarantineList');
-
-    if(qList){
-        qList.innerHTML = "<p>Ошибка загрузки карантина.</p>";
-    }
-
+    if(qList) qList.innerHTML = html;
 }
-}
+
 async function resolveQ(id, action) {
-    try{
-
-    const res = await fetch(`${API_URL}/quarantine_resolve`, {
-        method: 'POST',
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-            id: id,
-            action: action
-        })
-    });
-
-    const data = await res.json();
-
-    console.log("Quarantine resolve:", data);
-
-    if(window.tg && tg.HapticFeedback){
-        tg.HapticFeedback.notificationOccurred('success');
-    }
-
-    if(typeof initAI === "function"){
-        initAI();
-    }
-
-    loadQuarantine();
-
-}catch(err){
-
-    console.error("Resolve quarantine error:", err);
-
-    if(window.tg && tg.showAlert){
-        tg.showAlert("Ошибка обработки карантина");
-    }
-
-}
+    await fetch(`${API_URL}/quarantine_resolve`, { method: 'POST', body: JSON.stringify({ id: id, action: action }) });
+    initAI(); loadQuarantine();
 }
 
 // =========================================================

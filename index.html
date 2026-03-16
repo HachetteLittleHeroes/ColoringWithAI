@@ -1338,61 +1338,66 @@ window.handleAchievementPhotos = async function(event) {
 };
 
 async function uploadAchievementData(files) {
-    // 1. Пробуем найти ID пользователя
-    let userId = "0";
-    const userIdDisplay = document.getElementById('userIdDisplay');
-    
-    if (userIdDisplay) {
-        userId = userIdDisplay.innerText.replace(/[^0-9]/g, '');
-    } else {
-        // Если элемента нет, попробуем взять из параметров URL (стандарт для Telegram)
-        const urlParams = new URLSearchParams(window.location.search);
-        userId = urlParams.get('id') || "0";
+    // 1. Сразу показываем, что процесс пошел (в консоли и через индикатор)
+    console.log("Начинаю процесс отправки...");
+    if (window.tg && tg.MainButton) {
+        tg.MainButton.setText("ОТПРАВКА...");
+        tg.MainButton.show();
     }
 
-    // 2. Формируем данные для отправки
-    const payload = {
-        action: 'check_achievement',
-        achievementId: window.currentAchievementRequest ? window.currentAchievementRequest.id : "unknown",
-        title: window.currentAchievementRequest ? window.currentAchievementRequest.title : "Без названия",
-        user: userId,
-        photoCount: files.length
-    };
-
-    // 3. Пытаемся отправить
     try {
-        // Проверяем, существует ли API_URL
-        if (typeof API_URL === 'undefined') {
-            tg.showAlert("Ошибка: Переменная API_URL не определена в скрипте!");
+        // 2. Получаем ID пользователя
+        let userId = "0";
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        if (userIdDisplay) {
+            userId = userIdDisplay.innerText.replace(/[^0-9]/g, '');
+        } else {
+            const urlParams = new URLSearchParams(window.location.search);
+            userId = urlParams.get('id') || "0";
+        }
+
+        // 3. Проверка API_URL
+        if (typeof API_URL === 'undefined' || !API_URL) {
+            alert("Критическая ошибка: Переменная API_URL не найдена!");
             return;
         }
 
-        const finalUrl = `${API_URL}/api/check_achievement`;
-        
-        const response = await fetch(finalUrl, {
+        const payload = {
+            action: 'check_achievement',
+            achievementId: window.currentAchievementRequest ? window.currentAchievementRequest.id : "unknown",
+            title: window.currentAchievementRequest ? window.currentAchievementRequest.title : "Без названия",
+            user: userId,
+            photoCount: files.length
+        };
+
+        console.log("Отправляю запрос на:", `${API_URL}/api/check_achievement`);
+        console.log("Данные:", payload);
+
+        // 4. САМ ЗАПРОС
+        const response = await fetch(`${API_URL}/api/check_achievement`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
+        // 5. ОБРАБОТКА ОТВЕТА (самое опасное место)
         if (response.ok) {
-            const result = await response.json();
-            if (window.tg) {
-                tg.showAlert(`✅ Успешно отправлено!\nАдмин проверит ваши фото (${files.length} шт.)`);
-            }
+            // Сначала уведомление, потом попытка прочитать JSON
+            if (window.tg) tg.showAlert(`✅ Успешно!\nЗадание "${payload.title}" отправлено.`);
+            console.log("Запрос успешно выполнен");
         } else {
             const errorText = await response.text();
-            if (window.tg) tg.showAlert(`❌ Ошибка сервера (${response.status}): ${errorText}`);
+            if (window.tg) tg.showAlert(`❌ Ошибка сервера ${response.status}: ${errorText}`);
         }
 
-    } catch (e) {
-        console.error("Ошибка Fetch:", e);
-        if (window.tg) tg.showAlert("❌ Ошибка сети: Не удалось достучаться до сервера. Проверьте API_URL.");
+    } catch (err) {
+        console.error("ПОЛНАЯ ОШИБКА:", err);
+        if (window.tg) tg.showAlert("❌ Произошел сбой: " + err.message);
+    } finally {
+        if (window.tg && tg.MainButton) tg.MainButton.hide();
     }
 }
+
 
 
 

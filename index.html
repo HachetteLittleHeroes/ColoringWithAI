@@ -1338,37 +1338,62 @@ window.handleAchievementPhotos = async function(event) {
 };
 
 async function uploadAchievementData(files) {
+    // 1. Пробуем найти ID пользователя
+    let userId = "0";
     const userIdDisplay = document.getElementById('userIdDisplay');
-    const userId = userIdDisplay ? userIdDisplay.innerText.replace(/[^0-9]/g, '') : "0";
     
-    // Формируем данные
+    if (userIdDisplay) {
+        userId = userIdDisplay.innerText.replace(/[^0-9]/g, '');
+    } else {
+        // Если элемента нет, попробуем взять из параметров URL (стандарт для Telegram)
+        const urlParams = new URLSearchParams(window.location.search);
+        userId = urlParams.get('id') || "0";
+    }
+
+    // 2. Формируем данные для отправки
     const payload = {
         action: 'check_achievement',
-        achievementId: window.currentAchievementRequest.id,
-        title: window.currentAchievementRequest.title,
+        achievementId: window.currentAchievementRequest ? window.currentAchievementRequest.id : "unknown",
+        title: window.currentAchievementRequest ? window.currentAchievementRequest.title : "Без названия",
         user: userId,
         photoCount: files.length
     };
 
+    // 3. Пытаемся отправить
     try {
-        // Убедись, что API_URL определен выше в коде
-        const response = await fetch(`${API_URL}/api/check_achievement`, {
+        // Проверяем, существует ли API_URL
+        if (typeof API_URL === 'undefined') {
+            tg.showAlert("Ошибка: Переменная API_URL не определена в скрипте!");
+            return;
+        }
+
+        const finalUrl = `${API_URL}/api/check_achievement`;
+        
+        const response = await fetch(finalUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
             body: JSON.stringify(payload)
         });
 
         if (response.ok) {
-            if (window.tg) tg.showAlert("✅ Успешно! Задание отправлено на проверку админу.");
+            const result = await response.json();
+            if (window.tg) {
+                tg.showAlert(`✅ Успешно отправлено!\nАдмин проверит ваши фото (${files.length} шт.)`);
+            }
         } else {
-            const errorMsg = await response.text();
-            throw new Error(errorMsg || "Ошибка сервера");
+            const errorText = await response.text();
+            if (window.tg) tg.showAlert(`❌ Ошибка сервера (${response.status}): ${errorText}`);
         }
+
     } catch (e) {
-        console.error("Ошибка отправки:", e);
-        if (window.tg) tg.showAlert("❌ Не удалось отправить: " + e.message);
+        console.error("Ошибка Fetch:", e);
+        if (window.tg) tg.showAlert("❌ Ошибка сети: Не удалось достучаться до сервера. Проверьте API_URL.");
     }
 }
+
 
 
 // ---------------------------------------------------------

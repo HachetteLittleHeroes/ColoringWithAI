@@ -1338,7 +1338,6 @@ window.handleAchievementPhotos = async function(event) {
 };
 
 async function uploadAchievementData(files) {
-    // 1. Сразу показываем, что процесс пошел (в консоли и через индикатор)
     console.log("Начинаю процесс отправки...");
     if (window.tg && tg.MainButton) {
         tg.MainButton.setText("ОТПРАВКА...");
@@ -1346,7 +1345,7 @@ async function uploadAchievementData(files) {
     }
 
     try {
-        // 2. Получаем ID пользователя
+        // 1. Получаем ID пользователя
         let userId = "0";
         const userIdDisplay = document.getElementById('userIdDisplay');
         if (userIdDisplay) {
@@ -1356,35 +1355,44 @@ async function uploadAchievementData(files) {
             userId = urlParams.get('id') || "0";
         }
 
-        // 3. Проверка API_URL
+        // 2. Проверка API_URL
         if (typeof API_URL === 'undefined' || !API_URL) {
             alert("Критическая ошибка: Переменная API_URL не найдена!");
             return;
         }
 
-        const payload = {
-            action: 'check_achievement',
-            achievementId: window.currentAchievementRequest ? window.currentAchievementRequest.id : "unknown",
-            title: window.currentAchievementRequest ? window.currentAchievementRequest.title : "Без названия",
-            user: userId,
-            photoCount: files.length
-        };
+        // 3. ИСПРАВЛЕНИЕ: Формируем FormData вместо обычного JSON
+        const formData = new FormData();
+        formData.append('action', 'check_achievement');
+        formData.append('achievementId', window.currentAchievementRequest ? window.currentAchievementRequest.id : "unknown");
+        formData.append('title', window.currentAchievementRequest ? window.currentAchievementRequest.title : "Без названия");
+        formData.append('user', userId);
+        
+        // 4. Добавляем сами файлы в запрос
+        for (let i = 0; i < files.length; i++) {
+            // 'photos' — это ключ, по которому твой бэкенд будет искать файлы
+            formData.append('photos', files[i]); 
+        }
 
         console.log("Отправляю запрос на:", `${API_URL}/api/check_achievement`);
-        console.log("Данные:", payload);
 
-        // 4. САМ ЗАПРОС
+        // 5. САМ ЗАПРОС
         const response = await fetch(`${API_URL}/api/check_achievement`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            // ВАЖНО: Мы убрали 'Content-Type': 'application/json'. 
+            // При передаче FormData браузер сам установит нужный 'multipart/form-data'.
+            body: formData
         });
 
-        // 5. ОБРАБОТКА ОТВЕТА (самое опасное место)
+        // 6. ОБРАБОТКА ОТВЕТА
         if (response.ok) {
-            // Сначала уведомление, потом попытка прочитать JSON
-            if (window.tg) tg.showAlert(`✅ Успешно!\nЗадание "${payload.title}" отправлено.`);
+            if (window.tg) tg.showAlert(`✅ Успешно!\nЗадание "${formData.get('title')}" отправлено на проверку.`);
             console.log("Запрос успешно выполнен");
+            
+            // Очищаем инпут после успешной отправки, чтобы избежать дублей
+            const input = document.getElementById("achievementPhotoInput");
+            if(input) input.value = "";
+            
         } else {
             const errorText = await response.text();
             if (window.tg) tg.showAlert(`❌ Ошибка сервера ${response.status}: ${errorText}`);
@@ -1397,6 +1405,7 @@ async function uploadAchievementData(files) {
         if (window.tg && tg.MainButton) tg.MainButton.hide();
     }
 }
+
 
 
 

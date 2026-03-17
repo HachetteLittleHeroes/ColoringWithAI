@@ -40,3 +40,31 @@ function toggleRewards() {
         el.style.display = 'none';
     }
 }
+function toggleEarnAchetiki() {
+    const el = document.getElementById('earn-section');
+
+    if (el.style.display === 'none') {
+        el.style.display = 'block';
+
+        el.innerHTML = `
+            <div class="category-title">Заработать ашетики</div>
+
+            <div class="card">
+                <p>📸 Загрузить фото</p>
+                <span>+10</span>
+            </div>
+
+            <div class="card">
+                <p>🎯 Выполнить задание</p>
+                <span>+20</span>
+            </div>
+
+            <div class="card">
+                <p>⭐ Достижение</p>
+                <span>+50</span>
+            </div>
+        `;
+    } else {
+        el.style.display = 'none';
+    }
+}

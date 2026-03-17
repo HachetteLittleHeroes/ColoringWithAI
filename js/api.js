@@ -1,148 +1,132 @@
-// ================================
-// api.js — все серверные запросы
-// ================================
+// ==========================================
+// api.js — работа с внешними данными
+// ==========================================
 
-const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io"; // твой сервер
+const MARKERS_CSV_URL = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=';
+const AMVERA_URL = 'https://hlhbot-hachettelittleheroes.amvera.io'; // Ваш бэкенд
 
-// ---------------- User / Профиль ----------------
+// ---------------- МАРКЕРЫ (Google Таблица) ----------------
+async function fetchMarkersFromSheet() {
+    try {
+        const response = await fetch(`${MARKERS_CSV_URL}${new Date().getTime()}`);
+        const csvText = await response.text();
+        
+        const rows = csvText.split('\n').map(row => 
+            row.split(',').map(cell => cell.replace(/"/g, '').trim())
+        );
+
+        let parsedMarkers = [];
+        rows.forEach(row => {
+            for (let i = 0; i < row.length; i++) {
+                let num = row[i];
+                if (num && !isNaN(num) && parseInt(num) > 10) {
+                    let stock = parseInt(row[i+1] || row[i+2] || "0");
+                    parsedMarkers.push({
+                        number: num,
+                        stock: isNaN(stock) ? 0 : stock,
+                        price: 75 
+                    });
+                    i++; 
+                }
+            }
+        });
+        return parsedMarkers.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
+    } catch (error) {
+        console.error("Ошибка загрузки маркеров:", error);
+        return [];
+    }
+}
+
+// ---------------- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ (Amvera) ----------------
 async function getUserData(userId) {
-    const res = await fetch(`${API_URL}/user/${userId}`);
-    if (!res.ok) throw new Error("Не удалось получить данные пользователя");
-    return res.json();
+    try {
+        const response = await fetch(`${AMVERA_URL}/get_user?id=${userId}`);
+        if (!response.ok) throw new Error('Ошибка сети при запросе к Amvera');
+        return await response.json();
+    } catch (error) {
+        console.error("Ошибка при получении профиля с Amvera:", error);
+        // Фоллбек, чтобы интерфейс не ломался, если бэкенд не отвечает
+        return {
+            id: userId,
+            name: localStorage.getItem('user_nickname') || "Пользователь",
+            balance: 0, 
+            avatar: localStorage.getItem('user_avatar') || 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/avatars/av2.png'
+        };
+    }
 }
 
-async function updateUserProfile(userId, profileData) {
-    const res = await fetch(`${API_URL}/user/${userId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profileData)
-    });
-    if (!res.ok) throw new Error("Не удалось обновить профиль");
-    return res.json();
+async function updateUserProfile(userId, data) {
+    try {
+        const response = await fetch(`${AMVERA_URL}/update_user`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                username: data.name,
+            }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            console.log("Данные успешно сохранены на сервере Amvera");
+            if (data.name) localStorage.setItem('user_nickname', data.name);
+            return { success: true };
+        } else {
+            throw new Error(result.error || 'Сервер вернул ошибку');
+        }
+    } catch (error) {
+        console.error("Не удалось сохранить данные на Amvera:", error);
+        // Временное сохранение локально при ошибке сервера
+        if (data.name) localStorage.setItem('user_nickname', data.name);
+        return { success: false, error: error.message };
+    }
 }
 
-// ---------------- Баланс / Аштеты ----------------
-async function getUserBalance(userId) {
-    const res = await fetch(`${API_URL}/balance/${userId}`);
-    if (!res.ok) throw new Error("Не удалось получить баланс");
-    return res.json();
-}
-
-async function addBalance(userId, amount) {
-    const res = await fetch(`${API_URL}/balance/${userId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount })
-    });
-    if (!res.ok) throw new Error("Не удалось добавить очки");
-    return res.json();
-}
-
-// ---------------- Маркеры / Магазин ----------------
-async function getMarkers() {
-    const res = await fetch(`${API_URL}/markers`);
-    if (!res.ok) throw new Error("Не удалось получить маркеры");
-    return res.json();
-}
-
-async function buyMarker(userId, markerId) {
-    const res = await fetch(`${API_URL}/buy`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, markerId })
-    });
-    if (!res.ok) throw new Error("Не удалось купить маркер");
-    return res.json();
-}
-
-// ---------------- Корзина ----------------
+// ---------------- КОРЗИНА И ЗАКАЗЫ ----------------
 async function getCart(userId) {
-    const res = await fetch(`${API_URL}/cart/${userId}`);
-    if (!res.ok) throw new Error("Не удалось получить корзину");
-    return res.json();
-}
-
-async function addToCart(userId, itemId, quantity = 1) {
-    const res = await fetch(`${API_URL}/cart/${userId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId, quantity })
-    });
-    if (!res.ok) throw new Error("Не удалось добавить в корзину");
-    return res.json();
+    // Пока храним локально для теста
+    const savedCart = localStorage.getItem(`cart_${userId}`);
+    return { items: savedCart ? JSON.parse(savedCart) : [] };
 }
 
 async function checkoutCart(userId) {
-    const res = await fetch(`${API_URL}/cart/${userId}/checkout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }
-    });
-    if (!res.ok) throw new Error("Не удалось оформить заказ");
-    return res.json();
+    console.log(`Оформление заказа для ${userId}`);
+    localStorage.removeItem(`cart_${userId}`);
+    return { success: true };
 }
 
-// ---------------- Достижения ----------------
+// ---------------- ДОСТИЖЕНИЯ ----------------
 async function getAchievements(userId) {
-    const res = await fetch(`${API_URL}/achievements/${userId}`);
-    if (!res.ok) throw new Error("Не удалось получить достижения");
-    return res.json();
+    return [
+        { id: 1, title: "Первый шаг", icon: "https://cdn-icons-png.flaticon.com/512/190/190411.png" },
+        { id: 2, title: "Коллекционер", icon: "https://cdn-icons-png.flaticon.com/512/3135/3135783.png" }
+    ];
 }
 
-async function updateAchievement(userId, slotIndex, achievementId) {
-    const res = await fetch(`${API_URL}/achievements/${userId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slotIndex, achievementId })
-    });
-    if (!res.ok) throw new Error("Не удалось обновить достижение");
-    return res.json();
+async function updateAchievement(userId, slot, achievementId) {
+    console.log(`Слот ${slot} обновлен на достижение ${achievementId}`);
+    return { success: true };
 }
 
-// ---------------- Аватар ----------------
-async function uploadAvatar(userId, file) {
-    const formData = new FormData();
-    formData.append("avatar", file);
-    const res = await fetch(`${API_URL}/user/${userId}/avatar`, {
-        method: "POST",
-        body: formData
-    });
-    if (!res.ok) throw new Error("Не удалось загрузить аватар");
-    return res.json();
+// ---------------- ИИ ПАЛИТРА ----------------
+async function processAIImage(userId, file, brand, inventoryOnly) {
+    console.log(`Обработка ИИ: ${brand}, только мой инвентарь: ${inventoryOnly}`);
+    // Имитация задержки сервера
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    return {
+        recommendedMarker: Math.floor(Math.random() * 300) + 10,
+        confidence: 0.95
+    };
 }
 
-// ---------------- ИИ Палитра ----------------
-async function processAIImage(userId, file, brand = "All", inventoryOnly = false) {
-    const formData = new FormData();
-    formData.append("image", file);
-    formData.append("brand", brand);
-    formData.append("inventoryOnly", inventoryOnly);
-    
-    const res = await fetch(`${API_URL}/ai/process/${userId}`, {
-        method: "POST",
-        body: formData
-    });
-    if (!res.ok) throw new Error("Ошибка обработки изображения ИИ");
-    return res.json();
-}
-
-async function trainAIColor(userId, brand, set, markerNumber, file) {
-    const formData = new FormData();
-    formData.append("image", file);
-    formData.append("brand", brand);
-    formData.append("set", set);
-    formData.append("markerNumber", markerNumber);
-    
-    const res = await fetch(`${API_URL}/ai/train/${userId}`, {
-        method: "POST",
-        body: formData
-    });
-    if (!res.ok) throw new Error("Ошибка обучения ИИ");
-    return res.json();
-}
-
-// ---------------- Общая функция fetch ----------------
-async function fetchJSON(url, options = {}) {
-    const res = await fetch(url, options);
-    if (!res.ok) throw new Error(`Ошибка запроса: ${res.status}`);
-    return res.json();
-}
+// ---------------- ГЛОБАЛЬНЫЙ ЭКСПОРТ ----------------
+window.fetchMarkersFromSheet = fetchMarkersFromSheet;
+window.getUserData = getUserData;
+window.updateUserProfile = updateUserProfile;
+window.getCart = getCart;
+window.checkoutCart = checkoutCart;
+window.getAchievements = getAchievements;
+window.updateAchievement = updateAchievement;
+window.processAIImage = processAIImage;

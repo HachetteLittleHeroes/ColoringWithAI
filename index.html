@@ -1406,11 +1406,11 @@ async function uploadAchievementData(files) {
 
         console.log("Отправка на:", `${API_URL}/check_achievement`);
 
-        const response = await fetch(`${API_URL}/api/check_achievement`) {
-            method: 'POST',
-            body: formData,
-            mode: 'cors' 
-        });
+        const response = await fetch(`${API_URL}/check_achievement`, {
+    method: 'POST',
+    body: formData,
+    mode: 'cors' 
+});
 
         if (response.ok) {
             const result = await response.json();

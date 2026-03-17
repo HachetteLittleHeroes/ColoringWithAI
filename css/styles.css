@@ -135,6 +135,12 @@ button, .buy-btn {
     position: relative;
     z-index: 2;
 }
+.card {
+    background: #1c1c1e;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 10px;
+}
 
 /* ===================== Навигация ===================== */
 .nav {

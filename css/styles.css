@@ -227,14 +227,35 @@ button, .buy-btn {
 }
 
 /* ===================== Баланс ===================== */
+/* Улучшенная карточка баланса */
 .balance-card {
-    background: var(--bg-secondary);
+    background: linear-gradient(135deg, #ff9500 0%, #ffcc00 100%); /* Тот самый градиент */
     border-radius: 20px;
-    padding: 20px;
+    padding: 25px 20px;
     width: 100%;
     box-sizing: border-box;
-    margin-top: 0;
+    color: white; /* Текст на оранжевом должен быть белым */
+    box-shadow: 0 10px 20px rgba(255, 149, 0, 0.3);
+    position: relative;
+    overflow: hidden;
 }
+
+/* Добавим легкое свечение иконке книги */
+.gold-book {
+    color: white;
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+}
+
+/* Оживим кнопки внутри профиля */
+.balance-card .buy-btn {
+    backdrop-filter: blur(5px);
+    transition: transform 0.2s;
+}
+
+.balance-card .buy-btn:active {
+    transform: scale(0.98);
+}
+
 
 .balance-amount {
     font-size: 36px;

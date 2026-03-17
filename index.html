@@ -115,11 +115,31 @@
 
 <!-- ================= НАВИГАЦИЯ ================= -->
 <nav class="nav">
-    <button onclick="tab('profile')">Профиль</button>
-    <button onclick="tab('markers')">Маркеры</button>
-    <button onclick="tab('answers')">Ответы</button>
-    <button onclick="tab('mymarkers')">Мои</button>
-    <button onclick="tab('cart')">Корзина</button>
+    <button id="btn-answers" class="nav-btn" onclick="tab('answers')">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Ответы</span>
+    </button>
+
+    <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')">
+        <span class="nav-icon">🎨</span>
+        <span class="nav-label">ИИ палитры</span>
+    </button>
+
+    <button id="btn-markers" class="nav-btn" onclick="tab('markers')">
+        <span class="nav-icon">🖍️</span>
+        <span class="nav-label">Маркеры</span>
+    </button>
+
+    <button id="btn-cart" class="nav-btn" onclick="tab('cart')">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">Корзина</span>
+        <span id="cartBadge" class="badge" style="display:none">0</span>
+    </button>
+
+    <button id="btn-profile" class="nav-btn active" onclick="tab('profile')">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Профиль</span>
+    </button>
 </nav>
 
 <!-- ================= JS ================= -->

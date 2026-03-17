@@ -1,80 +1,143 @@
-/* ========================
-   Основные стили
-======================== */
+/* ===================== Общие переменные ===================== */
 :root {
-    --bg: #1e1e1e;
-    --bg-secondary: #2c2c2c;
-    --text: #fff;
+    --bg: #121212;
+    --bg-secondary: #1E1E1E;
+    --text: #FFFFFF;
     --accent: #ff9500;
-    --secondary: #555;
-    --gray: #aaa;
-    --gold: #ffd700;
+    --secondary: #2C2C2C;
+    --gray: #888888;
+    --gold: #FFD700;
 }
 
+/* ===================== Сброс ===================== */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
 }
 
 body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: var(--bg);
     color: var(--text);
-    height: 100vh;
-    overflow: hidden;
-    transition: background 0.3s, color 0.3s;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
+/* ===================== Страницы ===================== */
 .page {
     display: none;
-    height: calc(100vh - 60px);
-    overflow-y: auto;
-    padding-bottom: 80px;
-    transition: opacity 0.3s;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 .page.active {
     display: block;
-    opacity: 1;
 }
 
+/* ===================== Заголовки ===================== */
 .header {
+    font-weight: 700;
     font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-    padding: 15px 0;
-    border-bottom: 1px solid var(--secondary);
+    margin-bottom: 15px;
+    color: var(--text);
 }
 
-/* ========================
-   Навигация
-======================== */
+/* ===================== Сетки ===================== */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+}
+
+.organizer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.reward-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+/* ===================== Инпуты и селекты ===================== */
+input[type="text"], select {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--secondary);
+    background: var(--bg-secondary);
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+/* ===================== Кнопки ===================== */
+button, .buy-btn {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.buy-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background: var(--accent);
+    color: var(--text);
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: 0.2s;
+    text-align: center;
+}
+
+.buy-btn:hover {
+    opacity: 0.9;
+}
+
+.buy-btn.rounded-pill {
+    border-radius: 50px;
+}
+
+/* ===================== Навигация ===================== */
 .nav {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 60px;
-    background: var(--bg-secondary);
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    background: var(--bg-secondary);
     border-top: 1px solid var(--secondary);
-    z-index: 1000;
-    transition: background 0.3s;
+    z-index: 100;
 }
 
 .nav-btn {
+    flex: 1;
+    padding: 10px 0;
+    font-size: 12px;
+    color: var(--gray);
     background: none;
     border: none;
-    color: var(--gray);
-    font-size: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    cursor: pointer;
-    transition: color 0.3s;
+    justify-content: center;
 }
 
 .nav-btn.active {
@@ -82,310 +145,254 @@ body {
 }
 
 .nav-icon {
-    font-size: 20px;
+    font-size: 18px;
+    margin-bottom: 2px;
 }
 
 .badge {
-    position: absolute;
-    top: 2px;
-    right: 10px;
+    display: inline-block;
     background: red;
     color: #fff;
+    border-radius: 50%;
     font-size: 10px;
     padding: 2px 5px;
-    border-radius: 50%;
+    margin-left: 2px;
 }
 
-/* ========================
-   Кнопки
-======================== */
-.buy-btn {
-    background: var(--accent);
-    color: #000;
-    border: none;
-    padding: 12px;
-    border-radius: 12px;
+/* ===================== Профиль ===================== */
+.profile-hero {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 20px 10px 20px;
+    background: var(--bg-secondary);
+    border-radius: 20px;
+}
+
+.avatar-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0;
+}
+
+.avatar-preview {
+    width: 100%;
+    height: 100%;
     cursor: pointer;
-    font-weight: bold;
-    text-align: center;
-    transition: opacity 0.2s, transform 0.2s;
 }
 
-.buy-btn:hover {
-    opacity: 0.9;
-    transform: scale(1.03);
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    z-index: 5;
 }
 
-.rounded-pill {
-    border-radius: 50px;
+.edit-avatar-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: var(--accent);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
 }
 
-/* ========================
-   Списки и сетки
-======================== */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-    gap: 10px;
-    padding: 10px;
+.profile-info-right {
+    flex-grow: 1;
 }
 
-.achievements-grid, .reward-grid, .inventory-grid, .organizer-grid, .brand-grid-modal {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 10px;
+.profile-username {
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
 }
 
-/* ========================
-   Карточки и элементы
-======================== */
-.balance-card, .card {
+.profile-status {
+    font-size: 14px;
+    color: var(--gray);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: var(--secondary);
+    display: inline-block;
+    margin-top: 2px;
+}
+
+/* ===================== Баланс ===================== */
+.balance-card {
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0;
+}
+
+.balance-amount {
+    font-size: 36px;
+    margin: 10px 0;
+    font-weight: 800;
+}
+
+/* ===================== Модальные окна ===================== */
+.modal-overlay, .custom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content, .custom-modal {
     background: var(--bg-secondary);
     border-radius: 20px;
     padding: 15px;
-    margin: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    transition: transform 0.2s;
+    max-width: 90%;
+    max-height: 80%;
+    overflow-y: auto;
 }
 
-.balance-card:hover, .card:hover {
-    transform: translateY(-2px);
+.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: var(--gray);
+    cursor: pointer;
+}
+
+/* ===================== Достижения ===================== */
+.top-slot {
+    text-align: center;
+    flex: 1;
+}
+
+.top-slot div {
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--gray);
+}
+
+.top-slot div i {
+    color: var(--gray);
+}
+
+.top-slot div + div {
+    font-size: 10px;
+    color: var(--gray);
+}
+
+/* ===================== Магазин наград ===================== */
+.reward-card {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.reward-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.reward-info {
+    padding: 5px 0;
+    font-size: 12px;
+    color: var(--text);
+}
+
+.spend-btn {
+    background: var(--accent);
+    color: var(--text);
+    border: none;
+    border-radius: 12px;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+/* ===================== AI Палитра ===================== */
+#aiMultipleResultsContainer {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* ===================== Scrollbars ===================== */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--secondary);
+}
+
+/* ===================== Остальные элементы ===================== */
+.brand-grid-modal, #achievementsGrid, #modalBrandGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 8px;
 }
 
 .row-item {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.row-item:last-child {
-    border-bottom: none;
-}
-
-.gold-book {
-    color: var(--gold);
-}
-
-.reward-card, .marker-card, .cart-item, .organizer-card, .organizer-cell, .brand-card {
-    background: var(--bg-secondary);
-    padding: 10px;
-    border-radius: 12px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 5px;
-    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 4px 0;
 }
 
-.reward-card:hover, .marker-card:hover, .cart-item:hover, .organizer-card:hover, .organizer-cell:hover, .brand-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+.category-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
-/* ========================
-   Профиль
-======================== */
-.profile-hero {
+.avatar-grid-presets {
     display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 15px;
-}
-
-.avatar-container {
-    position: relative;
-    width: 60px;
-    height: 60px;
-}
-
-.avatar-preview {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    border: 3px solid var(--accent);
-    transition: transform 0.2s, border-color 0.2s;
-}
-
-.avatar-preview:hover {
-    transform: scale(1.05);
-    border-color: var(--gold);
-}
-
-.avatar-editor {
-    background: var(--bg-secondary);
-    border-radius: 20px;
-    padding: 10px;
-    transition: max-height 0.3s ease-out;
-}
-
-.avatar-preset {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
-    object-fit: cover;
-    transition: transform 0.2s;
-}
-
-.avatar-preset:hover {
-    transform: scale(1.1);
-}
-
-/* ========================
-   Органайзеры
-======================== */
-.organizer-grid {
-    display: flex;
-    flex-wrap: wrap;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
-.organizer-card, .organizer-cell {
-    background: var(--bg-secondary);
-    border-radius: 12px;
-    padding: 15px;
-    cursor: pointer;
-    text-align: center;
-    flex: 1 0 30%;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.organizer-card:hover, .organizer-cell:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-}
-
-/* ========================
-   Модальные окна
-======================== */
-.custom-modal-overlay, .modal-overlay {
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.custom-modal-overlay.show, .modal-overlay.show {
-    display: flex;
-    opacity: 1;
-}
-
-.custom-modal, .modal-content {
-    background: var(--bg-secondary);
-    border-radius: 20px;
-    padding: 20px;
-    width: 90%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    animation: slideDown 0.3s ease-out;
-}
-
-.modal-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.close-btn {
+.inventory-grid div, .organizer-grid div, .brand-grid-modal div, .achievements-grid div {
     background: var(--secondary);
-    color: var(--text);
-    border: none;
-    padding: 4px 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.close-btn:hover {
-    background: var(--accent);
-}
-
-/* ========================
-   Анимации
-======================== */
-@keyframes slideDown {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* ========================
-   AI Палитра
-======================== */
-#aiMultipleResultsContainer {
+    border-radius: 10px;
+    height: 60px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
 }
 
-/* ========================
-   Книги и просмотр
-======================== */
-#viewer {
-    display: none;
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    background: rgba(0,0,0,0.95);
-    z-index: 2000;
-    flex-direction: column;
-    animation: fadeIn 0.3s ease-out;
-}
-
+/* ===================== Картинки книг ===================== */
 #viewer-content img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-}
-
-/* ========================
-   Топ достижения
-======================== */
-.top-slot {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.top-slot div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* ========================
-   Прочее
-======================== */
-input[type=text], select {
-    width: 100%;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid var(--secondary);
-    background: var(--bg);
-    color: var(--text);
-    transition: border-color 0.2s;
-}
-
-input[type=text]:focus, select:focus {
-    border-color: var(--accent);
-    outline: none;
-}
-
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }

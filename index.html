@@ -1338,72 +1338,113 @@ window.handleAchievementPhotos = async function(event) {
 };
 // --- УБЕДИСЬ, ЧТО API_URL ИСПОЛЬЗУЕТ HTTPS И НЕ ИМЕЕТ СЛЭША В КОНЦЕ ---
 // Пример: const API_URL = "https://your-app-name.amvera.io"; 
-const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io";
+// --- ИНИЦИАЛИЗАЦИЯ И КОНФИГУРАЦИЯ ---
+let tg = null;
 
+// Безопасная инициализация Telegram Mini App
+try {
+    if (window.Telegram && window.Telegram.WebApp) {
+        tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        console.log("Telegram WebApp инициализирован");
+    } else {
+        console.warn("Telegram WebApp не найден, работаем в режиме браузера");
+    }
+} catch (e) {
+    console.error("Ошибка при инициализации Telegram:", e);
+}
+
+// Ссылка строго без /api и без слэша в конце!
+const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io"; 
+
+let aiDB = [];
+let userInventory = [];
+
+// --- ФУНКЦИЯ ЗАГРУЗКИ БАЗЫ ИИ ---
+async function loadAIDB() {
+    try {
+        const response = await fetch(`${API_URL}/api/ai_db`);
+        if (response.ok) {
+            aiDB = await response.json();
+            console.log("База ИИ успешно загружена, записей:", aiDB.length);
+        } else {
+            console.error("Сервер ответил ошибкой при загрузке ИИ:", response.status);
+        }
+    } catch (e) {
+        console.error("Критическая ошибка при загрузке базы ИИ:", e);
+    }
+}
+
+// --- ФУНКЦИЯ ОТПРАВКИ ФОТО (ПОЛНЫЙ КОД) ---
 async function uploadAchievementData(files) {
+    // Проверка наличия файлов
     if (!files || files.length === 0) {
-        alert("Выберите хотя бы одно фото");
+        if (tg) tg.showAlert("Выберите хотя бы одно фото");
+        else alert("Выберите хотя бы одно фото");
         return;
     }
 
-    // Показываем индикатор загрузки в Telegram
-    if (window.tg) {
+    // Показываем кнопку загрузки, если tg инициализирован
+    if (tg && tg.MainButton) {
         tg.MainButton.setText("ОТПРАВКА ФОТО...").show();
     }
 
     try {
         const formData = new FormData();
-        
-        // 1. Собираем данные
         const urlParams = new URLSearchParams(window.location.search);
         const userId = urlParams.get('id') || "0";
-        const title = window.currentAchievementRequest ? window.currentAchievementRequest.title : "Задание";
-        const level = window.currentAchievementRequest ? window.currentAchievementRequest.level : 1;
+        
+        // Получаем данные задания
+        const title = (window.currentAchievementRequest && window.currentAchievementRequest.title) 
+                      ? window.currentAchievementRequest.title : "Задание";
+        const level = (window.currentAchievementRequest && window.currentAchievementRequest.level) 
+                      ? window.currentAchievementRequest.level : 1;
 
         formData.append('user', userId);
         formData.append('title', title);
         formData.append('level', level);
 
-        // 2. Добавляем файлы
+        // Добавляем файлы в FormData
         for (let i = 0; i < files.length; i++) {
             formData.append('photos', files[i]);
         }
 
-        console.log("Отправка на:", `${API_URL}/api/check_achievement`);
+        console.log("Отправка запроса на:", `${API_URL}/api/check_achievement`);
 
-        // 3. Выполняем запрос
+        // Выполнение POST запроса
         const response = await fetch(`${API_URL}/api/check_achievement`, {
             method: 'POST',
             body: formData,
-            // ВАЖНО: Заголовки (Headers) НЕ УКАЗЫВАЕМ, 
-            // браузер сам подставит multipart/form-data с нужным boundary
-            mode: 'cors' 
+            mode: 'cors'
         });
 
         if (response.ok) {
             const result = await response.json();
-            if (window.tg) {
+            if (tg) {
                 tg.showAlert("✅ Фото успешно отправлено на проверку!");
                 tg.MainButton.hide();
+            } else {
+                alert("✅ Фото успешно отправлено!");
             }
-            // Очищаем поле выбора, чтобы можно было отправить снова
-            const input = document.getElementById('achievementPhotoInput');
-            if (input) input.value = "";
         } else {
             const errorText = await response.text();
-            throw new Error(`Сервер ответил ${response.status}: ${errorText}`);
+            console.error("Ошибка сервера:", errorText);
+            if (tg) tg.showAlert(`Ошибка сервера: ${response.status}`);
+            else alert(`Ошибка сервера: ${response.status}`);
         }
-
     } catch (err) {
-        console.error("Ошибка отправки:", err);
-        if (window.tg) {
-            tg.showAlert("❌ Ошибка при отправке: " + err.message);
+        console.error("🚨 Критическая ошибка сети:", err);
+        if (tg) tg.showAlert("Ошибка сети: " + err.message);
+        else alert("Ошибка сети: " + err.message);
+    } finally {
+        // Скрываем кнопку в любом случае
+        if (tg && tg.MainButton) {
             tg.MainButton.hide();
-        } else {
-            alert("Ошибка: " + err.message);
         }
     }
 }
+
 
 
 

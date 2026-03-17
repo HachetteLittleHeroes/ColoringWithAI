@@ -2027,7 +2027,7 @@ function renderBrandInventory() {
         let locationHtml = '';
 
         if (isOwned) {
-            let locationStr = findMarkerLocation(mId);
+            let locationStr = typeof findMarkerLocation === "function" ? findMarkerLocation(mId) : null;
             if (locationStr) {
                 locationHtml = `<div style="font-size:10px; color:#ff9500; margin-top:6px; line-height:1.2; word-wrap:break-word;">📍 ${locationStr}</div>`;
             }
@@ -2056,8 +2056,8 @@ async function massToggle(isAdded) {
                 } else {
                     userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
                     organizers.forEach(org => { org.cells.forEach(cell => { cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_")); }); });
-                    saveOrganizers();
-                    renderOrganizers();
+                    if (typeof saveOrganizers === "function") saveOrganizers();
+                    if (typeof renderOrganizers === "function") renderOrganizers();
                 }
 
                 let userId = document.getElementById('userIdDisplay')?.innerText || "0";
@@ -2085,10 +2085,10 @@ function tab(id) {
     let btnEl = document.getElementById('btn-' + id);
     if(btnEl) btnEl.classList.add('active');
     
-    if (id === 'shop') loadMarkers();
-    if (id === 'cart') renderCart();
-    if (id === 'mymarkers') { closeBrandView(); renderBrandsList(); renderOrganizers(); }
-    if (id === 'profile' || id === 'tasks') renderStatusQuests(); 
+    if (id === 'shop' && typeof loadMarkers === "function") loadMarkers();
+    if (id === 'cart' && typeof renderCart === "function") renderCart();
+    if (id === 'mymarkers') { closeBrandView(); renderBrandsList(); if (typeof renderOrganizers === "function") renderOrganizers(); }
+    if ((id === 'profile' || id === 'tasks') && typeof renderStatusQuests === "function") renderStatusQuests(); 
     
     if(window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
@@ -2101,7 +2101,9 @@ let aiDB = [], userInventory = [], currentViewingBrand = null;
 async function initAI() {
     try {
         let res = await fetch(`${API_URL}/ai_db`);
-        aiDB = (await res.json())?.data || [];
+        let data = await res.json();
+        aiDB = data?.data || [];
+        
         let userId = document.getElementById('userIdDisplay')?.innerText || "0";
         let invRes = await fetch(`${API_URL}/inventory?user_id=${userId}`);
         userInventory = await invRes.json() || [];
@@ -2109,8 +2111,10 @@ async function initAI() {
 
     // Admin Panel
     if(document.getElementById('userIdDisplay')?.innerText=="496779756") {
-        document.getElementById('aiAdminPanel')?.style.display="block";
-        document.getElementById('adminTaskPanel')?.style.display="block";
+        const aiAdminPanel = document.getElementById('aiAdminPanel');
+        const adminTaskPanel = document.getElementById('adminTaskPanel');
+        if (aiAdminPanel) aiAdminPanel.style.display="block";
+        if (adminTaskPanel) adminTaskPanel.style.display="block";
         if(typeof loadQuarantine==="function") loadQuarantine();
         if(typeof loadAdminTasks==="function") loadAdminTasks();
     }
@@ -2160,8 +2164,6 @@ function processAI(event) {
     });
 }
 
-// =========================================================
-// --- ПОЛНОСТЬЮ РАБОТАЮЩАЯ ОБРАТНАЯ СВЯЗЬ / КОРРЕКЦИЯ ---
 function predictColorMultiple(rgb,imgB64,resDiv,index){
     if(aiDB.length===0){resDiv.innerHTML="<p>База ИИ пуста.</p>"; return;}
     let searchBrand=document.getElementById('aiSearchBrand')?.value||"All";
@@ -2231,14 +2233,13 @@ async function submitCorrection(index,brand){
         initAI();
     }catch(e){console.error(e); alert("Ошибка отправки корректировки");}
 }
-</script>
+
 function toggleAdminSet() {
     const brand = document.getElementById('adminTrainBrand').value;
     const setElem = document.getElementById('adminTrainSet');
     if (setElem) setElem.style.display = (brand === 'Tooli-Art') ? 'block' : 'none';
 }
 
-// ИСПРАВЛЕННЫЙ БЛОК ОБУЧЕНИЯ ИИ (ОТОРВАННЫЕ КУСКИ ВЛОЖЕНЫ В ФУНКЦИЮ)
 async function trainAI(event) {
     const brand = document.getElementById('adminTrainBrand').value;
     let num = document.getElementById('adminTrainNum').value.trim();
@@ -2261,6 +2262,11 @@ async function trainAI(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         const img = new Image();
+        
+        img.onerror = function() {
+            if (window.tg && window.tg.showAlert) window.tg.showAlert("Ошибка загрузки изображения");
+        };
+
         img.onload = async function() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
@@ -2292,18 +2298,11 @@ async function trainAI(event) {
                 if (window.tg && window.tg.showAlert) window.tg.showAlert("Ошибка обучения ИИ");
             }
         };
-        
-        // Обработчик ошибки загрузки картинки теперь правильно привязан к img
-        img.onerror = function(){
-            if(window.tg && window.tg.showAlert){
-                window.tg.showAlert("Ошибка загрузки изображения");
-            }
-        };
-
         img.src = e.target.result;
     };
     reader.readAsDataURL(event.target.files[0]);
 }
+
 async function loadQuarantine() {
     try {
         let res = await fetch(`${API_URL}/quarantine_list`);
@@ -2341,26 +2340,16 @@ async function resolveQ(id, action) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id: id, action: action })
         });
-        const data = await res.json();
         
-        if (window.tg && window.tg.HapticFeedback) {
-            window.tg.HapticFeedback.notificationOccurred('success');
-        }
-        
-        if (typeof initAI === "function") {
-            initAI();
-        }
-        
+        if (window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
+        if (typeof initAI === "function") initAI();
         loadQuarantine();
 
     } catch (err) {
         console.error("Resolve quarantine error:", err);
-        if (window.tg && window.tg.showAlert) {
-            window.tg.showAlert("Ошибка обработки карантина");
-        }
+        if (window.tg && window.tg.showAlert) window.tg.showAlert("Ошибка обработки карантина");
     }
 }
-
 
 // =========================================================
 // --- ЛОГИКА ДОСТИЖЕНИЙ В ПРОФИЛЕ ---
@@ -2380,11 +2369,11 @@ function renderFullAchievementsList() {
             <span onclick="closePicker()" style="color:var(--accent); font-weight:bold; cursor:pointer;">Закрыть</span>
         </div>
         <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; padding:15px; max-height:400px; overflow-y:auto;">
-            ${achievementsConfig.map(ach => {
+            ${typeof achievementsConfig !== "undefined" ? achievementsConfig.map(ach => {
                 let current = 0;
-                if (ach.type === 'admin_check') current = window.userProfileData.stats[ach.statKey] || 0;
+                if (ach.type === 'admin_check' && window.userProfileData && window.userProfileData.stats) current = window.userProfileData.stats[ach.statKey] || 0;
                 if (ach.type === 'auto_balance') current = userBalance;
-                if (ach.type === 'auto_name') current = window.userProfileData.stats.nameChanged || 0;
+                if (ach.type === 'auto_name' && window.userProfileData && window.userProfileData.stats) current = window.userProfileData.stats.nameChanged || 0;
                 
                 const isEarned = current >= ach.target;
                 const filterStyle = isEarned ? '' : 'filter: grayscale(1) opacity(0.4);';
@@ -2400,7 +2389,7 @@ function renderFullAchievementsList() {
                     </div>
                     <div style="font-size:10px; color:${isEarned ? 'var(--text)' : 'var(--gray)'}; font-weight:500;">${ach.title}</div>
                 </div>`;
-            }).join('')}
+            }).join('') : ''}
         </div>`;
 }
 
@@ -2421,6 +2410,7 @@ function closePicker() {
 
 function selectForTop(achId, achImg, achTitle, achDesc) {
     if (currentSlot !== null) {
+        if (!window.userProfileData) window.userProfileData = {};
         if (!window.userProfileData.topAchievements) window.userProfileData.topAchievements = [null, null, null];
         window.userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
         updateSlotUI(currentSlot, achImg, achTitle, achDesc);
@@ -2437,7 +2427,7 @@ function updateSlotUI(index, img, title, desc) {
     if(slot) {
         slot.innerHTML = `
         <div onclick="showAchDescription('${title}', '${desc}', '${img}')" style="cursor:pointer;text-align:center;">
-        <img src="${img}" style="width:60px; height:60px; border-radius:18px; object-fit:cover; border:3px solid gold; box-shadow:0 0 10px rgba(255,215,0,0.6);">
+        <img src="${img}" style="width:60px; height:60px; border-radius:18px; object-fit:cover; border:3px solid #ff9500; box-shadow:0 0 10px rgba(255,149,0,0.4);">
         <div style="font-size:10px; color:white; margin-top:5px; font-weight:bold; overflow:hidden; text-overflow:ellipsis;">${title}</div>
         </div>
         <div onclick="openAchievementPicker(${index})" style="font-size:9px;color:var(--accent);margin-top:4px;cursor:pointer;">Изменить</div>`;
@@ -2529,13 +2519,6 @@ window.onload = () => {
 <div id="fullAchievementsList" style="display:none; background:var(--bg); border-radius:20px 20px 0 0; position:fixed; bottom:0; left:0; width:100%; z-index:1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);">
 </div>
 
-<input type="file" id="achievementPhotoInput" multiple accept="image/*" style="display:none" onchange="handleAchievementPhotos(event)">
-    <input 
-type="file" 
-id="achievementPhotoInput" 
-accept="image/*" 
-multiple 
-style="display:none"
-onchange="handleAchievementPhotos(event)">
+<input type="file" id="achievementPhotoInput" multiple accept="image/*" style="display:none" onchange="typeof handleAchievementPhotos === 'function' ? handleAchievementPhotos(event) : null">
 </body>
 </html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html> 
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   
+</head>
+<body>
+
+    <div id="answers" class="page active">
+        <div class="header">Ответы</div>
+        <input type="text" id="bookSearch" placeholder="Поиск тома..." oninput="filterBooks()">
+        <div id="booksGrid" class="grid"></div>
+    </div>
+
+    <div id="shop" class="page">
+        <div class="header">Маркеры</div>
+        <div class="category-title" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px;">
+            <span>GuangNa</span>
+            <span style="color: var(--accent); text-transform: none; font-size: 15px;">75 руб./шт.</span>
+        </div>
+        <input type="text" id="markerSearch" placeholder="Поиск номера..." oninput="filterMarkers()">
+        <div id="markersList"></div>
+    </div>
+
+    <div id="cart" class="page">
+        <div class="header">Корзина</div>
+        <div id="cartList"></div>
+        <button id="mainOrderBtn" class="buy-btn rounded-pill" style="padding: 18px; margin-top:20px; display: none;" onclick="checkout()">Оформить заказ</button>
+    </div>
+
+    <div id="mymarkers" class="page">
+        <div class="header">Мои маркеры 🎒</div>
+        
+        <div id="organizerSection" style="margin-bottom: 25px;">
+            <div class="category-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Мои органайзеры 📦</span>
+                <button class="buy-btn" style="width:auto; padding:5px 12px; font-size:12px; border-radius:8px;" onclick="showAddOrganizer()">+ Новый</button>
+            </div>
+            <div id="organizersList" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                </div>
+        </div>
+
+        <div id="brandsMainView">
+            <div id="brandsGridContainer">
+                </div>
+        </div>
+
+        <div id="brandDetailView" style="display:none;">
+            <div style="display:flex; align-items:center; margin-bottom:15px;">
+                <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px; background:var(--secondary); color:var(--text);" onclick="closeBrandView()">← Назад</button>
+                <h3 id="currentBrandTitle" style="margin:0 0 0 15px;"></h3>
+            </div>
+            
+            <input type="text" id="brandSearchInput" placeholder="Поиск номера в бренде..." oninput="filterBrandInventory()">
+            
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <button class="buy-btn" style="font-size:12px; border-radius:10px; padding:10px;" onclick="massToggle(true)">Добавить весь бренд</button>
+                <button class="buy-btn" style="font-size:12px; border-radius:10px; padding:10px; background:#ff3b30;" onclick="massToggle(false)">Убрать весь бренд</button>
+            </div>
+            
+            <div id="brandInventoryList" class="inventory-grid"></div>
+        </div>
+    </div>
+    <div id="profile" class="page">
+        <div class="header" style="text-align: left; padding-left: 20px; font-weight: 800; font-size: 24px;">Профиль</div>
+
+        <div class="profile-hero" style="display: flex; align-items: center; gap: 20px; padding: 20px 20px 10px 20px;">
+    <div class="avatar-container" style="margin: 0;">
+        <div class="avatar-preview" id="mainAvatarPreview" onclick="toggleAvatarEditor()">
+            <img id="user-avatar" 
+                 src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/avatars/av2.png"
+                 style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; z-index: 5;">
+        </div>
+        <div class="edit-avatar-btn" onclick="toggleAvatarEditor()" style="display:none;"><i class="fas fa-pen"></i></div>
+    </div>
+
+   <div class="profile-info-right" style="flex-grow: 1;">
+    
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+        <h2 class="profile-username" id="displayUsername"
+            style="margin:0; font-size:20px; cursor:pointer;"
+            onclick="changeNickname()">
+            Без имени
+        </h2>
+
+        <i class="fas fa-pen"
+           style="color:var(--gray); font-size:14px; cursor:pointer;"
+           onclick="changeNickname()">
+        </i>
+    </div>
+
+    <!-- ПЛАШКА СТАТУСА -->
+    <div id="currentStatus"
+         class="profile-status"
+         onclick="openStatusSelect()">
+         Без статуса
+    </div>
+
+</div>
+</div>
+
+
+        <div class="avatar-editor" id="avatarEditorBlock" style="display:none; padding: 0 10px; margin-bottom: 15px;">
+            <div class="category-title" style="margin-top: 0; text-align: center;">Выбор аватара</div>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
+                <button class="buy-btn rounded-pill" style="background: var(--bg); color: var(--text); border: 2px solid var(--accent); padding: 10px; font-size: 14px;" onclick="document.getElementById('customAvatarInput').click()">📷 Загрузить свое фото</button>
+            </div>
+            <div class="avatar-grid-presets" id="avatarPresetsGrid"></div>
+            <button class="buy-btn rounded-pill" style="margin-top: 10px;" onclick="toggleAvatarEditor()">Готово</button>
+        </div>
+
+        <div id="loyaltyBlock" style="width: 100%; padding: 0 5px; box-sizing: border-box;"> 
+            <div class="balance-card" style="margin-top:0; padding: 25px 20px; border-radius: 20px; width: 100%; box-sizing: border-box;">
+                <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
+                <div class="balance-amount" style="font-size: 36px; margin: 10px 0; font-weight: 800;"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
+                <p style="margin:0; font-weight: 500; font-size: 14px; margin-bottom: 15px;">ашетиков накоплено</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="buy-btn" style="background:rgba(255,255,255,0.25); border:1px solid white; border-radius:12px; padding:12px; width: 100%; font-size: 14px; font-weight: bold; color: white;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
+               <button class="buy-btn" 
+style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.5); border-radius:12px; padding:12px; width:100%; font-size:14px; font-weight:bold; color:white;" 
+onclick="toggleEarnAchetiki()">
+Заработать ашетики 💰
+</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="rewards-section" style="display: none; padding: 0 10px; margin-top: 15px;">
+            <div class="category-title">Магазин наград</div>
+            <div class="reward-grid">
+                <div class="reward-card">
+                    <img src="bonusi/b1.png">
+                    <div class="reward-info"><b>Книжная закладка Hachette (любая)</b></div>
+                    <button class="spend-btn" onclick="buyReward('Закладка Hachette', 750)">750 <i class="fas fa-book-open"></i></button>
+                </div>
+                <div class="reward-card">
+                    <img src="bonusi/b2.png">
+                    <div class="reward-info"><b>Petites Poupees</b></div>
+                    <button class="spend-btn" onclick="buyReward('Petites Poupees', 950)">950 <i class="fas fa-book-open"></i></button>
+                </div>
+                <div class="reward-card">
+                    <img src="bonusi/b3.png">
+                    <div class="reward-info"><b>Трекер от Hachette</b></div>
+                    <button class="spend-btn" onclick="buyReward('Трекер Hachette', 950)">950 <i class="fas fa-book-open"></i></button>
+                </div>
+                <div class="reward-card">
+                    <img src="bonusi/b4.png">
+                    <div class="reward-info"><b>Спиртовая раскраска (любая)</b></div>
+                    <button class="spend-btn" onclick="buyReward('Спиртовая раскраска', 1250)">1250 <i class="fas fa-book-open"></i></button>
+                </div>
+                <div class="reward-card" style="grid-column: span 2;">
+                    <img src="bonusi/b5.png" style="height: 140px;">
+                    <div class="reward-info"><b>Hachette Coloriages (А4 том любой)</b></div>
+                    <button class="spend-btn" onclick="buyReward('Hachette Coloriages A4', 1500)">1500 <i class="fas fa-book-open"></i></button>
+                </div>
+            </div>
+            <button class="buy-btn" style="background:none; color:var(--gray); margin-top:15px; font-size: 14px;" onclick="toggleRewards()">← Скрыть магазин</button>
+        </div>
+
+        <div id="real-loyalty-info" style="display:none; margin-top: 15px; padding: 0 10px; animation: slideDown 0.3s ease-out;">
+            <div class="category-title" style="margin-top:10px;">Программа лояльности</div>
+            <div class="row-item"><span>Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
+            <div class="row-item"><span>Бонус за отзыв</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
+            <div class="row-item"><span>Бонус за покупку от 3000₽</span><b class="gold-book">+20 <i class="fas fa-book-open"></i></b></div>
+            <div class="row-item">
+                <div style="display:flex; flex-direction:column;">
+                    <span>Бонусы за крупные покупки</span>
+                    <small style="color:var(--gray); font-size:11px;">от 5к - 30 / от 7.5к - 40 / от 10к - 50</small>
+                </div>
+                <b class="gold-book"><i class="fas fa-book-open"></i></b>
+            </div>
+            <div class="row-item"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
+            <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
+        </div>
+
+      <div class="brand-button" onclick="openTasks()" style="margin-top: 25px; margin-bottom: 20px;">
+    <span>📋 Задания</span>
+    <span class="brand-counter">Развернуть</span>
+</div>
+      <div id="questsListContainer" style="display:none; margin-bottom: 25px;"></div>
+
+       <div class="category-title" style="margin-top: 25px; text-align: center;">Достижения</div>
+
+<div class="achievements-container" style="padding: 0 5px; box-sizing: border-box;">
+    <div class="balance-card" style="margin-top:0; padding: 20px; border-radius: 20px; width: 100%; box-sizing: border-box; background: var(--bg-secondary); border: 1px solid rgba(255,255,255,0.1);">
+        
+        <p style="margin:0 0 15px 0; opacity:0.7; font-size: 12px; text-align: center; letter-spacing: 1px;">ТОП ДОСТИЖЕНИЙ (Кликни, чтобы выбрать)</p>
+        
+        <div style="display: flex; justify-content: space-around; gap: 10px; margin-bottom: 5px;">
+            <div class="top-slot" onclick="openAchievementPicker(0)" id="slot-0" style="text-align: center; flex: 1;">
+                <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 15px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--gray);">
+                    <i class="fas fa-plus" style="color: var(--gray);"></i>
+                </div>
+                <div style="font-size: 10px; color: var(--gray);">Пусто</div>
+            </div>
+            <div class="top-slot" onclick="openAchievementPicker(1)" id="slot-1" style="text-align: center; flex: 1;">
+                <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 15px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--gray);">
+                    <i class="fas fa-plus" style="color: var(--gray);"></i>
+                </div>
+                <div style="font-size: 10px; color: var(--gray);">Пусто</div>
+            </div>
+            <div class="top-slot" onclick="openAchievementPicker(2)" id="slot-2" style="text-align: center; flex: 1;">
+                <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 15px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--gray);">
+                    <i class="fas fa-plus" style="color: var(--gray);"></i>
+                </div>
+                <div style="font-size: 10px; color: var(--gray);">Пусто</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="fullAchievementsList" style="display:none; margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <span style="font-size: 14px; font-weight: bold;">Выберите достижение для топа:</span>
+        <i class="fas fa-times" onclick="closePicker()" style="cursor: pointer; padding: 5px;"></i>
+    </div>
+    <div id="achievementsGrid" class="achievements-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"></div>
+</div>
+
+
+        <div style="display: none;">
+            <div class="category-title" style="margin-top: 0; text-align: center;">Награды (Статусы)</div>
+            <div id="statusAwardsContainer" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:20px;"></div>
+        </div>
+
+        <div id="adminTaskPanel" style="display:none; margin-top:30px; border: 2px solid var(--accent); padding: 15px; border-radius: 18px;">
+            <div class="category-title" style="margin-top:0; color: var(--accent);">🛠 Админ: Проверка заданий</div>
+            <div id="adminTaskRequests"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            <div class="profile-id" style="opacity: 0.5; font-size: 11px;">ID: <span id="userIdDisplay">---</span></div>
+        </div>
+    </div>
+<div id="loyalty-info" style="display: none; margin-top: 15px;">
+    <div class="category-title" style="margin-top:25px;">Программа лояльности</div>
+    <div class="row-item"><span>Приветственный бонус</span><b class="gold-book">+100 <i class="fas fa-book-open"></i></b></div>
+    <div class="row-item"><span>Бонус за отзыв</span><b class="gold-book">+25 <i class="fas fa-book-open"></i></b></div>
+    <div class="row-item"><span>Бонус за покупку от 3000₽</span><b class="gold-book">+20 <i class="fas fa-book-open"></i></b></div>
+    <div class="row-item">
+        <div style="display:flex; flex-direction:column;">
+            <span>Бонусы за крупные покупки</span>
+            <small style="color:var(--gray); font-size:11px;">от 5к - 30 / от 7.5к - 40 / от 10к - 50</small>
+        </div>
+        <b class="gold-book"><i class="fas fa-book-open"></i></b>
+    </div>
+    <div class="row-item"><span>Событие «Baby Boom»</span><b class="gold-book">+50 <i class="fas fa-book-open"></i></b></div>
+    <div class="row-item"><span>1 место в челленджах</span><b class="gold-book">+150 <i class="fas fa-book-open"></i></b></div>
+    <button class="buy-btn" style="background:none; color:var(--gray); margin-top:10px; font-size: 12px;" onclick="document.getElementById('loyalty-info').style.display='none'">[ скрыть ]</button>
+</div>
+
+    <div id="aipalette" class="page">
+        <div class="header">ИИ Палитра ✨</div>
+        <div class="card" style="padding: 20px; text-align: center; border:none; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <p style="font-size:14px; margin-top:0;">Сфотографируй цвет — нейросеть найдет лучший маркер из твоей палитры!</p>
+
+            <div style="margin-bottom: 20px; text-align: left; background: var(--secondary); padding: 15px; border-radius: 12px;">
+                <label style="display: block; font-size: 13px; margin-bottom: 5px; font-weight: bold;">Бренд для поиска:</label>
+                <select id="aiSearchBrand" style="width: 100%; padding: 10px; border-radius: 8px; border: none; margin-bottom: 15px; background: var(--bg); color: var(--text);">
+                    <option value="All">Все бренды (Глобальный поиск)</option>
+                    <option value="GuangNa">GuangNa</option>
+                    <option value="Languo">Languo</option>
+                    <option value="Zibeef">Zibeef</option>
+                    <option value="Tooli-Art">Tooli-Art</option>
+                    <option value="InfiArt">InfiArt</option>
+                    <option value="Grasp">Grasp</option>
+                </select>
+                
+                <label style="display: flex; align-items: center; font-size: 14px; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="aiUseInventoryOnly" style="width: 18px; height: 18px; accent-color: var(--accent);">
+                    Искать только среди моих маркеров
+                </label>
+                
+                <button class="buy-btn rounded-pill" style="padding: 12px; font-size: 14px; margin-top: 15px; background: var(--bg); border: 2px solid var(--accent); color: var(--text);" onclick="tab('mymarkers')">Мои маркеры 🎒</button>
+            </div>
+
+            <input type="file" id="aiInput" accept="image/*" multiple style="display:none;" onchange="processAI(event)">
+            <button class="buy-btn rounded-pill" style="padding:15px;" onclick="document.getElementById('aiInput').click()">📷 Сфотографировать цвет</button>
+            
+            <div id="aiMultipleResultsContainer"></div>
+
+        </div>
+
+        <div id="aiAdminPanel" style="display:none; margin-top:30px;">
+            <div class="category-title">🛠 Админ: Управление ИИ</div>
+            
+            <div class="row-item" style="flex-direction:column; align-items:stretch;">
+                <p style="margin:0 0 10px 0; font-weight:bold; font-size:14px;">Обучить новый цвет:</p>
+                <select id="adminTrainBrand" onchange="toggleAdminSet()" style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(128,128,128,0.2); margin-bottom:10px;">
+                    <option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option>
+                    <option value="Tooli-Art">Tooli-Art</option><option value="InfiArt">InfiArt</option><option value="Grasp">Grasp</option>
+                </select>
+                <select id="adminTrainSet" style="display:none; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(128,128,128,0.2); margin-bottom:10px;">
+                    <option value="Pastel">Pastel (24)</option>
+                    <option value="Jewel">Jewel (24)</option>
+                    <option value="Confetti">Confetti (24)</option>
+                    <option value="Metallic">Metallic (24)</option>
+                    <option value="Neon">Neon (24)</option>
+                    <option value="Glitter">Glitter (24)</option>
+                    <option value="Wildflower">Wildflower (24)</option>
+                    <option value="Brown">Brown (22)</option>
+                    <option value="Purple">Purple (22)</option>
+                    <option value="Pink">Pink (22)</option>
+                    <option value="Skin">Skin (22)</option>
+                    <option value="Green">Green (22)</option>
+                    <option value="Gray">Gray (22)</option>
+                    <option value="Orange">Orange (22)</option>
+                    <option value="Red & Pink">Red & Pink (22)</option>
+                    <option value="Yellow & Brown">Yellow & Brown (22)</option>
+                    <option value="Blue & Purple">Blue & Purple (22)</option>
+                    <option value="Southwest">Southwest (28)</option>
+                    <option value="Nocturnal">Nocturnal (28)</option>
+                    <option value="Essential">Essential (28)</option>
+                    <option value="Earth">Earth (36)</option>
+                </select>
+
+                <input type="text" id="adminTrainNum" placeholder="Номер маркера" style="border:1px solid rgba(128,128,128,0.2);">
+                <input type="file" id="adminTrainInput" accept="image/*" style="display:none;" onchange="trainAI(event)">
+                <button class="buy-btn rounded-pill" style="background:var(--gold); color:#000;" onclick="document.getElementById('adminTrainInput').click()">📥 Загрузить и Обучить</button>
+            </div>
+
+            <div class="category-title" style="margin-top:20px;">🚨 Карантин (Ожидают проверки)</div>
+            <div id="adminQuarantineList"></div>
+        </div>
+    </div>
+
+    <div id="viewer">
+        <div class="viewer-header">
+            <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="closeBook()">Назад</button>
+            <div id="page-counter" style="color:var(--text); font-weight:bold;"></div>
+        </div>
+        <div id="viewer-content" style="height: 85vh; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none;" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
+            <img src="" id="current-page" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+        </div>
+    </div> 
+
+    <div id="organizerDetailView" class="page" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1001; background: var(--bg); overflow-y: auto; padding: 15px; box-sizing: border-box;">
+        <div style="display:flex; align-items:center; margin-bottom:20px;">
+            <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px; background:var(--secondary); color:var(--text);" onclick="closeOrganizerView()">← Назад</button>
+            <h3 id="viewOrgTitle" style="margin:0 0 0 15px;"></h3>
+        </div>
+        <div id="gridContainer" class="organizer-grid"></div>
+    </div>
+
+    <div id="cellManageModal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-header-row">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span class="modal-title" id="cellModalTitle">Ячейка</span>
+                    <button class="buy-btn" style="padding:4px 10px; width:auto; font-size:12px; background:var(--secondary); color:var(--text); border-radius: 8px;" onclick="renameCurrentCell()">✏️</button>
+                </div>
+                <button class="close-btn" onclick="closeCellModal()">✕</button>
+            </div>
+            <div id="cellMarkerList" style="overflow-y:auto; flex-grow:1; margin-bottom:15px; min-height:120px;"></div>
+            <button class="buy-btn" style="border-radius:12px;" onclick="openAddMarkerModal()">+ Добавить маркер</button>
+        </div>
+    </div>
+
+    <div id="addMarkerModal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-header-row">
+                <span class="modal-title">Выберите бренд и номер</span>
+                <button class="close-btn" onclick="closeAddMarkerModal()">✕</button>
+            </div>
+            <div class="brand-grid-modal" id="modalBrandGrid"></div>
+            <input type="text" id="modalMarkerSearch" placeholder="Введите номер маркера..." style="margin-bottom:15px; background: var(--bg); border: 2px solid var(--secondary);">
+            <button class="buy-btn" style="border-radius:12px; background:#34c759;" onclick="confirmAddMarkerToCell()">Сохранить в ячейку</button>
+        </div>
+    </div>
+
+    <div id="statusSelectModal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-header-row">
+                <span class="modal-title">Выберите статус</span>
+                <button class="close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">✕</button>
+            </div>
+            <div id="statusSelectList" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+    </div>
+
+    <nav class="nav">
+        <button id="btn-answers" class="nav-btn active" onclick="tab('answers')"><span class="nav-icon">📚</span>Ответы</button>
+        <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><span class="nav-icon">🎨</span>ИИ палитры</button>
+        <button id="btn-shop" class="nav-btn" onclick="tab('shop')"><span class="nav-icon">🖍️</span>Маркеры</button>
+        <button id="btn-cart" class="nav-btn" onclick="tab('cart')">
+            <span class="nav-icon">🛒</span>Корзина
+            <span id="cartBadge" class="badge" style="display:none">0</span>
+        </button> 
+        <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Профиль</button>
+    </nav>
+
+<div id="achievementModal" class="modal-overlay" style="display:none;" onclick="this.style.display='none'">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <img id="achModalIconImg" src="" style="width:80px; height:80px; border-radius:20px; margin-bottom:15px;">
+        <h2 id="achModalTitle" style="margin-bottom:10px;"></h2>
+        <div id="achModalDesc" style="color:var(--gray); font-size:14px; line-height:1.4;"></div>
+        <button class="buy-btn" style="margin-top:20px;" onclick="document.getElementById('achievementModal').style.display='none'">Понятно</button>
+    </div>
+</div>
+
+<div id="nameInputModal" class="modal-overlay" style="display:none; z-index:9999;">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 style="margin-bottom:15px; text-align:center;">Новый никнейм</h2>
+        <input type="text" id="newNameInput" style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--gray); margin-bottom:15px; font-size:16px; box-sizing:border-box; background:var(--bg); color:var(--text);" placeholder="Ваш никнейм">
+        <div style="display:flex; gap:10px;">
+            <button class="buy-btn" style="flex:1; background:#34c759; color:white; padding:12px; border-radius:12px;" onclick="saveNewNickname()">Сохранить</button>
+            <button class="buy-btn" style="flex:1; background:var(--secondary); color:var(--text); padding:12px; border-radius:12px;" onclick="document.getElementById('nameInputModal').style.display='none'">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<div id="statusSelectModal" class="modal-overlay" style="display:none; z-index:9999;">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 style="margin-bottom:15px; text-align:center;">Выберите статус</h2>
+        <div id="statusSelectList" style="display:flex; flex-direction:column; gap:10px; max-height:50vh; overflow-y:auto; margin-bottom:15px; padding-right:5px;"></div>
+        <button class="buy-btn" style="background:var(--secondary); color:var(--text); padding:12px; border-radius:12px; width:100%;" onclick="document.getElementById('statusSelectModal').style.display='none'">Закрыть</button>
+    </div>
+</div>
+
+<div id="fullAchievementsList" style="display:none; background:var(--bg); border-radius:20px 20px 0 0; position:fixed; bottom:0; left:0; width:100%; z-index:1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);">
+</div>
+<input type="file" id="achievementPhotoInput" multiple accept="image/*" style="display:none" onchange="handleAchievementPhotos(event)">
+    <script src="js/app.js"></script>
+</body>
+</html>

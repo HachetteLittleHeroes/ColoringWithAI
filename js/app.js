@@ -5,31 +5,40 @@ const state = {
 };
 
 function tab(tabId) {
-    const targetPage = document.getElementById(tabId);
-    
-    // Проверка: существует ли страница, которую мы хотим открыть
-    if (!targetPage) {
-        console.error("Страница с ID '" + tabId + "' не найдена!");
-        return; // Прекращаем выполнение, чтобы не сломать остальной JS
-    }
+    console.log("Переход на вкладку:", tabId);
 
-    // Скрываем все страницы
-    document.querySelectorAll('.page').forEach(p => {
+    // 1. Находим все элементы с классом .page
+    const pages = document.querySelectorAll('.page');
+    const buttons = document.querySelectorAll('.nav-btn');
+
+    // 2. Скрываем АБСОЛЮТНО ВСЕ страницы принудительно
+    pages.forEach(p => {
+        p.style.setProperty('display', 'none', 'important');
         p.classList.remove('active');
-        p.style.display = 'none'; // Гарантированное скрытие
     });
 
-    // Показываем нужную
-    targetPage.classList.add('active');
-    targetPage.style.display = 'block';
+    // 3. Убираем активный класс у кнопок
+    buttons.forEach(b => b.classList.remove('active'));
 
-    // Обновляем кнопки в меню
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    const btn = document.getElementById(`btn-${tabId}`);
-    if (btn) btn.classList.add('active');
+    // 4. Пытаемся показать нужную страницу
+    const targetPage = document.getElementById(tabId);
+    
+    if (targetPage) {
+        targetPage.style.setProperty('display', 'block', 'important');
+        targetPage.classList.add('active');
+        
+        // Подсвечиваем кнопку
+        const targetBtn = document.getElementById('btn-' + tabId);
+        if (targetBtn) targetBtn.classList.add('active');
+        
+        // Скроллим вверх
+        window.scrollTo(0, 0);
+    } else {
+        // Если ID не совпал, выводим подсказку, чтобы понять, в чем дело
+        console.error(`Ошибка: Страница с id="${tabId}" не найдена в HTML!`);
+        alert(`Ошибка навигации: страница "${tabId}" отсутствует.`);
+    }
 }
-
-
 
 // Поиск
 function filterBooks() {

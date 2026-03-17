@@ -1,10 +1,12 @@
 /* ===================== Общие переменные ===================== */
 :root {
-    --bg: #121212;
-    --bg-secondary: #1E1E1E;
-    --text: #FFFFFF;
-    --accent: #ff9500;
-    --secondary: #2C2C2C;
+    /* Цвета подстраиваются под тему Telegram, если открыто там, иначе fallback */
+    --bg: var(--tg-theme-bg-color, #121212);
+    --bg-secondary: var(--tg-theme-secondary-bg-color, #1E1E1E);
+    --text: var(--tg-theme-text-color, #FFFFFF);
+    --accent: var(--tg-theme-button-color, #ff9500);
+    --accent-text: var(--tg-theme-button-text-color, #ffffff);
+    --secondary: var(--tg-theme-secondary-bg-color, #2C2C2C);
     --gray: #888888;
     --gold: #FFD700;
 }
@@ -17,17 +19,19 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     overflow-x: hidden;
+    padding-bottom: 80px; /* Чтобы контент не прятался под навигацией */
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* ===================== Страницы ===================== */
 .page {
     display: none;
-    padding: 10px;
+    padding: 10px 15px;
     box-sizing: border-box;
 }
 
@@ -37,17 +41,18 @@ body {
 
 /* ===================== Заголовки ===================== */
 .header {
-    font-weight: 700;
-    font-size: 20px;
+    font-weight: 800;
+    font-size: 24px;
     margin-bottom: 15px;
+    padding-top: 10px;
     color: var(--text);
 }
 
 /* ===================== Сетки ===================== */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
 }
 
 .inventory-grid {
@@ -71,18 +76,19 @@ body {
 .reward-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
+    gap: 12px;
 }
 
 /* ===================== Инпуты и селекты ===================== */
 input[type="text"], select {
     width: 100%;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--secondary);
-    background: var(--bg-secondary);
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: none;
+    background: var(--secondary);
     color: var(--text);
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    outline: none;
 }
 
 input[type="file"] {
@@ -93,22 +99,28 @@ input[type="file"] {
 button, .buy-btn {
     font-family: inherit;
     cursor: pointer;
+    background: var(--accent);
+    color: var(--accent-text);
+    border: none;
+    transition: opacity 0.2s, transform 0.1s;
 }
 
 .buy-btn {
     display: inline-block;
-    padding: 10px 15px;
-    background: var(--accent);
-    color: var(--text);
-    border: none;
+    padding: 12px 15px;
     border-radius: 12px;
-    font-weight: 600;
-    transition: 0.2s;
+    font-weight: bold;
     text-align: center;
+    width: 100%;
 }
 
 .buy-btn:hover {
     opacity: 0.9;
+}
+
+.buy-btn:active {
+    transform: scale(0.98);
+    opacity: 0.7;
 }
 
 .buy-btn.rounded-pill {
@@ -121,16 +133,17 @@ button, .buy-btn {
     bottom: 0;
     left: 0;
     width: 100%;
+    height: 75px;
     display: flex;
-    background: var(--bg-secondary);
-    border-top: 1px solid var(--secondary);
-    z-index: 100;
+    background: var(--bg);
+    border-top: 0.5px solid rgba(128,128,128,0.2);
+    z-index: 999;
 }
 
 .nav-btn {
     flex: 1;
     padding: 10px 0;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--gray);
     background: none;
     border: none;
@@ -145,18 +158,20 @@ button, .buy-btn {
 }
 
 .nav-icon {
-    font-size: 18px;
-    margin-bottom: 2px;
+    font-size: 22px;
+    margin-bottom: 4px;
 }
 
 .badge {
-    display: inline-block;
-    background: red;
-    color: #fff;
-    border-radius: 50%;
-    font-size: 10px;
-    padding: 2px 5px;
-    margin-left: 2px;
+    position: absolute;
+    top: 5px;
+    left: 55%;
+    background: #ff3b30;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 7px;
+    font-size: 11px;
+    font-weight: bold;
 }
 
 /* ===================== Профиль ===================== */
@@ -164,9 +179,10 @@ button, .buy-btn {
     display: flex;
     align-items: center;
     gap: 20px;
-    padding: 20px 20px 10px 20px;
+    padding: 20px;
     background: var(--bg-secondary);
     border-radius: 20px;
+    margin-bottom: 15px;
 }
 
 .avatar-container {
@@ -189,6 +205,7 @@ button, .buy-btn {
     object-fit: cover;
     display: block;
     z-index: 5;
+    background: #eee;
 }
 
 .edit-avatar-btn {
@@ -223,46 +240,48 @@ button, .buy-btn {
     border-radius: 8px;
     background: var(--secondary);
     display: inline-block;
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
-/* ===================== Баланс ===================== */
-/* Улучшенная карточка баланса */
-
+/* ===================== Баланс (Тот самый красивый) ===================== */
 .balance-card {
-    /* Тот самый оранжевый градиент */
-    background: linear-gradient(135deg, #ff9500 0%, #ffcc00 100%); 
+    background: linear-gradient(135deg, #FF8C00 0%, #E65100 100%);
     border-radius: 20px;
     padding: 25px 20px;
     width: 100%;
     box-sizing: border-box;
-    color: white; /* Текст на градиенте должен быть белым */
-    box-shadow: 0 10px 20px rgba(255, 149, 0, 0.3);
-    margin-top: 0;
+    color: white !important;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(230, 81, 0, 0.3);
+    margin-top: 10px;
+    margin-bottom: 15px;
+    position: relative;
+    overflow: hidden;
 }
-
-/* Иконка книги внутри баланса */
-.gold-book {
-    color: white;
-    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-}
-
-
-/* Оживим кнопки внутри профиля */
-.balance-card .buy-btn {
-    backdrop-filter: blur(5px);
-    transition: transform 0.2s;
-}
-
-.balance-card .buy-btn:active {
-    transform: scale(0.98);
-}
-
 
 .balance-amount {
-    font-size: 36px;
-    margin: 10px 0;
+    font-size: 48px;
     font-weight: 800;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.gold-book {
+    color: var(--gold);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.balance-card .buy-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+    color: white;
+    width: auto;
+    padding: 8px 15px;
+    margin-top: 5px;
 }
 
 /* ===================== Модальные окна ===================== */
@@ -282,18 +301,20 @@ button, .buy-btn {
 .modal-content, .custom-modal {
     background: var(--bg-secondary);
     border-radius: 20px;
-    padding: 15px;
+    padding: 20px;
     max-width: 90%;
     max-height: 80%;
     overflow-y: auto;
+    width: 100%;
 }
 
 .close-btn {
     background: transparent;
     border: none;
-    font-size: 18px;
+    font-size: 20px;
     color: var(--gray);
     cursor: pointer;
+    float: right;
 }
 
 /* ===================== Достижения ===================== */
@@ -326,32 +347,41 @@ button, .buy-btn {
 /* ===================== Магазин наград ===================== */
 .reward-card {
     background: var(--bg-secondary);
-    border-radius: 12px;
+    border-radius: 15px;
     overflow: hidden;
     text-align: center;
     display: flex;
     flex-direction: column;
+    border: 1px solid rgba(128,128,128,0.1);
 }
 
 .reward-card img {
     width: 100%;
-    height: auto;
+    height: 110px;
     object-fit: cover;
+    background: #ddd;
 }
 
 .reward-info {
-    padding: 5px 0;
-    font-size: 12px;
+    padding: 10px;
+    font-size: 13px;
+    line-height: 1.2;
     color: var(--text);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .spend-btn {
-    background: var(--accent);
-    color: var(--text);
+    background: #E65100;
+    color: white;
     border: none;
-    border-radius: 12px;
-    padding: 5px;
-    margin-top: 5px;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    width: 100%;
 }
 
 /* ===================== AI Палитра ===================== */
@@ -377,24 +407,30 @@ button, .buy-btn {
     background: var(--secondary);
 }
 
-/* ===================== Остальные элементы ===================== */
+/* ===================== Остальные элементы (Строки и Категории) ===================== */
+.row-item {
+    background: var(--bg-secondary);
+    padding: 15px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    border: 0.5px solid rgba(128,128,128,0.1);
+}
+
+.category-title {
+    margin: 20px 0 10px;
+    font-size: 14px;
+    color: var(--gray);
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
 .brand-grid-modal, #achievementsGrid, #modalBrandGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
     gap: 8px;
-}
-
-.row-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px 0;
-}
-
-.category-title {
-    font-weight: 600;
-    font-size: 14px;
-    margin-bottom: 10px;
 }
 
 .avatar-grid-presets {

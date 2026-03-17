@@ -5,14 +5,30 @@ const state = {
 };
 
 function tab(tabId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
+    const targetPage = document.getElementById(tabId);
     
+    // Проверка: существует ли страница, которую мы хотим открыть
+    if (!targetPage) {
+        console.error("Страница с ID '" + tabId + "' не найдена!");
+        return; // Прекращаем выполнение, чтобы не сломать остальной JS
+    }
+
+    // Скрываем все страницы
+    document.querySelectorAll('.page').forEach(p => {
+        p.classList.remove('active');
+        p.style.display = 'none'; // Гарантированное скрытие
+    });
+
+    // Показываем нужную
+    targetPage.classList.add('active');
+    targetPage.style.display = 'block';
+
+    // Обновляем кнопки в меню
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     const btn = document.getElementById(`btn-${tabId}`);
     if (btn) btn.classList.add('active');
-    state.currentTab = tabId;
 }
+
 
 // Поиск
 function filterBooks() {

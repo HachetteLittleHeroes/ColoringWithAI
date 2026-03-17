@@ -2171,62 +2171,41 @@ let userInventory = [];
 
 async function initAI() {
     try {
-
     let res = await fetch(`${API_URL}/ai_db`);
+    let data = await res.json();
 
-    if(!res.ok){
-        console.error("AI DB API error", res.status);
-        aiDB = [];
+    if(Array.isArray(data)){
+        aiDB = data;
+    } else if(data && Array.isArray(data.data)){
+        aiDB = data.data;
+    } else if(data && Array.isArray(data.ai_db)){
+        aiDB = data.ai_db;
     } else {
-
-        let data = await res.json();
-
-        if(Array.isArray(data)){
-            aiDB = data;
-        } else {
-            console.warn("AI DB returned non-array:", data);
-            aiDB = [];
-        }
-
+        console.warn("AI DB unexpected format:", data);
+        aiDB = [];
     }
 
+    // Инвентарь пользователя
     let userId = document.getElementById('userIdDisplay')?.innerText;
-
     if(userId && userId !== "---"){
-
         try{
-
             let invRes = await fetch(`${API_URL}/inventory?user_id=${userId}`);
-
-            if(invRes.ok){
-
-                let invData = await invRes.json();
-
-                if(Array.isArray(invData)){
-                    userInventory = invData;
-                } else {
-                    userInventory = [];
-                }
-
+            let invData = await invRes.json();
+            if(Array.isArray(invData)){
+                userInventory = invData;
             } else {
                 userInventory = [];
             }
-
-        }catch(invErr){
-
+        } catch(invErr){
             console.error("Ошибка загрузки инвентаря", invErr);
             userInventory = [];
-
         }
-
     }
 
 } catch(e) {
-
     console.error("Ошибка загрузки БД ИИ или инвентаря", e);
     aiDB = [];
     userInventory = [];
-
 }
 
 let userDisp = document.getElementById('userIdDisplay');

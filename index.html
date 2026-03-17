@@ -93,13 +93,6 @@
             margin-bottom: 12px;
             cursor: pointer;
         }
-        <input 
-type="file" 
-id="achievementPhotoInput" 
-accept="image/*" 
-multiple 
-style="display:none"
-onchange="handleAchievementPhotos(event)">
         .brand-counter {
             font-size: 14px;
             color: var(--accent);
@@ -1324,7 +1317,7 @@ background:${i < level ? levelColors[i] : 'rgba(255,255,255,0.1)'};
                 <div style="width:${percent}%;height:100%;background:var(--accent);transition:0.5s;"></div>
             </div>
             ${!isDone && ach.type === 'admin_check'
-                ? `<button class="buy-btn" style="padding:8px;font-size:12px;" onclick="sendAchievementRequest('${ach.id}','${ach.title}')">Отправить фото на проверку</button>`
+                ? `<button class="buy-btn" style="padding:8px;font-size:12px;"onclick="sendAchievementRequest('${ach.id}','${ach.title}', ${level})">Отправить фото на проверку</button>`
                 : ''}
             ${isDone
                 ? `<div style="color:var(--accent);font-size:11px;font-weight:bold;">Достижение разблокировано!</div>`
@@ -1336,17 +1329,18 @@ background:${i < level ? levelColors[i] : 'rgba(255,255,255,0.1)'};
 // Используем window, чтобы переменная была доступна из любой части кода
 window.currentAchievementRequest = null;
 
-window.sendAchievementRequest = function(id, title) {
+window.sendAchievementRequest = function(id, title, level = 1) {
     console.log("Вызов sendAchievementRequest:", id, title);
-    
+
     window.currentAchievementRequest = {
         id: id,
-        title: title
+        title: title,
+        level: level
     };
 
     const input = document.getElementById("achievementPhotoInput");
     if (input) {
-        input.value = ""; // Сброс, чтобы можно было выбрать те же фото
+        input.value = "";
         input.click();
     } else {
         if (window.tg) tg.showAlert("Ошибка: Инпут не найден в DOM");
@@ -1395,7 +1389,10 @@ async function uploadAchievementData(files) {
         const formData = new FormData();
         
         const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('id') || "0";
+        const userId = urlParams.get('id') 
+    || document.getElementById('userIdDisplay')?.innerText 
+    || (window.tg && window.tg.initDataUnsafe?.user?.id) 
+    || "0";
         const title = window.currentAchievementRequest ? window.currentAchievementRequest.title : "Задание";
         const level = window.currentAchievementRequest ? window.currentAchievementRequest.level : 1;
 
@@ -1409,7 +1406,7 @@ async function uploadAchievementData(files) {
 
         console.log("Отправка на:", `${API_URL}/check_achievement`);
 
-        const response = await fetch(`${API_URL}/check_achievement`, {
+        const response = await fetch(`${API_URL}/api/check_achievement`) {
             method: 'POST',
             body: formData,
             mode: 'cors' 
@@ -1436,12 +1433,6 @@ async function uploadAchievementData(files) {
         } else {
             alert("Ошибка: " + err.message);
         }
-    }
-}
-// Функция-прослойка для обработки выбора файлов
-function handleAchievementPhotos(event) {
-    if (event.target.files && event.target.files.length > 0) {
-        uploadAchievementData(event.target.files);
     }
 }
 
@@ -1508,7 +1499,7 @@ async function loadAdminTasks() {
 
                 <div style="display:flex; gap:10px; margin-top:12px; width:100%;">
                     <button class="buy-btn" style="flex:2; background:#34c759; padding:10px; border-radius:8px;" 
-                        onclick="approveTask(${t.id}, '${t.user_id}', '${t.statusName}', document.getElementById('points_${t.id}').value)">
+                        onclick="approveTask(${t.id}, '${t.user_id}', ${JSON.stringify(t.statusName)}, document.getElementById('points_${t.id}').value)"
                         Одобрить
                     </button>
                     <button class="buy-btn" style="flex:1; background:#ff3b30; padding:10px; border-radius:8px;" 
@@ -2074,8 +2065,6 @@ function buyReward(name, price) {
     }
 }
 
-let currentViewingBrand = null;
-
 function renderBrandsList() {
     const container = document.getElementById('brandsGridContainer');
     if(!container) return;
@@ -2247,8 +2236,11 @@ function filterMarkers() { renderMarkers(markersData); }
 // =========================================================
 
 const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io/api";
-let aiDB = [];
-let userInventory = [];
+const state = {
+    aiDB: [],
+    userInventory: [],
+    currentBrand: null
+};
 
 async function initAI() {
     try {
@@ -2362,7 +2354,10 @@ function predictColorMultiple(rgb, imgB64, resDiv, index) {
         return true;
     });
 
-    if(filteredDB.length === 0) { resDiv.innerHTML = "<p style='color:var(--gray);'>Совпадений в вашей палитре не найдено.</p>"; return; }
+   if (!bestMatch) {
+    resDiv.innerHTML = "<p>Ошибка поиска совпадения.</p>";
+    return;
+}
 
     let bestMatch = null, minDist = Infinity;
     filteredDB.forEach(item => {
@@ -2699,5 +2694,12 @@ window.onload = () => {
 </div>
 
 <input type="file" id="achievementPhotoInput" multiple accept="image/*" style="display:none" onchange="handleAchievementPhotos(event)">
+    <input 
+type="file" 
+id="achievementPhotoInput" 
+accept="image/*" 
+multiple 
+style="display:none"
+onchange="handleAchievementPhotos(event)">
 </body>
 </html>

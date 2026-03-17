@@ -1434,7 +1434,7 @@ window.showTasks = openTasks;
 window.goToTasks = openTasks;
 
 // =========================================================
-// --- ЛОГИКА АДМИНКИ ЗАДАНИЙ ---
+// --- ЛОГИКА АДМИНКИ ЗАДАНИЙ (ОБНОВЛЕННАЯ) ---
 // =========================================================
 
 async function loadAdminTasks() {
@@ -1443,41 +1443,81 @@ async function loadAdminTasks() {
         let tasks = await res.json();
         let container = document.getElementById('adminTaskRequests');
         if(!container) return;
+
         if(tasks.length === 0) {
             container.innerHTML = '<div style="color:var(--gray); font-size:12px; text-align:center;">Нет новых заданий на проверку</div>';
             return;
         }
+
         container.innerHTML = tasks.map(t => `
-            <div class="row-item" style="flex-direction:column; align-items:flex-start;">
-                <b style="font-size:14px;">Пользователь ID: ${t.user_id}</b>
-                <span style="font-size:13px; color:var(--gray);">Задание: ${t.statusName} (Ур. ${t.level})</span>
-                <div style="display:flex; gap:10px; margin-top:10px; width:100%;">
-                    <button class="buy-btn" style="flex:1; background:#34c759; padding:8px; border-radius:8px;" onclick="approveTask(${t.id}, '${t.user_id}', '${t.statusName}', ${t.level})">Одобрить</button>
-                    <button class="buy-btn" style="flex:1; background:#ff3b30; padding:8px; border-radius:8px;" onclick="rejectTask(${t.id})">Отклонить</button>
+            <div class="row-item" style="flex-direction:column; align-items:flex-start; background: rgba(255,255,255,0.05); padding:12px; border-radius:12px; margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:8px;">
+                    <b style="font-size:14px; color:var(--accent);">@${t.username || 'unknown'}</b>
+                    <span style="font-size:12px; color:var(--gray);">ID: ${t.user_id}</span>
+                </div>
+                
+                <div style="font-size:13px; margin-bottom:10px;">
+                    📌 Задание: <b>${t.statusName}</b> <br>
+                    📈 Текущий уровень: <span style="color:var(--gold); font-weight:bold;">${t.userLevel || 1}</span>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:10px; width:100%; margin-top:5px;">
+                    <span style="font-size:12px; color:var(--gray);">Очков прогресса:</span>
+                    <select id="points_${t.id}" style="background:var(--secondary); color:var(--text); border:1px solid var(--accent); border-radius:5px; padding:4px;">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:12px; width:100%;">
+                    <button class="buy-btn" style="flex:2; background:#34c759; padding:10px; border-radius:8px;" 
+                        onclick="approveTask(${t.id}, '${t.user_id}', '${t.statusName}', document.getElementById('points_${t.id}').value)">
+                        Одобрить
+                    </button>
+                    <button class="buy-btn" style="flex:1; background:#ff3b30; padding:10px; border-radius:8px;" 
+                        onclick="rejectTask(${t.id})">
+                        Откл.
+                    </button>
                 </div>
             </div>
         `).join('');
     } catch(e) {
         let container = document.getElementById('adminTaskRequests');
-        if(container) container.innerHTML = '<div style="color:var(--gray); font-size:12px; text-align:center;">Ошибка соединения с сервером или нет новых заявок</div>';
+        if(container) container.innerHTML = '<div style="color:var(--gray); font-size:12px; text-align:center;">Ошибка загрузки или нет заявок</div>';
     }
 }
 
-async function approveTask(taskId, userId, statusName, level) {
+async function approveTask(taskId, userId, statusName, points) {
     try {
-        await fetch(`${API_URL}/approve_task`, { method: 'POST', body: JSON.stringify({ taskId, userId, statusName, level }) });
-        if(window.tg && tg.showAlert) tg.showAlert("✅ Задание успешно одобрено!");
-        loadAdminTasks();
-    } catch(e) { console.error("Ошибка при одобрении задания:", e); }
+        const response = await fetch(`${API_URL}/approve_task`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                taskId: taskId, 
+                userId: userId, 
+                statusName: statusName, 
+                points: parseInt(points) // Передаем количество добавленных очков
+            }) 
+        });
+
+        if(response.ok) {
+            if(window.tg && tg.showAlert) tg.showAlert(`✅ Успешно! Добавлено очков: ${points}`);
+            loadAdminTasks(); // Обновляем список у админа
+            
+            // Если это делает сам админ для себя, обновляем его прогресс-бары сразу
+            if (typeof renderStatusQuests === "function") renderStatusQuests();
+        } else {
+            throw new Error("Ошибка сервера");
+        }
+    } catch(e) { 
+        console.error("Ошибка при одобрении задания:", e);
+        if(window.tg && tg.showAlert) tg.showAlert("❌ Ошибка при отправке одобрения");
+    }
 }
 
-async function rejectTask(taskId) {
-    try {
-        await fetch(`${API_URL}/reject_task`, { method: 'POST', body: JSON.stringify({ taskId }) });
-        if(window.tg && tg.showAlert) tg.showAlert("❌ Задание отклонено.");
-        loadAdminTasks();
-    } catch(e) { console.error("Ошибка при отклонении задания:", e); }
-}
 
 // =========================================================
 // --- ЛОГИКА ОРГАНАЙЗЕРОВ ---
@@ -2048,12 +2088,23 @@ function renderBrandInventory() {
     container.innerHTML = filtered.map(markerNum => {
         let mId = `${currentViewingBrand.name}_${markerNum}`;
         let isOwned = userInventory.includes(mId);
+        let locationHtml = '';
+
+        if (isOwned) {
+            let locationStr = findMarkerLocation(mId);
+            if (locationStr) {
+                locationHtml = `<div style="font-size:10px; color:#ff9500; margin-top:6px; line-height:1.2; word-wrap:break-word;">📍 ${locationStr}</div>`;
+            }
+        }
+
         return `
-        <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})">
-            ${markerNum}
+        <div class="inventory-item ${isOwned ? 'owned' : ''}" onclick="toggleInventory('${currentViewingBrand.name}', '${markerNum}', ${!isOwned})" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:10px; min-height:60px;">
+            <span style="font-size:15px; font-weight:bold;">${markerNum}</span>
+            ${locationHtml}
         </div>`;
     }).join('');
 }
+
 
 function filterBrandInventory() { renderBrandInventory(); }
 

@@ -2283,7 +2283,7 @@ function predictColorMultiple(rgb, imgB64, resDiv, index) {
 
     let confidence = Math.max(0, (1 - (minDist / 441.67)) * 100).toFixed(1);
     const mId = `${bestMatch.brand}_${bestMatch.marker}`;
-    const locationInfo = findMarkerLocation(mId);
+    const locationInfo = typeof findMarkerLocation === "function" ? findMarkerLocation(mId) : null;
 
     const locationLabel = locationInfo 
         ? `<div style="margin-top:8px; color:#34c759; font-weight:bold; font-size:13px;">📍 Находится: ${locationInfo}</div>
@@ -2318,18 +2318,18 @@ function toggleAdminSet() {
     if (setElem) setElem.style.display = (brand === 'Tooli-Art') ? 'block' : 'none';
 }
 
-// ЭТОТ БЛОК БЫЛ СЛОМАН (ДОБАВЛЕНА ФУНКЦИЯ trainAI)
+// ИСПРАВЛЕННЫЙ БЛОК ОБУЧЕНИЯ ИИ (ОТОРВАННЫЕ КУСКИ ВЛОЖЕНЫ В ФУНКЦИЮ)
 async function trainAI(event) {
     const brand = document.getElementById('adminTrainBrand').value;
     let num = document.getElementById('adminTrainNum').value.trim();
 
     if (!num) {
-        if (window.tg && tg.showAlert) tg.showAlert("Введите номер маркера");
+        if (window.tg && window.tg.showAlert) window.tg.showAlert("Введите номер маркера");
         return;
     }
 
     if (!event.target.files || !event.target.files[0]) {
-        if (window.tg && tg.showAlert) tg.showAlert("Выберите фото маркера");
+        if (window.tg && window.tg.showAlert) window.tg.showAlert("Выберите фото маркера");
         return;
     }
 
@@ -2363,118 +2363,95 @@ async function trainAI(event) {
                     body: JSON.stringify({ brand: brand, marker: num, rgb: rgb })
                 });
 
-                if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                if (window.tg && tg.showAlert) tg.showAlert("Маркер успешно добавлен в базу ИИ");
+                if (window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
+                if (window.tg && window.tg.showAlert) window.tg.showAlert("Маркер успешно добавлен в базу ИИ");
                 
                 if (typeof initAI === "function") initAI();
             } catch (err) {
                 console.error("AI train error:", err);
-                if (window.tg && tg.showAlert) tg.showAlert("Ошибка обучения ИИ");
+                if (window.tg && window.tg.showAlert) window.tg.showAlert("Ошибка обучения ИИ");
             }
         };
+        
+        // Обработчик ошибки загрузки картинки теперь правильно привязан к img
+        img.onerror = function(){
+            if(window.tg && window.tg.showAlert){
+                window.tg.showAlert("Ошибка загрузки изображения");
+            }
+        };
+
         img.src = e.target.result;
     };
     reader.readAsDataURL(event.target.files[0]);
 }
-        }
 
-    };
-
-    img.onerror = function(){
-        if(window.tg && tg.showAlert){
-            tg.showAlert("Ошибка загрузки изображения");
-        }
-    };
-
-    img.src = e.target.result;
-};
-
-reader.readAsDataURL(event.target.files[0]);
-}
 async function loadQuarantine() {
     try{
+        let res = await fetch(`${API_URL}/quarantine_list`);
+        if(!res.ok){
+            throw new Error("API error");
+        }
+        let data = await res.json();
+        let html = data.length === 0 ? "<p>Пусто.</p>" : "";
 
-    let res = await fetch(`${API_URL}/quarantine_list`);
+        data.forEach(q => {
+            html += `<div class="row-item" style="align-items:center;">
+                <img src="${q.image}" style="width:50px; border-radius:8px; margin-right:10px; object-fit:cover;">
+                <div style="flex:1;">
+                    <b>${q.brand}</b><br>
+                    <span style="font-size:14px; color:var(--accent);">№ ${q.correct_marker}</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#34c759;" onclick="resolveQ(${q.id}, 'approve')">Одобрить</button>
+                    <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#ff3b30;" onclick="resolveQ(${q.id}, 'reject')">Отвергнуть</button>
+                </div>
+            </div>`;
+        });
 
-    if(!res.ok){
-        throw new Error("API error");
+        let qList = document.getElementById('adminQuarantineList');
+        if(qList){
+            qList.innerHTML = html;
+        }
+    }catch(err){
+        console.error("Quarantine load error:", err);
+        let qList = document.getElementById('adminQuarantineList');
+        if(qList){
+            qList.innerHTML = "<p>Ошибка загрузки карантина.</p>";
+        }
     }
-
-    let data = await res.json();
-
-    let html = data.length === 0 ? "<p>Пусто.</p>" : "";
-
-    data.forEach(q => {
-
-        html += `<div class="row-item" style="align-items:center;">
-            <img src="${q.image}" style="width:50px; border-radius:8px; margin-right:10px; object-fit:cover;">
-            <div style="flex:1;">
-                <b>${q.brand}</b><br>
-                <span style="font-size:14px; color:var(--accent);">№ ${q.correct_marker}</span>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:5px;">
-                <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#34c759;" onclick="resolveQ(${q.id}, 'approve')">Одобрить</button>
-                <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#ff3b30;" onclick="resolveQ(${q.id}, 'reject')">Отвергнуть</button>
-            </div>
-        </div>`;
-
-    });
-
-    let qList = document.getElementById('adminQuarantineList');
-
-    if(qList){
-        qList.innerHTML = html;
-    }
-
-}catch(err){
-
-    console.error("Quarantine load error:", err);
-
-    let qList = document.getElementById('adminQuarantineList');
-
-    if(qList){
-        qList.innerHTML = "<p>Ошибка загрузки карантина.</p>";
-    }
-
 }
-}
+
 async function resolveQ(id, action) {
     try{
+        const res = await fetch(`${API_URL}/quarantine_resolve`, {
+            method: 'POST',
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                id: id,
+                action: action
+            })
+        });
+        const data = await res.json();
+        console.log("Quarantine resolve:", data);
 
-    const res = await fetch(`${API_URL}/quarantine_resolve`, {
-        method: 'POST',
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-            id: id,
-            action: action
-        })
-    });
+        if(window.tg && window.tg.HapticFeedback){
+            window.tg.HapticFeedback.notificationOccurred('success');
+        }
 
-    const data = await res.json();
+        if(typeof initAI === "function"){
+            initAI();
+        }
 
-    console.log("Quarantine resolve:", data);
+        loadQuarantine();
 
-    if(window.tg && tg.HapticFeedback){
-        tg.HapticFeedback.notificationOccurred('success');
+    }catch(err){
+        console.error("Resolve quarantine error:", err);
+        if(window.tg && window.tg.showAlert){
+            window.tg.showAlert("Ошибка обработки карантина");
+        }
     }
-
-    if(typeof initAI === "function"){
-        initAI();
-    }
-
-    loadQuarantine();
-
-}catch(err){
-
-    console.error("Resolve quarantine error:", err);
-
-    if(window.tg && tg.showAlert){
-        tg.showAlert("Ошибка обработки карантина");
-    }
-
-}
 }
 
 // =========================================================
@@ -2539,8 +2516,11 @@ function selectForTop(achId, achImg, achTitle, achDesc) {
         if (!window.userProfileData.topAchievements) window.userProfileData.topAchievements = [null, null, null];
         window.userProfileData.topAchievements[currentSlot] = { achId, achImg, achTitle, achDesc };
         updateSlotUI(currentSlot, achImg, achTitle, achDesc);
-        saveProfileData(); closePicker();
-        if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        
+        if (typeof saveProfileData === "function") saveProfileData(); 
+        closePicker();
+        
+        if(window.tg && window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
     }
 }
 
@@ -2548,11 +2528,11 @@ function updateSlotUI(index, img, title, desc) {
     const slot = document.getElementById(`slot-${index}`);
     if(slot) {
         slot.innerHTML = `
-<div onclick="showAchDescription('${title}', '${desc}', '${img}')" style="cursor:pointer;text-align:center;">
-<img src="${img}" style="width:60px; height:60px; border-radius:18px; object-fit:cover; border:3px solid gold; box-shadow:0 0 10px rgba(255,215,0,0.6);">
-<div style="font-size:10px; color:white; margin-top:5px; font-weight:bold; overflow:hidden; text-overflow:ellipsis;">${title}</div>
-</div>
-<div onclick="openAchievementPicker(${index})" style="font-size:9px;color:var(--accent);margin-top:4px;cursor:pointer;">Изменить</div>`;
+        <div onclick="showAchDescription('${title}', '${desc}', '${img}')" style="cursor:pointer;text-align:center;">
+        <img src="${img}" style="width:60px; height:60px; border-radius:18px; object-fit:cover; border:3px solid gold; box-shadow:0 0 10px rgba(255,215,0,0.6);">
+        <div style="font-size:10px; color:white; margin-top:5px; font-weight:bold; overflow:hidden; text-overflow:ellipsis;">${title}</div>
+        </div>
+        <div onclick="openAchievementPicker(${index})" style="font-size:9px;color:var(--accent);margin-top:4px;cursor:pointer;">Изменить</div>`;
     }
 }
 
@@ -2580,29 +2560,33 @@ function showAchDescription(title, desc, img) {
 // --- ИНИЦИАЛИЗАЦИЯ ПРИ ЗАПУСКЕ ---
 // =========================================================
 window.onload = () => {
-    const params = new URLSearchParams(window.location.search);
-    let balEl = document.getElementById('userBalance');
-    if(balEl) balEl.innerText = params.get('balance') || 0;
-    
-    let userIdEl = document.getElementById('userIdDisplay');
-    const userId = params.get('id') || (window.tg && tg.initDataUnsafe?.user?.id) || "---";
-    if(userIdEl) userIdEl.innerText = userId;
-    
-    loadProfileData(); 
-    initUserStats(); 
-    
-    setTimeout(() => {
-        renderStatusQuests(); 
-        if (window.userProfileData.topAchievements) {
-            window.userProfileData.topAchievements.forEach((ach, index) => {
-                if (ach) updateSlotUI(index, ach.achImg, ach.achTitle, ach.achDesc);
-            });
-        }
-    }, 100);
+    try {
+        const params = new URLSearchParams(window.location.search);
+        let balEl = document.getElementById('userBalance');
+        if(balEl) balEl.innerText = params.get('balance') || 0;
+        
+        let userIdEl = document.getElementById('userIdDisplay');
+        const userId = params.get('id') || (window.tg && window.tg.initDataUnsafe?.user?.id) || "---";
+        if(userIdEl) userIdEl.innerText = userId;
+        
+        if (typeof loadProfileData === "function") loadProfileData(); 
+        if (typeof initUserStats === "function") initUserStats(); 
+        
+        setTimeout(() => {
+            if (typeof renderStatusQuests === "function") renderStatusQuests(); 
+            if (window.userProfileData && window.userProfileData.topAchievements) {
+                window.userProfileData.topAchievements.forEach((ach, index) => {
+                    if (ach) updateSlotUI(index, ach.achImg, ach.achTitle, ach.achDesc);
+                });
+            }
+        }, 100);
 
-    initAI();
-    renderBooks();
-    renderOrganizers(); 
+        initAI();
+        if (typeof renderBooks === "function") renderBooks();
+        if (typeof renderOrganizers === "function") renderOrganizers(); 
+    } catch (e) {
+        console.error("Ошибка при инициализации окна:", e);
+    }
 };
 </script>
 
@@ -2636,12 +2620,7 @@ window.onload = () => {
 
 <div id="fullAchievementsList" style="display:none; background:var(--bg); border-radius:20px 20px 0 0; position:fixed; bottom:0; left:0; width:100%; z-index:1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);">
 </div>
-<input 
-type="file" 
-id="achievementPhotoInput" 
-multiple 
-accept="image/*" 
-style="display:none"
-onchange="handleAchievementPhotos(event)">
+
+<input type="file" id="achievementPhotoInput" multiple accept="image/*" style="display:none" onchange="handleAchievementPhotos(event)">
 </body>
 </html>

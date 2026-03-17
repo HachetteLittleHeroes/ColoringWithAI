@@ -41,32 +41,38 @@ function toggleRewards() {
     }
 }
 function toggleEarnAchetiki() {
-    const el = document.getElementById('earn-section');
+    openSheet(`
+        <h3>💰 Заработать ашетики</h3>
 
-    if (el.style.display === 'none') {
-        el.style.display = 'block';
+        <div class="sheet-card">
+            <p>📸 Загрузить фото — +10</p>
+        </div>
 
-        el.innerHTML = `
-            <div class="category-title">Заработать ашетики</div>
+        <div class="sheet-card">
+            <p>🎯 Выполнить задание — +20</p>
+        </div>
 
-            <div class="card">
-                <p>📸 Загрузить фото</p>
-                <span>+10</span>
-            </div>
+        <div class="sheet-card">
+            <p>⭐ Достижение — +50</p>
+        </div>
+    `);
+}
+function toggleRewards() {
+    openSheet(`
+        <h3>🎁 Потратить ашетики</h3>
 
-            <div class="card">
-                <p>🎯 Выполнить задание</p>
-                <span>+20</span>
-            </div>
+        <div class="sheet-card">
+            <p>Стикеры — 100</p>
+        </div>
 
-            <div class="card">
-                <p>⭐ Достижение</p>
-                <span>+50</span>
-            </div>
-        `;
-    } else {
-        el.style.display = 'none';
-    }
+        <div class="sheet-card">
+            <p>Палитра — 200</p>
+        </div>
+
+        <div class="sheet-card">
+            <p>Бонус — 300</p>
+        </div>
+    `);
 }
 function openSheet(contentHTML) {
     const sheet = document.getElementById('bottomSheet');

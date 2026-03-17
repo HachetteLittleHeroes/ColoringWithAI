@@ -2143,8 +2143,11 @@ async function massToggle(isAdded) {
         tg.showConfirm(actionText, async (confirm) => {
             if (confirm) {
                 let trainedIds = aiDB.filter(item => item.brand === currentViewingBrand.name).map(item => `${currentViewingBrand.name}_${item.marker}`);
-                if (isAdded) {
-                    userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
+               
+                if(isAdded) {
+    userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
+    renderBrandInventory();
+}
                 } else {
                     userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
                     organizers.forEach(org => { org.cells.forEach(cell => { cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_")); }); });
@@ -2354,16 +2357,21 @@ function predictColorMultiple(rgb, imgB64, resDiv, index) {
         return true;
     });
 
-   if (!bestMatch) {
+   let bestMatch = null, minDist = Infinity;
+
+filteredDB.forEach(item => {
+    let dist = Math.sqrt(
+        Math.pow(item.rgb[0]-rgb[0],2) + 
+        Math.pow(item.rgb[1]-rgb[1],2) + 
+        Math.pow(item.rgb[2]-rgb[2],2)
+    );
+    if(dist < minDist) { minDist = dist; bestMatch = item; }
+});
+
+if(!bestMatch) {
     resDiv.innerHTML = "<p>Ошибка поиска совпадения.</p>";
     return;
 }
-
-    let bestMatch = null, minDist = Infinity;
-    filteredDB.forEach(item => {
-        let dist = Math.sqrt(Math.pow(item.rgb[0]-rgb[0], 2) + Math.pow(item.rgb[1]-rgb[1], 2) + Math.pow(item.rgb[2]-rgb[2], 2));
-        if(dist < minDist) { minDist = dist; bestMatch = item; }
-    });
 
     let confidence = Math.max(0, (1 - (minDist / 441.67)) * 100).toFixed(1);
     const mId = `${bestMatch.brand}_${bestMatch.marker}`;

@@ -2027,10 +2027,18 @@ async function checkout() {
 }
 
 
-// =========================================================
-// --- СИСТЕМА НАГРАД И НАВИГАЦИЯ ---
-// =========================================================
+<!-- ========================================================= -->
+<!-- --- СИСТЕМА НАГРАД И НАВИГАЦИЯ --- -->
+<!-- ========================================================= -->
+<script>
+const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io/api";
 
+let aiDB = [];
+let userInventory = [];
+let currentViewingBrand = null;
+
+// =========================================================
+// --- НАГРАДЫ ---
 function toggleRewards() {
     const rewardsSection = document.getElementById('rewards-section');
     const loyaltyInfo = document.getElementById('loyalty-info');
@@ -2065,6 +2073,8 @@ function buyReward(name, price) {
     }
 }
 
+// =========================================================
+// --- БРЕНДЫ И ИНВЕНТАРЬ ---
 function renderBrandsList() {
     const container = document.getElementById('brandsGridContainer');
     if(!container) return;
@@ -2118,7 +2128,7 @@ function renderBrandInventory() {
         let locationHtml = '';
 
         if (isOwned) {
-            let locationStr = findMarkerLocation(mId);
+            let locationStr = findMarkerLocation ? findMarkerLocation(mId) : null;
             if (locationStr) {
                 locationHtml = `<div style="font-size:10px; color:#ff9500; margin-top:6px; line-height:1.2; word-wrap:break-word;">📍 ${locationStr}</div>`;
             }
@@ -2132,7 +2142,6 @@ function renderBrandInventory() {
     }).join('');
 }
 
-
 function filterBrandInventory() { renderBrandInventory(); }
 
 async function massToggle(isAdded) {
@@ -2143,11 +2152,8 @@ async function massToggle(isAdded) {
         tg.showConfirm(actionText, async (confirm) => {
             if (confirm) {
                 let trainedIds = aiDB.filter(item => item.brand === currentViewingBrand.name).map(item => `${currentViewingBrand.name}_${item.marker}`);
-               
-                if(isAdded) {
-    userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
-    renderBrandInventory();
-}
+                if (isAdded) {
+                    userInventory = Array.from(new Set([...userInventory, ...trainedIds]));
                 } else {
                     userInventory = userInventory.filter(id => !id.startsWith(currentViewingBrand.name + "_"));
                     organizers.forEach(org => { org.cells.forEach(cell => { cell.markers = cell.markers.filter(id => !id.startsWith(currentViewingBrand.name + "_")); }); });
@@ -2168,7 +2174,26 @@ async function massToggle(isAdded) {
     }
 }
 
-// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
+async function toggleInventory(brand, marker, isAdded) {
+    let mId = `${brand}_${marker}`;
+    if(isAdded && !userInventory.includes(mId)) userInventory.push(mId);
+    if(!isAdded) {
+        userInventory = userInventory.filter(id => id !== mId);
+        organizers.forEach(org => { org.cells.forEach(cell => { cell.markers = cell.markers.filter(id => id !== mId); }); });
+        saveOrganizers();
+        renderOrganizers(); 
+    }
+    renderBrandInventory();
+    if(window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+
+    let userId = document.getElementById('userIdDisplay')?.innerText || "0";
+    fetch(`${API_URL}/inventory`, {
+        method: 'POST', body: JSON.stringify({ user_id: userId, marker_id: mId, action: isAdded ? "add" : "remove" })
+    }).catch(e => console.error("Ошибка сохранения инвентаря", e));
+}
+
+// =========================================================
+// --- УНИВЕРСАЛЬНАЯ НАВИГАЦИЯ ---
 function tab(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -2196,11 +2221,8 @@ function updatePage() {
     function tryLoad() { img.src = `otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; }
     img.onerror = () => { 
         fIndex++; 
-        if (fIndex < formats.length) {
-            tryLoad(); 
-        } else {
-            img.onerror = null; // Предотвращаем бесконечный цикл, если ни один формат не подошел
-        }
+        if (fIndex < formats.length) tryLoad();
+        else img.onerror = null;
     };
     tryLoad(); counter.innerText = `${currentPage} / ${maxPages}`;
 }
@@ -2214,94 +2236,133 @@ function handleTouchEnd(e) {
     }
 }
 
-async function toggleInventory(brand, marker, isAdded) {
-    let mId = `${brand}_${marker}`;
-    if(isAdded && !userInventory.includes(mId)) userInventory.push(mId);
-    if(!isAdded) {
-        userInventory = userInventory.filter(id => id !== mId);
-        organizers.forEach(org => { org.cells.forEach(cell => { cell.markers = cell.markers.filter(id => id !== mId); }); });
-        saveOrganizers();
-        renderOrganizers(); 
-    }
-    renderBrandInventory();
-    if(window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-
-    let userId = document.getElementById('userIdDisplay')?.innerText || "0";
-    fetch(`${API_URL}/inventory`, {
-        method: 'POST', body: JSON.stringify({ user_id: userId, marker_id: mId, action: isAdded ? "add" : "remove" })
-    }).catch(e => console.error("Ошибка сохранения инвентаря", e));
-}
-
-function filterMarkers() { renderMarkers(markersData); }
-
 // =========================================================
-// --- СИСТЕМА ИСКУССТВЕННОГО ИНТЕЛЛЕКТА (AI) ---
+// --- ИИ ---
 // =========================================================
-
-const API_URL = "https://hlhbot-hachettelittleheroes.amvera.io/api";
-const state = {
-    aiDB: [],
-    userInventory: [],
-    currentBrand: null
-};
-
 async function initAI() {
     try {
         let res = await fetch(`${API_URL}/ai_db`);
         if (!res.ok) throw new Error("API error");
         let data = await res.json();
 
-        if (Array.isArray(data)) {
-            aiDB = data;
-        } else if (data && Array.isArray(data.data)) {
-            aiDB = data.data;
-        } else if (data && Array.isArray(data.ai_db)) {
-            aiDB = data.ai_db;
-        } else {
-            console.warn("AI DB unexpected format:", data);
-            aiDB = [];
-        }
+        if (Array.isArray(data)) aiDB = data;
+        else if (data && Array.isArray(data.data)) aiDB = data.data;
+        else if (data && Array.isArray(data.ai_db)) aiDB = data.ai_db;
+        else aiDB = [];
 
         let userId = document.getElementById('userIdDisplay')?.innerText;
         if (userId && userId !== "---") {
             try {
                 let invRes = await fetch(`${API_URL}/inventory?user_id=${userId}`);
-                if (invRes.ok) {
-                    let invData = await invRes.json();
-                    userInventory = Array.isArray(invData) ? invData : [];
-                } else {
-                    userInventory = [];
-                }
-            } catch (invErr) {
-                console.error("Ошибка загрузки инвентаря", invErr);
-                userInventory = [];
-            }
+                userInventory = invRes.ok ? await invRes.json() : [];
+            } catch { userInventory = []; }
         }
 
     } catch (e) {
-        console.error("Ошибка загрузки БД ИИ или инвентаря", e);
+        console.error("Ошибка загрузки ИИ", e);
         aiDB = [];
         userInventory = [];
     }
 
     let userDisp = document.getElementById('userIdDisplay');
-
     if (userDisp && userDisp.innerText == "496779756") {
-        let aiPan = document.getElementById('aiAdminPanel');
-        if (aiPan) aiPan.style.display = "block";
-
-        let taskPan = document.getElementById('adminTaskPanel');
-        if (taskPan) taskPan.style.display = "block";
-
-        if (typeof loadQuarantine === "function") {
-            loadQuarantine();
-        }
-
-        if (typeof loadAdminTasks === "function") {
-            loadAdminTasks();
-        }
+        let aiPan = document.getElementById('aiAdminPanel'); if (aiPan) aiPan.style.display = "block";
+        let taskPan = document.getElementById('adminTaskPanel'); if (taskPan) taskPan.style.display = "block";
+        if (typeof loadQuarantine === "function") loadQuarantine();
+        if (typeof loadAdminTasks === "function") loadAdminTasks();
     }
 }
+
+// --- ИИ: Палитра ---
+function processAI(event) {
+    const files = event.target.files;
+    if(!files || files.length === 0) return;
+    const container = document.getElementById('aiMultipleResultsContainer');
+    if(!container) return;
+    container.innerHTML = ''; 
+    
+    Array.from(files).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onerror = () => console.error("Ошибка чтения файла");
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas'); 
+                const ctx = canvas.getContext('2d');
+                const scale = Math.min(300/img.width, 300/img.height);
+                canvas.width = img.width*scale; canvas.height = img.height*scale;
+                ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+                const imgB64 = canvas.toDataURL('image/jpeg',0.5);
+                const sx = Math.max(0,(canvas.width/2)-25), sy = Math.max(0,(canvas.height/2)-25);
+                const imgData = ctx.getImageData(sx, sy, 50, 50).data;
+                let r=0,g=0,b=0,count=0;
+                for(let i=0;i<imgData.length;i+=4){r+=imgData[i];g+=imgData[i+1];b+=imgData[i+2];count++;}
+                const rgb = [Math.round(r/count), Math.round(g/count), Math.round(b/count)];
+
+                const resDiv = document.createElement('div');
+                resDiv.style.marginTop="15px"; resDiv.style.background="var(--secondary)";
+                resDiv.style.padding="15px"; resDiv.style.borderRadius="12px";
+                resDiv.id = `aiResBlock_${index}`;
+
+                container.appendChild(canvas);
+                canvas.style.maxWidth="100%"; canvas.style.borderRadius="12px";
+                canvas.style.marginTop="15px"; canvas.style.border="1px solid rgba(128,128,128,0.2)";
+
+                predictColorMultiple(rgb,imgB64,resDiv,index);
+                container.appendChild(resDiv);
+            };
+            img.onerror = () => console.error("Ошибка загрузки изображения");
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// --- ИИ: Обучение ---
+async function trainAI(event){
+    const brand = document.getElementById('adminTrainBrand').value;
+    let num = document.getElementById('adminTrainNum').value.trim();
+
+    if(!num){ if(window.tg && tg.showAlert) tg.showAlert("Введите номер маркера"); return; }
+    if(!event.target.files || !event.target.files[0]){ if(window.tg && tg.showAlert) tg.showAlert("Выберите фото маркера"); return; }
+
+    if(brand==='Tooli-Art'){ num = document.getElementById('adminTrainSet').value + " " + num; }
+
+    const reader = new FileReader();
+    reader.onerror = () => console.error("Ошибка чтения файла для обучения");
+    reader.onload = function(e){
+        const img = new Image();
+        img.onerror = () => console.error("Ошибка загрузки изображения для обучения");
+        img.onload = async function(){
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width=img.width; canvas.height=img.height;
+            ctx.drawImage(img,0,0);
+            const imgData = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+            let r=0,g=0,b=0,c=0;
+            for(let i=0;i<imgData.length;i+=4){r+=imgData[i];g+=imgData[i+1];b+=imgData[i+2];c++;}
+            const rgb = [Math.round(r/c), Math.round(g/c), Math.round(b/c)];
+
+            try{
+                await fetch(`${API_URL}/train`,{
+                    method:'POST',
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({brand:brand,marker:num,rgb:rgb})
+                });
+                if(window.tg && window.tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                if(window.tg && window.tg.showAlert) tg.showAlert("Маркер успешно добавлен в базу ИИ");
+                if(typeof initAI==="function") initAI();
+            }catch(err){
+                console.error("AI train error:",err);
+                if(window.tg && window.tg.showAlert) tg.showAlert("Ошибка обучения ИИ");
+            }
+        };
+        img.src=e.target.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+</script>
 
 
 function processAI(event) {

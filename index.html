@@ -908,6 +908,28 @@
         </button> 
         <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Профиль</button>
     </nav>
+<div class="profile-header" style="text-align: center; padding: 20px;">
+    <div id="user-avatar-container" onclick="toggleAvatarEditor()">
+        <img id="user-avatar" src="" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--accent);">
+    </div>
+
+    <h2 id="userName" style="margin: 10px 0 2px 0;">Без имени</h2>
+
+    <div id="userStatusDisplay" onclick="changeCustomStatus()" style="font-size: 14px; margin-bottom: 15px; font-weight: 500; transition: color 0.3s;">
+        Без статуса
+    </div>
+
+    <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="buy-btn" onclick="openLoyaltyProgram()" style="flex: 1;">
+            Заработать ашетики
+        </button>
+        
+        <button class="buy-btn" onclick="openTasks()" style="flex: 1; background: var(--secondary); color: var(--text);">
+            Задания статусов
+        </button>
+    </div>
+</div>
+
 <script>
 // =========================================================
 // --- БАЗОВЫЕ НАСТРОЙКИ, ПРОФИЛЬ И АВАТАРЫ ---
@@ -939,6 +961,23 @@ function saveProfileData() {
     catch (e) { console.error("Ошибка сохранения профиля:", e); }
 }
 
+function updateStatusUI() {
+    const statusEl = document.getElementById('userStatusDisplay');
+    if (statusEl) {
+        statusEl.innerText = window.userProfileData.status || "Без статуса";
+        
+        // Делаем статус кликабельным и подсвечиваем, если есть доступные статусы
+        const unlocked = window.userProfileData.unlockedAchievements || [];
+        if (unlocked.length > 0) {
+            statusEl.style.color = "var(--accent)"; 
+            statusEl.style.cursor = "pointer";
+        } else {
+            statusEl.style.color = "var(--gray)";
+            statusEl.style.cursor = "default";
+        }
+    }
+}
+
 function loadProfileData() {
     try {
         const saved = localStorage.getItem('hlh_user_profile');
@@ -958,8 +997,8 @@ function loadProfileData() {
     const nameProfileEl = document.getElementById('userName'); 
     if (nameProfileEl) nameProfileEl.innerText = window.userProfileData.name;
     
-    const statusEl = document.getElementById('userStatusDisplay');
-    if (statusEl) statusEl.innerText = window.userProfileData.status;
+    // Обновляем UI статуса
+    updateStatusUI();
 }
 
 function toggleAvatarEditor() {
@@ -1015,7 +1054,7 @@ function updateAvatarImage() {
     }
 }
 // ---------------------------------------------------------
-// ИСПРАВЛЕНИЕ: Вызов статического окна смены имени
+// Смена имени
 // ---------------------------------------------------------
 function changeNickname() {
     initUserStats();
@@ -1045,6 +1084,7 @@ function saveNewNickname() {
     
     saveProfileData();
     renderStatusQuests();
+    updateStatusUI();
     
     let modal = document.getElementById('nameInputModal');
     if(modal) modal.style.display = 'none';
@@ -1054,27 +1094,34 @@ function saveNewNickname() {
 }
 
 // ---------------------------------------------------------
-// ИСПРАВЛЕНИЕ: Вызов статического окна смены статуса
+// Смена статуса
 // ---------------------------------------------------------
 function changeCustomStatus() {
     const unlocked = window.userProfileData.unlockedAchievements || [];
+    
+    // Блокируем открытие, если нет доступных статусов
+    if (unlocked.length === 0) {
+        if (window.tg && tg.showAlert) {
+            tg.showAlert("У вас пока нет разблокированных статусов. Выполняйте задания, чтобы получить их!");
+        } else {
+            alert("У вас пока нет разблокированных статусов. Выполняйте задания, чтобы получить их!");
+        }
+        return;
+    }
+
     let modal = document.getElementById('statusSelectModal');
     if (!modal) return;
     
     let listHtml = '';
     listHtml += `<button class="buy-btn" style="background:#ff3b30; color:white; padding:10px; border-radius:10px; margin-bottom:5px;" onclick="setNewStatus('Без статуса')">Сбросить статус</button>`;
     
-    if (unlocked.length > 0) {
-        unlocked.forEach(achId => {
-            let ach = achievementsConfig.find(a => a.id === achId);
-            if (ach) {
-                let statusText = ach.desc.replace('Статус: ', '').replace('Достижение: ', '').trim();
-                listHtml += `<button class="buy-btn" style="background:var(--accent); color:white; padding:10px; border-radius:10px; margin-bottom:5px;" onclick="setNewStatus('${statusText}')">${statusText}</button>`;
-            }
-        });
-    } else {
-        listHtml += `<div style="text-align:center; color:var(--gray); font-size:14px; margin-top:10px; margin-bottom:10px;">У вас пока нет разблокированных статусов. Выполняйте задания, чтобы получить их!</div>`;
-    }
+    unlocked.forEach(achId => {
+        let ach = achievementsConfig.find(a => a.id === achId);
+        if (ach) {
+            let statusText = ach.desc.replace('Статус: ', '').replace('Достижение: ', '').trim();
+            listHtml += `<button class="buy-btn" style="background:var(--accent); color:white; padding:10px; border-radius:10px; margin-bottom:5px;" onclick="setNewStatus('${statusText}')">${statusText}</button>`;
+        }
+    });
     
     document.getElementById('statusSelectList').innerHTML = listHtml;
     modal.style.display = 'flex';
@@ -1082,8 +1129,7 @@ function changeCustomStatus() {
 
 function setNewStatus(newStatus) {
     window.userProfileData.status = newStatus;
-    const statusEl = document.getElementById('userStatusDisplay');
-    if (statusEl) statusEl.innerText = window.userProfileData.status;
+    updateStatusUI();
     saveProfileData();
     document.getElementById('statusSelectModal').style.display = 'none';
     if(window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -1137,6 +1183,7 @@ function renderStatusQuests() {
         if(isDone && !wasDone) {
             if(!window.userProfileData.unlockedAchievements) window.userProfileData.unlockedAchievements = [];
             window.userProfileData.unlockedAchievements.push(ach.id);
+            updateStatusUI(); // Обновляем статусы при получении нового достижения
             setTimeout(() => {
                 if(window.tg && tg.showAlert) tg.showAlert(`🏆 Новое достижение!\n${ach.title}`);
             }, 300);
@@ -1176,24 +1223,43 @@ function sendAchievementRequest(id, title) {
 }
 
 // ---------------------------------------------------------
-// ИСПРАВЛЕНИЕ: Функция для открытия квестов (статусов)
+// ОТКРЫТИЕ ЛОЯЛЬНОСТИ И ЗАДАНИЙ (НОВАЯ ЛОГИКА)
 // ---------------------------------------------------------
-function openTasks() {
-    const container = document.getElementById('questsListContainer');
-    if(!container) return;
+function openLoyaltyProgram() {
+    const loyaltyInfo = document.getElementById('loyalty-info');
+    const rewardsSection = document.getElementById('rewards-section');
+    const tasksContainer = document.getElementById('questsListContainer');
 
-    if(container.style.display === 'block'){
-        container.style.display = 'none';
-    }else{
-        container.style.display = 'block';
-        renderStatusQuests();
+    if (tasksContainer) tasksContainer.style.display = 'none'; // Скрываем квесты
+    
+    if (loyaltyInfo) {
+        loyaltyInfo.style.display = 'block'; // Показываем лояльность
+        if (rewardsSection) rewardsSection.style.display = 'none'; // Скрываем товары за баллы
+    }
+
+    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+}
+window.openLoyaltyProgram = openLoyaltyProgram;
+
+function openTasks() {
+    const tasksContainer = document.getElementById('questsListContainer');
+    const loyaltyInfo = document.getElementById('loyalty-info');
+
+    if (loyaltyInfo) loyaltyInfo.style.display = 'none'; // Скрываем лояльность
+
+    if(tasksContainer){
+        if(tasksContainer.style.display === 'block'){
+            tasksContainer.style.display = 'none';
+        }else{
+            tasksContainer.style.display = 'block';
+            renderStatusQuests();
+        }
     }
 
     if (window.tg && tg.HapticFeedback){
         tg.HapticFeedback.impactOccurred('light');
     }
 }
-// Добавляем алиасы на случай опечаток в HTML
 window.showTasks = openTasks;
 window.goToTasks = openTasks;
 
@@ -1623,7 +1689,7 @@ function changeQty(index, delta) {
 }
 
 // ---------------------------------------------------------
-// ИСПРАВЛЕНИЕ: Кнопка оформления заказа (скрытая отправка деталей)
+// Кнопка оформления заказа
 // ---------------------------------------------------------
 function checkout() {
     if (cart.length === 0) return;

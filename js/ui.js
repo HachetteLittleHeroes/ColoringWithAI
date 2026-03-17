@@ -169,3 +169,16 @@ function updateCartBadge(count) {
 document.addEventListener('DOMContentLoaded', () => {
     tab('profile'); // по умолчанию открываем Профиль
 });
+function updateUserProfile(data) {
+    if (data.username) {
+        document.getElementById('displayUsername').innerText = data.username;
+    }
+    if (data.balance !== undefined) {
+        document.getElementById('userBalance').innerText = data.balance;
+    }
+    if (data.photo_url) {
+        document.getElementById('user-avatar').src = data.photo_url;
+    }
+}
+// Не забудьте сделать её глобальной, чтобы app.js её увидел
+window.updateUserProfile = updateUserProfile;

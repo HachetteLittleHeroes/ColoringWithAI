@@ -2171,22 +2171,82 @@ let userInventory = [];
 
 async function initAI() {
     try {
-        let res = await fetch(`${API_URL}/ai_db`);
-        aiDB = await res.json();
-        let userId = document.getElementById('userIdDisplay')?.innerText;
-        if(userId && userId !== "---") {
-            let invRes = await fetch(`${API_URL}/inventory?user_id=${userId}`);
-            userInventory = await invRes.json();
+
+    let res = await fetch(`${API_URL}/ai_db`);
+
+    if(!res.ok){
+        console.error("AI DB API error", res.status);
+        aiDB = [];
+    } else {
+
+        let data = await res.json();
+
+        if(Array.isArray(data)){
+            aiDB = data;
+        } else {
+            console.warn("AI DB returned non-array:", data);
+            aiDB = [];
         }
-    } catch(e) { console.error("Ошибка загрузки БД ИИ или инвентаря", e); }
-    
-    let userDisp = document.getElementById('userIdDisplay');
-    if (userDisp && userDisp.innerText == "496779756") {
-        let aiPan = document.getElementById('aiAdminPanel'); if(aiPan) aiPan.style.display = "block";
-        let taskPan = document.getElementById('adminTaskPanel'); if(taskPan) taskPan.style.display = "block"; 
-        loadQuarantine();
-        loadAdminTasks(); 
+
     }
+
+    let userId = document.getElementById('userIdDisplay')?.innerText;
+
+    if(userId && userId !== "---"){
+
+        try{
+
+            let invRes = await fetch(`${API_URL}/inventory?user_id=${userId}`);
+
+            if(invRes.ok){
+
+                let invData = await invRes.json();
+
+                if(Array.isArray(invData)){
+                    userInventory = invData;
+                } else {
+                    userInventory = [];
+                }
+
+            } else {
+                userInventory = [];
+            }
+
+        }catch(invErr){
+
+            console.error("Ошибка загрузки инвентаря", invErr);
+            userInventory = [];
+
+        }
+
+    }
+
+} catch(e) {
+
+    console.error("Ошибка загрузки БД ИИ или инвентаря", e);
+    aiDB = [];
+    userInventory = [];
+
+}
+
+let userDisp = document.getElementById('userIdDisplay');
+
+if (userDisp && userDisp.innerText == "496779756") {
+
+    let aiPan = document.getElementById('aiAdminPanel');
+    if(aiPan) aiPan.style.display = "block";
+
+    let taskPan = document.getElementById('adminTaskPanel');
+    if(taskPan) taskPan.style.display = "block";
+
+    if(typeof loadQuarantine === "function"){
+        loadQuarantine();
+    }
+
+    if(typeof loadAdminTasks === "function"){
+        loadAdminTasks();
+    }
+
 }
 
 function processAI(event) {

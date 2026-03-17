@@ -2473,13 +2473,10 @@ async function trainAI(event) {
     };
     reader.readAsDataURL(event.target.files[0]);
 }
-
 async function loadQuarantine() {
-    try{
+    try {
         let res = await fetch(`${API_URL}/quarantine_list`);
-        if(!res.ok){
-            throw new Error("API error");
-        }
+        if (!res.ok) throw new Error("API error");
         let data = await res.json();
         let html = data.length === 0 ? "<p>Пусто.</p>" : "";
 
@@ -2491,57 +2488,48 @@ async function loadQuarantine() {
                     <span style="font-size:14px; color:var(--accent);">№ ${q.correct_marker}</span>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:5px;">
-                    <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#34c759;" onclick="resolveQ(${q.id}, 'approve')">Одобрить</button>
-                    <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#ff3b30;" onclick="resolveQ(${q.id}, 'reject')">Отвергнуть</button>
+                    <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#34c759;" onclick="resolveQ('${q.id}', 'approve')">Одобрить</button>
+                    <button class="buy-btn" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#ff3b30;" onclick="resolveQ('${q.id}', 'reject')">Отвергнуть</button>
                 </div>
             </div>`;
         });
 
         let qList = document.getElementById('adminQuarantineList');
-        if(qList){
-            qList.innerHTML = html;
-        }
-    }catch(err){
+        if (qList) qList.innerHTML = html;
+    } catch (err) {
         console.error("Quarantine load error:", err);
         let qList = document.getElementById('adminQuarantineList');
-        if(qList){
-            qList.innerHTML = "<p>Ошибка загрузки карантина.</p>";
-        }
+        if (qList) qList.innerHTML = "<p>Ошибка загрузки карантина.</p>";
     }
 }
 
 async function resolveQ(id, action) {
-    try{
+    try {
         const res = await fetch(`${API_URL}/quarantine_resolve`, {
             method: 'POST',
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify({
-                id: id,
-                action: action
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: id, action: action })
         });
         const data = await res.json();
-        console.log("Quarantine resolve:", data);
-
-        if(window.tg && window.tg.HapticFeedback){
+        
+        if (window.tg && window.tg.HapticFeedback) {
             window.tg.HapticFeedback.notificationOccurred('success');
         }
-
-        if(typeof initAI === "function"){
+        
+        if (typeof initAI === "function") {
             initAI();
         }
-
+        
         loadQuarantine();
 
-    }catch(err){
+    } catch (err) {
         console.error("Resolve quarantine error:", err);
-        if(window.tg && window.tg.showAlert){
+        if (window.tg && window.tg.showAlert) {
             window.tg.showAlert("Ошибка обработки карантина");
         }
     }
 }
+
 
 // =========================================================
 // --- ЛОГИКА ДОСТИЖЕНИЙ В ПРОФИЛЕ ---

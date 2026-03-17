@@ -283,6 +283,26 @@ button, .buy-btn {
     padding: 8px 15px;
     margin-top: 5px;
 }
+.balance-btns-container {
+    display: flex;
+    flex-direction: column; /* Кнопки друг под другом */
+    gap: 12px;             /* Расстояние между кнопками */
+    width: 100%;
+    margin-top: 10px;
+}
+
+.balance-action-btn {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(10px);
+    color: white !important;
+    width: 100% !important;   /* На всю ширину */
+    padding: 16px !important; /* Увеличиваем высоту кнопки */
+    font-size: 18px !important; /* Увеличиваем шрифт */
+    border-radius: 15px !important;
+    font-weight: 600;
+}
+
 
 /* ===================== Модальные окна ===================== */
 .modal-overlay, .custom-modal-overlay {

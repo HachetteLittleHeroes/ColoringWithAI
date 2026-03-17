@@ -126,6 +126,11 @@ button, .buy-btn {
 .buy-btn.rounded-pill {
     border-radius: 50px;
 }
+.gold-book {
+    color: #FFD700;
+    font-size: 28px;
+    margin-left: 8px;
+}
 
 /* ===================== Навигация ===================== */
 .nav {

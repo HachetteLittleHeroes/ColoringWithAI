@@ -137,8 +137,15 @@ button, .buy-btn {
     display: flex;
     background: var(--bg);
     border-top: 0.5px solid rgba(128,128,128,0.2);
-    z-index: 999;
+    z-index: 9999; /* Максимальный приоритет, чтобы не перекрывалось черным фоном */
 }
+
+/* Убедитесь, что страницы не перекрывают меню */
+.page {
+    display: none;
+    padding-bottom: 90px; /* Отступ снизу, чтобы контент не залез под меню */
+}
+
 
 .nav-btn {
     flex: 1;

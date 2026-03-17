@@ -79,17 +79,23 @@
         <div id="avatarPresetsGrid" class="avatar-grid-presets"></div>
     </div>
 
-    <div class="balance-card">
-        <p>ВАШ БАЛАНС</p>
-        <div class="balance-amount"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
-        <button class="buy-btn" onclick="toggleRewards()">Потратить 🎁</button>
-        <button class="buy-btn" onclick="toggleEarnAchetiki()">Заработать 💰</button>
+<div class="balance-card">
+    <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px; color: white;">ВАШ БАЛАНС</p>
+    <div class="balance-amount">
+        <span id="userBalance">0</span> 
+        <i class="fas fa-book-open gold-book"></i>
     </div>
-
-    <div id="rewards-section" style="display:none;"><h3>Магазин наград</h3><div class="reward-grid" id="rewardsList"></div></div>
-    <div id="real-loyalty-info" style="display:none;"><h3>Как заработать</h3><p>Выполняйте задания...</p></div>
-    <div id="questsListContainer" style="display:none;"></div>
+    
+    <div class="balance-btns-container">
+        <button class="buy-btn balance-action-btn" onclick="toggleRewards()">
+            Потратить ашетики 🎁
+        </button>
+        <button class="buy-btn balance-action-btn" onclick="toggleEarnAchetiki()">
+            Заработать ашетики 💰
+        </button>
+    </div>
 </div>
+
 
 <div id="aipalette" class="page">
     <div class="header">ИИ Палитра ✨</div>

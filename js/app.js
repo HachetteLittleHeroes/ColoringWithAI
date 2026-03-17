@@ -59,3 +59,15 @@ function toggleRewards() {
 
 // Инициализация при старте
 document.addEventListener('DOMContentLoaded', initApp);
+//закрытие окна выбора статуса
+function closeStatusSelect() {
+    document.getElementById('statusSelectModal').style.display = 'none';
+}
+
+// Функция для закрытия при клике на темный фон
+function closeStatusSelectOutside(event) {
+    if (event.target.id === 'statusSelectModal') {
+        closeStatusSelect();
+    }
+}
+

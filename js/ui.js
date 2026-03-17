@@ -68,3 +68,19 @@ function toggleEarnAchetiki() {
         el.style.display = 'none';
     }
 }
+function openSheet(contentHTML) {
+    const sheet = document.getElementById('bottomSheet');
+    const overlay = document.getElementById('sheetOverlay');
+    const content = document.getElementById('sheetContent');
+
+    content.innerHTML = contentHTML;
+
+    sheet.classList.add('active');
+    overlay.classList.add('active');
+}
+
+function closeSheet() {
+    document.getElementById('bottomSheet').classList.remove('active');
+    document.getElementById('sheetOverlay').classList.remove('active');
+}
+

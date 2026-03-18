@@ -1,5 +1,5 @@
 /**
- * app.js — Главный контроллер приложения
+ * app.js — Полный контроллер
  */
 
 const State = {
@@ -7,26 +7,31 @@ const State = {
     markers: [],
     cart: [],
     currentTab: 'profile',
-    isAdmin: false,
-    adminId: '496779756'
+    userId: '496779756'
 };
 
 const GITHUB_AVATAR_PATH = 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/';
+let pendingAvatarUrl = '';
 
 async function init() {
-    console.log("Запуск приложения...");
+    console.log("Запуск...");
     
     const tg = window.Telegram?.WebApp;
     if (tg) {
-        tg.expand();
-        tg.ready();
+        tg.expand(); tg.ready();
         State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
-    } else {
-        State.userId = '496779756';
     }
 
-    State.isAdmin = (State.userId === State.adminId);
+    // РЕШЕНИЕ ПРОБЛЕМЫ МИГАНИЯ: Сразу достаем из памяти
+    const localName = localStorage.getItem('user_name');
+    const localAvatar = localStorage.getItem('user_avatar');
+    const localStatus = localStorage.getItem('user_status');
+    
+    if (localName) document.getElementById('displayUsername').innerText = localName;
+    if (localAvatar) document.getElementById('user-avatar').src = localAvatar;
+    if (localStatus) document.getElementById('currentStatus').innerText = localStatus;
 
+    // Фоновая загрузка актуальных данных
     State.user = await window.api.getUser(State.userId);
     State.markers = await window.api.fetchMarkers();
     State.cart = window.api.getCart();
@@ -36,16 +41,10 @@ async function init() {
     renderTasks();
     updateCartBadge();
     
-    if (State.isAdmin) {
-        const adminBlock = document.getElementById('adminAIBlock');
-        if (adminBlock) adminBlock.style.display = 'block';
-    }
-
     tab('profile');
 }
 
-// ===================== НАВИГАЦИЯ =====================
-
+// НАВИГАЦИЯ
 function tab(tabId) {
     const pages = document.querySelectorAll('.page');
     const buttons = document.querySelectorAll('.nav-btn');
@@ -68,20 +67,14 @@ function tab(tabId) {
     }
 }
 
-// ===================== ПРОФИЛЬ И АВАТАРКИ =====================
-
+// ПРОФИЛЬ И АВАТАРКИ
 function renderProfile() {
     if (!State.user) return;
 
-    const avatarImg = document.getElementById('user-avatar');
-    const nameEl = document.getElementById('displayUsername');
-    const balanceEl = document.getElementById('userBalance');
-    const statusEl = document.getElementById('currentStatus');
-
-    if (avatarImg) avatarImg.src = State.user.avatar;
-    if (nameEl) nameEl.innerText = State.user.name;
-    if (balanceEl) balanceEl.innerText = State.user.balance;
-    if (statusEl) statusEl.innerText = State.user.status;
+    document.getElementById('user-avatar').src = State.user.avatar;
+    document.getElementById('displayUsername').innerText = State.user.name;
+    document.getElementById('userBalance').innerText = State.user.balance;
+    document.getElementById('currentStatus').innerText = State.user.status;
 
     const presetGrid = document.getElementById('avatarPresets');
     if (presetGrid) {
@@ -89,13 +82,10 @@ function renderProfile() {
         for (let i = 1; i <= 8; i++) {
             const img = document.createElement('img');
             img.src = `${GITHUB_AVATAR_PATH}av${i}.png`; 
-            img.alt = `Avatar ${i}`;
             img.className = 'preset-avatar-item';
-            
-            // Если картинка не найдена (404), скрываем ее, чтобы не было битых иконок
             img.onerror = function() { this.style.display = 'none'; };
-            
-            img.onclick = () => selectAvatar(img.src);
+            // При клике теперь открываем окно подтверждения
+            img.onclick = () => promptAvatarConfirm(img.src);
             presetGrid.appendChild(img);
         }
     }
@@ -104,36 +94,45 @@ function renderProfile() {
 function toggleAvatarEditor() {
     const el = document.getElementById('avatarEditorBlock');
     if (!el) return;
-    
     const isHidden = el.style.display === 'none' || el.style.display === '';
     el.style.display = isHidden ? 'block' : 'none';
-    
-    if (isHidden) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
 }
 
-async function selectAvatar(url) {
-    State.user.avatar = url;
-    const mainAvatar = document.getElementById('user-avatar');
-    if (mainAvatar) mainAvatar.src = url;
+// ЛОГИКА ОКНА ПОДТВЕРЖДЕНИЯ АВАТАРА
+function promptAvatarConfirm(url) {
+    pendingAvatarUrl = url;
+    document.getElementById('avatarPreview').src = url;
+    document.getElementById('avatarConfirmModal').style.display = 'flex';
+}
+
+function closeAvatarConfirm() {
+    document.getElementById('avatarConfirmModal').style.display = 'none';
+    pendingAvatarUrl = '';
+}
+
+async function applyAvatar() {
+    if (!pendingAvatarUrl) return;
     
-    await window.api.updateProfile(State.userId, 'avatar', url);
+    State.user.avatar = pendingAvatarUrl;
+    document.getElementById('user-avatar').src = pendingAvatarUrl;
+    await window.api.updateProfile(State.userId, 'avatar', pendingAvatarUrl);
+    
+    closeAvatarConfirm();
     toggleAvatarEditor();
 }
 
+// СВОЕ ФОТО
 async function handleCustomAvatar(event) {
     const file = event.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = async (e) => {
-        const url = e.target.result;
-        await selectAvatar(url);
+        promptAvatarConfirm(e.target.result);
     };
     reader.readAsDataURL(file);
 }
 
+// ИМЯ
 function changeNickname() {
     document.getElementById('nameModal').style.display = 'flex';
 }
@@ -149,36 +148,89 @@ async function saveNewNickname() {
     document.getElementById('nameModal').style.display = 'none';
 }
 
+// КНОПКИ БАЛАНСА
 function toggleSection(id) {
     const el = document.getElementById(id);
     const isVisible = el.style.display === 'block';
     
-    const rewards = document.getElementById('rewards-section');
-    const earn = document.getElementById('earn-section');
-    if(rewards) rewards.style.display = 'none';
-    if(earn) earn.style.display = 'none';
+    document.getElementById('rewards-section').style.display = 'none';
+    document.getElementById('earn-section').style.display = 'none';
     
-    el.style.display = isVisible ? 'none' : 'block';
+    if (!isVisible) {
+        el.style.display = 'block';
+    }
 }
 
-// ===================== ЗАДАНИЯ И КОРЗИНА (ЗАГЛУШКИ ДЛЯ ИНИЦИАЛИЗАЦИИ) =====================
-
+// ЗАДАНИЯ
 function toggleTasks() {
     const content = document.getElementById('tasksList');
     const arrow = document.getElementById('tasksArrow');
     const isHidden = content.style.display === 'none';
+    
     content.style.display = isHidden ? 'block' : 'none';
     arrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
 }
 
 function renderTasks() {
     const container = document.getElementById('tasksList');
-    if(container) container.innerHTML = '<p style="padding:15px; color:#888;">Задания загружаются...</p>';
+    const branches = window.api.getTaskData();
+    
+    container.innerHTML = branches.map(branch => `
+        <div style="margin-bottom: 10px;">
+            <h4 style="color:var(--accent); margin-bottom:10px;">${branch.title}</h4>
+            ${branch.levels.map(lv => `
+                <div class="task-level">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span style="font-size:14px;">Ур. ${lv.lv}: ${lv.text}</span>
+                        <span style="color:#FFD700; font-weight:bold;">+${lv.reward} <i class="fas fa-book-open"></i></span>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `).join('');
 }
 
+// МАРКЕРЫ И КОРЗИНА
 function renderMarkers() {
     const container = document.getElementById('markersList');
-    if(container) container.innerHTML = '<p style="padding:15px; color:#888;">Загрузка маркеров...</p>';
+    if (!State.markers.length) {
+        container.innerHTML = '<p style="padding:15px; text-align:center; color:#888;">Загрузка...</p>';
+        return;
+    }
+    container.innerHTML = State.markers.map(m => {
+        const cartItem = State.cart.find(item => item.id === m.id);
+        const count = cartItem ? cartItem.count : 0;
+        return `
+            <div class="marker-item">
+                <div>
+                    <div style="font-weight:bold; font-size:18px;">№ ${m.number}</div>
+                    <div style="font-size:12px; color:${m.stock > 0 ? '#34c759' : '#ff3b30'}">${m.stock} шт.</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="btn-circle ${count === 0 ? 'disabled' : ''}" onclick="changeCart('${m.id}', -1)">-</button>
+                    <span style="font-weight:bold; width:20px; text-align:center;">${count}</span>
+                    <button class="btn-circle ${count >= m.stock ? 'disabled' : ''}" onclick="changeCart('${m.id}', 1)">+</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function changeCart(id, delta) {
+    const marker = State.markers.find(m => m.id === id);
+    let cartItem = State.cart.find(item => item.id === id);
+
+    if (delta > 0) {
+        if (!cartItem) State.cart.push({ ...marker, count: 1 });
+        else if (cartItem.count < marker.stock) cartItem.count++;
+    } else {
+        if (cartItem) {
+            cartItem.count--;
+            if (cartItem.count <= 0) State.cart = State.cart.filter(item => item.id !== id);
+        }
+    }
+    window.api.saveCart(State.cart);
+    renderMarkers(); updateCartBadge();
 }
 
 function updateCartBadge() {
@@ -189,4 +241,5 @@ function updateCartBadge() {
     badge.style.display = totalCount > 0 ? 'block' : 'none';
 }
 
+window.updateCartBadge = updateCartBadge;
 document.addEventListener('DOMContentLoaded', init);

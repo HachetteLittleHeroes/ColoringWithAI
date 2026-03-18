@@ -92,8 +92,14 @@ function renderProfile() {
             img.onerror = function() { this.style.display = 'none'; };
             img.onclick = () => promptAvatarConfirm(img.src);
             presetGrid.appendChild(img);
+            if (tabId === 'aipalette') {
+        const adminBlock = document.getElementById('adminAiBlock');
+        // Проверяем ID (твой ID или заглушка для тестов локально)
+        if (State.userId === '496779756' || State.userId === 'твой_настоящий_tg_id') {
+            adminBlock.style.display = 'block';
         }
     }
+
 
     for (let i = 0; i < 3; i++) {
         const slotEl = document.getElementById(`slot-${i}`);

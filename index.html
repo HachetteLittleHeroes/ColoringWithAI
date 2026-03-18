@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script>
+    // Ловим обычные ошибки (опечатки, синтаксис, отсутствие переменных)
+    window.onerror = function(message, source, lineno, colno, error) {
+        const loaderText = document.getElementById('loading-text');
+        if (loaderText) {
+            loaderText.style.color = "#ff3b30"; // Делаем текст красным
+            loaderText.innerText = `ОШИБКА: ${message} (Файл: ${source.split('/').pop()}, Строка: ${lineno})`;
+        }
+        return false;
+    };
+
+    // Ловим ошибки асинхронных запросов (например, если отвалился fetch)
+    window.addEventListener("unhandledrejection", function(event) {
+        const loaderText = document.getElementById('loading-text');
+        if (loaderText) {
+            loaderText.style.color = "#ff3b30";
+            loaderText.innerText = `ОШИБКА ЗАГРУЗКИ ДАННЫХ: ${event.reason}`;
+        }
+    });
+</script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Coloring App</title>

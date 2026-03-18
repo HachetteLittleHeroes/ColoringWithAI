@@ -457,20 +457,53 @@ window.openAnswersGallery = function(tomeNum) {
 window.updateGalleryImage = function() {
     const imgEl = document.getElementById('galleryMainImage');
     const indicator = document.getElementById('galleryPageIndicator');
+    const modal = document.getElementById('answersGalleryModal'); // Ссылка на саму модалку
+    
     if (!imgEl) return;
+
+    // Сбрасываем старые обработчики
+    imgEl.onerror = null;
+
     imgEl.onerror = function() {
         this.onerror = null;
+        // Ставим заглушку
         this.src = 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png';
-        alert('Страница не найдена или конец тома.');
-        if (currentGalleryPage > 1) { currentGalleryPage--; indicator.innerText = `Страница ${currentGalleryPage}`; }
+        
+        // ПРОВЕРКА: показываем алерт, только если модалка открыта (display === 'flex')
+        // и если мы уже ушли дальше первой страницы
+        if (modal && modal.style.display === 'flex' && currentGalleryPage > 1) {
+            alert('Страница не найдена или это был конец тома.');
+        }
+        
+        // Откатываем счетчик, чтобы не уходить в бесконечность
+        if (currentGalleryPage > 1) {
+            currentGalleryPage--;
+            if (indicator) indicator.innerText = `Страница ${currentGalleryPage}`;
+        }
     };
+
+    // Формируем путь к картинке
     imgEl.src = `${window.CONFIG.GITHUB_BASE}otveti/t${currentGalleryTome}/${currentGalleryPage}.png`;
-    indicator.innerText = `Страница ${currentGalleryPage}`;
+    if (indicator) indicator.innerText = `Страница ${currentGalleryPage}`;
 }
 
-window.nextGalleryPage = () => { currentGalleryPage++; updateGalleryImage(); };
-window.prevGalleryPage = () => { if (currentGalleryPage > 1) { currentGalleryPage--; updateGalleryImage(); } };
-window.closeAnswersGallery = () => { document.getElementById('answersGalleryModal').style.display = 'none'; };
+window.nextGalleryPage = function() {
+    currentGalleryPage++;
+    updateGalleryImage();
+}
+
+window.prevGalleryPage = function() {
+    if (currentGalleryPage > 1) {
+        currentGalleryPage--;
+        updateGalleryImage();
+    }
+}
+
+window.closeAnswersGallery = function() {
+    const modal = document.getElementById('answersGalleryModal');
+    if (modal) modal.style.display = 'none';
+}
+
 
 window.submitAdminAiTrain = function() {
     const file = document.getElementById('adminAiInput').files[0];

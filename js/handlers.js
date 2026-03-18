@@ -10,7 +10,8 @@ function showAddOrganizer() {
 }
 
 async function loadOrganizers() {
-    const userId = document.getElementById('userIdDisplay').innerText;
+    const userId = document.getElementById('userIdDisplay')?.innerText; // Добавлено ? для безопасности
+    if(!userId) return; // Заглушка, чтобы не выдавало ошибку в консоли
     const organizers = await getOrganizers(userId);
     const container = document.getElementById('organizersList');
     container.innerHTML = '';
@@ -97,7 +98,8 @@ function openStatusSelect() {
 }
 
 async function loadStatuses() {
-    const userId = document.getElementById('userIdDisplay').innerText;
+    const userId = document.getElementById('userIdDisplay')?.innerText;
+    if(!userId) return;
     const statuses = await getStatuses();
     const container = document.getElementById('statusSelectList');
     container.innerHTML = '';

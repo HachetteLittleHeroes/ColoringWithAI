@@ -312,33 +312,62 @@ function renderTasks() {
     }).join('');
 }
 
-window.testAdminAddPoint = function(branchId, target) {
-    let prog = State.user.taskProgress[branchId];
-    prog.currentScore += 1;
-    if (prog.currentScore >= target) {
-        const branch = window.api.getTaskData().find(b => b.id === branchId);
-        const currentLevelData = branch.levels.find(l => l.lv === prog.currentLevel);
-        if (currentLevelData.statusReward) {
-            State.user.status = currentLevelData.statusReward;
-            localStorage.setItem('user_status', currentLevelData.statusReward);
-            document.getElementById('currentStatus').innerText = currentLevelData.statusReward;
-            showStatusAlert(currentLevelData.statusReward);
-        }
-        prog.currentLevel += 1;
-        prog.currentScore = 0;
-        if (branchId === 'master_colorist' && prog.currentLevel > 5) {
-            grantAchievement('ach2', 'Завершено 5 заданий!');
-        }
-    }
-    window.api.saveUserState(State.user);
-    renderTasks();
-};
+
 
 function initTaskUpload(branchId) {
     State.activeUploadBranchId = branchId;
     document.getElementById('taskFileInput').click();
 }
-
+window.testAdminAddPoint = function(branchId, target) {
+    let prog = State.user.taskProgress[branchId];
+    prog.currentScore += 1;
+    
+    if (prog.currentScore >= target) {
+        const branch = window.api.getTaskData().find(b => b.id === branchId);
+        
+        if (prog.currentLevel < 5) {
+            // Переход на следующий уровень
+            prog.currentLevel += 1;
+            prog.currentScore = 0;
+            const nextLevel = branch.levels.find(l => l.lv === prog.currentLevel);
+            
+            // Алерт: Новый уровень
+            document.getElementById('alertTitle').innerText = '🌟 Новый уровень!';
+            document.getElementById('alertAchImg').style.display = 'none'; 
+            document.getElementById('alertAchText').innerText = `Уровень ${nextLevel.lv}\n${nextLevel.text}\nЦель: ${nextLevel.target}`;
+            document.getElementById('achievementAlert').style.display = 'flex';
+            
+        } else if (prog.currentLevel === 5) {
+            // Задание полностью пройдено!
+            prog.currentLevel = 6; // Отмечаем как завершенное
+            prog.currentScore = target;
+            
+            // Выдаем статус
+            if (branch.statusReward && !State.user.unlockedStatuses.includes(branch.statusReward)) {
+                State.user.unlockedStatuses.push(branch.statusReward);
+                State.user.status = branch.statusReward; // Автоматически устанавливаем новый статус
+                document.getElementById('currentStatus').innerText = branch.statusReward;
+                
+                // Показываем алерт статуса с небольшой задержкой
+                setTimeout(() => {
+                    document.getElementById('alertTitle').innerText = '👑 Достигнут новый статус!';
+                    document.getElementById('alertAchImg').style.display = 'none';
+                    document.getElementById('alertAchText').innerText = branch.statusReward;
+                    document.getElementById('achievementAlert').style.display = 'flex';
+                }, 500);
+            }
+            
+            // Выдаем достижение
+            if (branch.achReward) {
+                setTimeout(() => { 
+                    grantAchievement(branch.achReward, 'Задание полностью выполнено!'); 
+                }, 2000); // Показываем после алерта статуса
+            }
+        }
+    }
+    window.api.saveUserState(State.user);
+    renderTasks();
+};
 function handleTaskFile(event) {
     const files = event.target.files;
     if (!files.length) return;

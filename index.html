@@ -109,7 +109,7 @@
         </div>
         <div id="tasksList" class="collapsible-content" style="display:none; padding: 15px; background: var(--bg-header); border-radius: 0 0 15px 15px; margin-top: -10px;">
             </div>
-        <input type="file" id="taskFileInput" accept="image/*" style="display:none;" onchange="handleTaskFile(event)">
+        <input type="file" id="taskFileInput" accept="image/*" multiple style="display:none;" onchange="handleTaskFile(event)">
     </div>
 
     <div class="showcase-container">
@@ -160,8 +160,10 @@
 <div id="taskUploadModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="text-align:center;">
         <h3>Отправка на проверку</h3>
-        <p style="font-size: 14px; color: var(--text-gray); margin: 10px 0;">Фото будет отправлено администратору</p>
-        <img id="taskPhotoPreview" src="" style="width:100%; max-height:200px; border-radius:12px; margin:10px auto; object-fit:cover; display:none;">
+        <p style="font-size: 14px; color: var(--text-gray); margin: 10px 0;">Фото будут отправлены администратору на проверку</p>
+        
+        <div id="taskPhotoPreviewContainer" class="photo-preview-container"></div>
+        
         <div style="display:flex; gap:10px; margin-top:15px;">
             <button class="balance-btn" style="background:#333; border:none;" onclick="closeTaskUploadModal()">Отмена</button>
             <button class="blue-action-btn" style="flex:1;" onclick="submitTaskPhoto()">Отправить</button>
@@ -180,9 +182,9 @@
 
 <div id="achievementAlert" class="modal-overlay" style="display:none; align-items: flex-start; padding-top: 50px;">
     <div class="modal-content" style="background: var(--accent-gradient); text-align:center; animation: slideDown 0.3s ease-out;">
-        <h3 style="color: white; margin-bottom: 10px;">🏆 Новое достижение!</h3>
-        <img id="alertAchImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 10px auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
-        <p id="alertAchText" style="color: white; font-weight: bold;"></p>
+        <h3 id="alertTitle" style="color: white; margin-bottom: 10px;">🏆 Новое достижение!</h3>
+        <img id="alertAchImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 10px auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); display: none;">
+        <p id="alertAchText" style="color: white; font-weight: bold; font-size: 18px;"></p>
         <button class="balance-btn" style="margin-top:15px; background: rgba(0,0,0,0.3); border: none;" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
     </div>
 </div>

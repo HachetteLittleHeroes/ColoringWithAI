@@ -13,14 +13,22 @@ const State = {
 
 let pendingAvatarUrl = '';
 let activeShowcaseSlot = null;
+let currentInfoSlot = null; // Для модалки с описанием
 
-// Цвета для разных уровней заданий
+// БАЗА ОПИСАНИЙ ДОСТИЖЕНИЙ
+const ACH_DATA = {
+    'ach1': { title: 'Смена имиджа!', desc: 'Вы успешно изменили свой аватар.' },
+    'ach2': { title: 'Легенда штриховки', desc: 'Завершено 5 заданий в ветке мастера.' }
+    // Сюда можно добавлять описания для других ID достижений
+};
+
+// ОБНОВЛЕННЫЕ ЦВЕТА ДЛЯ УРОВНЕЙ
 const LEVEL_COLORS = {
     1: '#a3a3a3', // Серый
-    2: '#cd7f32', // Бронзовый
-    3: '#c0c0c0', // Серебряный
-    4: '#ffd700', // Золотой
-    5: '#ff3366'  // Рубиновый
+    2: '#34bdeb', // Голубой
+    3: '#9b59b6', // Фиолетовый
+    4: '#ff3b30', // Красный
+    5: '#ffd700'  // Золотой/Желтый
 };
 
 async function init() {
@@ -88,13 +96,16 @@ function renderProfile() {
         }
     }
 
+    // ЛОГИКА ВИТРИНЫ: Если слот занят - показываем описание, если пуст - окно выбора
     for (let i = 0; i < 3; i++) {
         const slotEl = document.getElementById(`slot-${i}`);
         const achId = State.user.showcase[i];
         if (achId) {
             slotEl.innerHTML = `<img src="${window.CONFIG.GITHUB_BASE}achievements/${achId}.png" alt="Achievement">`;
+            slotEl.onclick = () => showAchievementInfo(achId, i);
         } else {
             slotEl.innerHTML = '<i class="fas fa-lock"></i>';
+            slotEl.onclick = () => openShowcaseModal(i);
         }
     }
 }
@@ -165,26 +176,43 @@ function toggleSection(id) {
 }
 
 // ДОСТИЖЕНИЯ И АЛЕРТЫ
-function grantAchievement(achId, text) {
+function grantAchievement(achId, defaultText) {
     if (!State.user.unlockedAchievements.includes(achId)) {
         State.user.unlockedAchievements.push(achId);
         window.api.saveUserState(State.user);
         
-        document.getElementById('alertTitle').innerText = '🏆 Новое достижение!';
+        const data = ACH_DATA[achId] || { title: 'Новое достижение!', desc: defaultText };
+        
+        document.getElementById('alertTitle').innerText = '🏆 ' + data.title;
         const imgEl = document.getElementById('alertAchImg');
         imgEl.src = `${window.CONFIG.GITHUB_BASE}achievements/${achId}.png`;
         imgEl.style.display = 'block';
         
-        document.getElementById('alertAchText').innerText = text;
+        document.getElementById('alertAchText').innerText = data.desc;
         document.getElementById('achievementAlert').style.display = 'flex';
     }
 }
 
 function showStatusAlert(statusName) {
     document.getElementById('alertTitle').innerText = '✨ Новый статус!';
-    document.getElementById('alertAchImg').style.display = 'none'; // Скрываем картинку для статуса
+    document.getElementById('alertAchImg').style.display = 'none'; 
     document.getElementById('alertAchText').innerText = statusName;
     document.getElementById('achievementAlert').style.display = 'flex';
+}
+
+// ПОКАЗ ИНФОРМАЦИИ О ДОСТИЖЕНИИ
+function showAchievementInfo(achId, slotIndex) {
+    currentInfoSlot = slotIndex;
+    const data = ACH_DATA[achId] || { title: 'Достижение', desc: 'Описание пока скрыто.' };
+    document.getElementById('achInfoTitle').innerText = data.title;
+    document.getElementById('achInfoImg').src = `${window.CONFIG.GITHUB_BASE}achievements/${achId}.png`;
+    document.getElementById('achInfoDesc').innerText = data.desc;
+    document.getElementById('achInfoModal').style.display = 'flex';
+}
+
+function replaceShowcaseSlot() {
+    document.getElementById('achInfoModal').style.display = 'none';
+    openShowcaseModal(currentInfoSlot);
 }
 
 function openShowcaseModal(slotIndex) {
@@ -196,15 +224,44 @@ function openShowcaseModal(slotIndex) {
         list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">У вас пока нет достижений.</p>';
     } else {
         State.user.unlockedAchievements.forEach(achId => {
+            // ЗАПРЕТ НА ДУБЛИКАТЫ ВО ВСЕХ СЛОТАХ
+            const isEquipped = State.user.showcase.includes(achId);
+            const isCurrentSlot = State.user.showcase[slotIndex] === achId;
+            
+            // Если достижение уже стоит в другом слоте, пропускаем его
+            if (isEquipped && !isCurrentSlot) return;
+
             const div = document.createElement('div');
             div.className = 'ach-list-item';
+            if (isCurrentSlot) div.style.borderColor = 'var(--status-green)';
             div.innerHTML = `<img src="${window.CONFIG.GITHUB_BASE}achievements/${achId}.png">`;
             div.onclick = () => pinAchievement(achId);
             list.appendChild(div);
         });
+        
+        if (list.innerHTML === '') {
+            list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">Все доступные достижения уже установлены в другие слоты.</p>';
+        }
     }
     
+    // Кнопка снятия достижения
+    const clearBtnContainer = document.getElementById('clearSlotBtnContainer');
+    if (State.user.showcase[slotIndex]) {
+        clearBtnContainer.innerHTML = `<button class="balance-btn" style="background:var(--status-red); border:none; margin-top:10px; width: 100%;" onclick="clearAchievementSlot()">Снять достижение</button>`;
+    } else {
+        clearBtnContainer.innerHTML = '';
+    }
+
     document.getElementById('showcaseModal').style.display = 'flex';
+}
+
+function clearAchievementSlot() {
+    if (activeShowcaseSlot !== null) {
+        State.user.showcase[activeShowcaseSlot] = null;
+        window.api.saveUserState(State.user);
+        renderProfile();
+    }
+    document.getElementById('showcaseModal').style.display = 'none';
 }
 
 function pinAchievement(achId) {
@@ -247,7 +304,7 @@ function renderTasks() {
 
         const percent = Math.min(100, (userProg.currentScore / activeLevel.target) * 100);
         
-        // Определение цвета для текущего уровня
+        // Определение цвета для текущего уровня по новой палитре
         const levelColor = LEVEL_COLORS[activeLevel.lv] || 'var(--accent)';
 
         return `
@@ -345,8 +402,6 @@ function closeTaskUploadModal() {
 }
 
 function submitTaskPhoto() {
-    // Просто скрываем модалку и показываем Алерт об успешной отправке.
-    // Больше мы сами уровень не повышаем — ждем "админа".
     closeTaskUploadModal();
     alert("Фотографии успешно отправлены администратору на проверку!");
 }

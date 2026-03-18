@@ -447,42 +447,41 @@ window.selectStatus = function(st) {
 let currentGalleryTome = 1;
 let currentGalleryPage = 1;
 
+// --- ГАЛЕРЕЯ ОТВЕТОВ (Версия без фантомных алертов) ---
+let currentGalleryTome = 1;
+let currentGalleryPage = 1;
+
 window.openAnswersGallery = function(tomeNum) {
     currentGalleryTome = tomeNum;
     currentGalleryPage = 1;
+    // Сначала показываем модалку, чтобы проверка внутри updateGalleryImage прошла успешно
+    const modal = document.getElementById('answersGalleryModal');
+    if (modal) modal.style.display = 'flex';
     updateGalleryImage();
-    document.getElementById('answersGalleryModal').style.display = 'flex';
 }
 
 window.updateGalleryImage = function() {
     const imgEl = document.getElementById('galleryMainImage');
     const indicator = document.getElementById('galleryPageIndicator');
-    const modal = document.getElementById('answersGalleryModal'); // Ссылка на саму модалку
+    const modal = document.getElementById('answersGalleryModal');
     
     if (!imgEl) return;
 
-    // Сбрасываем старые обработчики
-    imgEl.onerror = null;
-
     imgEl.onerror = function() {
         this.onerror = null;
-        // Ставим заглушку
         this.src = 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png';
         
-        // ПРОВЕРКА: показываем алерт, только если модалка открыта (display === 'flex')
-        // и если мы уже ушли дальше первой страницы
-        if (modal && modal.style.display === 'flex' && currentGalleryPage > 1) {
-            alert('Страница не найдена или это был конец тома.');
-        }
+        // ПРОВЕРКА: Если модалка закрыта (none или пустая строка), вообще ничего не пишем
+        const isVisible = modal && (modal.style.display === 'flex' || modal.style.display === 'block');
         
-        // Откатываем счетчик, чтобы не уходить в бесконечность
-        if (currentGalleryPage > 1) {
+        if (isVisible && currentGalleryPage > 1) {
+            alert('Больше страниц нет');
+            // Откатываем страницу назад, так как текущая не загрузилась
             currentGalleryPage--;
             if (indicator) indicator.innerText = `Страница ${currentGalleryPage}`;
         }
     };
 
-    // Формируем путь к картинке
     imgEl.src = `${window.CONFIG.GITHUB_BASE}otveti/t${currentGalleryTome}/${currentGalleryPage}.png`;
     if (indicator) indicator.innerText = `Страница ${currentGalleryPage}`;
 }

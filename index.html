@@ -10,20 +10,20 @@
 </head>
 <body>
 
-<div id="userIdDisplay" style="display:none;"></div>
-
 <div id="profile" class="page active">
+    
     <div class="profile-header-block">
         <div class="avatar-section">
-            <div class="avatar-wrapper" onclick="toggleAvatarEditor()">
+            <div class="avatar-wrapper" onclick="toggleAvatarEditor()" style="position: relative; z-index: 10;">
                 <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png" alt="">
+                <div class="avatar-edit-icon"><i class="fas fa-pencil-alt"></i></div>
             </div>
             <div class="profile-meta">
                 <div class="name-row" onclick="changeNickname()">
                     <h2 id="displayUsername">Без имени</h2>
                     <i class="fas fa-pencil-alt edit-icon"></i>
                 </div>
-                <div id="currentStatus" class="status-badge" onclick="openStatusSelect()">Без статуса</div>
+                <div id="currentStatus" class="status-badge" onclick="openStatusInfo()">Без статуса</div>
             </div>
         </div>
     </div>
@@ -52,52 +52,82 @@
 
     <div id="rewards-section" class="sub-page-block" style="display:none;">
         <div class="section-header">Товары за ашетики</div>
-        <div id="rewardsList" class="reward-grid"></div>
+        <div class="reward-grid">
+            <div class="reward-card">
+                <h4>Закладка</h4>
+                <div class="reward-price">750 <i class="fas fa-book-open gold-book"></i></div>
+            </div>
+            <div class="reward-card">
+                <h4>Спиртовая раскраска</h4>
+                <div class="reward-price">1250 <i class="fas fa-book-open gold-book"></i></div>
+            </div>
+            <div class="reward-card">
+                <h4>Раскраска Petites Poepees</h4>
+                <div class="reward-price">1250 <i class="fas fa-book-open gold-book"></i></div>
+            </div>
+            <div class="reward-card">
+                <h4>Любой том Hachette A4</h4>
+                <div class="reward-price">1500 <i class="fas fa-book-open gold-book"></i></div>
+            </div>
+        </div>
     </div>
 
     <div id="earn-section" class="sub-page-block" style="display:none;">
         <div class="section-header">Как получить ашетики</div>
-        <div id="earnInstructions" class="earn-info"></div>
+        <div class="earn-info">
+            <div class="earn-card">
+                <p>За отзыв</p>
+                <span class="earn-bonus">+25 <i class="fas fa-book-open gold-book"></i></span>
+            </div>
+            <div class="earn-card">
+                <p>За покупку от 3 000 ₽</p>
+                <span class="earn-bonus">+10 <i class="fas fa-book-open gold-book"></i></span>
+            </div>
+            <div class="earn-card">
+                <p>За покупку от 5 000 ₽</p>
+                <span class="earn-bonus">+20 <i class="fas fa-book-open gold-book"></i></span>
+            </div>
+            <div class="earn-card">
+                <p>За покупку от 7 500 ₽</p>
+                <span class="earn-bonus">+30 <i class="fas fa-book-open gold-book"></i></span>
+            </div>
+            <div class="earn-card">
+                <p>За покупку от 10 000 ₽</p>
+                <span class="earn-bonus">+40 <i class="fas fa-book-open gold-book"></i></span>
+            </div>
+        </div>
     </div>
 
     <div class="tasks-container">
         <div class="section-tab" onclick="toggleTasks()">
-            <span>Задания</span>
-            <i class="fas fa-chevron-down" id="tasksArrow"></i>
+            <span>Задания на статус</span>
+            <i class="fas fa-chevron-down" id="tasksArrow" style="transition: transform 0.3s;"></i>
         </div>
-        <div id="tasksList" class="collapsible-content" style="display:none;">
+        <div id="tasksList" class="collapsible-content" style="display:none; padding: 15px; background: var(--bg-header); border-radius: 0 0 15px 15px; margin-top: -10px;">
             </div>
     </div>
 
     <div class="showcase-container">
         <div class="section-header">Витрина Топ-3</div>
         <div class="showcase-grid">
-            <div class="showcase-slot" onclick="openAchievementInfo(0)" id="slot-0"><i class="fas fa-lock"></i></div>
-            <div class="showcase-slot" onclick="openAchievementInfo(1)" id="slot-1"><i class="fas fa-lock"></i></div>
-            <div class="showcase-slot" onclick="openAchievementInfo(2)" id="slot-2"><i class="fas fa-lock"></i></div>
+            <div class="showcase-slot" id="slot-0"><i class="fas fa-lock"></i></div>
+            <div class="showcase-slot" id="slot-1"><i class="fas fa-lock"></i></div>
+            <div class="showcase-slot" id="slot-2"><i class="fas fa-lock"></i></div>
         </div>
     </div>
 </div>
 
 <div id="markers" class="page">
     <div class="header">Маркеры</div>
-    <div class="search-container">
-        <input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="filterMarkers()">
-    </div>
     <div class="brand-section">
         <h3 class="brand-title">GUANGNA</h3>
-        <div id="markersList" class="marker-list-container">
-            </div>
+        <div id="markersList" class="marker-list-container"></div>
     </div>
 </div>
 
 <div id="answers" class="page">
     <div class="header">Ответы</div>
-    <div class="search-container">
-        <input type="text" id="bookSearch" placeholder="Найти том..." oninput="filterBooks()">
-    </div>
-    <div id="booksGrid" class="market-grid">
-        </div>
+    <div style="padding: 20px; text-align: center; color: var(--text-gray);">Ответы в разработке</div>
 </div>
 
 <div id="aipalette" class="page">
@@ -110,13 +140,6 @@
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
         <div id="aiResult" class="ai-result-card" style="display:none;"></div>
     </div>
-
-    <button class="action-btn-main" onclick="openMyCollection()">Мои маркеры и органайзеры 🎒</button>
-
-    <div id="adminAIBlock" class="admin-panel" style="display:none;">
-        <h4>Обучение ИИ (Admin)</h4>
-        <button class="admin-btn" onclick="startAITraining()">Создать 25 вариаций партии</button>
-    </div>
 </div>
 
 <div id="cart" class="page">
@@ -124,33 +147,34 @@
     <div id="cartItemsList" class="cart-container"></div>
     <div class="cart-footer">
         <div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div>
-        <button class="buy-btn" onclick="checkout()">Оформить заказ</button>
+        <button class="buy-btn">Оформить заказ</button>
     </div>
 </div>
 
-<div id="viewer" class="fullscreen-viewer" style="display:none;">
-    <button class="viewer-close" onclick="closeViewer()">Назад</button>
-    <div id="viewerContent" class="viewer-slider"></div>
+<div id="statusInfoModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content" style="text-align:center;">
+        <h3>Ваш статус</h3>
+        <p style="margin: 15px 0; color: var(--text-gray);">Новые статусы открываются только по мере выполнения уровней в блоке «Задания»!</p>
+        <button class="blue-action-btn" onclick="document.getElementById('statusInfoModal').style.display = 'none';">Понятно</button>
+    </div>
 </div>
 
-<div id="collectionModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content full-modal">
-        <button class="close-modal" onclick="closeCollection()">×</button>
-        <h3>Моя коллекция</h3>
-        <div id="brandStats" class="brand-stats-list"></div>
-        <hr>
-        <div class="organizer-controls">
-            <button onclick="createNewOrganizer()">+ Создать органайзер</button>
+<div id="avatarConfirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content" style="text-align:center;">
+        <h3>Установить аватар?</h3>
+        <img id="avatarPreview" src="" style="width:100px; height:100px; border-radius:50%; margin:20px auto; border:3px solid var(--accent); object-fit:cover; display:block;">
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button class="balance-btn" style="background:#333; border:none;" onclick="closeAvatarConfirm()">Отмена</button>
+            <button class="blue-action-btn" style="flex:1;" onclick="applyAvatar()">Применить</button>
         </div>
-        <div id="organizersList" class="organizers-grid"></div>
     </div>
 </div>
 
 <div id="nameModal" class="modal-overlay" style="display:none;">
     <div class="modal-content">
         <h3>Как вас звать?</h3>
-        <input type="text" id="newNameInput" placeholder="Введите ник...">
-        <button class="action-btn-main" style="margin-top:15px; width:100%; padding:14px; background:var(--accent); color:white; border-radius:12px;" onclick="saveNewNickname()">Сохранить</button>
+        <input type="text" id="newNameInput" placeholder="Введите ник..." style="width:100%; padding:14px; background:var(--bg); border:none; border-radius:12px; color:white; margin-top:15px;">
+        <button class="blue-action-btn" style="margin-top:15px; background:var(--accent);" onclick="saveNewNickname()">Сохранить</button>
     </div>
 </div>
 
@@ -175,7 +199,6 @@
 </nav>
 
 <script src="js/api.js"></script>
-<script src="js/ui.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

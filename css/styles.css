@@ -1,13 +1,13 @@
 /* ===================== Общие переменные ===================== */
 :root {
-    /* Цвета подстраиваются под тему Telegram, если открыто там, иначе fallback */
     --bg: var(--tg-theme-bg-color, #121212);
     --bg-secondary: var(--tg-theme-secondary-bg-color, #1E1E1E);
+    --card-bg: #1c1c1e; /* ВАЖНО: добавили */
     --text: var(--tg-theme-text-color, #FFFFFF);
-    --accent: var(--tg-theme-button-color, #ff9500);
-    --accent-text: var(--tg-theme-button-text-color, #ffffff);
-    --secondary: var(--tg-theme-secondary-bg-color, #2C2C2C);
-    --gray: #888888;
+    --accent: #ff9500;
+    --accent-text: #ffffff;
+    --secondary: #2C2C2C;
+    --gray: #888;
     --gold: #FFD700;
 }
 
@@ -19,607 +19,203 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-    padding-bottom: 80px; /* Чтобы контент не прятался под навигацией */
-    -webkit-tap-highlight-color: transparent;
+    padding-bottom: 90px;
 }
 
 /* ===================== Страницы ===================== */
 .page {
     display: none;
     padding: 10px 15px;
-    box-sizing: border-box;
 }
 
 .page.active {
-    display: block;
+    display: block !important;
 }
 
 /* ===================== Заголовки ===================== */
 .header {
-    font-weight: 800;
     font-size: 24px;
+    font-weight: 800;
     margin-bottom: 15px;
-    padding-top: 10px;
-    color: var(--text);
-}
-
-/* ===================== Сетки ===================== */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 15px;
-}
-
-.inventory-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 10px;
-}
-
-.organizer-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 10px;
-}
-
-.achievements-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.reward-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 12px;
-}
-
-/* ===================== Инпуты и селекты ===================== */
-input[type="text"], select {
-    width: 100%;
-    padding: 12px 15px;
-    border-radius: 12px;
-    border: none;
-    background: var(--secondary);
-    color: var(--text);
-    margin-bottom: 15px;
-    outline: none;
-}
-
-input[type="file"] {
-    display: none;
 }
 
 /* ===================== Кнопки ===================== */
-button, .buy-btn {
-    font-family: inherit;
-    cursor: pointer;
-    background: var(--accent);
-    color: var(--accent-text);
-    border: none;
-    transition: opacity 0.2s, transform 0.1s;
-}
-
 .buy-btn {
-    display: inline-block;
-    padding: 12px 15px;
-    border-radius: 12px;
-    font-weight: bold;
-    text-align: center;
-    width: 100%;
-}
-
-.buy-btn:hover {
-    opacity: 0.9;
+    padding: 14px;
+    border-radius: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 .buy-btn:active {
-    transform: scale(0.98);
-    opacity: 0.7;
+    transform: scale(0.97);
 }
 
-.buy-btn.rounded-pill {
-    border-radius: 50px;
-}
-.gold-book {
-    color: #FFD700;
-    font-size: 28px;
-    margin-left: 8px;
-}
-.balance-card {
-    position: relative;
-    z-index: 2;
-}
-.card {
-    background: #1c1c1e;
-    padding: 12px;
-    border-radius: 12px;
-    margin-top: 10px;
-}
-
-/* ===================== Навигация ===================== */
+/* ===================== НАВИГАЦИЯ ===================== */
 .nav {
     position: fixed;
     bottom: 0;
-    left: 0;
     width: 100%;
     height: 75px;
     display: flex;
     background: var(--bg);
-    border-top: 0.5px solid rgba(128,128,128,0.2);
-    z-index: 9999; /* Максимальный приоритет, чтобы не перекрывалось черным фоном */
+    border-top: 1px solid rgba(255,255,255,0.05);
+    z-index: 9999;
 }
-
-/* Убедитесь, что страницы не перекрывают меню */
-.page {
-    display: none;
-    padding-bottom: 90px; /* Отступ снизу, чтобы контент не залез под меню */
-}
-
 
 .nav-btn {
     flex: 1;
-    padding: 10px 0;
     font-size: 11px;
     color: var(--gray);
     background: none;
     border: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
 }
 
 .nav-btn.active {
     color: var(--accent);
 }
 
-.nav-icon {
-    font-size: 22px;
-    margin-bottom: 4px;
-}
-
-.badge {
-    position: absolute;
-    top: 5px;
-    left: 55%;
-    background: #ff3b30;
-    color: white;
-    border-radius: 10px;
-    padding: 2px 7px;
-    font-size: 11px;
-    font-weight: bold;
-}
-
-/* ===================== Профиль ===================== */
+/* ===================== ПРОФИЛЬ ===================== */
 .profile-hero {
     display: flex;
-    align-items: center;
     gap: 20px;
-    padding: 20px;
+    padding: 15px;
     background: var(--bg-secondary);
     border-radius: 20px;
     margin-bottom: 15px;
 }
 
 .avatar-container {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    margin: 0;
+    width: 90px;
+    height: 90px;
 }
 
 .avatar-preview {
     width: 100%;
     height: 100%;
-    cursor: pointer;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--accent);
 }
 
 .avatar-preview img {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
     object-fit: cover;
-    display: block;
-    z-index: 5;
-    background: #eee;
-}
-
-.edit-avatar-btn {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: var(--accent);
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    display: none;
 }
 
 .profile-info-right {
-    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .profile-username {
     font-size: 20px;
-    font-weight: 700;
-    cursor: pointer;
+    font-weight: 800;
 }
 
 .profile-status {
-    font-size: 14px;
-    color: var(--gray);
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 8px;
+    margin-top: 5px;
     background: var(--secondary);
-    display: inline-block;
-    margin-top: 4px;
+    padding: 5px 10px;
+    border-radius: 12px;
+    cursor: pointer;
 }
 
-/* ===================== Баланс (Тот самый красивый) ===================== */
+/* ===================== БАЛАНС ===================== */
 .balance-card {
-    background: linear-gradient(135deg, #FF8C00 0%, #E65100 100%);
+    background: linear-gradient(135deg, #FF8C00, #E65100);
     border-radius: 20px;
-    padding: 25px 20px;
-    width: 100%;
-    box-sizing: border-box;
-    color: white !important;
+    padding: 25px;
     text-align: center;
-    box-shadow: 0 10px 20px rgba(230, 81, 0, 0.3);
-    margin-top: 10px;
     margin-bottom: 15px;
-    position: relative;
-    overflow: hidden;
 }
 
 .balance-amount {
-    font-size: 48px;
+    font-size: 42px;
     font-weight: 800;
-    margin: 10px 0;
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 15px;
+    align-items: center;
+    gap: 10px;
 }
 
 .gold-book {
     color: var(--gold);
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    font-size: 28px;
 }
 
-.balance-card .buy-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(5px);
+/* КНОПКИ ВНУТРИ БАЛАНСА */
+.balance-action-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.4);
     color: white;
-    width: auto;
-    padding: 8px 15px;
-    margin-top: 5px;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 16px;
 }
-.balance-btns-container {
-    display: flex;
-    flex-direction: column; /* Кнопки друг под другом */
-    gap: 12px;             /* Расстояние между кнопками */
-    width: 100%;
+
+/* ===================== КАРТОЧКИ ===================== */
+.card {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 15px;
     margin-top: 10px;
 }
 
-.balance-action-btn {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
-    backdrop-filter: blur(10px);
-    color: white !important;
-    width: 100% !important;   /* На всю ширину */
-    padding: 16px !important; /* Увеличиваем высоту кнопки */
-    font-size: 18px !important; /* Увеличиваем шрифт */
-    border-radius: 15px !important;
-    font-weight: 600;
-}
-
-
-/* ===================== Модальные окна ===================== */
-.modal-overlay, .custom-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-content, .custom-modal {
-    background: var(--bg-secondary);
-    border-radius: 20px;
-    padding: 20px;
-    max-width: 90%;
-    max-height: 80%;
-    overflow-y: auto;
-    width: 100%;
-}
-
-.close-btn {
-    background: transparent;
-    border: none;
-    font-size: 20px;
-    color: var(--gray);
-    cursor: pointer;
-    float: right;
-}
-
-/* ===================== Достижения ===================== */
-.top-slot {
-    text-align: center;
-    flex: 1;
-}
-
-.top-slot div {
-    width: 60px;
-    height: 60px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 15px;
-    margin: 0 auto 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px dashed var(--gray);
-}
-
-.top-slot div i {
-    color: var(--gray);
-}
-
-.top-slot div + div {
-    font-size: 10px;
-    color: var(--gray);
-}
-
-/* ===================== Магазин наград ===================== */
-.reward-card {
-    background: var(--bg-secondary);
-    border-radius: 15px;
-    overflow: hidden;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid rgba(128,128,128,0.1);
-}
-
-.reward-card img {
-    width: 100%;
-    height: 110px;
-    object-fit: cover;
-    background: #ddd;
-}
-
-.reward-info {
-    padding: 10px;
-    font-size: 13px;
-    line-height: 1.2;
-    color: var(--text);
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.spend-btn {
-    background: #E65100;
-    color: white;
-    border: none;
-    padding: 10px;
-    font-weight: bold;
-    font-size: 13px;
-    cursor: pointer;
-    width: 100%;
-}
-
-/* ===================== AI Палитра ===================== */
-#aiMultipleResultsContainer {
-    margin-top: 15px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-/* ===================== Scrollbars ===================== */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--accent);
-    border-radius: 3px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--secondary);
-}
-
-/* ===================== Остальные элементы (Строки и Категории) ===================== */
-.row-item {
-    background: var(--bg-secondary);
-    padding: 15px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    border: 0.5px solid rgba(128,128,128,0.1);
-}
-
-.category-title {
-    margin: 20px 0 10px;
-    font-size: 14px;
-    color: var(--gray);
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-.brand-grid-modal, #achievementsGrid, #modalBrandGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 8px;
-}
-
-.avatar-grid-presets {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.inventory-grid div, .organizer-grid div, .brand-grid-modal div, .achievements-grid div {
-    background: var(--secondary);
-    border-radius: 10px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-}
-
-/* ===================== Картинки книг ===================== */
-#viewer-content img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-/* Гарантируем, что активная страница видна */
-.page.active {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* Меню ВСЕГДА должно быть сверху */
-.nav {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 75px !important;
-    z-index: 99999 !important; /* Ставим на самый верх */
-    background: var(--bg) !important; /* Убедись, что фон не прозрачный */
-    display: flex !important;
-}
-
-/* Убираем черный фон, который может всё перекрывать */
-body {
-    background: var(--bg);
-    margin: 0;
-    padding: 0;
-}
-/* --- СТИЛИ ДЛЯ АВАТАРА И ПРОФИЛЯ --- */
-.profile-hero { display: flex; flex-direction: row; align-items: center; gap: 20px; margin-bottom: 25px; padding: 0 10px; }
-.avatar-container { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
-.avatar-preview { width: 100%; height: 100%; background: #b6e3f4; border-radius: 50%; overflow: hidden; border: 4px solid var(--accent); box-sizing: border-box; box-shadow: 0 6px 12px rgba(0,122,255,0.2); transition: 0.3s; }
-.avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
-.edit-avatar-btn { position: absolute; bottom: -5px; right: -5px; background: var(--bg); border: 2px solid var(--accent); color: var(--accent); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 12px; }
-
-.profile-info-right { display: flex; flex-direction: column; justify-content: center; flex-grow: 1; }
-.profile-username { font-size: 20px; font-weight: 800; margin: 0; color: var(--text); }
-.profile-status { font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--gray); padding: 4px 10px; background: var(--secondary); border-radius: 12px; display: inline-block; width: fit-content; cursor: pointer; }
-
-.avatar-editor { display: none; background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid rgba(128,128,128,0.2); width: 100%; box-sizing: border-box; margin-bottom: 20px; animation: slideDown 0.3s ease-out; }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-.avatar-grid-presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
-.avatar-preset-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; border: 3px solid transparent; overflow: hidden; background: #b6e3f4; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.avatar-preset-btn img { width: 100%; height: 100%; object-fit: cover; }
-.avatar-preset-btn.active { border-color: var(--accent); transform: scale(1.08); box-shadow: 0 4px 10px rgba(0,122,255,0.2); }
-
-.achievements-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
-.achieve-card { background: var(--card-bg); border-radius: 16px; padding: 15px 5px; text-align: center; border: 2px solid rgba(128,128,128,0.1); filter: grayscale(1); opacity: 0.5; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
-.achieve-card.unlocked { filter: grayscale(0); opacity: 1; border-color: var(--gold); background: rgba(241, 196, 15, 0.05); box-shadow: 0 4px 10px rgba(241, 196, 15, 0.1); transform: scale(1); }
-.achieve-card.unlocked:active { transform: scale(0.95); }
-
-.achieve-icon-img { width: 45px; height: 45px; margin-bottom: 8px; object-fit: contain; border-radius: 8px; }
-.achieve-title { font-size: 11px; font-weight: 800; line-height: 1.2; color: var(--text); }
-.achievement-icon-large-img { width: 80px; height: 80px; margin-bottom: 15px; object-fit: contain; border-radius: 12px; }
-/* ===== BOTTOM SHEET (iOS стиль) ===== */
-
-.sheet-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 9998;
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.3s;
-}
-
-.sheet-overlay.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.bottom-sheet {
-    position: fixed;
-    bottom: -100%;
-    left: 0;
-    right: 0;
-    background: #1c1c1e;
-    border-radius: 20px 20px 0 0;
-    padding: 20px;
-    z-index: 9999;
-    transition: 0.35s cubic-bezier(.25,.8,.25,1);
-}
-
-.bottom-sheet.active {
-    bottom: 0;
-}
-
-.sheet-handle {
-    width: 40px;
-    height: 5px;
-    background: #555;
-    border-radius: 10px;
-    margin: 0 auto 15px;
-}
-
-.sheet-card {
-    background: #2c2c2e;
-    padding: 15px;
-    border-radius: 14px;
-    margin-bottom: 10px;
-}
-
-.sheet-card p {
-    margin: 0;
-    font-weight: 600;
-}
-.loyalty-block {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 15px;
-    margin: 15px 10px;
-    animation: slideDown 0.3s ease;
-}
-
+/* ===================== ЛОЯЛЬНОСТЬ ===================== */
 .loyalty-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.03);
-    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 14px;
+    background: var(--card-bg);
+    margin-top: 10px;
 }
 
 .loyalty-item span {
-    font-weight: 700;
     color: var(--accent);
+    font-weight: 700;
+}
+
+/* ===================== ДОСТИЖЕНИЯ ===================== */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.achieve-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 15px;
+    text-align: center;
+    opacity: 0.5;
+}
+
+.achieve-card.unlocked {
+    opacity: 1;
+    border: 2px solid var(--gold);
+}
+
+/* ===================== МОДАЛКИ ===================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 20px;
 }

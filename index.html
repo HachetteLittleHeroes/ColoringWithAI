@@ -132,9 +132,35 @@
 </div>
 
 <div id="answers" class="page">
-    <div class="header">Ответы</div>
-    <div style="padding: 20px; text-align: center; color: var(--text-gray);">Ответы в разработке</div>
+    <div class="header">Ответы и Тома</div>
+    <div class="reward-grid" style="padding: 15px;">
+        <div class="reward-card">
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 1" onclick="openAnswersGallery(1)">
+            <h4 onclick="openAnswersGallery(1)">Том 1</h4>
+            <button class="balance-btn" style="width:100%; margin-top:10px;" onclick="changeCart('tome1', 1)">В корзину (1500 ₽)</button>
+        </div>
+        <div class="reward-card">
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 2" onclick="openAnswersGallery(2)">
+            <h4 onclick="openAnswersGallery(2)">Том 2</h4>
+            <button class="balance-btn" style="width:100%; margin-top:10px;" onclick="changeCart('tome2', 1)">В корзину (1500 ₽)</button>
+        </div>
+    </div>
 </div>
+
+<div id="answersGalleryModal" class="modal-overlay" style="display:none; background: rgba(0,0,0,0.9);">
+    <div class="modal-content" style="background: transparent; box-shadow: none; text-align: center; width: 100%; padding: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white;">
+            <button class="btn-circle" onclick="prevGalleryPage()"><i class="fas fa-arrow-left"></i></button>
+            <span id="galleryPageIndicator" style="font-weight: bold; font-size: 18px;">Страница 1</span>
+            <button class="btn-circle" onclick="nextGalleryPage()"><i class="fas fa-arrow-right"></i></button>
+        </div>
+        
+        <img id="galleryMainImage" src="" style="width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-bottom: 20px;" onerror="this.src='https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png'; this.onerror=null; alert('Больше страниц нет!'); prevGalleryPage();">
+        
+        <button class="blue-action-btn" onclick="closeAnswersGallery()">Закрыть</button>
+    </div>
+</div>
+
 
 <div id="aipalette" class="page">
     <div class="header">ИИ Палитра ✨</div>
@@ -144,6 +170,13 @@
             <p>Загрузить фото для определения цвета</p>
         </div>
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
+                <div id="adminAiBlock" style="margin-top: 30px; padding: 15px; background: var(--bg-header); border: 1px dashed var(--status-green); border-radius: 12px; display: none;">
+        <h4 style="color: var(--status-green); margin-bottom: 15px; text-align: center;"><i class="fas fa-user-shield"></i> Обучение ИИ (Админ)</h4>
+        <input type="file" id="adminAiInput" accept="image/*" style="margin-bottom:10px; width:100%; color: var(--text-gray);">
+        <input type="text" id="adminAiBrand" placeholder="Бренд (например, GUANGNA)" style="width:100%; padding:12px; margin-bottom:10px; background:var(--bg); color:white; border:none; border-radius:8px;">
+        <input type="text" id="adminAiNumber" placeholder="Номер маркера (например, 120)" style="width:100%; padding:12px; margin-bottom:15px; background:var(--bg); color:white; border:none; border-radius:8px;">
+        <button class="blue-action-btn" style="background: var(--status-green);" onclick="submitAdminAiTrain()">Загрузить данные</button>
+    </div>
         <div id="aiResult" class="ai-result-card" style="display:none;"></div>
     </div>
 </div>
@@ -202,13 +235,15 @@
     </div>
 </div>
 
-<div id="statusInfoModal" class="modal-overlay" style="display:none;">
+<div id="statusSelectModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="text-align:center;">
-        <h3>Ваш статус</h3>
-        <p style="margin: 15px 0; color: var(--text-gray);">Новые статусы открываются только по мере выполнения уровней в блоке «Задания»!</p>
-        <button class="blue-action-btn" onclick="document.getElementById('statusInfoModal').style.display = 'none';">Понятно</button>
+        <h3>Выберите статус</h3>
+        <p style="margin: 10px 0; font-size: 12px; color: var(--text-gray);">Новые статусы открываются за полное прохождение веток заданий (5 уровней).</p>
+        <div id="availableStatusesList" style="margin-top: 15px;"></div>
+        <button class="balance-btn" style="background:#333; border:none; margin-top:15px; width:100%;" onclick="document.getElementById('statusSelectModal').style.display = 'none';">Отмена</button>
     </div>
 </div>
+
 
 <div id="avatarConfirmModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="text-align:center;">

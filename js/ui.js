@@ -89,4 +89,31 @@ function closeSheet() {
     document.getElementById('bottomSheet').classList.remove('active');
     document.getElementById('sheetOverlay').classList.remove('active');
 }
+function toggleEarnAchetiki() {
+    const el = document.getElementById('earn-section');
 
+    if (el.style.display === 'none' || el.style.display === '') {
+        el.style.display = 'block';
+
+        el.innerHTML = `
+            <div class="category-title">💰 Как заработать ашетики</div>
+
+            <div class="loyalty-item">
+                <p>📸 Загрузить фото</p>
+                <span>+10</span>
+            </div>
+
+            <div class="loyalty-item">
+                <p>🎯 Выполнить задание</p>
+                <span>+20</span>
+            </div>
+
+            <div class="loyalty-item">
+                <p>⭐ Получить достижение</p>
+                <span>+50</span>
+            </div>
+        `;
+    } else {
+        el.style.display = 'none';
+    }
+}

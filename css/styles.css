@@ -601,3 +601,25 @@ body {
     margin: 0;
     font-weight: 600;
 }
+.loyalty-block {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 15px;
+    margin: 15px 10px;
+    animation: slideDown 0.3s ease;
+}
+
+.loyalty-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    margin-bottom: 10px;
+}
+
+.loyalty-item span {
+    font-weight: 700;
+    color: var(--accent);
+}

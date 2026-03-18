@@ -1,5 +1,5 @@
 /**
- * app.js — Полный контроллер (Исправленная версия)
+ * app.js — Полный контроллер
  */
 
 const State = {
@@ -7,13 +7,17 @@ const State = {
     markers: [],
     cart: [],
     currentTab: 'profile',
-    userId: '496779756', // Твой ID по умолчанию
+    userId: '496779756',
     activeUploadBranchId: null
 };
 
 let pendingAvatarUrl = '';
 let activeShowcaseSlot = null;
-let currentInfoSlot = null;
+let currentInfoSlot = null; // Для модалки с описанием
+
+// ОБЪЯВЛЯЕМ ПЕРЕМЕННЫЕ ГАЛЕРЕИ ОДИН РАЗ
+let currentGalleryTome = 1;
+let currentGalleryPage = 1;
 
 // БАЗА ОПИСАНИЙ ДОСТИЖЕНИЙ
 const ACH_DATA = {
@@ -27,16 +31,15 @@ const LEVEL_COLORS = {
     2: '#34bdeb', // Голубой
     3: '#9b59b6', // Фиолетовый
     4: '#ff3b30', // Красный
-    5: '#ffd700'  // Золотой
+    5: '#ffd700'  // Золотой/Желтый
 };
 
 async function init() {
-    console.log("Запуск приложения...");
+    console.log("Запуск...");
     
     const tg = window.Telegram?.WebApp;
     if (tg) {
-        tg.expand(); 
-        tg.ready();
+        tg.expand(); tg.ready();
         State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
     }
 
@@ -57,12 +60,14 @@ function tab(tabId) {
     const pages = document.querySelectorAll('.page');
     const buttons = document.querySelectorAll('.nav-btn');
 
+    // Скрываем всё
     pages.forEach(p => {
         p.style.setProperty('display', 'none', 'important');
         p.classList.remove('active');
     });
     buttons.forEach(b => b.classList.remove('active'));
 
+    // Скрываем админку по умолчанию
     const adminBlock = document.getElementById('adminAiBlock');
     if (adminBlock) adminBlock.style.display = 'none';
 
@@ -74,19 +79,21 @@ function tab(tabId) {
         targetPage.classList.add('active');
         targetBtn.classList.add('active');
         
-        State.currentTab = tabId;
-        
-        // Логика показа админки
-        if (tabId === 'aipalette' && adminBlock) {
-            if (String(State.userId) === '496779756') {
-                adminBlock.style.display = 'block';
+        // Защита: State может быть не инициализирован
+        if (window.State) {
+            State.currentTab = tabId;
+            // Проверка админа
+            if (tabId === 'aipalette' && adminBlock) {
+                if (String(State.userId) === '496779756' || State.userId === 'твой_настоящий_tg_id') {
+                    adminBlock.style.display = 'block';
+                }
             }
         }
         window.scrollTo(0, 0);
     }
 }
 
-// ПРОФИЛЬ
+// ПРОФИЛЬ И АВАТАРКИ
 function renderProfile() {
     if (!State.user) return;
 
@@ -95,7 +102,6 @@ function renderProfile() {
     document.getElementById('userBalance').innerText = State.user.balance;
     document.getElementById('currentStatus').innerText = State.user.status;
 
-    // Сетка пресетов аватарок
     const presetGrid = document.getElementById('avatarPresets');
     if (presetGrid && presetGrid.children.length === 0) {
         for (let i = 1; i <= 8; i++) {
@@ -108,7 +114,6 @@ function renderProfile() {
         }
     }
 
-    // Слоты достижений (витрина)
     for (let i = 0; i < 3; i++) {
         const slotEl = document.getElementById(`slot-${i}`);
         if (!slotEl) continue;
@@ -195,6 +200,13 @@ function grantAchievement(achId, defaultText) {
     }
 }
 
+function showStatusAlert(statusName) {
+    document.getElementById('alertTitle').innerText = '✨ Новый статус!';
+    document.getElementById('alertAchImg').style.display = 'none'; 
+    document.getElementById('alertAchText').innerText = statusName;
+    document.getElementById('achievementAlert').style.display = 'flex';
+}
+
 function showAchievementInfo(achId, slotIndex) {
     currentInfoSlot = slotIndex;
     const data = ACH_DATA[achId] || { title: 'Достижение', desc: 'Описание пока скрыто.' };
@@ -227,6 +239,15 @@ function openShowcaseModal(slotIndex) {
             div.onclick = () => pinAchievement(achId);
             list.appendChild(div);
         });
+        if (list.innerHTML === '') {
+            list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">Все доступные достижения уже установлены.</p>';
+        }
+    }
+    const clearBtnContainer = document.getElementById('clearSlotBtnContainer');
+    if (State.user.showcase[slotIndex]) {
+        clearBtnContainer.innerHTML = `<button class="balance-btn" style="background:var(--status-red); border:none; margin-top:10px; width: 100%;" onclick="clearAchievementSlot()">Снять достижение</button>`;
+    } else {
+        clearBtnContainer.innerHTML = '';
     }
     document.getElementById('showcaseModal').style.display = 'flex';
 }
@@ -249,7 +270,7 @@ function pinAchievement(achId) {
     document.getElementById('showcaseModal').style.display = 'none';
 }
 
-// ЗАДАНИЯ
+// ЗАДАНИЯ И ПРОГРЕССИЯ
 function toggleTasks() {
     const content = document.getElementById('tasksList');
     const arrow = document.getElementById('tasksArrow');
@@ -268,13 +289,13 @@ function renderTasks() {
         const userProg = progressData[branch.id] || { currentLevel: 1, currentScore: 0 };
         const activeLevel = branch.levels.find(lv => lv.lv === userProg.currentLevel);
 
-        if (userProg.currentLevel > 5) {
+        if (!activeLevel) {
             return `
             <div style="margin-bottom: 15px;">
                 <h4 style="color:var(--status-green); margin-bottom:10px; font-size:16px;">${branch.title}</h4>
                 <div class="task-level" style="text-align:center; color:var(--status-green); border-color: var(--status-green);">
                     <i class="fas fa-check-circle" style="font-size:24px; margin-bottom:10px;"></i>
-                    <br>Все 5 уровней пройдены!
+                    <br>Все уровни пройдены!
                 </div>
             </div>`;
         }
@@ -300,12 +321,17 @@ function renderTasks() {
                         <i class="fas fa-camera"></i> Прикрепить фото
                     </button>
                     <button class="balance-btn" style="margin-top: 10px; padding: 6px; font-size: 12px; border: 1px dashed ${levelColor}; color: ${levelColor}; background: transparent;" onclick="testAdminAddPoint('${branch.id}', ${activeLevel.target})">
-                        <i class="fas fa-wrench"></i> Тест: +1 очко
+                        <i class="fas fa-wrench"></i> Тест: админ дал +1 очко
                     </button>
                 </div>
             </div>
         `;
     }).join('');
+}
+
+function initTaskUpload(branchId) {
+    State.activeUploadBranchId = branchId;
+    document.getElementById('taskFileInput').click();
 }
 
 window.testAdminAddPoint = function(branchId, target) {
@@ -316,40 +342,48 @@ window.testAdminAddPoint = function(branchId, target) {
         const branch = window.api.getTaskData().find(b => b.id === branchId);
         
         if (prog.currentLevel < 5) {
+            // Переход на следующий уровень
             prog.currentLevel += 1;
             prog.currentScore = 0;
             const nextLevel = branch.levels.find(l => l.lv === prog.currentLevel);
             
+            // Алерт: Новый уровень
             document.getElementById('alertTitle').innerText = '🌟 Новый уровень!';
             document.getElementById('alertAchImg').style.display = 'none'; 
-            document.getElementById('alertAchText').innerText = `Уровень ${nextLevel.lv}\n${nextLevel.text}`;
+            document.getElementById('alertAchText').innerText = `Уровень ${nextLevel.lv}\n${nextLevel.text}\nЦель: ${nextLevel.target}`;
             document.getElementById('achievementAlert').style.display = 'flex';
+            
         } else if (prog.currentLevel === 5) {
-            prog.currentLevel = 6; 
+            // Задание полностью пройдено!
+            prog.currentLevel = 6; // Отмечаем как завершенное
+            prog.currentScore = target;
+            
+            // Выдаем статус
             if (branch.statusReward && !State.user.unlockedStatuses.includes(branch.statusReward)) {
                 State.user.unlockedStatuses.push(branch.statusReward);
-                State.user.status = branch.statusReward;
+                State.user.status = branch.statusReward; // Автоматически устанавливаем новый статус
                 document.getElementById('currentStatus').innerText = branch.statusReward;
                 
+                // Показываем алерт статуса с небольшой задержкой
                 setTimeout(() => {
-                    document.getElementById('alertTitle').innerText = '👑 Новый статус!';
+                    document.getElementById('alertTitle').innerText = '👑 Достигнут новый статус!';
+                    document.getElementById('alertAchImg').style.display = 'none';
                     document.getElementById('alertAchText').innerText = branch.statusReward;
                     document.getElementById('achievementAlert').style.display = 'flex';
                 }, 500);
             }
+            
+            // Выдаем достижение
             if (branch.achReward) {
-                setTimeout(() => { grantAchievement(branch.achReward, 'Задание выполнено!'); }, 2000);
+                setTimeout(() => { 
+                    grantAchievement(branch.achReward, 'Задание полностью выполнено!'); 
+                }, 2000); // Показываем после алерта статуса
             }
         }
     }
     window.api.saveUserState(State.user);
     renderTasks();
 };
-
-function initTaskUpload(branchId) {
-    State.activeUploadBranchId = branchId;
-    document.getElementById('taskFileInput').click();
-}
 
 function handleTaskFile(event) {
     const files = event.target.files;
@@ -374,7 +408,12 @@ function closeTaskUploadModal() {
     State.activeUploadBranchId = null;
 }
 
-// МАРКЕРЫ
+function submitTaskPhoto() {
+    closeTaskUploadModal();
+    alert("Фотографии отправлены!");
+}
+
+// МАРКЕРЫ И КОРЗИНА
 function renderMarkers() {
     const container = document.getElementById('markersList');
     if (!container) return;
@@ -403,7 +442,6 @@ function renderMarkers() {
 
 function changeCart(id, delta) {
     const marker = State.markers.find(m => m.id === id);
-    if (!marker) return;
     let cartItem = State.cart.find(item => item.id === id);
     if (delta > 0) {
         if (!cartItem) State.cart.push({ ...marker, count: 1 });
@@ -415,8 +453,7 @@ function changeCart(id, delta) {
         }
     }
     window.api.saveCart(State.cart);
-    renderMarkers(); 
-    updateCartBadge();
+    renderMarkers(); updateCartBadge();
 }
 
 function updateCartBadge() {
@@ -427,10 +464,9 @@ function updateCartBadge() {
     badge.style.display = totalCount > 0 ? 'block' : 'none';
 }
 
-// СТАТУСЫ, ГАЛЕРЕЯ И АДМИНКА
+// --- ВЫБОР СТАТУСА ---
 window.openStatusInfo = function() {
     const list = document.getElementById('availableStatusesList');
-    if (!list) return;
     list.innerHTML = State.user.unlockedStatuses.map(st => `
         <button class="balance-btn" style="width:100%; margin-bottom:10px; ${State.user.status === st ? 'border: 1px solid var(--status-green); color:var(--status-green);' : ''}" onclick="selectStatus('${st}')">${st}</button>
     `).join('');
@@ -444,13 +480,7 @@ window.selectStatus = function(st) {
     document.getElementById('statusSelectModal').style.display = 'none';
 }
 
-let currentGalleryTome = 1;
-let currentGalleryPage = 1;
-
-// --- ГАЛЕРЕЯ ОТВЕТОВ (Версия без фантомных алертов) ---
-let currentGalleryTome = 1;
-let currentGalleryPage = 1;
-
+// --- ГАЛЕРЕЯ ОТВЕТОВ ---
 window.openAnswersGallery = function(tomeNum) {
     currentGalleryTome = tomeNum;
     currentGalleryPage = 1;
@@ -466,6 +496,8 @@ window.updateGalleryImage = function() {
     const modal = document.getElementById('answersGalleryModal');
     
     if (!imgEl) return;
+
+    imgEl.onerror = null;
 
     imgEl.onerror = function() {
         this.onerror = null;
@@ -503,17 +535,31 @@ window.closeAnswersGallery = function() {
     if (modal) modal.style.display = 'none';
 }
 
-
+// --- АДМИН-ПАНЕЛЬ ИИ ---
 window.submitAdminAiTrain = function() {
     const file = document.getElementById('adminAiInput').files[0];
     const brand = document.getElementById('adminAiBrand').value.trim();
     const number = document.getElementById('adminAiNumber').value.trim();
-    if (!file || !brand || !number) { alert("Заполните все поля!"); return; }
-    alert(`Данные отправлены!\nБренд: ${brand}\nМаркер: ${number}`);
-};
+    
+    if (!file || !brand || !number) {
+        alert("Пожалуйста, заполните все поля и выберите фото!");
+        return;
+    }
+    
+    alert(`Данные успешно отправлены в базу!\nБренд: ${brand}\nМаркер: ${number}`);
+    
+    document.getElementById('adminAiInput').value = '';
+    document.getElementById('adminAiBrand').value = '';
+    document.getElementById('adminAiNumber').value = '';
+}
 
+// ФУНКЦИЯ ПОЛНОГО СБРОСА
 window.resetAllData = function() {
-    if(confirm("Сбросить прогресс?")) { localStorage.clear(); location.reload(); }
+    if(confirm("Вы уверены, что хотите полностью сбросить прогресс? Все данные будут удалены.")) {
+        localStorage.clear();
+        location.reload();
+    }
 };
 
+window.updateCartBadge = updateCartBadge;
 document.addEventListener('DOMContentLoaded', init);

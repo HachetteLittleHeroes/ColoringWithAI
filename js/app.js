@@ -36,18 +36,33 @@ const LEVEL_COLORS = {
 
 async function init() {
     console.log("Запуск системы...");
+    
     const tg = window.Telegram?.WebApp;
     if (tg) {
-        tg.expand(); tg.ready();
+        tg.expand();
+        tg.ready();
         State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
     }
-    // Нужно добавить инициализацию данных здесь
+
+    // 1. Загружаем данные пользователя
     State.user = await window.api.getUser(State.userId);
+    
+    // 2. Загружаем маркеры
     await window.loadMarkersFromCSV();
+
+    // 3. Отрисовываем всё
     renderProfile();
     renderTasks();
     updateCartBadge();
+
+    // 4. Убираем экран загрузки (через небольшую паузу для плавности)
+    setTimeout(() => {
+        const loader = document.getElementById('loading-screen');
+        if (loader) loader.style.opacity = '0';
+        setTimeout(() => { if(loader) loader.style.display = 'none'; }, 300);
+    }, 200);
 }
+
 
 
 
@@ -531,32 +546,41 @@ window.closeBook = function() {
     document.getElementById('viewer').style.display = 'none'; 
 };
 
+// --- ГАЛЕРЕЯ ОТВЕТОВ ---
+
+// Используем единые названия переменных
+let currentGalleryTome = 1;
+let currentGalleryPage = 1;
+let maxGalleryPages = 50; // Установи примерное или точное кол-во страниц
+let touchStartX = 0;
+let touchStartY = 0;
+
 window.updatePage = function() {
-    const img = document.getElementById('current-page');
-    const counter = document.getElementById('page-counter');
-    // Перебираем форматы, если файла нет
-    const formats = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG'];
-    let fIndex = 0;
+    const img = document.getElementById('galleryMainImage');
+    const counter = document.getElementById('galleryPageIndicator');
     
-    function tryLoad() { 
-        img.src = `otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; 
-    }
+    if (!img || !counter) return;
+
+    img.style.display = 'block';
     
-    img.onerror = () => { 
-        fIndex++; 
-        if (fIndex < formats.length) {
-            tryLoad(); 
-        } else {
-            // Если ни один формат не подошел, ставим заглушку
-            img.src = 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png';
+    // Формируем путь. Убедись, что папка на GitHub называется именно так
+    const currentSrc = `${window.CONFIG.GITHUB_BASE}otveti/tome${currentGalleryTome}/page${currentGalleryPage}.png`;
+    
+    img.src = currentSrc;
+    counter.innerText = `${currentGalleryPage} / ${maxGalleryPages}`;
+
+    // Обработка ошибки (если картинки нет)
+    img.onerror = () => {
+        img.onerror = null; 
+        alert('Больше страниц нет!');
+        if (currentGalleryPage > 1) {
+            currentGalleryPage--;
+            window.updatePage();
         }
     };
-    
-    tryLoad(); 
-    counter.innerText = `${currentPage} / ${maxPages}`;
 };
 
-// Свайпы для мобилок
+// Свайпы для мобилок (исправленные переменные)
 window.handleTouchStart = function(e) { 
     touchStartX = e.touches[0].screenX; 
     touchStartY = e.touches[0].screenY; 
@@ -565,11 +589,34 @@ window.handleTouchStart = function(e) {
 window.handleTouchEnd = function(e) {
     let dx = touchStartX - e.changedTouches[0].screenX;
     let dy = touchStartY - e.changedTouches[0].screenY;
+    
+    // Проверка: это был горизонтальный свайп?
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-        if (dx > 0 && currentPage < maxPages) { currentPage++; window.updatePage(); }
-        else if (dx < 0 && currentPage > 1) { currentPage--; window.updatePage(); }
+        if (dx > 0) { 
+            // Свайп влево — следующая страница
+            currentGalleryPage++; 
+            window.updatePage(); 
+        } else if (dx < 0 && currentGalleryPage > 1) { 
+            // Свайп вправо — предыдущая страница
+            currentGalleryPage--; 
+            window.updatePage(); 
+        }
     }
 };
+
+// Функции открытия/закрытия
+window.openBook = function(tome, max) {
+    currentGalleryTome = tome;
+    maxGalleryPages = max;
+    currentGalleryPage = 1;
+    document.getElementById('viewer').style.display = 'block';
+    window.updatePage();
+};
+
+window.closeBook = function() {
+    document.getElementById('viewer').style.display = 'none';
+};
+
 
 window.checkout = function() {
     const cart = window.State.cart;

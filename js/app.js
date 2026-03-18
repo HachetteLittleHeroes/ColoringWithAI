@@ -22,7 +22,6 @@ async function init() {
         State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
     }
 
-    // РЕШЕНИЕ ПРОБЛЕМЫ МИГАНИЯ: Сразу достаем из памяти
     const localName = localStorage.getItem('user_name');
     const localAvatar = localStorage.getItem('user_avatar');
     const localStatus = localStorage.getItem('user_status');
@@ -31,7 +30,6 @@ async function init() {
     if (localAvatar) document.getElementById('user-avatar').src = localAvatar;
     if (localStatus) document.getElementById('currentStatus').innerText = localStatus;
 
-    // Фоновая загрузка актуальных данных
     State.user = await window.api.getUser(State.userId);
     State.markers = await window.api.fetchMarkers();
     State.cart = window.api.getCart();
@@ -84,7 +82,6 @@ function renderProfile() {
             img.src = `${GITHUB_AVATAR_PATH}av${i}.png`; 
             img.className = 'preset-avatar-item';
             img.onerror = function() { this.style.display = 'none'; };
-            // При клике теперь открываем окно подтверждения
             img.onclick = () => promptAvatarConfirm(img.src);
             presetGrid.appendChild(img);
         }
@@ -96,6 +93,11 @@ function toggleAvatarEditor() {
     if (!el) return;
     const isHidden = el.style.display === 'none' || el.style.display === '';
     el.style.display = isHidden ? 'block' : 'none';
+    if (isHidden) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function openStatusInfo() {
+    document.getElementById('statusInfoModal').style.display = 'flex';
 }
 
 // ЛОГИКА ОКНА ПОДТВЕРЖДЕНИЯ АВАТАРА
@@ -118,7 +120,7 @@ async function applyAvatar() {
     await window.api.updateProfile(State.userId, 'avatar', pendingAvatarUrl);
     
     closeAvatarConfirm();
-    toggleAvatarEditor();
+    document.getElementById('avatarEditorBlock').style.display = 'none';
 }
 
 // СВОЕ ФОТО
@@ -161,7 +163,7 @@ function toggleSection(id) {
     }
 }
 
-// ЗАДАНИЯ
+// ЗАДАНИЯ С ПРОГРЕССИЕЙ
 function toggleTasks() {
     const content = document.getElementById('tasksList');
     const arrow = document.getElementById('tasksArrow');
@@ -174,20 +176,68 @@ function toggleTasks() {
 function renderTasks() {
     const container = document.getElementById('tasksList');
     const branches = window.api.getTaskData();
-    
-    container.innerHTML = branches.map(branch => `
-        <div style="margin-bottom: 10px;">
-            <h4 style="color:var(--accent); margin-bottom:10px;">${branch.title}</h4>
-            ${branch.levels.map(lv => `
-                <div class="task-level">
-                    <div style="display:flex; justify-content:space-between;">
-                        <span style="font-size:14px;">Ур. ${lv.lv}: ${lv.text}</span>
-                        <span style="color:#FFD700; font-weight:bold;">+${lv.reward} <i class="fas fa-book-open"></i></span>
+    const progressData = State.user.taskProgress || {};
+
+    container.innerHTML = branches.map(branch => {
+        // Достаем прогресс пользователя или ставим 1 уровень по умолчанию
+        const userProg = progressData[branch.id] || { currentLevel: 1, currentScore: 0 };
+
+        return `
+            <div style="margin-bottom: 15px;">
+                <h4 style="color:var(--accent); margin-bottom:15px; font-size:16px;">${branch.title}</h4>
+                ${branch.levels.map(lv => {
+                    const isCompleted = lv.lv < userProg.currentLevel;
+                    const isActive = lv.lv === userProg.currentLevel;
+                    const isLocked = lv.lv > userProg.currentLevel;
+
+                    const currentScore = isCompleted ? lv.target : (isActive ? userProg.currentScore : 0);
+                    const percent = Math.min(100, (currentScore / lv.target) * 100);
+
+                    return `
+                    <div class="task-level ${isLocked ? 'locked' : ''}">
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                            <span style="font-size:14px; font-weight:bold;">Уровень ${lv.lv}: ${lv.text}</span>
+                            <span style="color:#FFD700; font-weight:bold;">+${lv.reward} <i class="fas fa-book-open"></i></span>
+                        </div>
+                        
+                        <div class="progress-bar-container">
+                            <div class="progress-fill" style="width: ${percent}%;"></div>
+                        </div>
+                        
+                        <div style="font-size:12px; color:var(--text-gray); text-align:right; margin-bottom: 12px;">
+                            Прогресс: ${currentScore} / ${lv.target}
+                        </div>
+
+                        ${isActive ? `
+                            <button class="blue-action-btn" style="padding: 10px; font-size: 14px;" onclick="sendTaskProof()">
+                                <i class="fas fa-camera"></i> Отправить задание на проверку
+                            </button>
+                        ` : ''}
+                        
+                        ${isCompleted ? `
+                            <div style="color:var(--status-green); font-size:14px; text-align:center; font-weight:bold;">
+                                <i class="fas fa-check-circle"></i> Уровень пройден
+                            </div>
+                        ` : ''}
+
+                        ${isLocked ? `
+                            <div style="color:var(--text-gray); font-size:14px; text-align:center;">
+                                <i class="fas fa-lock"></i> Откроется после ${lv.lv - 1} уровня
+                            </div>
+                        ` : ''}
                     </div>
-                </div>
-            `).join('')}
-        </div>
-    `).join('');
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }).join('');
+}
+
+// Отправка задания (закрытие окна или показ подсказки)
+function sendTaskProof() {
+    alert("Пожалуйста, сделайте фото вашей работы и отправьте его прямо в чат с ботом! Администратор проверит работу и начислит очки задания.");
+    // Раскомментируй строку ниже, если хочешь, чтобы WebApp автоматически закрывался
+    // if (window.Telegram?.WebApp) window.Telegram.WebApp.close();
 }
 
 // МАРКЕРЫ И КОРЗИНА

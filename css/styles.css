@@ -8,6 +8,7 @@
     --accent: #ff9500;
     --accent-gradient: linear-gradient(135deg, #FF8C00 0%, #E65100 100%);
     --status-red: #ff3b30;
+    --status-green: #34c759;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -43,13 +44,32 @@ button:active { transform: scale(0.96); }
     padding: 2px;
     background: var(--bg);
     cursor: pointer;
+    position: relative;
 }
 .avatar-wrapper img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+/* Иконка карандаша прямо на аватарке для понятности */
+.avatar-edit-icon {
+    position: absolute;
+    bottom: -5px; right: -5px;
+    background: var(--accent);
+    color: white;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    border: 3px solid var(--bg-header);
+}
 
 .profile-meta h2 { font-size: 22px; margin-bottom: 4px; }
 .name-row { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 .edit-icon { font-size: 14px; color: var(--text-gray); }
-.status-badge { color: var(--accent); font-size: 14px; margin-top: 2px; font-weight: 600; }
+
+.status-badge { 
+    color: var(--accent); font-size: 14px; margin-top: 2px; font-weight: 600; 
+    display: inline-block; padding: 4px 10px; background: rgba(255,149,0,0.1); 
+    border-radius: 8px; cursor: pointer;
+}
 
 .expandable-block {
     margin: 0 15px 15px; padding: 15px;
@@ -76,7 +96,7 @@ button:active { transform: scale(0.96); }
     display: flex; justify-content: center; align-items: center; gap: 8px;
 }
 
-/* БАЛАНС */
+/* БАЛАНС И КАРТОЧКИ ТОВАРОВ */
 .balance-card {
     background: var(--accent-gradient);
     margin: 15px; padding: 25px 20px;
@@ -104,13 +124,36 @@ button:active { transform: scale(0.96); }
     background: var(--bg-header); border-radius: 20px;
 }
 .section-header { font-size: 18px; font-weight: bold; margin-bottom: 15px; }
-.earn-card {
-    display: flex; justify-content: space-between;
-    padding: 12px; background: var(--bg); border-radius: 10px; margin-bottom: 10px;
-}
-.earn-bonus { color: var(--accent); font-weight: bold; }
 
-/* ЗАДАНИЯ */
+/* Сетка товаров */
+.reward-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.reward-card {
+    background: var(--bg);
+    padding: 15px 10px;
+    border-radius: 15px;
+    text-align: center;
+    border: 1px solid #333;
+    display: flex; flex-direction: column; justify-content: space-between;
+}
+.reward-card h4 {
+    font-size: 14px; margin-bottom: 10px; font-weight: normal; color: #ddd;
+}
+.reward-price {
+    font-weight: bold; font-size: 16px; color: var(--accent);
+}
+
+.earn-card {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 12px; background: var(--bg); border-radius: 10px; margin-bottom: 10px;
+    border: 1px solid #333;
+}
+.earn-bonus { color: var(--accent); font-weight: bold; font-size: 16px; }
+
+/* ЗАДАНИЯ С ПРОГРЕСС-БАРОМ */
 .tasks-container { margin: 15px; }
 .section-tab {
     background: var(--bg-header); padding: 18px;
@@ -122,6 +165,18 @@ button:active { transform: scale(0.96); }
     background: var(--bg); padding: 15px;
     border-radius: 12px; margin-bottom: 10px;
     border: 1px solid #333;
+    transition: opacity 0.3s;
+}
+.task-level.locked { opacity: 0.5; pointer-events: none; }
+
+.progress-bar-container {
+    width: 100%; height: 8px;
+    background: #333; border-radius: 4px;
+    margin: 12px 0 8px; overflow: hidden;
+}
+.progress-fill {
+    height: 100%; background: var(--accent);
+    width: 0%; transition: width 0.4s ease;
 }
 
 /* ВИТРИНА ДОСТИЖЕНИЙ (В РЯД + СВЕЧЕНИЕ) */
@@ -129,23 +184,20 @@ button:active { transform: scale(0.96); }
     background: var(--bg-header); margin: 15px; padding: 20px;
     border-radius: 20px; position: relative; overflow: hidden;
 }
-/* Оранжевое свечение снизу */
 .showcase-container::after {
     content: ''; position: absolute; bottom: 0; left: 0;
     width: 100%; height: 50px;
     background: linear-gradient(to top, rgba(255, 149, 0, 0.2), transparent);
     pointer-events: none;
 }
-.showcase-grid {
-    display: flex; justify-content: space-between; gap: 10px;
-}
+.showcase-grid { display: flex; justify-content: space-between; gap: 10px; }
 .showcase-slot {
     flex: 1; aspect-ratio: 1;
     background: var(--bg); border: 2px solid #333;
     border-radius: 15px; display: flex;
     align-items: center; justify-content: center;
     font-size: 24px; color: #555;
-    position: relative; z-index: 1; /* Чтобы свечение было под иконками */
+    position: relative; z-index: 1;
 }
 
 /* МАРКЕРЫ */

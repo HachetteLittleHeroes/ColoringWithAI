@@ -81,7 +81,7 @@ async function init() {
         }, 500);
     }
 }
-
+}
 
 // НАВИГАЦИЯ
 function tab(tabId) {

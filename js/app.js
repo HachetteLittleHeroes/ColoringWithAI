@@ -479,15 +479,19 @@ window.selectStatus = function(st) {
     document.getElementById('currentStatus').innerText = st;
     document.getElementById('statusSelectModal').style.display = 'none';
 }
+// --- ГАЛЕРЕЯ ОТВЕТОВ (Финальная битва с алертом) ---
 
-// --- ГАЛЕРЕЯ ОТВЕТОВ ---
 window.openAnswersGallery = function(tomeNum) {
     currentGalleryTome = tomeNum;
     currentGalleryPage = 1;
-    // Сначала показываем модалку, чтобы проверка внутри updateGalleryImage прошла успешно
     const modal = document.getElementById('answersGalleryModal');
-    if (modal) modal.style.display = 'flex';
-    updateGalleryImage();
+    if (modal) {
+        modal.style.display = 'flex';
+        // Если у тебя в HTML есть блок для текста ошибки, скрываем его при открытии
+        const errLabel = document.getElementById('galleryErrorLabel');
+        if (errLabel) errLabel.style.display = 'none';
+    }
+    window.updateGalleryImage();
 }
 
 window.updateGalleryImage = function() {
@@ -497,36 +501,43 @@ window.updateGalleryImage = function() {
     
     if (!imgEl) return;
 
+    // Очищаем старый обработчик перед новой попыткой загрузки
     imgEl.onerror = null;
 
     imgEl.onerror = function() {
+        // Отключаем обработчик, чтобы не зациклиться при загрузке заглушки
         this.onerror = null;
-        this.src = 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png';
         
-        // ПРОВЕРКА: Если модалка закрыта (none или пустая строка), вообще ничего не пишем
+        // Проверяем, открыта ли галерея
         const isVisible = modal && (modal.style.display === 'flex' || modal.style.display === 'block');
-        
+
         if (isVisible && currentGalleryPage > 1) {
             alert('Больше страниц нет');
-            // Откатываем страницу назад, так как текущая не загрузилась
+            // Возвращаемся на последнюю рабочую страницу
             currentGalleryPage--;
-            if (indicator) indicator.innerText = `Страница ${currentGalleryPage}`;
+            this.src = `${window.CONFIG.GITHUB_BASE}otveti/t${currentGalleryTome}/${currentGalleryPage}.png`;
+        } else {
+            // Если это первая страница или модалка закрыта — просто ставим заглушку без алертов
+            this.src = 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png';
         }
+        
+        if (indicator) indicator.innerText = `Страница ${currentGalleryPage}`;
     };
 
+    // Запускаем загрузку
     imgEl.src = `${window.CONFIG.GITHUB_BASE}otveti/t${currentGalleryTome}/${currentGalleryPage}.png`;
     if (indicator) indicator.innerText = `Страница ${currentGalleryPage}`;
 }
 
 window.nextGalleryPage = function() {
     currentGalleryPage++;
-    updateGalleryImage();
+    window.updateGalleryImage();
 }
 
 window.prevGalleryPage = function() {
     if (currentGalleryPage > 1) {
         currentGalleryPage--;
-        updateGalleryImage();
+        window.updateGalleryImage();
     }
 }
 

@@ -12,24 +12,36 @@
 
 <div id="userIdDisplay" style="display:none;"></div>
 
+
 <div id="profile" class="page active">
+    
     <div class="profile-header-block">
         <div class="avatar-section">
             <div class="avatar-wrapper" onclick="toggleAvatarEditor()">
-                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/avatars/av2.png" alt="Avatar">
+                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png" alt="Avatar">
+                <div class="avatar-overlay">Avatar</div>
             </div>
+            
             <div class="profile-meta">
-                <h2 id="displayUsername" onclick="changeNickname()">Без имени</h2>
-                <div id="currentStatus" class="status-badge" onclick="openStatusSelect()">Новичок</div>
+                <div class="name-row" onclick="changeNickname()">
+                    <h2 id="displayUsername">Без имени</h2>
+                    <i class="fas fa-pencil-alt edit-icon"></i>
+                </div>
+                <div id="currentStatus" class="status-label" onclick="openStatusSelect()">Новичок</div>
             </div>
         </div>
     </div>
 
     <div id="avatarEditorBlock" class="expandable-block" style="display:none;">
+        <p class="section-subtitle">Выберите аватарку:</p>
         <div class="preset-avatars" id="avatarPresets">
             </div>
-        <input type="file" id="customAvatarInput" style="display:none;" onchange="handleCustomAvatar(event)">
-        <button class="action-btn-secondary" onclick="document.getElementById('customAvatarInput').click()">Установить своё фото</button>
+        <div class="custom-photo-row">
+            <input type="file" id="customAvatarInput" style="display:none;" onchange="handleCustomAvatar(event)">
+            <button class="text-link-btn" onclick="document.getElementById('customAvatarInput').click()">
+                Установить своё фото
+            </button>
+        </div>
     </div>
 
     <div class="balance-card">
@@ -38,10 +50,12 @@
             <span id="userBalance">0</span> 
             <i class="fas fa-book-open gold-book"></i>
         </div>
-        <div class="balance-controls">
-            <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🎁</button>
-            <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
+        <div class="balance-row">
+            <button class="balance-action" onclick="toggleSection('rewards-section')">Потратить ашетики 🎁</button>
+            <button class="balance-action" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
         </div>
+    </div>
+    
     </div>
 
     <div id="rewards-section" class="sub-page-block" style="display:none;">

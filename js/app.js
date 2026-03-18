@@ -45,31 +45,23 @@ async function init() {
             State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
         }
 
-        // 1. Загружаем данные пользователя (из api.js)
+        // Загружаем данные
         if (window.api) {
             State.user = await window.api.getUser(State.userId);
-        } else {
-            console.error("Критическая ошибка: api.js не загружен!");
         }
-        
-        // 2. Загружаем маркеры из CSV
         await window.loadMarkersFromCSV();
 
-        // 3. Отрисовываем интерфейс
+        // Отрисовываем интерфейс
         if (typeof renderProfile === 'function') renderProfile();
         if (typeof renderTasks === 'function') renderTasks();
         if (typeof updateCartBadge === 'function') updateCartBadge();
 
-        console.log("Инициализация успешно завершена");
-
     } catch (error) {
         console.error("Ошибка при инициализации:", error);
-        // Если случилась ошибка, меняем текст на экране, чтобы юзер не гадал
         const loadeText = document.getElementById('loading-text');
-        if (loadeText) loadeText.innerText = "Ошибка загрузки. Попробуйте обновить.";
+        if (loadeText) loadeText.innerText = "Ошибка загрузки данных.";
     } finally {
-        // ЭТОТ БЛОК ВЫПОЛНИТСЯ ВСЕГДА
-        // Убираем экран загрузки через 500мс, чтобы не было резкого скачка
+        // Убираем экран загрузки
         setTimeout(() => {
             if (loader) {
                 loader.style.transition = "opacity 0.5s ease";
@@ -80,8 +72,12 @@ async function init() {
             }
         }, 500);
     }
-}
-}
+} // <--- ВОТ ЭТА ЖИЗНЕННО ВАЖНАЯ СКОБКА ТЕПЕРЬ НА МЕСТЕ!
+
+// НАВИГАЦИЯ
+function tab(tabId) {
+// ... дальше идет твой старый код функции tab ...
+
 
 // НАВИГАЦИЯ
 function tab(tabId) {

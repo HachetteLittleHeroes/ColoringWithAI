@@ -36,12 +36,19 @@ const LEVEL_COLORS = {
 
 async function init() {
     console.log("Запуск системы...");
-    
     const tg = window.Telegram?.WebApp;
     if (tg) {
         tg.expand(); tg.ready();
         State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
     }
+    // Нужно добавить инициализацию данных здесь
+    State.user = await window.api.getUser(State.userId);
+    await window.loadMarkersFromCSV();
+    renderProfile();
+    renderTasks();
+    updateCartBadge();
+}
+
 
 
 

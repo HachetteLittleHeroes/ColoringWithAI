@@ -157,7 +157,7 @@ button:active { transform: scale(0.96); }
 .task-level {
     background: var(--bg); padding: 15px;
     border-radius: 12px; margin-bottom: 10px;
-    border: 1px solid #333; transition: opacity 0.3s;
+    border: 1px solid #333; transition: border-color 0.3s;
 }
 
 .progress-bar-container {
@@ -167,7 +167,17 @@ button:active { transform: scale(0.96); }
 }
 .progress-fill {
     height: 100%; background: var(--accent);
-    width: 0%; transition: width 0.4s ease;
+    width: 0%; transition: width 0.4s ease, background-color 0.3s;
+}
+
+/* Контейнер для нескольких превью фото */
+.photo-preview-container {
+    display: flex; gap: 10px; overflow-x: auto; 
+    margin: 15px 0; padding-bottom: 5px;
+}
+.photo-preview-container img {
+    height: 100px; min-width: 100px; object-fit: cover; 
+    border-radius: 8px; flex-shrink: 0; border: 1px solid #444;
 }
 
 /* ВИТРИНА ДОСТИЖЕНИЙ */

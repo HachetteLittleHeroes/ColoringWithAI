@@ -12,22 +12,18 @@
 
 <div id="userIdDisplay" style="display:none;"></div>
 
-
 <div id="profile" class="page active">
-    
     <div class="profile-header-block">
         <div class="avatar-section">
             <div class="avatar-wrapper" onclick="toggleAvatarEditor()">
-                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png" alt="Avatar">
-                <div class="avatar-overlay">Avatar</div>
+                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png" alt="">
             </div>
-            
             <div class="profile-meta">
                 <div class="name-row" onclick="changeNickname()">
                     <h2 id="displayUsername">Без имени</h2>
                     <i class="fas fa-pencil-alt edit-icon"></i>
                 </div>
-                <div id="currentStatus" class="status-label" onclick="openStatusSelect()">Новичок</div>
+                <div id="currentStatus" class="status-badge" onclick="openStatusSelect()">Без статуса</div>
             </div>
         </div>
     </div>
@@ -36,12 +32,10 @@
         <p class="section-subtitle">Выберите аватарку:</p>
         <div class="preset-avatars" id="avatarPresets">
             </div>
-        <div class="custom-photo-row">
-            <input type="file" id="customAvatarInput" style="display:none;" onchange="handleCustomAvatar(event)">
-            <button class="text-link-btn" onclick="document.getElementById('customAvatarInput').click()">
-                Установить своё фото
-            </button>
-        </div>
+        <input type="file" id="customAvatarInput" style="display:none;" onchange="handleCustomAvatar(event)">
+        <button class="blue-action-btn" onclick="document.getElementById('customAvatarInput').click()">
+            <i class="fas fa-camera"></i> Загрузить фото
+        </button>
     </div>
 
     <div class="balance-card">
@@ -50,12 +44,10 @@
             <span id="userBalance">0</span> 
             <i class="fas fa-book-open gold-book"></i>
         </div>
-        <div class="balance-row">
-            <button class="balance-action" onclick="toggleSection('rewards-section')">Потратить ашетики 🎁</button>
-            <button class="balance-action" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
+        <div class="balance-controls">
+            <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🎁</button>
+            <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
         </div>
-    </div>
-    
     </div>
 
     <div id="rewards-section" class="sub-page-block" style="display:none;">
@@ -158,16 +150,16 @@
     <div class="modal-content">
         <h3>Как вас звать?</h3>
         <input type="text" id="newNameInput" placeholder="Введите ник...">
-        <button class="action-btn-main" onclick="saveNewNickname()">Сохранить</button>
+        <button class="action-btn-main" style="margin-top:15px; width:100%; padding:14px; background:var(--accent); color:white; border-radius:12px;" onclick="saveNewNickname()">Сохранить</button>
     </div>
 </div>
 
 <nav class="nav">
     <button id="btn-profile" class="nav-btn active" onclick="tab('profile')">
-        <i class="fas fa-user-circle"></i><span>Профиль</span>
+        <i class="fas fa-user"></i><span>Профиль</span>
     </button>
     <button id="btn-markers" class="nav-btn" onclick="tab('markers')">
-        <i class="fas fa-marker"></i><span>Маркеры</span>
+        <i class="fas fa-pen"></i><span>Маркеры</span>
     </button>
     <button id="btn-answers" class="nav-btn" onclick="tab('answers')">
         <i class="fas fa-book"></i><span>Ответы</span>

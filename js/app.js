@@ -19,7 +19,6 @@ let currentInfoSlot = null; // Для модалки с описанием
 const ACH_DATA = {
     'ach1': { title: 'Смена имиджа!', desc: 'Вы успешно изменили свой аватар.' },
     'ach2': { title: 'Легенда штриховки', desc: 'Завершено 5 заданий в ветке мастера.' }
-    // Сюда можно добавлять описания для других ID достижений
 };
 
 // ОБНОВЛЕННЫЕ ЦВЕТА ДЛЯ УРОВНЕЙ
@@ -96,7 +95,6 @@ function renderProfile() {
         }
     }
 
-    // ЛОГИКА ВИТРИНЫ: Если слот занят - показываем описание, если пуст - окно выбора
     for (let i = 0; i < 3; i++) {
         const slotEl = document.getElementById(`slot-${i}`);
         const achId = State.user.showcase[i];
@@ -135,15 +133,11 @@ function closeAvatarConfirm() {
 
 async function applyAvatar() {
     if (!pendingAvatarUrl) return;
-    
     State.user.avatar = pendingAvatarUrl;
     localStorage.setItem('user_avatar', pendingAvatarUrl);
     document.getElementById('user-avatar').src = pendingAvatarUrl;
-    
     closeAvatarConfirm();
     document.getElementById('avatarEditorBlock').style.display = 'none';
-
-    // Выдаем достижение за смену аватарки
     grantAchievement('ach1', 'Смена имиджа!');
 }
 
@@ -180,14 +174,11 @@ function grantAchievement(achId, defaultText) {
     if (!State.user.unlockedAchievements.includes(achId)) {
         State.user.unlockedAchievements.push(achId);
         window.api.saveUserState(State.user);
-        
         const data = ACH_DATA[achId] || { title: 'Новое достижение!', desc: defaultText };
-        
         document.getElementById('alertTitle').innerText = '🏆 ' + data.title;
         const imgEl = document.getElementById('alertAchImg');
         imgEl.src = `${window.CONFIG.GITHUB_BASE}achievements/${achId}.png`;
         imgEl.style.display = 'block';
-        
         document.getElementById('alertAchText').innerText = data.desc;
         document.getElementById('achievementAlert').style.display = 'flex';
     }
@@ -200,7 +191,6 @@ function showStatusAlert(statusName) {
     document.getElementById('achievementAlert').style.display = 'flex';
 }
 
-// ПОКАЗ ИНФОРМАЦИИ О ДОСТИЖЕНИИ
 function showAchievementInfo(achId, slotIndex) {
     currentInfoSlot = slotIndex;
     const data = ACH_DATA[achId] || { title: 'Достижение', desc: 'Описание пока скрыто.' };
@@ -219,18 +209,13 @@ function openShowcaseModal(slotIndex) {
     activeShowcaseSlot = slotIndex;
     const list = document.getElementById('availableAchievementsList');
     list.innerHTML = '';
-    
     if (State.user.unlockedAchievements.length === 0) {
         list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">У вас пока нет достижений.</p>';
     } else {
         State.user.unlockedAchievements.forEach(achId => {
-            // ЗАПРЕТ НА ДУБЛИКАТЫ ВО ВСЕХ СЛОТАХ
             const isEquipped = State.user.showcase.includes(achId);
             const isCurrentSlot = State.user.showcase[slotIndex] === achId;
-            
-            // Если достижение уже стоит в другом слоте, пропускаем его
             if (isEquipped && !isCurrentSlot) return;
-
             const div = document.createElement('div');
             div.className = 'ach-list-item';
             if (isCurrentSlot) div.style.borderColor = 'var(--status-green)';
@@ -238,20 +223,16 @@ function openShowcaseModal(slotIndex) {
             div.onclick = () => pinAchievement(achId);
             list.appendChild(div);
         });
-        
         if (list.innerHTML === '') {
-            list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">Все доступные достижения уже установлены в другие слоты.</p>';
+            list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">Все доступные достижения уже установлены.</p>';
         }
     }
-    
-    // Кнопка снятия достижения
     const clearBtnContainer = document.getElementById('clearSlotBtnContainer');
     if (State.user.showcase[slotIndex]) {
         clearBtnContainer.innerHTML = `<button class="balance-btn" style="background:var(--status-red); border:none; margin-top:10px; width: 100%;" onclick="clearAchievementSlot()">Снять достижение</button>`;
     } else {
         clearBtnContainer.innerHTML = '';
     }
-
     document.getElementById('showcaseModal').style.display = 'flex';
 }
 
@@ -303,8 +284,6 @@ function renderTasks() {
         }
 
         const percent = Math.min(100, (userProg.currentScore / activeLevel.target) * 100);
-        
-        // Определение цвета для текущего уровня по новой палитре
         const levelColor = LEVEL_COLORS[activeLevel.lv] || 'var(--accent)';
 
         return `
@@ -315,19 +294,15 @@ function renderTasks() {
                         <span style="font-size:14px; font-weight:bold;">${activeLevel.text}</span>
                         <span style="color:#FFD700; font-weight:bold;">+${activeLevel.reward} <i class="fas fa-book-open"></i></span>
                     </div>
-                    
                     <div class="progress-bar-container">
                         <div class="progress-fill" style="width: ${percent}%; background-color: ${levelColor};"></div>
                     </div>
-                    
                     <div style="font-size:12px; color:var(--text-gray); text-align:right; margin-bottom: 12px;">
                         Прогресс: ${userProg.currentScore} / ${activeLevel.target}
                     </div>
-
                     <button class="blue-action-btn" style="padding: 10px; font-size: 14px; background-color: ${levelColor}; color: #000;" onclick="initTaskUpload('${branch.id}')">
                         <i class="fas fa-camera"></i> Прикрепить фото
                     </button>
-                    
                     <button class="balance-btn" style="margin-top: 10px; padding: 6px; font-size: 12px; border: 1px dashed ${levelColor}; color: ${levelColor}; background: transparent;" onclick="testAdminAddPoint('${branch.id}', ${activeLevel.target})">
                         <i class="fas fa-wrench"></i> Тест: админ дал +1 очко
                     </button>
@@ -337,39 +312,28 @@ function renderTasks() {
     }).join('');
 }
 
-// Имитация начисления очков админом
 window.testAdminAddPoint = function(branchId, target) {
     let prog = State.user.taskProgress[branchId];
     prog.currentScore += 1;
-    
     if (prog.currentScore >= target) {
-        // Уровень выполнен!
         const branch = window.api.getTaskData().find(b => b.id === branchId);
         const currentLevelData = branch.levels.find(l => l.lv === prog.currentLevel);
-        
-        // 1. Выдача статуса
         if (currentLevelData.statusReward) {
             State.user.status = currentLevelData.statusReward;
             localStorage.setItem('user_status', currentLevelData.statusReward);
             document.getElementById('currentStatus').innerText = currentLevelData.statusReward;
             showStatusAlert(currentLevelData.statusReward);
         }
-        
-        // 2. Переход на следующий уровень
         prog.currentLevel += 1;
         prog.currentScore = 0;
-        
-        // 3. Достижение (за 5 уровней мастера штриховки)
         if (branchId === 'master_colorist' && prog.currentLevel > 5) {
             grantAchievement('ach2', 'Завершено 5 заданий!');
         }
     }
-    
     window.api.saveUserState(State.user);
     renderTasks();
 };
 
-// ЛОГИКА ЗАГРУЗКИ НЕСКОЛЬКИХ ФОТО
 function initTaskUpload(branchId) {
     State.activeUploadBranchId = branchId;
     document.getElementById('taskFileInput').click();
@@ -378,10 +342,8 @@ function initTaskUpload(branchId) {
 function handleTaskFile(event) {
     const files = event.target.files;
     if (!files.length) return;
-    
     const container = document.getElementById('taskPhotoPreviewContainer');
-    container.innerHTML = ''; // Очищаем контейнер от старых фото
-    
+    container.innerHTML = '';
     Array.from(files).forEach(file => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -391,9 +353,8 @@ function handleTaskFile(event) {
         };
         reader.readAsDataURL(file);
     });
-    
     document.getElementById('taskUploadModal').style.display = 'flex';
-    event.target.value = ''; // Сброс инпута
+    event.target.value = '';
 }
 
 function closeTaskUploadModal() {
@@ -403,7 +364,7 @@ function closeTaskUploadModal() {
 
 function submitTaskPhoto() {
     closeTaskUploadModal();
-    alert("Фотографии успешно отправлены администратору на проверку!");
+    alert("Фотографии отправлены!");
 }
 
 // МАРКЕРЫ И КОРЗИНА
@@ -435,7 +396,6 @@ function renderMarkers() {
 function changeCart(id, delta) {
     const marker = State.markers.find(m => m.id === id);
     let cartItem = State.cart.find(item => item.id === id);
-
     if (delta > 0) {
         if (!cartItem) State.cart.push({ ...marker, count: 1 });
         else if (cartItem.count < marker.stock) cartItem.count++;
@@ -456,6 +416,14 @@ function updateCartBadge() {
     badge.innerText = totalCount;
     badge.style.display = totalCount > 0 ? 'block' : 'none';
 }
+
+// ФУНКЦИЯ ПОЛНОГО СБРОСА
+window.resetAllData = function() {
+    if(confirm("Вы уверены, что хотите полностью сбросить прогресс? Все данные будут удалены.")) {
+        localStorage.clear();
+        location.reload();
+    }
+};
 
 window.updateCartBadge = updateCartBadge;
 document.addEventListener('DOMContentLoaded', init);

@@ -445,6 +445,82 @@ function updateCartBadge() {
     badge.innerText = totalCount;
     badge.style.display = totalCount > 0 ? 'block' : 'none';
 }
+// --- ВЫБОР СТАТУСА ---
+window.openStatusInfo = function() {
+    const list = document.getElementById('availableStatusesList');
+    list.innerHTML = State.user.unlockedStatuses.map(st => `
+        <button class="balance-btn" style="width:100%; margin-bottom:10px; ${State.user.status === st ? 'border: 1px solid var(--status-green); color:var(--status-green);' : ''}" onclick="selectStatus('${st}')">${st}</button>
+    `).join('');
+    document.getElementById('statusSelectModal').style.display = 'flex';
+}
+
+window.selectStatus = function(st) {
+    State.user.status = st;
+    window.api.saveUserState(State.user);
+    document.getElementById('currentStatus').innerText = st;
+    document.getElementById('statusSelectModal').style.display = 'none';
+}
+
+// --- ГАЛЕРЕЯ ОТВЕТОВ ---
+let currentGalleryTome = 1;
+let currentGalleryPage = 1;
+
+window.openAnswersGallery = function(tomeNum) {
+    currentGalleryTome = tomeNum;
+    currentGalleryPage = 1;
+    updateGalleryImage();
+    document.getElementById('answersGalleryModal').style.display = 'flex';
+}
+
+window.updateGalleryImage = function() {
+    const imgEl = document.getElementById('galleryMainImage');
+    // Восстанавливаем обработчик ошибок на случай успешной загрузки предыдущей
+    imgEl.onerror = function() {
+        this.src = `${window.CONFIG.GITHUB_BASE}avatars/av2.png`; // Заглушка
+        this.onerror = null;
+        alert('Больше страниц нет!');
+        prevGalleryPage();
+    };
+    imgEl.src = `${window.CONFIG.GITHUB_BASE}otveti/t${currentGalleryTome}/${currentGalleryPage}.png`;
+    document.getElementById('galleryPageIndicator').innerText = `Страница ${currentGalleryPage}`;
+}
+
+window.nextGalleryPage = function() {
+    currentGalleryPage++;
+    updateGalleryImage();
+}
+
+window.prevGalleryPage = function() {
+    if(currentGalleryPage > 1) {
+        currentGalleryPage--;
+        updateGalleryImage();
+    }
+}
+
+window.closeAnswersGallery = function() {
+    document.getElementById('answersGalleryModal').style.display = 'none';
+}
+
+// --- АДМИН-ПАНЕЛЬ ИИ ---
+window.submitAdminAiTrain = function() {
+    const file = document.getElementById('adminAiInput').files[0];
+    const brand = document.getElementById('adminAiBrand').value.trim();
+    const number = document.getElementById('adminAiNumber').value.trim();
+    
+    if (!file || !brand || !number) {
+        alert("Пожалуйста, заполните все поля и выберите фото!");
+        return;
+    }
+    
+    // Здесь позже будет отправка на твой бэкенд (Amvera)
+    alert(`Данные успешно отправлены в базу!\nБренд: ${brand}\nМаркер: ${number}`);
+    
+    // Очищаем форму
+    document.getElementById('adminAiInput').value = '';
+    document.getElementById('adminAiBrand').value = '';
+    document.getElementById('adminAiNumber').value = '';
+}
+
 
 // ФУНКЦИЯ ПОЛНОГО СБРОСА
 window.resetAllData = function() {

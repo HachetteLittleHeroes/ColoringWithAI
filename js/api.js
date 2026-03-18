@@ -44,16 +44,13 @@ const Api = {
 
     async getUser(userId) {
         try {
-            // Эмулируем ответ сервера, добавив инвентарь достижений
             return {
                 id: userId,
                 name: localStorage.getItem('user_name') || "Без имени",
                 balance: 0,
                 avatar: localStorage.getItem('user_avatar') || `${CONFIG.GITHUB_BASE}avatars/av2.png`,
                 status: localStorage.getItem('user_status') || "Без статуса",
-                // Храним ID разблокированных достижений (ach1, ach2)
                 unlockedAchievements: JSON.parse(localStorage.getItem('unlocked_achievements')) || [],
-                // Слоты витрины (массив из 3 элементов, хранит ID достижений)
                 showcase: JSON.parse(localStorage.getItem('showcase_slots')) || [null, null, null],
                 taskProgress: JSON.parse(localStorage.getItem('task_progress')) || {
                     'status_progression': { currentLevel: 1, currentScore: 0 },
@@ -87,10 +84,11 @@ const Api = {
                 id: 'status_progression',
                 title: 'Путь художника (Статусы)',
                 levels: [
-                    { lv: 1, target: 5, text: "Раскрасить 5 картинок", reward: 50 },
-                    { lv: 2, target: 10, text: "Раскрасить 10 картинок", reward: 100 },
-                    { lv: 3, target: 20, text: "Раскрасить 20 картинок", reward: 200 },
-                    { lv: 4, target: 50, text: "Раскрасить 50 картинок", reward: 500 }
+                    // ДОБАВЛЕНО: statusReward — статус, который выдается при завершении уровня
+                    { lv: 1, target: 5, text: "Раскрасить 5 картинок", reward: 50, statusReward: 'Новичок' },
+                    { lv: 2, target: 10, text: "Раскрасить 10 картинок", reward: 100, statusReward: 'Мастер' },
+                    { lv: 3, target: 20, text: "Раскрасить 20 картинок", reward: 200, statusReward: 'Легенда' },
+                    { lv: 4, target: 50, text: "Раскрасить 50 картинок", reward: 500, statusReward: 'Бог цвета' }
                 ]
             },
             {
@@ -101,7 +99,7 @@ const Api = {
                     { lv: 2, target: 1, text: "Использовать ИИ Палитру 5 раз", reward: 20 },
                     { lv: 3, target: 1, text: "Написать 1 отзыв", reward: 30 },
                     { lv: 4, target: 1, text: "Поделиться приложением с другом", reward: 50 },
-                    { lv: 5, target: 1, text: "Сделать заказ с маркерами", reward: 100 } // При выполнении выдаем достижение
+                    { lv: 5, target: 1, text: "Сделать заказ с маркерами", reward: 100 }
                 ]
             }
         ];

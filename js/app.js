@@ -210,13 +210,23 @@ window.loadMarkersFromCSV = async function() {
             }
         });
         
-        // Убираем дубликаты и сохраняем в глобальный State
-        window.State.markers = temp.filter((v, i, a) => a.findIndex(t => (t.number === v.number)) === i);
-        window.renderMarkers();
+                // 1. Убираем дубликаты
+        const uniqueMarkers = temp.filter((v, i, a) => 
+            a.findIndex(t => t.number === v.number) === i
+        );
+
+        // 2. Сохраняем напрямую в наш объект State (без window)
+        State.markers = uniqueMarkers;
+
+        // 3. Вызываем отрисовку
+        renderMarkers();
+
+        console.log("Маркеры успешно загружены из CSV:", State.markers.length);
     } catch (e) { 
         console.error("Ошибка загрузки CSV:", e); 
     }
 };
+
 
 // ДОСТИЖЕНИЯ И АЛЕРТЫ
 function grantAchievement(achId, defaultText) {

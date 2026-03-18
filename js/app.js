@@ -8,11 +8,20 @@ const State = {
     cart: [],
     currentTab: 'profile',
     userId: '496779756',
-    activeUploadBranchId: null // для хранения ID ветки, в которую грузим фото
+    activeUploadBranchId: null
 };
 
 let pendingAvatarUrl = '';
-let activeShowcaseSlot = null; // Индекс слота, который сейчас редактируется
+let activeShowcaseSlot = null;
+
+// Цвета для разных уровней заданий
+const LEVEL_COLORS = {
+    1: '#a3a3a3', // Серый
+    2: '#cd7f32', // Бронзовый
+    3: '#c0c0c0', // Серебряный
+    4: '#ffd700', // Золотой
+    5: '#ff3366'  // Рубиновый
+};
 
 async function init() {
     console.log("Запуск...");
@@ -67,7 +76,6 @@ function renderProfile() {
     document.getElementById('userBalance').innerText = State.user.balance;
     document.getElementById('currentStatus').innerText = State.user.status;
 
-    // Генерация пресетов
     const presetGrid = document.getElementById('avatarPresets');
     if (presetGrid && presetGrid.children.length === 0) {
         for (let i = 1; i <= 8; i++) {
@@ -80,7 +88,6 @@ function renderProfile() {
         }
     }
 
-    // Отрисовка витрины
     for (let i = 0; i < 3; i++) {
         const slotEl = document.getElementById(`slot-${i}`);
         const achId = State.user.showcase[i];
@@ -125,7 +132,7 @@ async function applyAvatar() {
     closeAvatarConfirm();
     document.getElementById('avatarEditorBlock').style.display = 'none';
 
-    // Тест: Выдаем достижение 1 за смену аватарки
+    // Выдаем достижение за смену аватарки
     grantAchievement('ach1', 'Смена имиджа!');
 }
 
@@ -157,17 +164,27 @@ function toggleSection(id) {
     if (!isVisible) el.style.display = 'block';
 }
 
-// ДОСТИЖЕНИЯ И ВИТРИНА
+// ДОСТИЖЕНИЯ И АЛЕРТЫ
 function grantAchievement(achId, text) {
     if (!State.user.unlockedAchievements.includes(achId)) {
         State.user.unlockedAchievements.push(achId);
         window.api.saveUserState(State.user);
         
-        // Показываем алерт
-        document.getElementById('alertAchImg').src = `${window.CONFIG.GITHUB_BASE}achievements/${achId}.png`;
+        document.getElementById('alertTitle').innerText = '🏆 Новое достижение!';
+        const imgEl = document.getElementById('alertAchImg');
+        imgEl.src = `${window.CONFIG.GITHUB_BASE}achievements/${achId}.png`;
+        imgEl.style.display = 'block';
+        
         document.getElementById('alertAchText').innerText = text;
         document.getElementById('achievementAlert').style.display = 'flex';
     }
+}
+
+function showStatusAlert(statusName) {
+    document.getElementById('alertTitle').innerText = '✨ Новый статус!';
+    document.getElementById('alertAchImg').style.display = 'none'; // Скрываем картинку для статуса
+    document.getElementById('alertAchText').innerText = statusName;
+    document.getElementById('achievementAlert').style.display = 'flex';
 }
 
 function openShowcaseModal(slotIndex) {
@@ -194,12 +211,12 @@ function pinAchievement(achId) {
     if (activeShowcaseSlot !== null) {
         State.user.showcase[activeShowcaseSlot] = achId;
         window.api.saveUserState(State.user);
-        renderProfile(); // Обновит иконки в витрине
+        renderProfile();
     }
     document.getElementById('showcaseModal').style.display = 'none';
 }
 
-// ЗАДАНИЯ С ОДНИМ УРОВНЕМ
+// ЗАДАНИЯ И ПРОГРЕССИЯ
 function toggleTasks() {
     const content = document.getElementById('tasksList');
     const arrow = document.getElementById('tasksArrow');
@@ -215,16 +232,13 @@ function renderTasks() {
 
     container.innerHTML = branches.map(branch => {
         const userProg = progressData[branch.id] || { currentLevel: 1, currentScore: 0 };
-        
-        // Ищем текущий активный уровень
         const activeLevel = branch.levels.find(lv => lv.lv === userProg.currentLevel);
 
         if (!activeLevel) {
-            // Если нет активного уровня, значит ветка пройдена полностью
             return `
             <div style="margin-bottom: 15px;">
-                <h4 style="color:var(--accent); margin-bottom:10px; font-size:16px;">${branch.title}</h4>
-                <div class="task-level" style="text-align:center; color:var(--status-green);">
+                <h4 style="color:var(--status-green); margin-bottom:10px; font-size:16px;">${branch.title}</h4>
+                <div class="task-level" style="text-align:center; color:var(--status-green); border-color: var(--status-green);">
                     <i class="fas fa-check-circle" style="font-size:24px; margin-bottom:10px;"></i>
                     <br>Все уровни пройдены!
                 </div>
@@ -232,26 +246,33 @@ function renderTasks() {
         }
 
         const percent = Math.min(100, (userProg.currentScore / activeLevel.target) * 100);
+        
+        // Определение цвета для текущего уровня
+        const levelColor = LEVEL_COLORS[activeLevel.lv] || 'var(--accent)';
 
         return `
             <div style="margin-bottom: 15px;">
-                <h4 style="color:var(--accent); margin-bottom:10px; font-size:16px;">${branch.title}</h4>
-                <div class="task-level">
+                <h4 style="color:${levelColor}; margin-bottom:10px; font-size:16px;">${branch.title} (Уровень ${activeLevel.lv})</h4>
+                <div class="task-level" style="border-color: ${levelColor};">
                     <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
-                        <span style="font-size:14px; font-weight:bold;">Уровень ${activeLevel.lv}: ${activeLevel.text}</span>
+                        <span style="font-size:14px; font-weight:bold;">${activeLevel.text}</span>
                         <span style="color:#FFD700; font-weight:bold;">+${activeLevel.reward} <i class="fas fa-book-open"></i></span>
                     </div>
                     
                     <div class="progress-bar-container">
-                        <div class="progress-fill" style="width: ${percent}%;"></div>
+                        <div class="progress-fill" style="width: ${percent}%; background-color: ${levelColor};"></div>
                     </div>
                     
                     <div style="font-size:12px; color:var(--text-gray); text-align:right; margin-bottom: 12px;">
                         Прогресс: ${userProg.currentScore} / ${activeLevel.target}
                     </div>
 
-                    <button class="blue-action-btn" style="padding: 10px; font-size: 14px;" onclick="initTaskUpload('${branch.id}')">
+                    <button class="blue-action-btn" style="padding: 10px; font-size: 14px; background-color: ${levelColor}; color: #000;" onclick="initTaskUpload('${branch.id}')">
                         <i class="fas fa-camera"></i> Прикрепить фото
+                    </button>
+                    
+                    <button class="balance-btn" style="margin-top: 10px; padding: 6px; font-size: 12px; border: 1px dashed ${levelColor}; color: ${levelColor}; background: transparent;" onclick="testAdminAddPoint('${branch.id}', ${activeLevel.target})">
+                        <i class="fas fa-wrench"></i> Тест: админ дал +1 очко
                     </button>
                 </div>
             </div>
@@ -259,23 +280,62 @@ function renderTasks() {
     }).join('');
 }
 
-// ЛОГИКА ЗАГРУЗКИ ФОТО ДЛЯ ЗАДАНИЯ
+// Имитация начисления очков админом
+window.testAdminAddPoint = function(branchId, target) {
+    let prog = State.user.taskProgress[branchId];
+    prog.currentScore += 1;
+    
+    if (prog.currentScore >= target) {
+        // Уровень выполнен!
+        const branch = window.api.getTaskData().find(b => b.id === branchId);
+        const currentLevelData = branch.levels.find(l => l.lv === prog.currentLevel);
+        
+        // 1. Выдача статуса
+        if (currentLevelData.statusReward) {
+            State.user.status = currentLevelData.statusReward;
+            localStorage.setItem('user_status', currentLevelData.statusReward);
+            document.getElementById('currentStatus').innerText = currentLevelData.statusReward;
+            showStatusAlert(currentLevelData.statusReward);
+        }
+        
+        // 2. Переход на следующий уровень
+        prog.currentLevel += 1;
+        prog.currentScore = 0;
+        
+        // 3. Достижение (за 5 уровней мастера штриховки)
+        if (branchId === 'master_colorist' && prog.currentLevel > 5) {
+            grantAchievement('ach2', 'Завершено 5 заданий!');
+        }
+    }
+    
+    window.api.saveUserState(State.user);
+    renderTasks();
+};
+
+// ЛОГИКА ЗАГРУЗКИ НЕСКОЛЬКИХ ФОТО
 function initTaskUpload(branchId) {
     State.activeUploadBranchId = branchId;
     document.getElementById('taskFileInput').click();
 }
 
 function handleTaskFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const preview = document.getElementById('taskPhotoPreview');
-        preview.src = e.target.result;
-        preview.style.display = 'block';
-        document.getElementById('taskUploadModal').style.display = 'flex';
-    };
-    reader.readAsDataURL(file);
+    const files = event.target.files;
+    if (!files.length) return;
+    
+    const container = document.getElementById('taskPhotoPreviewContainer');
+    container.innerHTML = ''; // Очищаем контейнер от старых фото
+    
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
+    
+    document.getElementById('taskUploadModal').style.display = 'flex';
     event.target.value = ''; // Сброс инпута
 }
 
@@ -285,24 +345,10 @@ function closeTaskUploadModal() {
 }
 
 function submitTaskPhoto() {
-    // В будущем тут будет отправка FormData на сервер.
-    // Сейчас ДЛЯ ТЕСТА мы просто переводим пользователя на следующий уровень.
-    const branchId = State.activeUploadBranchId;
-    if (branchId && State.user.taskProgress[branchId]) {
-        let prog = State.user.taskProgress[branchId];
-        prog.currentLevel += 1; // Увеличиваем уровень
-        prog.currentScore = 0;
-        window.api.saveUserState(State.user);
-        
-        // Тест достижения 2 (выдаем за 5 уровней мастера штриховки)
-        if (branchId === 'master_colorist' && prog.currentLevel > 5) {
-            grantAchievement('ach2', 'Завершено 5 заданий!');
-        }
-        
-        renderTasks();
-    }
-    
+    // Просто скрываем модалку и показываем Алерт об успешной отправке.
+    // Больше мы сами уровень не повышаем — ждем "админа".
     closeTaskUploadModal();
+    alert("Фотографии успешно отправлены администратору на проверку!");
 }
 
 // МАРКЕРЫ И КОРЗИНА

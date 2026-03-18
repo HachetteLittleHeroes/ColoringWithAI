@@ -2,26 +2,23 @@
 :root {
     --bg: #121212;
     --bg-secondary: #1e1e1e;
-    --bg-header: rgba(30, 30, 30, 0.8);
+    --bg-header: #1c1c1e;
     --text: #ffffff;
-    --text-gray: #aaaaaa;
+    --text-gray: #8e8e93;
     
-    /* Тот самый оранжевый */
     --accent: #ff9500;
     --accent-gradient: linear-gradient(135deg, #FF8C00 0%, #E65100 100%);
-    --accent-soft: rgba(255, 149, 0, 0.2);
+    --accent-soft: rgba(255, 149, 0, 0.15);
     
-    /* Статусы наличия */
-    --status-green: #4cd964;
+    --status-green: #34c759;
     --status-orange: #ff9500;
     --status-red: #ff3b30;
     
-    /* Свечения уровней заданий */
     --glow-1: transparent;
-    --glow-2: 0 0 15px rgba(0, 122, 255, 0.6); /* Голубой */
-    --glow-3: 0 0 15px rgba(52, 199, 89, 0.6);  /* Зеленый */
-    --glow-4: 0 0 15px rgba(175, 82, 222, 0.6); /* Фиолетовый */
-    --glow-5: 0 0 20px rgba(255, 215, 0, 0.8);  /* Золотой */
+    --glow-2: 0 0 15px rgba(0, 122, 255, 0.6);
+    --glow-3: 0 0 15px rgba(52, 199, 89, 0.6);
+    --glow-4: 0 0 15px rgba(175, 82, 222, 0.6);
+    --glow-5: 0 0 20px rgba(255, 215, 0, 0.8);
 }
 
 * {
@@ -35,7 +32,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
-    padding-bottom: 90px; /* Место под меню */
+    padding-bottom: 90px;
     overflow-x: hidden;
 }
 
@@ -46,31 +43,17 @@ body {
     padding: 20px 15px 10px;
 }
 
-.page {
-    display: none;
-    animation: fadeIn 0.3s ease;
-}
-
-.page.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+.page { display: none; }
+.page.active { display: block !important; opacity: 1 !important; visibility: visible !important; }
 
 button {
     border: none;
-    border-radius: 12px;
     font-family: inherit;
     cursor: pointer;
-    transition: transform 0.1s, opacity 0.2s;
+    transition: transform 0.1s;
 }
 
-button:active {
-    transform: scale(0.96);
-}
+button:active { transform: scale(0.96); }
 
 /* ===================== ПРОФИЛЬ (Header) ===================== */
 .profile-header-block {
@@ -78,7 +61,6 @@ button:active {
     margin: 15px;
     padding: 20px;
     border-radius: 20px;
-    backdrop-filter: blur(10px);
 }
 
 .avatar-section {
@@ -87,13 +69,16 @@ button:active {
     gap: 15px;
 }
 
+/* Увеличенный аватар */
 .avatar-wrapper {
-    width: 70px;
-    height: 70px;
+    width: 85px; 
+    height: 85px;
     border-radius: 50%;
-    border: 3px solid var(--accent); /* Оранжевый контур */
+    border: 3px solid var(--accent);
     padding: 2px;
     background: var(--bg);
+    position: relative;
+    cursor: pointer;
 }
 
 .avatar-wrapper img {
@@ -104,314 +89,8 @@ button:active {
 }
 
 .profile-meta h2 {
-    font-size: 20px;
+    font-size: 22px;
     margin-bottom: 4px;
-}
-
-.status-badge {
-    background: var(--accent-soft);
-    color: var(--accent);
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: bold;
-    display: inline-block;
-}
-
-/* Редактор аватарок */
-.expandable-block {
-    margin: 0 15px 15px;
-    padding: 15px;
-    background: var(--bg-secondary);
-    border-radius: 15px;
-}
-
-.preset-avatars {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.preset-avatars img {
-    width: 100%;
-    border-radius: 50%;
-    border: 2px solid var(--accent);
-    cursor: pointer;
-}
-
-/* ===================== КАРТОЧКА БАЛАНСА ===================== */
-.balance-card {
-    background: var(--accent-gradient);
-    margin: 15px;
-    padding: 25px 20px;
-    border-radius: 25px;
-    box-shadow: 0 10px 20px rgba(230, 81, 0, 0.3);
-    text-align: center;
-}
-
-.balance-label {
-    font-size: 12px;
-    letter-spacing: 1px;
-    opacity: 0.8;
-}
-
-.balance-main {
-    font-size: 44px;
-    font-weight: 800;
-    margin: 10px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-}
-
-.gold-book {
-    color: #FFD700;
-    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
-}
-
-.balance-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.balance-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: white;
-    padding: 14px;
-    font-size: 16px;
-    font-weight: 600;
-    backdrop-filter: blur(5px);
-}
-
-/* ===================== ЗАДАНИЯ И УРОВНИ ===================== */
-.tasks-container {
-    margin: 15px;
-}
-
-.section-tab {
-    background: var(--bg-secondary);
-    padding: 18px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: bold;
-}
-
-.task-branch {
-    background: #252525;
-    margin-top: 10px;
-    padding: 15px;
-    border-radius: 15px;
-}
-
-/* Магия свечения уровней */
-.task-level {
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 10px;
-    background: #333;
-    font-size: 14px;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-
-.level-1 { box-shadow: var(--glow-1); }
-.level-2 { box-shadow: var(--glow-2); border-color: rgba(0, 122, 255, 0.3); }
-.level-3 { box-shadow: var(--glow-3); border-color: rgba(52, 199, 89, 0.3); }
-.level-4 { box-shadow: var(--glow-4); border-color: rgba(175, 82, 222, 0.3); }
-.level-5 { box-shadow: var(--glow-5); border-color: rgba(255, 215, 0, 0.4); }
-
-/* ===================== МАРКЕРЫ (СЕТКА) ===================== */
-.marker-item {
-    background: var(--bg-secondary);
-    margin: 8px 15px;
-    padding: 12px 18px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.stock-high { color: var(--status-green); }
-.stock-low { color: var(--status-orange); }
-.stock-none { color: var(--status-red); opacity: 0.6; }
-
-.marker-controls {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.btn-circle {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-circle.disabled {
-    background: #444;
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* ===================== ОТВЕТЫ (МАРКЕТПЛЕЙС) ===================== */
-.market-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    padding: 15px;
-}
-
-.book-card {
-    background: var(--bg-secondary);
-    border-radius: 18px;
-    overflow: hidden;
-    position: relative;
-}
-
-.book-card img {
-    width: 100%;
-    aspect-ratio: 3/4;
-    object-fit: cover;
-}
-
-.book-info {
-    padding: 12px;
-}
-
-.pre-order-tag {
-    font-size: 10px;
-    color: var(--accent);
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-/* ===================== НИЖНЕЕ МЕНЮ ===================== */
-.nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 75px;
-    background: rgba(18, 18, 18, 0.95);
-    backdrop-filter: blur(15px);
-    display: flex;
-    border-top: 0.5px solid rgba(255,255,255,0.1);
-    z-index: 10000;
-}
-
-.nav-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    color: var(--text-gray);
-    font-size: 10px;
-    gap: 4px;
-}
-
-.nav-btn i {
-    font-size: 20px;
-}
-
-.nav-btn.active {
-    color: var(--accent);
-}
-
-.badge {
-    position: absolute;
-    top: 10px;
-    right: 15%;
-    background: var(--status-red);
-    color: white;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 10px;
-    font-weight: bold;
-}
-
-/* ===================== МОДАЛКИ И ПРОЧЕЕ ===================== */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 20000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background: var(--bg-secondary);
-    width: 90%;
-    max-height: 80%;
-    border-radius: 20px;
-    padding: 25px;
-    overflow-y: auto;
-}
-
-/* Поиск */
-.search-container {
-    padding: 0 15px 10px;
-}
-
-input[type="text"] {
-    width: 100%;
-    background: var(--bg-secondary);
-    border: none;
-    padding: 14px 18px;
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-}
-/* Стили для сетки выбора аватарок */
-.preset-avatars {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 в ряд, итого 2 ряда */
-    gap: 12px;
-    margin: 15px 0;
-}
-
-.preset-avatar-item {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    border: 2px solid var(--accent); /* Оранжевый контур */
-    cursor: pointer;
-    transition: transform 0.2s;
-    background: var(--bg);
-}
-
-.preset-avatar-item:active {
-    transform: scale(0.9);
-}
-
-.section-subtitle {
-    font-size: 14px;
-    color: var(--text-gray);
-    margin-bottom: 10px;
-}
-
-.text-link-btn {
-    background: none;
-    color: #4facfe; /* Голубой цвет как на скрине */
-    font-size: 14px;
-    text-decoration: underline;
-    padding: 10px 0;
-    width: 100%;
-    text-align: center;
 }
 
 .name-row {
@@ -424,4 +103,189 @@ input[type="text"] {
 .edit-icon {
     font-size: 14px;
     color: var(--text-gray);
+}
+
+.status-badge {
+    color: var(--text-gray);
+    font-size: 14px;
+    margin-top: 2px;
+}
+
+/* Редактор аватарок */
+.expandable-block {
+    margin: 0 15px 15px;
+    padding: 15px;
+    background: var(--bg-header);
+    border-radius: 20px;
+}
+
+.section-subtitle {
+    font-size: 14px;
+    color: var(--text-gray);
+    margin-bottom: 12px;
+}
+
+.preset-avatars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.preset-avatar-item {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    cursor: pointer;
+    background: var(--bg);
+    object-fit: cover;
+    transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+/* Анимация нажатия на пресет аватара */
+.preset-avatar-item:active {
+    transform: scale(0.9);
+    opacity: 0.7;
+}
+
+/* Полноценная синяя кнопка фото */
+.blue-action-btn {
+    background: #007aff; 
+    color: white;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ===================== КАРТОЧКА БАЛАНСА ===================== */
+.balance-card {
+    background: var(--accent-gradient);
+    margin: 15px;
+    padding: 25px 20px;
+    border-radius: 25px;
+    text-align: center;
+}
+
+.balance-label {
+    font-size: 12px;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.balance-main {
+    font-size: 48px;
+    font-weight: 800;
+    margin: 5px 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.gold-book {
+    color: #FFD700;
+}
+
+/* Контейнер для кнопок друг под другом */
+.balance-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Полупрозрачные кнопки */
+.balance-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    width: 100%;
+}
+
+/* ===================== ЗАДАНИЯ ===================== */
+.tasks-container { margin: 15px; }
+.section-tab {
+    background: var(--bg-header);
+    padding: 18px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+/* ===================== НИЖНЕЕ МЕНЮ ===================== */
+.nav {
+    position: fixed;
+    bottom: 0; left: 0; width: 100%;
+    height: 85px;
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    border-top: 1px solid #333;
+    z-index: 10000;
+    padding-bottom: 15px; /* Для iOS */
+}
+
+.nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    color: var(--text-gray);
+    font-size: 10px;
+    gap: 4px;
+    position: relative;
+}
+
+.nav-btn i { font-size: 20px; }
+.nav-btn.active { color: var(--accent); }
+
+.badge {
+    position: absolute;
+    top: 5px; right: 20%;
+    background: var(--status-red);
+    color: white;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 10px;
+}
+
+/* ===================== МОДАЛКИ ===================== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 20000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background: var(--bg-header);
+    width: 90%;
+    border-radius: 20px;
+    padding: 25px;
+}
+input[type="text"] {
+    width: 100%;
+    background: var(--bg);
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    margin-top: 10px;
 }

@@ -185,6 +185,35 @@ function toggleSection(id) {
     if (!isVisible) el.style.display = 'block';
 }
 
+window.loadMarkersFromCSV = async function() {
+    // Используем твою идеальную ссылку
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
+    try {
+        const res = await fetch(csvUrl);
+        const text = await res.text();
+        const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, '').trim()));
+        
+        let temp = [];
+        rows.forEach(row => {
+            for (let i = 0; i < row.length; i++) {
+                let num = row[i];
+                // Ищем номера маркеров (числа больше 10)
+                if (num && !isNaN(num) && parseInt(num) > 10) {
+                    let stock = parseInt(row[i+1] || row[i+2] || "0");
+                    temp.push({ id: String(num), number: String(num), stock: stock });
+                    i++; // Перепрыгиваем колонку с количеством
+                }
+            }
+        });
+        
+        // Убираем дубликаты и сохраняем в глобальный State
+        window.State.markers = temp.filter((v, i, a) => a.findIndex(t => (t.number === v.number)) === i);
+        window.renderMarkers();
+    } catch (e) { 
+        console.error("Ошибка загрузки CSV:", e); 
+    }
+};
+
 // ДОСТИЖЕНИЯ И АЛЕРТЫ
 function grantAchievement(achId, defaultText) {
     if (!State.user.unlockedAchievements.includes(achId)) {
@@ -481,70 +510,99 @@ window.selectStatus = function(st) {
 }
 // --- ГАЛЕРЕЯ ОТВЕТОВ (Финальная битва с алертом) ---
 
-window.openAnswersGallery = function(tomeNum) {
-    currentGalleryTome = tomeNum;
-    currentGalleryPage = 1;
-    const modal = document.getElementById('answersGalleryModal');
-    if (modal) {
-        modal.style.display = 'flex';
-        // Если у тебя в HTML есть блок для текста ошибки, скрываем его при открытии
-        const errLabel = document.getElementById('galleryErrorLabel');
-        if (errLabel) errLabel.style.display = 'none';
-    }
-    window.updateGalleryImage();
-}
+let currentVol, currentPage, maxPages, touchStartX, touchStartY;
 
-window.updateGalleryImage = function() {
-    const imgEl = document.getElementById('galleryMainImage');
-    const indicator = document.getElementById('galleryPageIndicator');
-    const modal = document.getElementById('answersGalleryModal');
+window.startBook = function(v, m) { 
+    currentVol = v; 
+    maxPages = m; 
+    currentPage = 1; 
+    document.getElementById('viewer').style.display = 'block'; 
+    window.updatePage(); 
+};
+
+window.closeBook = function() { 
+    document.getElementById('viewer').style.display = 'none'; 
+};
+
+window.updatePage = function() {
+    const img = document.getElementById('current-page');
+    const counter = document.getElementById('page-counter');
+    // Перебираем форматы, если файла нет
+    const formats = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG'];
+    let fIndex = 0;
     
-    if (!imgEl) return;
-
-    // Очищаем старый обработчик перед новой попыткой загрузки
-    imgEl.onerror = null;
-
-    imgEl.onerror = function() {
-        // Отключаем обработчик, чтобы не зациклиться при загрузке заглушки
-        this.onerror = null;
-        
-        // Проверяем, открыта ли галерея
-        const isVisible = modal && (modal.style.display === 'flex' || modal.style.display === 'block');
-
-        if (isVisible && currentGalleryPage > 1) {
-            alert('Больше страниц нет');
-            // Возвращаемся на последнюю рабочую страницу
-            currentGalleryPage--;
-            this.src = `${window.CONFIG.GITHUB_BASE}otveti/t${currentGalleryTome}/${currentGalleryPage}.png`;
-        } else {
-            // Если это первая страница или модалка закрыта — просто ставим заглушку без алертов
-            this.src = 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png';
-        }
-        
-        if (indicator) indicator.innerText = `Страница ${currentGalleryPage}`;
-    };
-
-    // Запускаем загрузку
-    imgEl.src = `${window.CONFIG.GITHUB_BASE}otveti/t${currentGalleryTome}/${currentGalleryPage}.png`;
-    if (indicator) indicator.innerText = `Страница ${currentGalleryPage}`;
-}
-
-window.nextGalleryPage = function() {
-    currentGalleryPage++;
-    window.updateGalleryImage();
-}
-
-window.prevGalleryPage = function() {
-    if (currentGalleryPage > 1) {
-        currentGalleryPage--;
-        window.updateGalleryImage();
+    function tryLoad() { 
+        img.src = `otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; 
     }
-}
+    
+    img.onerror = () => { 
+        fIndex++; 
+        if (fIndex < formats.length) {
+            tryLoad(); 
+        } else {
+            // Если ни один формат не подошел, ставим заглушку
+            img.src = 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png';
+        }
+    };
+    
+    tryLoad(); 
+    counter.innerText = `${currentPage} / ${maxPages}`;
+};
 
-window.closeAnswersGallery = function() {
-    const modal = document.getElementById('answersGalleryModal');
-    if (modal) modal.style.display = 'none';
-}
+// Свайпы для мобилок
+window.handleTouchStart = function(e) { 
+    touchStartX = e.touches[0].screenX; 
+    touchStartY = e.touches[0].screenY; 
+};
+
+window.handleTouchEnd = function(e) {
+    let dx = touchStartX - e.changedTouches[0].screenX;
+    let dy = touchStartY - e.changedTouches[0].screenY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+        if (dx > 0 && currentPage < maxPages) { currentPage++; window.updatePage(); }
+        else if (dx < 0 && currentPage > 1) { currentPage--; window.updatePage(); }
+    }
+};
+
+window.checkout = function() {
+    const cart = window.State.cart;
+    if (cart.length === 0) return;
+    
+    let markersCount = 0;
+    cart.forEach(item => { 
+        // Если у нас маркеры, считаем их общее количество
+        if (!item.type || item.type === 'Маркер') markersCount += item.count; 
+    });
+    
+    if (markersCount > 0 && markersCount < 3) {
+        window.Telegram.WebApp.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук.");
+        return;
+    }
+    
+    let totalSum = 0;
+    let details = `🛍 **ДЕТАЛИ ЗАКАЗА:**\n`;
+    
+    cart.forEach(item => {
+        // Допустим, цена маркера 75 руб. (можешь поменять логику, если в корзине не только маркеры)
+        const price = item.price || 75; 
+        const sum = price * item.count; 
+        totalSum += sum;
+        details += `▪️ Маркер №${item.number}\n   - ${item.count} шт. x ${price} = ${sum} руб.\n`;
+    });
+
+    // Считаем бонусы по твоей идеальной формуле
+    let bonusToEarn = 0;
+    if (totalSum >= 3000 && totalSum < 5000) bonusToEarn = 20;
+    else if (totalSum >= 5000 && totalSum < 7500) bonusToEarn = 30;
+    else if (totalSum >= 7500 && totalSum < 10000) bonusToEarn = 40;
+    else if (totalSum >= 10000) bonusToEarn = 50;
+    
+    details += `\n💰 **ИТОГО: ${totalSum} руб.**`;
+    details += `\n📖 **БОНУС К НАЧИСЛЕНИЮ: ${bonusToEarn}**`;
+    
+    window.Telegram.WebApp.sendData(JSON.stringify({ details: details })); 
+    window.Telegram.WebApp.close(); 
+};
 
 // --- АДМИН-ПАНЕЛЬ ИИ ---
 window.submitAdminAiTrain = function() {

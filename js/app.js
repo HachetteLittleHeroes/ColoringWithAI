@@ -56,11 +56,16 @@ function tab(tabId) {
     const pages = document.querySelectorAll('.page');
     const buttons = document.querySelectorAll('.nav-btn');
 
+    // Скрываем всё
     pages.forEach(p => {
         p.style.setProperty('display', 'none', 'important');
         p.classList.remove('active');
     });
     buttons.forEach(b => b.classList.remove('active'));
+
+    // Скрываем админку по умолчанию
+    const adminBlock = document.getElementById('adminAiBlock');
+    if (adminBlock) adminBlock.style.display = 'none';
 
     const targetPage = document.getElementById(tabId);
     const targetBtn = document.getElementById('btn-' + tabId);
@@ -69,10 +74,21 @@ function tab(tabId) {
         targetPage.style.setProperty('display', 'block', 'important');
         targetPage.classList.add('active');
         targetBtn.classList.add('active');
-        State.currentTab = tabId;
+        
+        // Защита: State может быть не инициализирован
+        if (window.State) {
+            State.currentTab = tabId;
+            // Проверка админа
+            if (tabId === 'aipalette' && adminBlock) {
+                if (String(State.userId) === '496779756') {
+                    adminBlock.style.display = 'block';
+                }
+            }
+        }
         window.scrollTo(0, 0);
     }
 }
+
 
 // ПРОФИЛЬ И АВАТАРКИ
 function renderProfile() {
@@ -467,7 +483,7 @@ window.selectStatus = function(st) {
     document.getElementById('statusSelectModal').style.display = 'none';
 }
 
-// --- ГАЛЕРЕЯ ОТВЕТОВ ---
+// --- ГАЛЕРЕЯ ОТВЕТОВ (Безопасная версия) ---
 let currentGalleryTome = 1;
 let currentGalleryPage = 1;
 
@@ -480,15 +496,28 @@ window.openAnswersGallery = function(tomeNum) {
 
 window.updateGalleryImage = function() {
     const imgEl = document.getElementById('galleryMainImage');
-    // Восстанавливаем обработчик ошибок на случай успешной загрузки предыдущей
+    const indicator = document.getElementById('galleryPageIndicator');
+    if (!imgEl) return;
+
+    // Убираем старые обработчики перед новой попыткой
+    imgEl.onerror = null;
+    imgEl.onload = null;
+
     imgEl.onerror = function() {
-        this.src = `${window.CONFIG.GITHUB_BASE}avatars/av2.png`; // Заглушка
         this.onerror = null;
-        alert('Больше страниц нет!');
-        prevGalleryPage();
+        // Показываем заглушку, если картинка не найдена
+        this.src = 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png';
+        alert('Страница не найдена или это был конец тома.');
+        
+        // Откатываем номер страницы назад, чтобы индикатор был верным
+        if (currentGalleryPage > 1) {
+            currentGalleryPage--;
+            indicator.innerText = `Страница ${currentGalleryPage}`;
+        }
     };
+
     imgEl.src = `${window.CONFIG.GITHUB_BASE}otveti/t${currentGalleryTome}/${currentGalleryPage}.png`;
-    document.getElementById('galleryPageIndicator').innerText = `Страница ${currentGalleryPage}`;
+    indicator.innerText = `Страница ${currentGalleryPage}`;
 }
 
 window.nextGalleryPage = function() {
@@ -497,7 +526,7 @@ window.nextGalleryPage = function() {
 }
 
 window.prevGalleryPage = function() {
-    if(currentGalleryPage > 1) {
+    if (currentGalleryPage > 1) {
         currentGalleryPage--;
         updateGalleryImage();
     }
@@ -506,6 +535,7 @@ window.prevGalleryPage = function() {
 window.closeAnswersGallery = function() {
     document.getElementById('answersGalleryModal').style.display = 'none';
 }
+
 
 // --- АДМИН-ПАНЕЛЬ ИИ ---
 window.submitAdminAiTrain = function() {

@@ -1,15 +1,10 @@
 /**
- * api.js — Логика данных и запросов
+ * api.js — Полная логика данных
  */
 
 const CONFIG = {
     MARKERS_CSV: 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv',
-    SERVER_URL: 'https://hlhbot-hachettelittleheroes.amvera.io',
-    STOCK_COLORS: {
-        MANY: '#34c759',   
-        LOW: '#ff9500',    
-        EMPTY: '#ff3b30'   
-    }
+    SERVER_URL: 'https://hlhbot-hachettelittleheroes.amvera.io'
 };
 
 const Api = {
@@ -51,15 +46,17 @@ const Api = {
             const res = await fetch(`${CONFIG.SERVER_URL}/get_user?id=${userId}`);
             const data = await res.json();
             
+            // Сохраняем в локалку для предзагрузки в будущем (решает проблему мигания)
             if (data.username) localStorage.setItem('user_name', data.username);
             if (data.avatar) localStorage.setItem('user_avatar', data.avatar);
+            if (data.status) localStorage.setItem('user_status', data.status);
             
             return {
                 id: userId,
                 name: data.username || localStorage.getItem('user_name') || "Без имени",
                 balance: data.balance || 0,
                 avatar: data.avatar || localStorage.getItem('user_avatar') || 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
-                status: data.status || "Без статуса", // Изменено по умолчанию
+                status: data.status || localStorage.getItem('user_status') || "Без статуса",
                 achievements: data.achievements || []
             };
         } catch (e) {
@@ -68,7 +65,7 @@ const Api = {
                 name: localStorage.getItem('user_name') || "Без имени",
                 balance: 0,
                 avatar: localStorage.getItem('user_avatar') || 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
-                status: "Без статуса", // Изменено по умолчанию
+                status: localStorage.getItem('user_status') || "Без статуса",
                 achievements: []
             };
         }
@@ -100,6 +97,20 @@ const Api = {
     saveCart(cart) {
         localStorage.setItem('cart', JSON.stringify(cart));
         if (window.updateCartBadge) window.updateCartBadge();
+    },
+
+    getTaskData() {
+        return [
+            {
+                id: 'markers_progression',
+                title: 'Мастер маркеров',
+                levels: [
+                    { lv: 1, target: 5, text: "Раскрасить 5 картинок", reward: 50 },
+                    { lv: 2, target: 10, text: "Раскрасить 10 картинок", reward: 100 },
+                    { lv: 3, target: 20, text: "Раскрасить 20 картинок", reward: 200 }
+                ]
+            }
+        ];
     }
 };
 

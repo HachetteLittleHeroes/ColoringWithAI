@@ -33,38 +33,54 @@ const LEVEL_COLORS = {
     4: '#ff3b30', // Красный
     5: '#ffd700'  // Золотой/Желтый
 };
-
 async function init() {
     console.log("Запуск системы...");
+    const loader = document.getElementById('loading-screen');
     
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-        tg.expand();
-        tg.ready();
-        State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
+    try {
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+            tg.ready();
+            State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
+        }
+
+        // 1. Загружаем данные пользователя (из api.js)
+        if (window.api) {
+            State.user = await window.api.getUser(State.userId);
+        } else {
+            console.error("Критическая ошибка: api.js не загружен!");
+        }
+        
+        // 2. Загружаем маркеры из CSV
+        await window.loadMarkersFromCSV();
+
+        // 3. Отрисовываем интерфейс
+        if (typeof renderProfile === 'function') renderProfile();
+        if (typeof renderTasks === 'function') renderTasks();
+        if (typeof updateCartBadge === 'function') updateCartBadge();
+
+        console.log("Инициализация успешно завершена");
+
+    } catch (error) {
+        console.error("Ошибка при инициализации:", error);
+        // Если случилась ошибка, меняем текст на экране, чтобы юзер не гадал
+        const loadeText = document.getElementById('loading-text');
+        if (loadeText) loadeText.innerText = "Ошибка загрузки. Попробуйте обновить.";
+    } finally {
+        // ЭТОТ БЛОК ВЫПОЛНИТСЯ ВСЕГДА
+        // Убираем экран загрузки через 500мс, чтобы не было резкого скачка
+        setTimeout(() => {
+            if (loader) {
+                loader.style.transition = "opacity 0.5s ease";
+                loader.style.opacity = "0";
+                setTimeout(() => {
+                    loader.style.display = "none";
+                }, 500);
+            }
+        }, 500);
     }
-
-    // 1. Загружаем данные пользователя
-    State.user = await window.api.getUser(State.userId);
-    
-    // 2. Загружаем маркеры
-    await window.loadMarkersFromCSV();
-
-    // 3. Отрисовываем всё
-    renderProfile();
-    renderTasks();
-    updateCartBadge();
-
-    // 4. Убираем экран загрузки (через небольшую паузу для плавности)
-    setTimeout(() => {
-        const loader = document.getElementById('loading-screen');
-        if (loader) loader.style.opacity = '0';
-        setTimeout(() => { if(loader) loader.style.display = 'none'; }, 300);
-    }, 200);
 }
-
-
-
 
 
 // НАВИГАЦИЯ

@@ -639,3 +639,5 @@ window.resetAllData = function() {
 
 window.updateCartBadge = updateCartBadge;
 document.addEventListener('DOMContentLoaded', init);
+window.State = State;
+

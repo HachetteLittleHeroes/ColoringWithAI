@@ -43,20 +43,6 @@ async function init() {
         State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
     }
 
-    State.user = await window.api.getUser(State.userId);
-    
-    // ВАЖНО: Сначала загружаем маркеры из CSV, потом рендерим
-    await window.loadMarkersFromCSV(); 
-    
-    State.cart = window.api.getCart();
-
-    renderProfile();
-    // renderMarkers() вызовется автоматически внутри loadMarkersFromCSV
-    renderTasks();
-    updateCartBadge();
-    
-    tab('profile');
-}
 
 
 // НАВИГАЦИЯ

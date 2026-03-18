@@ -46,7 +46,6 @@ const Api = {
             const res = await fetch(`${CONFIG.SERVER_URL}/get_user?id=${userId}`);
             const data = await res.json();
             
-            // Сохраняем в локалку для предзагрузки в будущем (решает проблему мигания)
             if (data.username) localStorage.setItem('user_name', data.username);
             if (data.avatar) localStorage.setItem('user_avatar', data.avatar);
             if (data.status) localStorage.setItem('user_status', data.status);
@@ -57,7 +56,11 @@ const Api = {
                 balance: data.balance || 0,
                 avatar: data.avatar || localStorage.getItem('user_avatar') || 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
                 status: data.status || localStorage.getItem('user_status') || "Без статуса",
-                achievements: data.achievements || []
+                achievements: data.achievements || [],
+                // Заглушка прогресса заданий пользователя с сервера (пока эмулируем)
+                taskProgress: data.taskProgress || {
+                    'status_progression': { currentLevel: 1, currentScore: 0 }
+                }
             };
         } catch (e) {
             return {
@@ -66,7 +69,10 @@ const Api = {
                 balance: 0,
                 avatar: localStorage.getItem('user_avatar') || 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
                 status: localStorage.getItem('user_status') || "Без статуса",
-                achievements: []
+                achievements: [],
+                taskProgress: {
+                    'status_progression': { currentLevel: 1, currentScore: 0 }
+                }
             };
         }
     },
@@ -99,15 +105,17 @@ const Api = {
         if (window.updateCartBadge) window.updateCartBadge();
     },
 
+    // Конфигурация уровней заданий
     getTaskData() {
         return [
             {
-                id: 'markers_progression',
-                title: 'Мастер маркеров',
+                id: 'status_progression',
+                title: 'Путь художника',
                 levels: [
                     { lv: 1, target: 5, text: "Раскрасить 5 картинок", reward: 50 },
                     { lv: 2, target: 10, text: "Раскрасить 10 картинок", reward: 100 },
-                    { lv: 3, target: 20, text: "Раскрасить 20 картинок", reward: 200 }
+                    { lv: 3, target: 20, text: "Раскрасить 20 картинок", reward: 200 },
+                    { lv: 4, target: 50, text: "Раскрасить 50 картинок", reward: 500 }
                 ]
             }
         ];

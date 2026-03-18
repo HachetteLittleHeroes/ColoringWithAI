@@ -35,7 +35,7 @@ const LEVEL_COLORS = {
 };
 
 async function init() {
-    console.log("Запуск...");
+    console.log("Запуск системы...");
     
     const tg = window.Telegram?.WebApp;
     if (tg) {
@@ -44,16 +44,20 @@ async function init() {
     }
 
     State.user = await window.api.getUser(State.userId);
-    State.markers = await window.api.fetchMarkers();
+    
+    // ВАЖНО: Сначала загружаем маркеры из CSV, потом рендерим
+    await window.loadMarkersFromCSV(); 
+    
     State.cart = window.api.getCart();
 
     renderProfile();
-    renderMarkers();
+    // renderMarkers() вызовется автоматически внутри loadMarkersFromCSV
     renderTasks();
     updateCartBadge();
     
     tab('profile');
 }
+
 
 // НАВИГАЦИЯ
 function tab(tabId) {

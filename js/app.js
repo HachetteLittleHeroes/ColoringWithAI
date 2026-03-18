@@ -1,223 +1,318 @@
-// app.js — главный контроллер
-const state = {
-    userId: '496779756', // В будущем: window.Telegram.WebApp.initDataUnsafe.user.id
-    currentTab: 'profile'
+/**
+ * app.js — Главный контроллер приложения
+ */
+
+// Состояние приложения
+const State = {
+    user: null,
+    markers: [],
+    cart: [],
+    currentTab: 'profile',
+    isAdmin: false, // Установится после загрузки данных
+    adminId: '496779756' // Ваш ID для доступа к обучению ИИ
 };
 
-/* ===================== НАВИГАЦИЯ ===================== */
-function tab(tabId) {
-    console.log("Переход на вкладку:", tabId);
+// ===================== ИНИЦИАЛИЗАЦИЯ =====================
 
+async function init() {
+    console.log("Приложение запускается...");
+    
+    // 1. Получаем ID из Telegram или ставим тестовый
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.expand();
+        tg.ready();
+        State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
+    } else {
+        State.userId = '496779756';
+    }
+
+    State.isAdmin = (State.userId === State.adminId);
+
+    // 2. Загружаем данные
+    State.user = await window.api.getUser(State.userId);
+    State.markers = await window.api.fetchMarkers();
+    State.cart = window.api.getCart();
+
+    // 3. Первичный рендер
+    renderProfile();
+    renderMarkers();
+    renderTasks();
+    updateCartBadge();
+    
+    if (State.isAdmin) {
+        document.getElementById('adminAIBlock').style.display = 'block';
+    }
+
+    // Показываем профиль по умолчанию
+    tab('profile');
+}
+
+// ===================== НАВИГАЦИЯ =====================
+
+function tab(tabId) {
     const pages = document.querySelectorAll('.page');
     const buttons = document.querySelectorAll('.nav-btn');
 
-    pages.forEach(p => {
-        p.style.setProperty('display', 'none', 'important');
-        p.classList.remove('active');
-    });
-
+    pages.forEach(p => p.classList.remove('active'));
     buttons.forEach(b => b.classList.remove('active'));
 
     const targetPage = document.getElementById(tabId);
-    
-    if (targetPage) {
-        targetPage.style.setProperty('display', 'block', 'important');
+    const targetBtn = document.getElementById('btn-' + tabId);
+
+    if (targetPage && targetBtn) {
         targetPage.classList.add('active');
-        
-        const targetBtn = document.getElementById('btn-' + tabId);
-        if (targetBtn) targetBtn.classList.add('active');
-        
+        targetBtn.classList.add('active');
+        State.currentTab = tabId;
         window.scrollTo(0, 0);
-    } else {
-        console.error(`Ошибка: Страница с id="${tabId}" не найдена`);
-        alert(`Ошибка: страница "${tabId}" отсутствует`);
     }
 }
 
-/* ===================== ПОИСК ===================== */
-function filterBooks() {
-    const q = document.getElementById('bookSearch').value.toLowerCase();
-    document.querySelectorAll('.book-card').forEach(c => {
-        c.style.display = c.innerText.toLowerCase().includes(q) ? 'block' : 'none';
-    });
-}
+// ===================== ЛОГИКА ПРОФИЛЯ =====================
 
-function filterMarkers() {
-    const q = document.getElementById('markerSearch').value.toLowerCase();
-    document.querySelectorAll('.marker-item, .marker-card').forEach(c => {
-        c.style.display = c.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
-    });
-}
+function renderProfile() {
+    document.getElementById('user-avatar').src = State.user.avatar;
+    document.getElementById('displayUsername').innerText = State.user.name;
+    document.getElementById('userBalance').innerText = State.user.balance;
+    document.getElementById('currentStatus').innerText = State.user.status;
 
-/* ===================== ДОСТИЖЕНИЯ ===================== */
-const achievements = [
-    {
-        id: "alcohol_markers",
-        title: "Спиртесса",
-        levels: [
-            { level: 1, count: 5, color: "#8e8e93" },
-            { level: 2, count: 10, color: "#5ac8fa" },
-            { level: 3, count: 10, color: "#34c759" },
-            { level: 4, count: 15, color: "#af52de" },
-            { level: 5, count: 20, color: "#ffcc00" }
-        ]
+    // Рендер пресетов аватарок (8 штук)
+    const presetGrid = document.getElementById('avatarPresets');
+    presetGrid.innerHTML = '';
+    for (let i = 1; i <= 8; i++) {
+        const img = document.createElement('img');
+        img.src = `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/avatars/av${i}.png`;
+        img.onclick = () => selectAvatar(img.src);
+        presetGrid.appendChild(img);
     }
-];
-
-/* ===================== ПРОФИЛЬ ===================== */
-async function initApp() {
-    const user = await window.api.getUserData(state.userId);
-
-    syncProfileUI(user);
-
-    document.getElementById('userIdDisplay').innerText = state.userId;
-
-    loadOrganizers();
-
-    renderAchievements();
-    loadSavedStatus();
-}
-
-async function saveNewNickname() {
-    const name = document.getElementById('newNameInput').value.trim();
-    if (!name) return;
-
-    await window.api.updateUserProfile(state.userId, { name });
-
-    document.getElementById('displayUsername').innerText = name;
-    document.getElementById('nameInputModal').style.display = 'none';
-}
-
-function changeNickname() {
-    document.getElementById('nameInputModal').style.display = 'flex';
 }
 
 function toggleAvatarEditor() {
     const el = document.getElementById('avatarEditorBlock');
-    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    const isHidden = el.style.display === 'none';
+    el.style.display = isHidden ? 'block' : 'none';
 }
 
-/* ===================== АШЕТИКИ ===================== */
-function toggleRewards() {
-    const el = document.getElementById('rewards-section');
-    if (!el) return;
-
-    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+async function selectAvatar(url) {
+    State.user.avatar = url;
+    document.getElementById('user-avatar').src = url;
+    await window.api.updateProfile(State.userId, 'avatar', url);
+    toggleAvatarEditor();
 }
 
-function toggleEarnAchetiki() {
-    const el = document.getElementById('earn-section');
-    if (!el) return;
+async function handleCustomAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    // В реальности тут была бы загрузка на сервер, пока имитируем:
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        const url = e.target.result;
+        selectAvatar(url);
+    };
+    reader.readAsDataURL(file);
+}
 
-    if (el.style.display === 'none' || el.style.display === '') {
-        el.style.display = 'block';
+function changeNickname() {
+    document.getElementById('nameModal').style.display = 'flex';
+}
 
-        el.innerHTML = `
-            <div class="category-title">💰 Заработать ашетики</div>
-
-            <div class="card">
-                <p>📸 Загрузить фото</p>
-                <span>+10</span>
-            </div>
-
-            <div class="card">
-                <p>🎯 Выполнить задание</p>
-                <span>+20</span>
-            </div>
-
-            <div class="card">
-                <p>⭐ Достижение</p>
-                <span>+50</span>
-            </div>
-        `;
-    } else {
-        el.style.display = 'none';
+async function saveNewNickname() {
+    const input = document.getElementById('newNameInput');
+    const newName = input.value.trim();
+    if (newName) {
+        State.user.name = newName;
+        document.getElementById('displayUsername').innerText = newName;
+        await window.api.updateProfile(State.userId, 'username', newName);
     }
+    document.getElementById('nameModal').style.display = 'none';
 }
 
-/* ===================== ДОСТИЖЕНИЯ UI ===================== */
-function renderAchievements() {
-    const grid = document.getElementById('achievementsGrid');
-    if (!grid) return;
-
-    const progress = JSON.parse(localStorage.getItem('ach_progress') || '{}');
-
-    grid.innerHTML = '';
-
-    achievements.forEach(a => {
-        const userLevel = progress[a.id] || 0;
-
-        const card = document.createElement('div');
-        card.className = 'achieve-card ' + (userLevel > 0 ? 'unlocked' : '');
-
-        const current = a.levels[userLevel - 1];
-
-        card.innerHTML = `
-            <div class="achieve-title">${a.title}</div>
-            <small>Уровень: ${userLevel}/5</small>
-        `;
-
-        if (current) {
-            card.style.borderColor = current.color;
-        }
-
-        card.onclick = () => openAchievement(a);
-
-        grid.appendChild(card);
-    });
+// Управление под-секциями (Магазин, Заработок)
+function toggleSection(id) {
+    const el = document.getElementById(id);
+    const isVisible = el.style.display === 'block';
+    
+    // Скрываем другие, если открываем новую
+    document.getElementById('rewards-section').style.display = 'none';
+    document.getElementById('earn-section').style.display = 'none';
+    
+    el.style.display = isVisible ? 'none' : 'block';
+    
+    if (!isVisible && id === 'earn-section') renderEarnInstructions();
 }
 
-function openAchievement(a) {
-    const progress = JSON.parse(localStorage.getItem('ach_progress') || '{}');
-    const level = progress[a.id] || 0;
+function renderEarnInstructions() {
+    const container = document.getElementById('earnInstructions');
+    container.innerHTML = `
+        <div class="earn-card">
+            <p>Подписка на канал</p>
+            <span class="earn-bonus">+50 <i class="fas fa-book-open"></i></span>
+        </div>
+        <div class="earn-card">
+            <p>Отзыв о наборе</p>
+            <span class="earn-bonus">+100 <i class="fas fa-book-open"></i></span>
+        </div>
+    `;
+}
 
-    const nextLevel = a.levels[level];
+// ===================== ЗАДАНИЯ И ДОСТИЖЕНИЯ =====================
 
-    if (!nextLevel) {
-        alert("Максимальный уровень!");
+function toggleTasks() {
+    const content = document.getElementById('tasksList');
+    const arrow = document.getElementById('tasksArrow');
+    const isHidden = content.style.display === 'none';
+    
+    content.style.display = isHidden ? 'block' : 'none';
+    arrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function renderTasks() {
+    const container = document.getElementById('tasksList');
+    const branches = window.api.getTaskData();
+    
+    container.innerHTML = branches.map(branch => `
+        <div class="task-branch">
+            <h4 style="margin-bottom:10px; color:var(--accent);">${branch.title}</h4>
+            ${branch.levels.map(lv => `
+                <div class="task-level ${lv.glow}">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>Уровень ${lv.lv}: ${lv.text}</span>
+                        <span style="color:#FFD700">+${lv.reward} <i class="fas fa-book-open"></i></span>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `).join('');
+}
+
+// ===================== МАРКЕРЫ И КОРЗИНА =====================
+
+function renderMarkers() {
+    const container = document.getElementById('markersList');
+    if (!State.markers.length) {
+        container.innerHTML = '<p style="padding:20px; text-align:center;">Загрузка маркеров...</p>';
         return;
     }
 
-    alert(`Задание:\nРаскрасить ${nextLevel.count} картинок\n(загрузка фото будет дальше)`);
+    container.innerHTML = State.markers.map(m => {
+        let stockClass = 'stock-high';
+        let stockText = `${m.stock} шт. в наличии`;
+        
+        if (m.stock <= 1) stockClass = 'stock-low';
+        if (m.stock === 0) {
+            stockClass = 'stock-none';
+            stockText = 'Нет в наличии';
+        }
+
+        const cartItem = State.cart.find(item => item.id === m.id);
+        const count = cartItem ? cartItem.count : 0;
+
+        return `
+            <div class="marker-item">
+                <div class="marker-info">
+                    <div style="font-weight:bold; font-size:18px;">№ ${m.number}</div>
+                    <div class="${stockClass}" style="font-size:12px;">${stockText}</div>
+                </div>
+                <div class="marker-controls">
+                    <button class="btn-circle ${count === 0 ? 'disabled' : ''}" onclick="changeCart('${m.id}', -1)">-</button>
+                    <span style="min-width:20px; text-align:center; font-weight:bold;">${count}</span>
+                    <button class="btn-circle ${count >= m.stock ? 'disabled' : ''}" onclick="changeCart('${m.id}', 1)">+</button>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
-function completeAchievement(id) {
-    let progress = JSON.parse(localStorage.getItem('ach_progress') || '{}');
+function changeCart(id, delta) {
+    const marker = State.markers.find(m => m.id === id);
+    let cartItem = State.cart.find(item => item.id === id);
 
-    if (!progress[id]) progress[id] = 0;
-
-    progress[id]++;
-
-    localStorage.setItem('ach_progress', JSON.stringify(progress));
-
-    if (progress[id] === 5) {
-        const status = "Спиртесса";
-
-        document.getElementById('currentStatus').innerText = status;
-        localStorage.setItem('status', status);
+    if (delta > 0) {
+        if (!cartItem) {
+            State.cart.push({ ...marker, count: 1 });
+        } else if (cartItem.count < marker.stock) {
+            cartItem.count++;
+        }
+    } else {
+        if (cartItem) {
+            cartItem.count--;
+            if (cartItem.count <= 0) {
+                State.cart = State.cart.filter(item => item.id !== id);
+            }
+        }
     }
 
-    renderAchievements();
+    window.api.saveCart(State.cart);
+    renderMarkers();
+    updateCartBadge();
+    if (State.currentTab === 'cart') renderCart();
 }
 
-/* ===================== СТАТУС ===================== */
-function loadSavedStatus() {
-    const saved = localStorage.getItem('status');
-    if (saved) {
-        document.getElementById('currentStatus').innerText = saved;
+function updateCartBadge() {
+    const badge = document.getElementById('cartBadge');
+    const totalCount = State.cart.reduce((sum, item) => sum + item.count, 0);
+    
+    if (totalCount > 0) {
+        badge.innerText = totalCount;
+        badge.style.display = 'block';
+    } else {
+        badge.style.display = 'none';
     }
 }
 
-/* ===================== МОДАЛКА СТАТУСА ===================== */
-function closeStatusSelect() {
-    document.getElementById('statusSelectModal').style.display = 'none';
-}
-
-function closeStatusSelectOutside(event) {
-    if (event.target.id === 'statusSelectModal') {
-        closeStatusSelect();
+function renderCart() {
+    const container = document.getElementById('cartItemsList');
+    const totalSumEl = document.getElementById('cartTotalSum');
+    
+    if (State.cart.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding:50px; opacity:0.5;">Корзина пуста</p>';
+        totalSumEl.innerText = '0';
+        return;
     }
+
+    let total = 0;
+    container.innerHTML = State.cart.map(item => {
+        total += item.price * item.count;
+        return `
+            <div class="marker-item">
+                <div>
+                    <b>№ ${item.number}</b><br>
+                    <small>${item.price} ₽ x ${item.count}</small>
+                </div>
+                <div>${item.price * item.count} ₽</div>
+            </div>
+        `;
+    }).join('');
+    totalSumEl.innerText = total;
 }
 
-/* ===================== СТАРТ ===================== */
-document.addEventListener('DOMContentLoaded', initApp);
+// ===================== ИИ ПАЛИТРА =====================
+
+async function processAI(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Показываем загрузку
+    const resultBox = document.getElementById('aiResult');
+    resultBox.style.display = 'block';
+    resultBox.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Анализируем цвет...</p>';
+
+    // Имитация работы ИИ
+    setTimeout(() => {
+        resultBox.innerHTML = `
+            <div style="background:var(--accent-soft); padding:15px; border-radius:12px; border:1px solid var(--accent);">
+                <h4 style="color:var(--accent)">Результат анализа:</h4>
+                <p style="margin-top:10px;">Ближайший маркер: <b>№ 102 (GuangNa)</b></p>
+                <p>Точность соответствия: <b>98.4%</b></p>
+            </div>
+        `;
+    }, 2000);
+}
+
+function startAITraining() {
+    if (!State.isAdmin) return;
+    alert("Запущен процесс создания 25 вариаций освещения для текущей партии маркеров. Данные будут обновлены на сервере.");
+}
+
+// Запуск приложения
+document.addEventListener('DOMContentLoaded', init);

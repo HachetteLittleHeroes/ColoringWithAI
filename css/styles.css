@@ -376,3 +376,52 @@ input[type="text"] {
     color: white;
     font-size: 16px;
 }
+/* Стили для сетки выбора аватарок */
+.preset-avatars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 в ряд, итого 2 ряда */
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.preset-avatar-item {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    border: 2px solid var(--accent); /* Оранжевый контур */
+    cursor: pointer;
+    transition: transform 0.2s;
+    background: var(--bg);
+}
+
+.preset-avatar-item:active {
+    transform: scale(0.9);
+}
+
+.section-subtitle {
+    font-size: 14px;
+    color: var(--text-gray);
+    margin-bottom: 10px;
+}
+
+.text-link-btn {
+    background: none;
+    color: #4facfe; /* Голубой цвет как на скрине */
+    font-size: 14px;
+    text-decoration: underline;
+    padding: 10px 0;
+    width: 100%;
+    text-align: center;
+}
+
+.name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.edit-icon {
+    font-size: 14px;
+    color: var(--text-gray);
+}

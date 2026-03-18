@@ -11,7 +11,6 @@ const State = {
     adminId: '496779756'
 };
 
-// Базовый путь к твоим аватаркам на GitHub
 const GITHUB_AVATAR_PATH = 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/';
 
 async function init() {
@@ -28,12 +27,10 @@ async function init() {
 
     State.isAdmin = (State.userId === State.adminId);
 
-    // Загрузка данных
     State.user = await window.api.getUser(State.userId);
     State.markers = await window.api.fetchMarkers();
     State.cart = window.api.getCart();
 
-    // Рендерим всё
     renderProfile();
     renderMarkers();
     renderTasks();
@@ -47,12 +44,35 @@ async function init() {
     tab('profile');
 }
 
+// ===================== НАВИГАЦИЯ =====================
+
+function tab(tabId) {
+    const pages = document.querySelectorAll('.page');
+    const buttons = document.querySelectorAll('.nav-btn');
+
+    pages.forEach(p => {
+        p.style.setProperty('display', 'none', 'important');
+        p.classList.remove('active');
+    });
+    buttons.forEach(b => b.classList.remove('active'));
+
+    const targetPage = document.getElementById(tabId);
+    const targetBtn = document.getElementById('btn-' + tabId);
+
+    if (targetPage && targetBtn) {
+        targetPage.style.setProperty('display', 'block', 'important');
+        targetPage.classList.add('active');
+        targetBtn.classList.add('active');
+        State.currentTab = tabId;
+        window.scrollTo(0, 0);
+    }
+}
+
 // ===================== ПРОФИЛЬ И АВАТАРКИ =====================
 
 function renderProfile() {
     if (!State.user) return;
 
-    // Установка основных данных
     const avatarImg = document.getElementById('user-avatar');
     const nameEl = document.getElementById('displayUsername');
     const balanceEl = document.getElementById('userBalance');
@@ -63,23 +83,24 @@ function renderProfile() {
     if (balanceEl) balanceEl.innerText = State.user.balance;
     if (statusEl) statusEl.innerText = State.user.status;
 
-    // Генерируем 8 предустановленных аватарок
     const presetGrid = document.getElementById('avatarPresets');
     if (presetGrid) {
-        presetGrid.innerHTML = ''; // Очищаем старое
+        presetGrid.innerHTML = ''; 
         for (let i = 1; i <= 8; i++) {
             const img = document.createElement('img');
-            // Формируем путь: assets/avatars/av1.png и т.д.
             img.src = `${GITHUB_AVATAR_PATH}av${i}.png`; 
             img.alt = `Avatar ${i}`;
             img.className = 'preset-avatar-item';
+            
+            // Если картинка не найдена (404), скрываем ее, чтобы не было битых иконок
+            img.onerror = function() { this.style.display = 'none'; };
+            
             img.onclick = () => selectAvatar(img.src);
             presetGrid.appendChild(img);
         }
     }
 }
 
-// Открытие/закрытие окна выбора аватарок
 function toggleAvatarEditor() {
     const el = document.getElementById('avatarEditorBlock');
     if (!el) return;
@@ -87,7 +108,6 @@ function toggleAvatarEditor() {
     const isHidden = el.style.display === 'none' || el.style.display === '';
     el.style.display = isHidden ? 'block' : 'none';
     
-    // Плавный скролл к блоку, если открыли
     if (isHidden) {
         el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -99,10 +119,9 @@ async function selectAvatar(url) {
     if (mainAvatar) mainAvatar.src = url;
     
     await window.api.updateProfile(State.userId, 'avatar', url);
-    toggleAvatarEditor(); // Закрываем после выбора
+    toggleAvatarEditor();
 }
 
-// Установка своего фото
 async function handleCustomAvatar(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -113,22 +132,6 @@ async function handleCustomAvatar(event) {
         await selectAvatar(url);
     };
     reader.readAsDataURL(file);
-}
-
-// Остальная логика без изменений для краткости (но она должна быть в твоем файле)
-function tab(tabId) {
-    const pages = document.querySelectorAll('.page');
-    const buttons = document.querySelectorAll('.nav-btn');
-    pages.forEach(p => p.classList.remove('active'));
-    buttons.forEach(b => b.classList.remove('active'));
-    const targetPage = document.getElementById(tabId);
-    const targetBtn = document.getElementById('btn-' + tabId);
-    if (targetPage && targetBtn) {
-        targetPage.classList.add('active');
-        targetBtn.classList.add('active');
-        State.currentTab = tabId;
-        window.scrollTo(0, 0);
-    }
 }
 
 function changeNickname() {
@@ -146,6 +149,38 @@ async function saveNewNickname() {
     document.getElementById('nameModal').style.display = 'none';
 }
 
+function toggleSection(id) {
+    const el = document.getElementById(id);
+    const isVisible = el.style.display === 'block';
+    
+    const rewards = document.getElementById('rewards-section');
+    const earn = document.getElementById('earn-section');
+    if(rewards) rewards.style.display = 'none';
+    if(earn) earn.style.display = 'none';
+    
+    el.style.display = isVisible ? 'none' : 'block';
+}
+
+// ===================== ЗАДАНИЯ И КОРЗИНА (ЗАГЛУШКИ ДЛЯ ИНИЦИАЛИЗАЦИИ) =====================
+
+function toggleTasks() {
+    const content = document.getElementById('tasksList');
+    const arrow = document.getElementById('tasksArrow');
+    const isHidden = content.style.display === 'none';
+    content.style.display = isHidden ? 'block' : 'none';
+    arrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function renderTasks() {
+    const container = document.getElementById('tasksList');
+    if(container) container.innerHTML = '<p style="padding:15px; color:#888;">Задания загружаются...</p>';
+}
+
+function renderMarkers() {
+    const container = document.getElementById('markersList');
+    if(container) container.innerHTML = '<p style="padding:15px; color:#888;">Загрузка маркеров...</p>';
+}
+
 function updateCartBadge() {
     const badge = document.getElementById('cartBadge');
     if (!badge) return;
@@ -153,9 +188,5 @@ function updateCartBadge() {
     badge.innerText = totalCount;
     badge.style.display = totalCount > 0 ? 'block' : 'none';
 }
-
-// Функции-заглушки для инициализации (чтобы не падало)
-function renderMarkers() { console.log("Markers rendered"); }
-function renderTasks() { console.log("Tasks rendered"); }
 
 document.addEventListener('DOMContentLoaded', init);

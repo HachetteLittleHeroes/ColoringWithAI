@@ -1,221 +1,378 @@
-/* ===================== Общие переменные ===================== */
+/* ===================== ПЕРЕМЕННЫЕ И ОСНОВА ===================== */
 :root {
-    --bg: var(--tg-theme-bg-color, #121212);
-    --bg-secondary: var(--tg-theme-secondary-bg-color, #1E1E1E);
-    --card-bg: #1c1c1e; /* ВАЖНО: добавили */
-    --text: var(--tg-theme-text-color, #FFFFFF);
+    --bg: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-header: rgba(30, 30, 30, 0.8);
+    --text: #ffffff;
+    --text-gray: #aaaaaa;
+    
+    /* Тот самый оранжевый */
     --accent: #ff9500;
-    --accent-text: #ffffff;
-    --secondary: #2C2C2C;
-    --gray: #888;
-    --gold: #FFD700;
+    --accent-gradient: linear-gradient(135deg, #FF8C00 0%, #E65100 100%);
+    --accent-soft: rgba(255, 149, 0, 0.2);
+    
+    /* Статусы наличия */
+    --status-green: #4cd964;
+    --status-orange: #ff9500;
+    --status-red: #ff3b30;
+    
+    /* Свечения уровней заданий */
+    --glow-1: transparent;
+    --glow-2: 0 0 15px rgba(0, 122, 255, 0.6); /* Голубой */
+    --glow-3: 0 0 15px rgba(52, 199, 89, 0.6);  /* Зеленый */
+    --glow-4: 0 0 15px rgba(175, 82, 222, 0.6); /* Фиолетовый */
+    --glow-5: 0 0 20px rgba(255, 215, 0, 0.8);  /* Золотой */
 }
 
-/* ===================== Сброс ===================== */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    font-family: -apple-system, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
-    padding-bottom: 90px;
+    padding-bottom: 90px; /* Место под меню */
+    overflow-x: hidden;
 }
 
-/* ===================== Страницы ===================== */
-.page {
-    display: none;
-    padding: 10px 15px;
-}
-
-.page.active {
-    display: block !important;
-}
-
-/* ===================== Заголовки ===================== */
+/* ===================== ОБЩИЕ ЭЛЕМЕНТЫ ===================== */
 .header {
     font-size: 24px;
     font-weight: 800;
+    padding: 20px 15px 10px;
+}
+
+.page {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.page.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+button {
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+/* ===================== ПРОФИЛЬ (Header) ===================== */
+.profile-header-block {
+    background: var(--bg-header);
+    margin: 15px;
+    padding: 20px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.avatar-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid var(--accent); /* Оранжевый контур */
+    padding: 2px;
+    background: var(--bg);
+}
+
+.avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-meta h2 {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.status-badge {
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* Редактор аватарок */
+.expandable-block {
+    margin: 0 15px 15px;
+    padding: 15px;
+    background: var(--bg-secondary);
+    border-radius: 15px;
+}
+
+.preset-avatars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
     margin-bottom: 15px;
 }
 
-/* ===================== Кнопки ===================== */
-.buy-btn {
-    padding: 14px;
-    border-radius: 14px;
-    font-weight: 600;
-    border: none;
+.preset-avatars img {
+    width: 100%;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
     cursor: pointer;
-    transition: 0.2s;
 }
 
-.buy-btn:active {
-    transform: scale(0.97);
+/* ===================== КАРТОЧКА БАЛАНСА ===================== */
+.balance-card {
+    background: var(--accent-gradient);
+    margin: 15px;
+    padding: 25px 20px;
+    border-radius: 25px;
+    box-shadow: 0 10px 20px rgba(230, 81, 0, 0.3);
+    text-align: center;
 }
 
-/* ===================== НАВИГАЦИЯ ===================== */
+.balance-label {
+    font-size: 12px;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.balance-main {
+    font-size: 44px;
+    font-weight: 800;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.gold-book {
+    color: #FFD700;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+}
+
+.balance-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.balance-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    backdrop-filter: blur(5px);
+}
+
+/* ===================== ЗАДАНИЯ И УРОВНИ ===================== */
+.tasks-container {
+    margin: 15px;
+}
+
+.section-tab {
+    background: var(--bg-secondary);
+    padding: 18px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.task-branch {
+    background: #252525;
+    margin-top: 10px;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+/* Магия свечения уровней */
+.task-level {
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 10px;
+    background: #333;
+    font-size: 14px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.level-1 { box-shadow: var(--glow-1); }
+.level-2 { box-shadow: var(--glow-2); border-color: rgba(0, 122, 255, 0.3); }
+.level-3 { box-shadow: var(--glow-3); border-color: rgba(52, 199, 89, 0.3); }
+.level-4 { box-shadow: var(--glow-4); border-color: rgba(175, 82, 222, 0.3); }
+.level-5 { box-shadow: var(--glow-5); border-color: rgba(255, 215, 0, 0.4); }
+
+/* ===================== МАРКЕРЫ (СЕТКА) ===================== */
+.marker-item {
+    background: var(--bg-secondary);
+    margin: 8px 15px;
+    padding: 12px 18px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stock-high { color: var(--status-green); }
+.stock-low { color: var(--status-orange); }
+.stock-none { color: var(--status-red); opacity: 0.6; }
+
+.marker-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-circle.disabled {
+    background: #444;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===================== ОТВЕТЫ (МАРКЕТПЛЕЙС) ===================== */
+.market-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 15px;
+}
+
+.book-card {
+    background: var(--bg-secondary);
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+}
+
+.book-card img {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+}
+
+.book-info {
+    padding: 12px;
+}
+
+.pre-order-tag {
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* ===================== НИЖНЕЕ МЕНЮ ===================== */
 .nav {
     position: fixed;
     bottom: 0;
+    left: 0;
     width: 100%;
     height: 75px;
+    background: rgba(18, 18, 18, 0.95);
+    backdrop-filter: blur(15px);
     display: flex;
-    background: var(--bg);
-    border-top: 1px solid rgba(255,255,255,0.05);
-    z-index: 9999;
+    border-top: 0.5px solid rgba(255,255,255,0.1);
+    z-index: 10000;
 }
 
 .nav-btn {
     flex: 1;
-    font-size: 11px;
-    color: var(--gray);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background: none;
-    border: none;
+    color: var(--text-gray);
+    font-size: 10px;
+    gap: 4px;
+}
+
+.nav-btn i {
+    font-size: 20px;
 }
 
 .nav-btn.active {
     color: var(--accent);
 }
 
-/* ===================== ПРОФИЛЬ ===================== */
-.profile-hero {
-    display: flex;
-    gap: 20px;
-    padding: 15px;
-    background: var(--bg-secondary);
-    border-radius: 20px;
-    margin-bottom: 15px;
-}
-
-.avatar-container {
-    width: 90px;
-    height: 90px;
-}
-
-.avatar-preview {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 4px solid var(--accent);
-}
-
-.avatar-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-info-right {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.profile-username {
-    font-size: 20px;
-    font-weight: 800;
-}
-
-.profile-status {
-    margin-top: 5px;
-    background: var(--secondary);
-    padding: 5px 10px;
-    border-radius: 12px;
-    cursor: pointer;
-}
-
-/* ===================== БАЛАНС ===================== */
-.balance-card {
-    background: linear-gradient(135deg, #FF8C00, #E65100);
-    border-radius: 20px;
-    padding: 25px;
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.balance-amount {
-    font-size: 42px;
-    font-weight: 800;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-
-.gold-book {
-    color: var(--gold);
-    font-size: 28px;
-}
-
-/* КНОПКИ ВНУТРИ БАЛАНСА */
-.balance-action-btn {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.4);
+.badge {
+    position: absolute;
+    top: 10px;
+    right: 15%;
+    background: var(--status-red);
     color: white;
-    padding: 14px;
-    border-radius: 14px;
-    font-size: 16px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: bold;
 }
 
-/* ===================== КАРТОЧКИ ===================== */
-.card {
-    background: var(--card-bg);
-    padding: 15px;
-    border-radius: 15px;
-    margin-top: 10px;
-}
-
-/* ===================== ЛОЯЛЬНОСТЬ ===================== */
-.loyalty-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px;
-    border-radius: 14px;
-    background: var(--card-bg);
-    margin-top: 10px;
-}
-
-.loyalty-item span {
-    color: var(--accent);
-    font-weight: 700;
-}
-
-/* ===================== ДОСТИЖЕНИЯ ===================== */
-.achievements-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
-
-.achieve-card {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 15px;
-    text-align: center;
-    opacity: 0.5;
-}
-
-.achieve-card.unlocked {
-    opacity: 1;
-    border: 2px solid var(--gold);
-}
-
-/* ===================== МОДАЛКИ ===================== */
+/* ===================== МОДАЛКИ И ПРОЧЕЕ ===================== */
 .modal-overlay {
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 20000;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
     background: var(--bg-secondary);
-    padding: 20px;
+    width: 90%;
+    max-height: 80%;
     border-radius: 20px;
+    padding: 25px;
+    overflow-y: auto;
+}
+
+/* Поиск */
+.search-container {
+    padding: 0 15px 10px;
+}
+
+input[type="text"] {
+    width: 100%;
+    background: var(--bg-secondary);
+    border: none;
+    padding: 14px 18px;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
 }

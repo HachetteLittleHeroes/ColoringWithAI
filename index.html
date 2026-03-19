@@ -1828,6 +1828,39 @@ user.isAdmin = (userId === ADMIN_ID);
         function openSupport() {
             window.open('https://boosty.to/coloringapp', '_blank');
         }
+        //Отправка запроса на бекенд
+async function adminChangeBalance() {
+    const targetId = document.getElementById('adminTargetUserId').value;
+    const amount = parseInt(document.getElementById('adminBalanceAmount').value);
+
+    if (!targetId || isNaN(amount)) {
+        tg.showAlert('Заполните ID и сумму');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${SERVER_URL}/api/admin/balance`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                adminId: userId, 
+                targetId: targetId, 
+                amount: amount 
+            })
+        });
+
+        if (response.ok) {
+            tg.showAlert(`Успешно начислено ${amount} ашетиков пользователю ${targetId}`);
+            document.getElementById('adminTargetUserId').value = '';
+            document.getElementById('adminBalanceAmount').value = '';
+        } else {
+            tg.showAlert('Ошибка сервера или нет прав');
+        }
+    } catch (error) {
+        tg.showAlert('Ошибка сети');
+    }
+}
+
         // ========== СИНХРОНИЗАЦИЯ С СЕРВЕРОМ ==========
 
 // Загружаем данные пользователя при входе
@@ -3177,6 +3210,20 @@ function saveDataLocal() {
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
         
         <!-- Админ-панель для обучения ИИ -->
+        <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
+<h4><i class="fas fa-coins"></i> Управление балансом</h4>
+<div class="form-group">
+    <label>ID пользователя</label>
+    <input type="number" id="adminTargetUserId" placeholder="Например: 123456789">
+</div>
+<div class="form-group">
+    <label>Сумма ашетиков (+ или -)</label>
+    <input type="number" id="adminBalanceAmount" placeholder="Например: 500">
+</div>
+<button onclick="adminChangeBalance()">
+    <i class="fas fa-gift"></i> Начислить
+</button>
+
         <div id="adminAiBlock" class="admin-panel" style="display:none;">
             <h4><i class="fas fa-robot"></i> Обучение ИИ (Админ)</h4>
             <div class="form-group">

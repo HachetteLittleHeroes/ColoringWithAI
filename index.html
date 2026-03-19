@@ -103,7 +103,7 @@
             width: 90px; 
             height: 90px;
             border-radius: 50%;
-            border: 3px solid var(--accent) !important; /* Оранжевая рамка */
+            border: 3px solid var(--accent) !important;
             padding: 3px;
             background: var(--bg);
             position: relative;
@@ -205,11 +205,11 @@
         .preset-avatar-item {
             aspect-ratio: 1/1;
             border-radius: 50%;
-            border: 3px solid var(--accent) !important; /* Оранжевая рамка */
-            padding: 3px;
+            border: 3px solid var(--accent) !important;
             cursor: pointer;
             transition: all 0.2s;
             overflow: hidden;
+            background: var(--bg);
         }
 
         .preset-avatar-item:hover {
@@ -219,9 +219,9 @@
         .preset-avatar-item img {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
             object-fit: cover;
             display: block;
+            border-radius: 50%;
         }
 
         .upload-photo-btn {
@@ -386,6 +386,8 @@
             background: var(--bg-header);
             position: relative;
             z-index: 10;
+            width: 100%;
+            border: none;
         }
 
         .tasks-header i {
@@ -396,6 +398,7 @@
             padding: 0 20px 20px;
             display: none;
             background: var(--bg-header);
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         .tasks-category {
@@ -550,7 +553,7 @@
         .task-status.pending { color: var(--status-yellow); }
 
         /* ==========================================
-           8. ВИТРИНА ДОСТИЖЕНИЙ - ИСПРАВЛЕНО
+           8. ВИТРИНА ДОСТИЖЕНИЙ
            ========================================== */
         .showcase-container {
             background: var(--bg-header);
@@ -605,7 +608,48 @@
         }
 
         /* ==========================================
-           9. ГАЛЕРЕЯ ДОСТИЖЕНИЙ
+           9. ПОИСК - ОБЩИЙ СТИЛЬ
+           ========================================== */
+        .search-container {
+            padding: 0 15px 15px;
+        }
+
+        .search-box {
+            background: var(--bg-header);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .search-box i {
+            color: var(--text-gray);
+            font-size: 16px;
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 15px;
+            width: 100%;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-gray);
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--text-gray);
+            padding: 30px 0;
+            font-size: 14px;
+        }
+
+        /* ==========================================
+           10. ГАЛЕРЕЯ ДОСТИЖЕНИЙ
            ========================================== */
         .achievements-grid {
             display: grid;
@@ -667,7 +711,7 @@
         }
 
         /* ==========================================
-           10. МАРКЕРЫ
+           11. МАРКЕРЫ
            ========================================== */
         .markers-section {
             padding: 0 15px;
@@ -681,6 +725,10 @@
             align-items: center;
             gap: 15px;
             margin-bottom: 10px;
+        }
+
+        .marker-item.hidden {
+            display: none;
         }
 
         .color-circle {
@@ -706,7 +754,7 @@
         }
 
         /* ==========================================
-           11. ОТВЕТЫ И ТОМА
+           12. ОТВЕТЫ И ТОМА
            ========================================== */
         .books-section {
             padding: 0 15px;
@@ -753,7 +801,7 @@
         }
 
         /* ==========================================
-           12. КОРЗИНА
+           13. КОРЗИНА
            ========================================== */
         .cart-items {
             padding: 0 15px;
@@ -843,7 +891,7 @@
         }
 
         /* ==========================================
-           13. ИИ ПАЛИТРА
+           14. ИИ ПАЛИТРА
            ========================================== */
         .ai-section {
             padding: 0 15px;
@@ -914,7 +962,7 @@
         }
 
         /* ==========================================
-           14. НАВИГАЦИЯ
+           15. НАВИГАЦИЯ
            ========================================== */
         .nav {
             position: fixed;
@@ -966,7 +1014,7 @@
         }
 
         /* ==========================================
-           15. МОДАЛЬНЫЕ ОКНА
+           16. МОДАЛЬНЫЕ ОКНА
            ========================================== */
         .modal-overlay {
             position: fixed;
@@ -1003,24 +1051,37 @@
             background: #444;
             color: white;
             width: 100%;
-            padding: 14px;
-            border-radius: 16px;
+            padding: 12px;
+            border-radius: 14px;
             font-weight: 600;
-            margin-top: 20px;
+            font-size: 14px;
+            margin-top: 10px;
             cursor: pointer;
             border: none;
         }
 
-        .blue-action-btn {
+        .modal-action-btn {
             background: var(--accent);
             color: white;
             width: 100%;
-            padding: 14px;
-            border-radius: 16px;
+            padding: 12px;
+            border-radius: 14px;
             font-weight: 600;
-            margin-top: 15px;
+            font-size: 14px;
+            margin-top: 10px;
             cursor: pointer;
             border: none;
+        }
+
+        .modal-buttons-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-buttons-row button {
+            flex: 1;
+            margin: 0;
         }
 
         .btn-circle {
@@ -1067,6 +1128,17 @@
             color: var(--text);
             font-size: 16px;
         }
+
+        /* Специально для модалки подтверждения аватара */
+        .avatar-preview-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 15px auto;
+            border: 3px solid var(--accent);
+            object-fit: cover;
+            display: block;
+        }
     </style>
 
     <script>
@@ -1076,7 +1148,7 @@
 
         document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color || '#121212');
         document.documentElement.style.setProperty('--text', tg.themeParams.text_color || '#ffffff');
-        document.documentElement.style.setProperty('--accent', '#ff9500'); // Принудительно оранжевый
+        document.documentElement.style.setProperty('--accent', '#ff9500');
 
         // Данные
         const levelConfig = [
@@ -1252,7 +1324,13 @@
             document.getElementById('btn-' + pageId).classList.add('active');
             window.scrollTo(0, 0);
             
-            if (pageId === 'markers') renderMarkers();
+            if (pageId === 'markers') {
+                renderMarkers();
+                document.getElementById('markerSearch').value = '';
+            }
+            if (pageId === 'answers') {
+                document.getElementById('bookSearch').value = '';
+            }
             if (pageId === 'cart') renderCart();
         }
 
@@ -1492,7 +1570,6 @@
                 const slot = document.getElementById(`slot-${i}`);
                 const achId = user.showcase[i];
                 slot.innerHTML = ''; 
-                slot.onclick = openAchievementsGallery;
                 
                 if (achId && achievementsDB[achId]) {
                     const img = document.createElement('img');
@@ -1636,7 +1713,7 @@
             document.getElementById('statusSelectModal').style.display = 'none'; 
         }
 
-        // ========== МАРКЕРЫ ==========
+        // ========== МАРКЕРЫ С ПОИСКОМ ==========
         function renderMarkers() {
             const container = document.getElementById('markersList');
             if (!container) return;
@@ -1645,6 +1722,8 @@
             markersDB.forEach(m => {
                 const div = document.createElement('div');
                 div.className = 'marker-item';
+                div.setAttribute('data-num', m.num);
+                div.setAttribute('data-name', m.name.toLowerCase());
                 div.innerHTML = `
                     <div class="color-circle" style="background-color: ${m.color};"></div>
                     <div class="marker-info">
@@ -1654,6 +1733,69 @@
                 `;
                 container.appendChild(div);
             });
+        }
+
+        function searchMarkers() {
+            const query = document.getElementById('markerSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.marker-item');
+            let visibleCount = 0;
+            
+            items.forEach(item => {
+                const num = item.getAttribute('data-num');
+                const name = item.getAttribute('data-name');
+                if (num.includes(query) || name.includes(query)) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            const noResults = document.getElementById('markerNoResults');
+            if (visibleCount === 0) {
+                if (!noResults) {
+                    const container = document.getElementById('markersList');
+                    const msg = document.createElement('div');
+                    msg.id = 'markerNoResults';
+                    msg.className = 'no-results';
+                    msg.innerText = 'Маркеры не найдены';
+                    container.appendChild(msg);
+                }
+            } else {
+                if (noResults) noResults.remove();
+            }
+        }
+
+        // ========== ПОИСК ПО ТОМАМ ==========
+        function searchBooks() {
+            const query = document.getElementById('bookSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.book-card');
+            let visibleCount = 0;
+            
+            items.forEach(item => {
+                const title = item.querySelector('h4').innerText.toLowerCase();
+                if (title.includes(query)) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            const noResults = document.getElementById('bookNoResults');
+            if (visibleCount === 0) {
+                const container = document.querySelector('.books-grid');
+                if (!document.getElementById('bookNoResults')) {
+                    const msg = document.createElement('div');
+                    msg.id = 'bookNoResults';
+                    msg.className = 'no-results';
+                    msg.style.gridColumn = 'span 2';
+                    msg.innerText = 'Тома не найдены';
+                    container.appendChild(msg);
+                }
+            } else {
+                if (noResults) noResults.remove();
+            }
         }
 
         // ========== КОРЗИНА ==========
@@ -1874,10 +2016,10 @@
 
     <!-- Задания -->
     <div class="tasks-section">
-        <div class="tasks-header" onclick="toggleTasks()">
+        <button class="tasks-header" onclick="toggleTasks()">
             <span>Задания</span>
             <i class="fas fa-chevron-down" id="tasksArrow"></i>
-        </div>
+        </button>
         <div id="tasksContent" class="tasks-content">
             <!-- Прогресс статуса -->
             <div class="status-progress">
@@ -1919,18 +2061,36 @@
     </div>
 </div>
 
-<!-- ========== МАРКЕРЫ ========== -->
+<!-- ========== МАРКЕРЫ С ПОИСКОМ ========== -->
 <div id="markers" class="page">
     <div class="header">Маркеры</div>
+    
+    <!-- Поиск по маркерам -->
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="markerSearch" placeholder="Поиск по номеру или названию..." oninput="searchMarkers()">
+        </div>
+    </div>
+    
     <div class="markers-section">
         <h3 style="color: var(--text-gray); font-size: 14px; margin-bottom: 10px;">GUANGNA</h3>
         <div id="markersList"></div>
     </div>
 </div>
 
-<!-- ========== ОТВЕТЫ И ТОМА ========== -->
+<!-- ========== ОТВЕТЫ И ТОМА С ПОИСКОМ ========== -->
 <div id="answers" class="page">
     <div class="header">Ответы и Тома</div>
+    
+    <!-- Поиск по томам -->
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="bookSearch" placeholder="Поиск по названию тома..." oninput="searchBooks()">
+        </div>
+    </div>
+    
     <div class="books-section">
         <div class="books-grid">
             <div class="book-card">
@@ -2011,21 +2171,21 @@
     <div class="modal-content">
         <h3>Настройки профиля</h3>
         <input type="text" id="newNameInput" placeholder="Введите ник...">
-        <button class="blue-action-btn" onclick="saveNewNickname()">Сохранить ник</button>
+        <button class="modal-action-btn" onclick="saveNewNickname()">Сохранить ник</button>
         <hr>
         <button class="modal-close-btn" style="background: var(--status-red);" onclick="resetAllData()">Сбросить весь прогресс</button>
         <button class="modal-close-btn" onclick="closeNameModal()">Отмена</button>
     </div>
 </div>
 
-<!-- Модалка подтверждения аватара -->
+<!-- Модалка подтверждения аватара - исправленные размеры кнопок -->
 <div id="avatarConfirmModal" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
         <h3>Установить аватар?</h3>
-        <img id="avatarPreview" src="" style="width: 120px; height: 120px; border-radius: 50%; margin: 20px auto; border: 3px solid var(--accent); object-fit: cover; display: block;">
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="modal-close-btn" style="flex: 1;" onclick="closeAvatarConfirm()">Отмена</button>
-            <button class="blue-action-btn" style="flex: 1; margin: 0;" onclick="applyAvatar()">Применить</button>
+        <img id="avatarPreview" src="" class="avatar-preview-img">
+        <div class="modal-buttons-row">
+            <button class="modal-close-btn" onclick="closeAvatarConfirm()">Отмена</button>
+            <button class="modal-action-btn" onclick="applyAvatar()">Применить</button>
         </div>
     </div>
 </div>
@@ -2074,9 +2234,9 @@
     <div class="modal-content" style="text-align:center;">
         <h3>Отправка на проверку</h3>
         <div id="taskPhotoPreviewContainer" class="photo-preview-container"></div>
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="modal-close-btn" style="flex: 1;" onclick="closeTaskUploadModal()">Отмена</button>
-            <button class="blue-action-btn" style="flex: 1; margin: 0;" onclick="submitTaskPhoto()">Отправить</button>
+        <div class="modal-buttons-row">
+            <button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button>
+            <button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button>
         </div>
     </div>
 </div>

@@ -751,3 +751,4 @@ window.openAnswersGallery = function(tome) {
     // Вызываем новую функцию, ставим 50 страниц по умолчанию
     window.openBook(tome, 50);
 };
+init();

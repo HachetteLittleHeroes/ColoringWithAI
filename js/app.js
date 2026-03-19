@@ -363,23 +363,29 @@ function toggleTasks() {
 function renderTasks() {
     const container = document.getElementById('tasksList');
     if (!container) return;
+
+    // 🔥 защита API
+    if (!window.api || typeof window.api.getTaskData !== 'function') {
+        console.error("API не готов");
+        container.innerHTML = '<p style="color:red;">Ошибка API</p>';
+        return;
+    }
+
+    // 🔥 защита user
+    if (!State.user) {
+        console.error("State.user отсутствует");
+        container.innerHTML = '<p style="color:red;">Нет данных пользователя</p>';
+        return;
+    }
+
+    // 🔥 защита taskProgress
+    if (!State.user.taskProgress) {
+        console.warn("taskProgress отсутствует, создаём");
+        State.user.taskProgress = {};
+    }
+
     const branches = window.api.getTaskData();
     const progressData = State.user.taskProgress;
-
-    container.innerHTML = branches.map(branch => {
-        const userProg = progressData[branch.id] || { currentLevel: 1, currentScore: 0 };
-        const activeLevel = branch.levels.find(lv => lv.lv === userProg.currentLevel);
-
-        if (!activeLevel) {
-            return `
-            <div style="margin-bottom: 15px;">
-                <h4 style="color:var(--status-green); margin-bottom:10px; font-size:16px;">${branch.title}</h4>
-                <div class="task-level" style="text-align:center; color:var(--status-green); border-color: var(--status-green);">
-                    <i class="fas fa-check-circle" style="font-size:24px; margin-bottom:10px;"></i>
-                    <br>Все уровни пройдены!
-                </div>
-            </div>`;
-        }
 
         const percent = Math.min(100, (userProg.currentScore / activeLevel.target) * 100);
         const levelColor = LEVEL_COLORS[activeLevel.lv] || 'var(--accent)';

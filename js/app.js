@@ -392,23 +392,19 @@ function renderTasks() {
         const userProg = progressData[branch.id] || { currentLevel: 1, currentScore: 0 };
         const activeLevel = branch.levels.find(lv => lv.lv === userProg.currentLevel);
 
-        // защита от undefined
+        // если всё пройдено
         if (!activeLevel) {
             return `
-                <div style="margin-bottom: 15px;">
-                    <h4 style="color:var(--status-green); margin-bottom:10px; font-size:16px;">${branch.title}</h4>
-                    <div class="task-level" style="text-align:center; color:var(--status-green); border-color: var(--status-green);">
-                        <i class="fas fa-check-circle" style="font-size:24px; margin-bottom:10px;"></i>
-                        <br>Все уровни пройдены
-                    </div>
+            <div style="margin-bottom: 15px;">
+                <h4 style="color:var(--status-green); margin-bottom:10px; font-size:16px;">${branch.title}</h4>
+                <div class="task-level" style="text-align:center; color:var(--status-green); border-color: var(--status-green);">
+                    <i class="fas fa-check-circle" style="font-size:24px; margin-bottom:10px;"></i>
+                    <br>Все уровни пройдены!
                 </div>
-            `;
+            </div>`;
         }
 
-        const percent = activeLevel.target
-            ? Math.min(100, (userProg.currentScore / activeLevel.target) * 100)
-            : 0;
-
+        const percent = Math.min(100, (userProg.currentScore / activeLevel.target) * 100);
         const levelColor = LEVEL_COLORS[activeLevel.lv] || 'var(--accent)';
 
         return `
@@ -416,29 +412,40 @@ function renderTasks() {
                 <h4 style="color:${levelColor}; margin-bottom:10px; font-size:16px;">
                     ${branch.title} (Уровень ${activeLevel.lv})
                 </h4>
+
                 <div class="task-level" style="border-color: ${levelColor};">
+
                     <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
-                        <span style="font-size:14px; font-weight:bold;">${activeLevel.text}</span>
+                        <span style="font-size:14px; font-weight:bold;">
+                            ${activeLevel.text}
+                        </span>
                         <span style="color:#FFD700; font-weight:bold;">
                             +${activeLevel.reward} <i class="fas fa-book-open"></i>
                         </span>
                     </div>
+
                     <div class="progress-bar-container">
-                        <div class="progress-fill" style="width: ${percent}%; background-color: ${levelColor};"></div>
+                        <div class="progress-fill"
+                             style="width: ${percent}%; background-color: ${levelColor};">
+                        </div>
                     </div>
+
                     <div style="font-size:12px; color:var(--text-gray); text-align:right; margin-bottom: 12px;">
                         Прогресс: ${userProg.currentScore} / ${activeLevel.target}
                     </div>
+
                     <button class="blue-action-btn"
                         style="padding: 10px; font-size: 14px; background-color: ${levelColor}; color: #000;"
                         onclick="initTaskUpload('${branch.id}')">
                         <i class="fas fa-camera"></i> Прикрепить фото
                     </button>
+
                     <button class="balance-btn"
                         style="margin-top: 10px; padding: 6px; font-size: 12px; border: 1px dashed ${levelColor}; color: ${levelColor}; background: transparent;"
                         onclick="testAdminAddPoint('${branch.id}', ${activeLevel.target})">
-                        <i class="fas fa-wrench"></i> Тест +1 очко
+                        <i class="fas fa-wrench"></i> Тест: админ дал +1 очко
                     </button>
+
                 </div>
             </div>
         `;

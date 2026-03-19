@@ -37,9 +37,13 @@ function toggleRewards() {
         el.style.display = 'block';
         el.innerHTML = `
             <div class="category-title">🎁 Потратить ашетики</div>
-            <div class="card"><p>🎁 Стикеры</p><button class="buy-btn" onclick="alert('Скоро!')">100</button></div>
-            <div class="card"><p>🎨 Палитра</p><button class="buy-btn" onclick="alert('Скоро!')">200</button></div>
+            <div class="card"><p>🎁 Стикеры</p><button class="buy-btn" data-cost="100">100</button></div>
+            <div class="card"><p>🎨 Палитра</p><button class="buy-btn" data-cost="200">200</button></div>
         `;
+        // Делаем делегирование
+        el.querySelectorAll('.buy-btn').forEach(btn => {
+            btn.addEventListener('click', () => alert('Скоро!'));
+        });
     } else {
         el.style.display = 'none';
     }
@@ -59,7 +63,6 @@ function toggleEarnAchetiki() {
         el.style.display = 'none';
     }
 }
-
 /* ---------------- 4. ОРГАНАЙЗЕРЫ И ЯЧЕЙКИ ---------------- */
 async function loadOrganizers() {
     const container = document.getElementById('organizersList');

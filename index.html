@@ -1724,19 +1724,20 @@
         };
 
         const levelTasks = [
-            { level: 1, title: 'Начинающий художник', description: 'Раскрась 1 страницу', xp: 10 },
-            { level: 2, title: 'Любитель цвета', description: 'Раскрась 3 страницы', xp: 20 },
-            { level: 3, title: 'Опытный колорист', description: 'Раскрась 5 страниц', xp: 30 },
-            { level: 4, title: 'Мастер оттенков', description: 'Раскрась 10 страниц', xp: 40 },
-            { level: 5, title: 'Легенда раскрасок', description: 'Раскрась 20 страниц', xp: 50 }
-        ];
+    { level: 1, title: 'Начинающий художник', description: 'Нужно подтвердить 1 раскрашенную страницу', maxProgress: 1 },
+    { level: 2, title: 'Любитель цвета', description: 'Нужно подтвердить 3 раскрашенные страницы', maxProgress: 3 },
+    { level: 3, title: 'Опытный колорист', description: 'Нужно подтвердить 5 раскрашенных страниц', maxProgress: 5 },
+    { level: 4, title: 'Мастер оттенков', description: 'Нужно подтвердить 10 раскрашенных страниц', maxProgress: 10 },
+    { level: 5, title: 'Легенда раскрасок', description: 'Нужно подтвердить 20 раскрашенных страниц', maxProgress: 20 }
+];
 
-        const timeTasks = [
-            { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 },
-            { id: 'time_2', title: 'Вечерний скетчинг', description: 'Раскрась страницу вечером', reward: 5 },
-            { id: 'time_3', title: 'Цветной выходной', description: 'Раскрась 2 страницы в выходные', reward: 10 },
-            { id: 'time_4', title: 'Градиент-мастер', description: 'Сделай градиент маркерами', reward: 8 }
-        ];
+const timeTasks = [
+    { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 },
+    { id: 'time_2', title: 'Вечерний скетчинг', description: 'Раскрась страницу вечером', reward: 5 },
+    { id: 'time_3', title: 'Цветной выходной', description: 'Раскрась 2 страницы в выходные', reward: 10 },
+    { id: 'time_4', title: 'Градиент-мастер', description: 'Сделай градиент маркерами', reward: 8 }
+];
+
 
         // База данных обученных цветов
         let trainedColors = JSON.parse(localStorage.getItem('trained_colors')) || {};
@@ -1779,7 +1780,7 @@ const defaultUser = {
     unlockedStatuses: ['Новичок'],
     achievements: [],
     showcase: [null, null, null],
-    levelTasksProgress: [false, false, false, false, false],
+    levelTasksProgress: [0, 0, 0, 0, 0],
     timeTasksProgress: {},
     timeTasksReset: Date.now(),
     aiUsageCount: 0,
@@ -2448,79 +2449,76 @@ function updateStatusProgress() {
     const container = document.getElementById('levelTasksList');
     if (!container) return;
     container.innerHTML = '';
-  let firstUncompletedFound = false;
-            levelTasks.forEach((task, index) => {
-        if (firstUncompletedFound) return; // Блокируем отображение следующих уровней
-                const isCompleted = user.levelTasksProgress[index];
-                const level = index + 1;
-                
-                const div = document.createElement('div');
-        div.className = `level-task`; // Убрали цветовую индикацию .lvl-X
+
+    let firstLocked = false;
+
+    levelTasks.forEach((task, index) => {
+        if (firstLocked) return;
+
+        const currentProgress = user.levelTasksProgress[index] || 0;
+        const maxProgress = task.maxProgress || 5;
+        const isCompleted = currentProgress >= maxProgress;
+
+        const div = document.createElement('div');
+        div.className = 'level-task-item';
+        div.style = "background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-color);";
         
-div.innerHTML = `
-            <div class="task-header">
-                <span class="level-badge" style="background: var(--card-bg); color: var(--text); border: 1px solid var(--border-color);">Уровень ${level}</span>
-                ${isCompleted ? '<span class="task-status completed">✓ Выполнено</span>' : ''}
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: bold; font-size: 15px;">${task.title}</span>
+                ${isCompleted ? '<span style="color: var(--status-green); font-weight: bold;">✓ Уровень пройден</span>' : ''}
             </div>
-            <div class="task-title">${task.title}</div>
-            <div class="task-description">${task.description} <span style="color:var(--accent); font-weight:bold;">+${task.xp} XP</span></div>
+            <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 10px;">${task.description}</p>
             
-            <div class="task-progress-bg">
-                <div class="task-progress-fill" style="width: ${progressPercent}%;"></div>
-                <div class="task-progress-text">${currentProgress} / ${task.maxProgress}</div>
+            <div class="task-progress-bg" style="background: var(--border-color); height: 10px; border-radius: 5px; overflow: hidden; position: relative;">
+                <div class="task-progress-fill" style="width: ${(currentProgress/maxProgress)*100}%; background: var(--accent-gradient); height: 100%; transition: width 0.4s ease;"></div>
+            </div>
+            
+            <div style="text-align: right; font-size: 11px; color: var(--text-gray); margin-top: 5px; margin-bottom: 10px;">
+                Подтверждено работ: ${currentProgress} / ${maxProgress}
             </div>
 
-            ${!isCompleted ? `
-                <div class="task-footer">
-                    <button class="photo-upload-btn" onclick="openTaskUpload('level_${index}')">
-                        <i class="fas fa-camera"></i> Отправить фото
-                    </button>
-                </div>
-            ` : ''}
+            <button class="photo-upload-btn" onclick="openTaskUpload('level_${index}')" style="width: 100%; padding: 10px; border-radius: 8px; background: var(--accent); color: white; border: none; font-weight: bold;">
+                <i class="fas fa-camera"></i> Отправить готовую работу
+            </button>
         `;
         
         container.appendChild(div);
-
-        if (!isCompleted) {
-            firstUncompletedFound = true; // Следующие уровни не отрендерятся
-        }
+        if (!isCompleted) firstLocked = true;
     });
 }
-        // ========== ТАЙМЕРЫ ЕЖЕНЕДЕЛЬНЫХ ЗАДАНИЙ ==========
+
 function renderTimeTasks() {
     const container = document.getElementById('timeTasksList');
     if (!container) return;
     container.innerHTML = '';
 
     timeTasks.forEach(task => {
-        const status = user.timeTasksProgress[task.id] || 'available';
         const div = document.createElement('div');
-        div.className = 'time-task'; // Обводка будет применена из CSS
+        div.className = 'time-task-item';
+        div.style = "border: 2px solid var(--accent); padding: 15px; border-radius: 12px; margin-bottom: 12px; background: var(--card-bg); position: relative; overflow: hidden;";
         
-        let statusHtml = '';
-        if (status === 'completed') statusHtml = '<span class="task-status completed">✓ Выполнено</span>';
-        else if (status === 'pending') statusHtml = '<span class="task-status pending">⏳ На проверке</span>';
-
         div.innerHTML = `
-            <div class="task-header">
-                <span class="time-badge time-countdown"><i class="far fa-clock"></i> Вычисление...</span>
-                <span class="task-reward">+${task.reward} <i class="fas fa-book-open gold-book"></i></span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span class="time-badge" style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">
+                    <i class="far fa-clock"></i> Таймер...
+                </span>
+                <span style="color: #FFD700; font-weight: bold; font-size: 14px;">
+                    +${task.reward} <i class="fas fa-book-open gold-book"></i>
+                </span>
             </div>
-            <div class="task-title">${task.title}</div>
-            <div class="task-description">${task.description}</div>
-            ${statusHtml}
-            ${status === 'available' ? `
-                <div class="task-footer">
-                    <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')">
-                        <i class="fas fa-camera"></i> Отправить фото
-                    </button>
-                </div>
-            ` : ''}
+            <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px;">${task.title}</div>
+            <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 12px;">${task.description}</p>
+            
+            <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')" style="width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold;">
+                Выполнить и заработать
+            </button>
         `;
         container.appendChild(div);
     });
-    updateTimers(); // Сразу запускаем обновление текста таймера
+    updateWeeklyTimers(); 
 }
+
 
 function updateTimers() {
     const oneWeek = 7 * 24 * 60 * 60 * 1000;

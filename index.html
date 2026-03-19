@@ -1,3 +1,6 @@
+Отлично! Я объединил ваш CSS файл с HTML. Вот полный объединенный index.html:
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -8,99 +11,779 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        /* БАЗОВЫЕ СТИЛИ И ТЕМА ТЕЛЕГРАМ */
+        /* ==========================================
+           1. ПЕРЕМЕННЫЕ И ГЛОБАЛЬНЫЕ НАСТРОЙКИ
+           ========================================== */
         :root {
-            --bg: var(--tg-theme-bg-color, #1e1e1e);
-            --bg-header: var(--tg-theme-secondary-bg-color, #2c2c2e);
-            --text: var(--tg-theme-text-color, #ffffff);
-            --text-gray: var(--tg-theme-hint-color, #8e8e93);
-            --accent: var(--tg-theme-button-color, #0a84ff);
+            /* Основная палитра */
+            --bg: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-header: #1c1c1e;
+            --text: #ffffff;
+            --text-gray: #8e8e93;
+            
+            /* Акцент (Оранжевый) */
+            --accent: #ff9500;
+            --accent-gradient: linear-gradient(135deg, #FF8C00 0%, #E65100 100%);
+            
+            /* Цвета уровней */
+            --lvl-1: #8e8e93; /* Серый */
+            --lvl-2: #007aff; /* Синий */
+            --lvl-3: #af52de; /* Фиолетовый */
+            --lvl-4: #ff3b30; /* Красный */
+            --lvl-5: #ffcc00; /* Золотой/Желтый */
+            
+            /* Статусы */
             --status-green: #34c759;
-            --status-yellow: #ffcc00;
             --status-red: #ff3b30;
-            --accent-gradient: linear-gradient(135deg, #0a84ff, #005bb5);
+            --status-yellow: #ffcc00;
         }
 
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-        * { box-sizing: border-box; }
-        
-        /* СТРАНИЦЫ И НАВИГАЦИЯ */
-        .page { display: none; padding: 15px; padding-bottom: 90px; }
-        .page.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        .header { font-size: 24px; font-weight: bold; margin-bottom: 20px; }
-        
-        .nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--bg-header); display: flex; border-top: 1px solid rgba(128,128,128,0.2); z-index: 999; }
-        .nav-btn { flex: 1; background: none; border: none; color: var(--text-gray); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; gap: 4px; position: relative; cursor: pointer; }
-        .nav-btn.active { color: var(--accent); }
-        .nav-btn i { font-size: 20px; }
-        .badge { position: absolute; top: 5px; right: 15px; background: var(--status-red); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none;
+        }
 
-        /* КАРТОЧКИ И БЛОКИ */
-        .balance-card, .reward-card, .sub-page-block, .task-card, .expandable-block { background: var(--bg-header); border-radius: 16px; padding: 15px; margin-bottom: 15px; }
-        .balance-card { text-align: center; background: var(--accent-gradient); color: white; }
-        .balance-label { font-size: 12px; opacity: 0.8; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px; }
-        .balance-main { font-size: 36px; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .balance-controls { display: flex; gap: 10px; }
-        .balance-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; background: rgba(255,255,255,0.2); color: white; font-weight: bold; cursor: pointer; font-size: 13px; }
-        .blue-action-btn { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; }
-        .buy-btn { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding-bottom: 100px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
 
-        /* ПРОФИЛЬ И АВАТАРЫ */
-        .profile-header-block { display: flex; align-items: center; margin-bottom: 20px; }
-        .avatar-wrapper { position: relative; width: 80px; height: 80px; margin-right: 15px; flex-shrink: 0; }
-        .avatar-wrapper img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
-        .avatar-edit-icon { position: absolute; bottom: 0; right: 0; background: var(--accent); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 12px; cursor: pointer; }
-        .name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; cursor: pointer; }
-        .name-row h2 { margin: 0; font-size: 20px; }
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        /* ==========================================
+           2. ТИПОГРАФИКА И ОБЩИЕ КОМПОНЕНТЫ
+           ========================================== */
+        .header { 
+            font-size: 26px; 
+            font-weight: 800; 
+            padding: 25px 20px 10px; 
+            text-align: left;
+            letter-spacing: -0.5px;
+        }
+
+        .page { 
+            display: none; 
+            width: 100%;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .page.active { 
+            display: block !important; 
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        button { 
+            border: none; 
+            background: none;
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+
+        button:active { 
+            transform: scale(0.96); 
+            opacity: 0.8;
+        }
+
+        /* ==========================================
+           3. ПРОФИЛЬ И АВАТАР
+           ========================================== */
+        .profile-header-block {
+            background: var(--bg-header);
+            margin: 15px; 
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .avatar-section { 
+            display: flex; 
+            align-items: center; 
+            gap: 18px; 
+        }
+
+        .avatar-wrapper {
+            width: 90px; 
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            padding: 3px;
+            background: var(--bg);
+            position: relative;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .avatar-wrapper img { 
+            width: 100%; 
+            height: 100%; 
+            border-radius: 50%; 
+            object-fit: cover; 
+        }
+
+        .avatar-edit-icon {
+            position: absolute;
+            bottom: 0; 
+            right: 0;
+            background: var(--accent);
+            color: white;
+            width: 28px; 
+            height: 28px;
+            border-radius: 50%;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 14px;
+            border: 3px solid var(--bg-header);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            pointer-events: auto !important;
+            z-index: 10;
+        }
+
+        .profile-meta h2 { 
+            font-size: 22px; 
+            font-weight: 700;
+            margin-bottom: 4px; 
+        }
+
+        .name-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            cursor: pointer;
+        }
+
+        .status-badge { 
+            font-size: 12px; 
+            margin-top: 6px; 
+            font-weight: 800; 
+            display: inline-block; 
+            padding: 5px 14px; 
+            border-radius: 12px; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            pointer-events: auto !important;
+            z-index: 10;
+        }
+
+        /* Классы уровней для JS */
+        .lvl-bg-1 { background-color: var(--lvl-1); }
+        .lvl-bg-2 { background-color: var(--lvl-2); }
+        .lvl-bg-3 { background-color: var(--lvl-3); }
+        .lvl-bg-4 { background-color: var(--lvl-4); }
+        .lvl-bg-5 { background-color: var(--lvl-5); color: #000; }
+
+        .preset-avatars {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+
+        .preset-avatars img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        /* ==========================================
+           4. БАЛАНС (АШЕТИКИ)
+           ========================================== */
+        .balance-card {
+            background: var(--accent-gradient);
+            margin: 15px; 
+            padding: 24px;
+            border-radius: 28px; 
+            text-align: center;
+            box-shadow: 0 12px 24px rgba(230, 81, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .balance-label { 
+            font-size: 13px; 
+            letter-spacing: 1.5px; 
+            opacity: 0.85; 
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .balance-main {
+            font-size: 46px; 
+            font-weight: 900;
+            margin: 8px 0 20px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 12px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .gold-book { 
+            color: #FFD700; 
+            filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
+        }
+
+        .balance-controls { 
+            display: flex; 
+            gap: 12px; 
+        }
+
+        .balance-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white; 
+            padding: 14px 10px;
+            font-size: 14px; 
+            font-weight: 700;
+            border-radius: 16px;
+            backdrop-filter: blur(5px);
+            pointer-events: auto !important;
+            z-index: 10;
+        }
+
+        /* ==========================================
+           5. ВИТРИНА ДОСТИЖЕНИЙ (SHOWCASE)
+           ========================================== */
+        .showcase-container {
+            background: var(--bg-header); 
+            margin: 15px; 
+            padding: 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .showcase-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
+        }
+
+        .showcase-slot {
+            aspect-ratio: 1/1;
+            background: rgba(0,0,0,0.2); 
+            border: 2px dashed #3a3a3c;
+            border-radius: 18px; 
+            display: flex;
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            position: relative;
+            transition: all 0.2s ease;
+            pointer-events: auto !important;
+            z-index: 10;
+        }
+
+        .showcase-slot.filled {
+            border: 2px solid var(--accent);
+            background: radial-gradient(circle, rgba(255,149,0,0.08) 0%, transparent 80%);
+            border-style: solid;
+        }
+
+        .showcase-slot img { 
+            width: 75%; 
+            height: 75%; 
+            object-fit: contain; 
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        .showcase-slot:empty::before {
+            content: '+';
+            color: #3a3a3c;
+            font-size: 24px;
+            font-weight: 300;
+        }
+
+        /* ==========================================
+           6. МАГАЗИН И КАРТОЧКИ ТОВАРОВ
+           ========================================== */
+        .sub-page-block {
+            margin: 0 15px 15px; 
+            padding: 18px;
+            background: var(--bg-header); 
+            border-radius: 24px;
+        }
+
+        .section-header { 
+            font-size: 18px; 
+            font-weight: 800; 
+            margin-bottom: 16px; 
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reward-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+        }
+
+        .reward-card {
+            background: var(--bg); 
+            padding: 15px;
+            border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+            display: flex; 
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 180px;
+            pointer-events: auto !important;
+            z-index: 10;
+        }
+
+        .reward-img { 
+            width: 100%; 
+            height: 85px; 
+            object-fit: contain; 
+            margin-bottom: 10px;
+            border-radius: 12px;
+        }
+
+        .reward-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #eee;
+            margin-bottom: 8px;
+        }
+
+        .reward-price { 
+            font-weight: 800; 
+            color: var(--accent); 
+            font-size: 16px;
+        }
+
+        .earn-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .earn-card {
+            display: flex;
+            justify-content: space-between;
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .earn-card p {
+            margin: 0;
+        }
+
+        /* ==========================================
+           7. ЗАДАНИЯ (TASKS)
+           ========================================== */
+        .section-tab {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-header);
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 2;
+            position: relative;
+        }
+
+        .task-card {
+            background: var(--bg); 
+            padding: 16px; 
+            border-radius: 18px; 
+            margin-bottom: 12px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-left: 5px solid var(--accent);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .task-card h4 { 
+            font-size: 15px; 
+            margin: 0 0 5px 0; 
+        }
         
-        .preset-avatars { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 5px; }
-        .preset-avatars img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer; }
+        .task-card p { 
+            font-size: 11px; 
+            color: var(--text-gray);
+            margin: 0;
+        }
 
-        /* ВИТРИНА ДОСТИЖЕНИЙ */
-        .showcase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .showcase-slot { background: var(--bg-header); height: 80px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 24px; color: var(--text-gray); overflow: hidden; border: 1px dashed var(--text-gray); cursor: pointer; }
-        .showcase-slot.filled { border: none; }
-        .showcase-slot img { width: 100%; height: 100%; object-fit: contain; }
+        .task-reward {
+            background: rgba(255,149,0,0.1);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+        }
 
-        /* ГРИДЫ (НАГРАДЫ) */
-        .reward-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .reward-img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; background: #eee; }
-        .reward-card h4 { margin: 0 0 5px 0; font-size: 14px; }
-        .reward-price { color: var(--text-gray); font-size: 14px; font-weight: bold; }
+        .collapsible-content {
+            background: var(--bg-header);
+            border-radius: 0 0 15px 15px;
+            margin-top: -10px;
+            padding: 15px;
+        }
 
-        /* ЗАДАНИЯ И ИИ */
-        .section-tab { display: flex; justify-content: space-between; align-items: center; background: var(--bg-header); padding: 15px; border-radius: 15px; cursor: pointer; font-weight: bold; z-index: 2; position: relative; }
-        .task-card { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(128,128,128,0.2); }
-        .task-card:last-child { border-bottom: none; }
-        .earn-info { display: flex; flex-direction: column; gap: 10px; }
-        .earn-card { display: flex; justify-content: space-between; background: var(--bg); padding: 12px; border-radius: 8px; font-size: 14px; }
-        .earn-card p { margin: 0; }
+        /* ==========================================
+           8. МАРКЕРЫ И ЦВЕТА
+           ========================================== */
+        .marker-item {
+            background: var(--bg); 
+            padding: 14px 16px;
+            border-radius: 18px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .color-circle {
+            width: 42px; 
+            height: 42px; 
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+
+        .marker-info { 
+            flex-grow: 1; 
+        }
         
-        .ai-upload-box { text-align: center; padding: 20px 0; }
-        .upload-area { border: 2px dashed var(--accent); padding: 40px 20px; border-radius: 20px; cursor: pointer; color: var(--accent); font-size: 16px; font-weight: bold; }
-        .upload-area i { font-size: 40px; margin-bottom: 15px; }
-
-        /* МАРКЕРЫ И КОРЗИНА */
-        .marker-item { display: flex; align-items: center; gap: 15px; padding: 12px; border-bottom: 1px solid rgba(128,128,128,0.2); background: var(--bg-header); margin-bottom: 5px; border-radius: 10px; }
-        .color-circle { width: 30px; height: 30px; border-radius: 50%; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
-        .marker-number { font-weight: bold; font-size: 16px; }
-        .marker-name { font-size: 12px; color: var(--text-gray); }
+        .marker-number { 
+            font-weight: 800; 
+            font-size: 16px; 
+        }
         
-        .cart-item { display: flex; gap: 15px; background: var(--bg-header); padding: 15px; border-radius: 15px; margin-bottom: 10px; align-items: center; }
-        .cart-footer { padding: 15px; background: var(--bg-header); border-radius: 15px; margin-top: 20px; }
-        .cart-total { font-size: 18px; font-weight: bold; margin-bottom: 15px; text-align: right; }
+        .marker-name { 
+            font-size: 11px; 
+            color: var(--text-gray); 
+            text-transform: uppercase; 
+        }
 
-        /* МОДАЛЬНЫЕ ОКНА */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 10000; padding: 20px; }
-        .modal-content { background: var(--bg-header); padding: 20px; border-radius: 20px; width: 100%; max-width: 380px; max-height: 90vh; overflow-y: auto; }
-        .btn-circle { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); border: none; color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; cursor: pointer; }
-        
-        .gold-book { color: #FFD700; filter: drop-shadow(0 0 2px rgba(255,215,0,0.5)); }
-        .photo-preview-container img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin: 5px; }
-        input[type="text"] { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--bg); color: var(--text); outline: none; }
+        .brand-section h3 {
+            color: var(--text-gray);
+            font-size: 14px;
+            text-transform: uppercase;
+            margin: 0 0 10px 15px;
+        }
+
+        /* ==========================================
+           9. НИЖНЕЕ МЕНЮ (NAVBAR)
+           ========================================== */
+        .nav {
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%;
+            height: 85px; 
+            background: rgba(28, 28, 30, 0.97);
+            backdrop-filter: blur(20px); 
+            display: flex;
+            border-top: 1px solid rgba(255,255,255,0.08); 
+            z-index: 9999;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .nav-btn {
+            flex: 1; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            color: var(--text-gray);
+            font-size: 10px; 
+            gap: 5px;
+            position: relative;
+            transition: color 0.2s;
+            pointer-events: auto !important;
+            z-index: 10000;
+        }
+
+        .nav-btn i { 
+            font-size: 24px; 
+            transition: transform 0.2s; 
+        }
+
+        .nav-btn.active { 
+            color: var(--accent); 
+        }
+
+        .nav-btn.active i {
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            position: absolute; 
+            top: 12px; 
+            right: 22%;
+            background: var(--status-red); 
+            color: white;
+            font-size: 10px; 
+            padding: 2px 7px; 
+            border-radius: 10px;
+            font-weight: 900;
+            box-shadow: 0 2px 5px rgba(255,59,48,0.4);
+        }
+
+        /* ==========================================
+           10. МОДАЛЬНЫЕ ОКНА
+           ========================================== */
+        .modal-overlay {
+            position: fixed; 
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.88); 
+            z-index: 100000;
+            display: none;
+            align-items: center; 
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--bg-header); 
+            width: 100%; 
+            max-width: 360px;
+            border-radius: 30px; 
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: modalSlide 0.4s cubic-bezier(0.17, 0.89, 0.32, 1.28);
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .blue-action-btn {
+            background: #007aff; 
+            color: white;
+            width: 100%; 
+            padding: 16px;
+            border-radius: 18px; 
+            font-size: 16px; 
+            font-weight: 700;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(0,122,255,0.3);
+        }
+
+        .btn-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* ==========================================
+           11. КОРЗИНА И ОФОРМЛЕНИЕ
+           ========================================== */
+        .cart-footer {
+            position: fixed; 
+            bottom: 85px; 
+            left: 0; 
+            width: 100%;
+            background: var(--bg-header); 
+            padding: 15px 25px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            z-index: 998;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+        }
+
+        .buy-btn { 
+            background: var(--status-green); 
+            color: white; 
+            padding: 14px 28px; 
+            border-radius: 16px; 
+            font-weight: 800; 
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(52,199,89,0.3);
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            background: var(--bg-header);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 10px 15px;
+            align-items: center;
+        }
+
+        .cart-total {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* ==========================================
+           12. ИИ ПАЛИТРА И ЗАГРУЗКА
+           ========================================== */
+        .upload-area {
+            border: 2px dashed #444;
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: rgba(255,255,255,0.02);
+            color: var(--accent);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .upload-area:active {
+            border-color: var(--accent);
+            background: rgba(255,149,0,0.05);
+        }
+
+        .upload-area i {
+            font-size: 40px;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .upload-area p {
+            margin: 0;
+        }
+
+        .photo-preview-container {
+            display: flex; 
+            gap: 12px; 
+            overflow-x: auto; 
+            padding: 5px 0 15px;
+            scrollbar-width: none;
+        }
+
+        .photo-preview-container img {
+            width: 85px; 
+            height: 85px; 
+            object-fit: cover; 
+            border-radius: 14px;
+            border: 2px solid #333;
+            flex-shrink: 0;
+        }
+
+        #adminAiBlock {
+            margin-top: 30px;
+            padding: 15px;
+            background: var(--bg-header);
+            border: 1px dashed var(--status-green);
+            border-radius: 12px;
+        }
+
+        #adminAiBlock h4 {
+            color: var(--status-green);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* ==========================================
+           13. ФОРМЫ И ВВОД
+           ========================================== */
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            font-size: 16px;
+        }
+
+        input[type="file"] {
+            color: var(--text);
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid rgba(128,128,128,0.2);
+        }
+
+        /* ==========================================
+           14. УТИЛИТЫ И КЛИКИ (ФИКСЫ)
+           ========================================== */
+        .hidden { display: none !important; }
+
+        .expandable-block {
+            background: var(--bg-header);
+            border-radius: 16px;
+            padding: 15px;
+            margin: 0 15px 15px;
+        }
+
+        #availableAchievementsList {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        #availableAchievementsList div {
+            background: var(--bg);
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        #availableAchievementsList div:hover {
+            opacity: 0.8;
+        }
+
+        #availableAchievementsList img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
     </style>
 
     <script>
@@ -116,6 +799,7 @@
 </head>
 <body>
 
+<!-- ========== СТРАНИЦА ПРОФИЛЯ ========== -->
 <div id="profile" class="page active">
     
     <div class="profile-header-block">
@@ -137,7 +821,7 @@
     <div id="avatarEditorBlock" class="expandable-block" style="display:none;">
         <p style="margin-top:0; color: var(--text-gray); font-size: 14px;">Выберите аватарку:</p>
         <div class="preset-avatars" id="avatarPresets"></div>
-        <input type="file" id="customAvatarInput" style="display:none;" onchange="handleCustomAvatar(event)">
+        <input type="file" id="customAvatarInput" style="display:none;" accept="image/*" onchange="handleCustomAvatar(event)">
         <button class="blue-action-btn" onclick="document.getElementById('customAvatarInput').click()">
             <i class="fas fa-camera"></i> Загрузить фото
         </button>
@@ -192,12 +876,12 @@
         </div>
     </div>
 
-    <div class="tasks-container" style="margin-bottom: 15px;">
+    <div class="tasks-container" style="margin: 15px;">
         <div class="section-tab" onclick="toggleTasks()">
             <span>Задания на статус</span>
             <i class="fas fa-chevron-down" id="tasksArrow" style="transition: transform 0.3s;"></i>
         </div>
-        <div id="tasksList" class="collapsible-content" style="display:none; padding: 15px; background: var(--bg-header); border-radius: 0 0 15px 15px; margin-top: -10px;"></div>
+        <div id="tasksList" class="collapsible-content" style="display:none;"></div>
         <input type="file" id="taskFileInput" accept="image/*" multiple style="display:none;" onchange="handleTaskFile(event)">
     </div>
 
@@ -212,17 +896,19 @@
     </div>
 </div>
 
+<!-- ========== СТРАНИЦА МАРКЕРЫ ========== -->
 <div id="markers" class="page">
     <div class="header">Маркеры</div>
     <div class="brand-section">
-        <h3 style="color: var(--text-gray); font-size: 14px; text-transform: uppercase;">GUANGNA</h3>
+        <h3>GUANGNA</h3>
         <div id="markersList" class="marker-list-container"></div>
     </div>
 </div>
 
+<!-- ========== СТРАНИЦА ОТВЕТЫ И ТОМА ========== -->
 <div id="answers" class="page">
     <div class="header">Ответы и Тома</div>
-    <div class="reward-grid">
+    <div class="reward-grid" style="margin: 0 15px;">
         <div class="reward-card">
             <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 1" onclick="openBook(1, 50)" style="cursor:pointer;">
             <h4 onclick="openBook(1, 50)" style="cursor:pointer;">Том 1</h4>
@@ -236,26 +922,28 @@
     </div>
 </div>
 
+<!-- ========== СТРАНИЦА ИИ ПАЛИТРА ========== -->
 <div id="aipalette" class="page">
     <div class="header">ИИ Палитра ✨</div>
-    <div class="ai-upload-box">
+    <div class="ai-upload-box" style="padding: 0 15px;">
         <div class="upload-area" onclick="document.getElementById('aiInput').click()">
             <i class="fas fa-camera"></i>
-            <p style="margin:0;">Загрузить фото для определения цвета</p>
+            <p>Загрузить фото для определения цвета</p>
         </div>
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
         
-        <div id="adminAiBlock" style="margin-top: 30px; padding: 15px; background: var(--bg-header); border: 1px dashed var(--status-green); border-radius: 12px; display: none;">
-            <h4 style="color: var(--status-green); margin-bottom: 15px; text-align: center;"><i class="fas fa-user-shield"></i> Обучение ИИ (Админ)</h4>
-            <input type="file" id="adminAiInput" accept="image/*" style="margin-bottom:10px; width:100%;">
-            <input type="text" id="adminAiBrand" placeholder="Бренд" style="margin-bottom:10px;">
-            <input type="text" id="adminAiNumber" placeholder="Номер маркера" style="margin-bottom:15px;">
+        <div id="adminAiBlock" style="display: none;">
+            <h4><i class="fas fa-user-shield"></i> Обучение ИИ (Админ)</h4>
+            <input type="file" id="adminAiInput" accept="image/*">
+            <input type="text" id="adminAiBrand" placeholder="Бренд">
+            <input type="text" id="adminAiNumber" placeholder="Номер маркера">
             <button class="blue-action-btn" style="background: var(--status-green);" onclick="submitAdminAiTrain()">Загрузить данные</button>
         </div>
         <div id="aiResult" class="expandable-block" style="display:none; margin-top: 20px; text-align: left;"></div>
     </div>
 </div>
 
+<!-- ========== СТРАНИЦА КОРЗИНА ========== -->
 <div id="cart" class="page">
     <div class="header">Корзина</div>
     <div id="cartItemsList"></div>
@@ -265,6 +953,9 @@
     </div>
 </div>
 
+<!-- ========== МОДАЛЬНЫЕ ОКНА ========== -->
+
+<!-- Модалка галереи ответов -->
 <div id="answersGalleryModal" class="modal-overlay" style="background: rgba(0,0,0,0.95);" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
     <div class="modal-content" style="background: transparent; box-shadow: none; text-align: center;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white;">
@@ -277,6 +968,7 @@
     </div>
 </div>
 
+<!-- Модалка загрузки фото задания -->
 <div id="taskUploadModal" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
         <h3 style="margin-top:0;">Отправка на проверку</h3>
@@ -288,15 +980,17 @@
     </div>
 </div>
 
+<!-- Модалка выбора достижения -->
 <div id="showcaseModal" class="modal-overlay">
     <div class="modal-content">
         <h3 style="text-align: center; margin-top:0; margin-bottom: 15px;">Выберите достижение</h3>
-        <div id="availableAchievementsList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"></div>
+        <div id="availableAchievementsList"></div>
         <div id="clearSlotBtnContainer"></div>
         <button class="balance-btn" style="background:#444; width: 100%; margin-top:15px;" onclick="document.getElementById('showcaseModal').style.display='none'">Отмена</button>
     </div>
 </div>
 
+<!-- Модалка информации о достижении -->
 <div id="achInfoModal" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
         <h3 id="achInfoTitle" style="margin-top:0;">Название</h3>
@@ -309,6 +1003,7 @@
     </div>
 </div>
 
+<!-- Модалка нового достижения -->
 <div id="achievementAlert" class="modal-overlay" style="align-items: flex-start; padding-top: 50px;">
     <div class="modal-content" style="background: var(--accent-gradient); text-align:center;">
         <h3 id="alertTitle" style="color: white; margin-top:0; margin-bottom: 10px;">🏆 Новое достижение!</h3>
@@ -318,6 +1013,7 @@
     </div>
 </div>
 
+<!-- Модалка выбора статуса -->
 <div id="statusSelectModal" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
         <h3 style="margin-top:0;">Выберите статус</h3>
@@ -326,6 +1022,7 @@
     </div>
 </div>
 
+<!-- Модалка подтверждения аватара -->
 <div id="avatarConfirmModal" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
         <h3 style="margin-top:0;">Установить аватар?</h3>
@@ -337,17 +1034,19 @@
     </div>
 </div>
 
+<!-- Модалка настроек профиля -->
 <div id="nameModal" class="modal-overlay">
     <div class="modal-content">
         <h3 style="margin-top:0; text-align:center;">Настройки профиля</h3>
         <input type="text" id="newNameInput" placeholder="Введите ник...">
         <button class="blue-action-btn" style="margin-top:15px;" onclick="saveNewNickname()">Сохранить ник</button>
-        <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(128,128,128,0.2);">
+        <hr>
         <button class="balance-btn" style="background:var(--status-red); width:100%;" onclick="resetAllData()">Сбросить весь прогресс</button>
         <button class="balance-btn" style="background:#444; margin-top:10px; width: 100%;" onclick="document.getElementById('nameModal').style.display='none'">Отмена</button>
     </div>
 </div>
 
+<!-- ========== НИЖНЯЯ НАВИГАЦИЯ ========== -->
 <nav class="nav">
     <button id="btn-profile" class="nav-btn active" onclick="tab('profile')">
         <i class="fas fa-user"></i><span>Профиль</span>
@@ -376,19 +1075,19 @@
     tg.expand();
     tg.ready();
 
-    document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color || '#1e1e1e');
+    document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color || '#121212');
     document.documentElement.style.setProperty('--text', tg.themeParams.text_color || '#ffffff');
-    document.documentElement.style.setProperty('--accent', tg.themeParams.button_color || '#0a84ff');
+    document.documentElement.style.setProperty('--accent', tg.themeParams.button_color || '#ff9500');
 
     // ==========================================
     // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И ДАННЫЕ
     // ==========================================
     const levelConfig = [
-        { level: 1, name: "Новичок", xpReq: 0, color: "gray" },
-        { level: 2, name: "Любитель", xpReq: 100, color: "blue" },
-        { level: 3, name: "Художник", xpReq: 300, color: "purple" },
-        { level: 4, name: "Мастер", xpReq: 600, color: "red" },
-        { level: 5, name: "Легенда", xpReq: 1000, color: "gold" }
+        { level: 1, name: "Новичок", xpReq: 0, color: "lvl-1" },
+        { level: 2, name: "Любитель", xpReq: 100, color: "lvl-2" },
+        { level: 3, name: "Художник", xpReq: 300, color: "lvl-3" },
+        { level: 4, name: "Мастер", xpReq: 600, color: "lvl-4" },
+        { level: 5, name: "Легенда", xpReq: 1000, color: "lvl-5" }
     ];
 
     const achievementsDB = {
@@ -472,14 +1171,7 @@
         
         const statusBadge = document.getElementById('currentStatus');
         statusBadge.innerText = user.status;
-        statusBadge.className = 'status-badge'; 
-        
-        if (currentLevelObj.color === 'gray') statusBadge.style.background = '#8e8e93';
-        if (currentLevelObj.color === 'blue') statusBadge.style.background = '#0a84ff';
-        if (currentLevelObj.color === 'purple') statusBadge.style.background = '#bf5af2';
-        if (currentLevelObj.color === 'red') statusBadge.style.background = '#ff453a';
-        if (currentLevelObj.color === 'gold') statusBadge.style.background = '#ffd60a';
-        statusBadge.style.color = currentLevelObj.color === 'gold' ? '#000' : '#FFF';
+        statusBadge.className = 'status-badge lvl-bg-' + currentLevelObj.level;
 
         renderShowcase();
         updateCartBadge();
@@ -621,13 +1313,9 @@
                 if (!ach) return;
                 
                 const div = document.createElement('div');
-                div.style.background = 'var(--bg)';
-                div.style.padding = '10px';
-                div.style.borderRadius = '12px';
-                div.style.cursor = 'pointer';
                 if (user.showcase.includes(achId)) div.style.opacity = '0.4';
                 
-                div.innerHTML = `<img src="${ach.img}" style="width: 50px; height: 50px; object-fit: contain;">`;
+                div.innerHTML = `<img src="${ach.img}">`;
                 div.onclick = () => selectAchievementForSlot(achId);
                 list.appendChild(div);
             });
@@ -714,11 +1402,11 @@
             else if (status === 'completed') actionHtml = `<span style="color:var(--status-green); font-size:12px;"><i class="fas fa-check-circle"></i> Готово</span>`;
             
             div.innerHTML = `
-                <div style="flex:1;">
-                    <h4 style="margin:0 0 5px 0; font-size:14px;">${task.title}</h4>
-                    <p style="margin:0; font-size:11px; color:var(--text-gray);">Награда: ${task.reward} 📖 | ${task.xp} XP</p>
+                <div class="task-info">
+                    <h4>${task.title}</h4>
+                    <p>Награда: ${task.reward} 📖 | ${task.xp} XP</p>
                 </div>
-                <div>${actionHtml}</div>
+                <div class="task-reward">${actionHtml}</div>
             `;
             list.appendChild(div);
         });
@@ -756,7 +1444,7 @@
         if (tempTaskPhotos.length > 0 && activeTaskId) {
             user.tasksProgress[activeTaskId] = 'pending';
             saveData();
-            setTimeout(() => adminApproveTask(activeTaskId), 3000); // Симуляция админа
+            setTimeout(() => adminApproveTask(activeTaskId), 3000);
             closeTaskUploadModal();
             renderTasks();
             tg.showAlert("Фото отправлены на проверку администратору!");
@@ -785,21 +1473,15 @@
             const isActive = user.status === lvl.name;
             const div = document.createElement('div');
             div.style.padding = '12px'; div.style.margin = '8px 0'; div.style.borderRadius = '10px';
-            div.style.background = isActive ? 'rgba(10, 132, 255, 0.2)' : 'var(--bg)';
+            div.style.background = isActive ? 'rgba(255,149,0,0.2)' : 'var(--bg)';
             div.style.border = isActive ? '1px solid var(--accent)' : 'none';
             div.style.display = 'flex'; div.style.justifyContent = 'space-between'; div.style.alignItems = 'center';
             
-            let colorHex = '#8e8e93';
-            if (lvl.color === 'blue') colorHex = '#0a84ff';
-            if (lvl.color === 'purple') colorHex = '#bf5af2';
-            if (lvl.color === 'red') colorHex = '#ff453a';
-            if (lvl.color === 'gold') colorHex = '#ffd60a';
-
             let actionHtml = isActive ? `<span style="color:var(--status-green);"><i class="fas fa-check"></i> Выбран</span>` :
                              isUnlocked ? `<button class="balance-btn" style="padding:6px 12px;" onclick="selectStatus('${lvl.name}')">Выбрать</button>` :
                              `<span style="color:var(--text-gray); font-size:12px;"><i class="fas fa-lock"></i> С ${lvl.xpReq} XP</span>`;
             
-            div.innerHTML = `<div style="display:flex; align-items:center; gap:10px;"><div style="width:15px; height:15px; border-radius:50%; background:${colorHex};"></div><span style="font-weight:bold; color: ${isUnlocked ? 'white' : 'gray'}">${lvl.name}</span></div><div>${actionHtml}</div>`;
+            div.innerHTML = `<div><span style="font-weight:bold; color: ${isUnlocked ? 'white' : 'gray'}">${lvl.name}</span></div><div>${actionHtml}</div>`;
             list.appendChild(div);
         });
         document.getElementById('statusSelectModal').style.display = 'flex';
@@ -878,7 +1560,7 @@
         }
     }
 
-    // Проверка админа (с подстраховкой)
+    // Проверка админа
     if (user && user.name && (user.name.toLowerCase() === 'admin' || user.name.toLowerCase() === 'админ')) {
         document.getElementById('adminAiBlock').style.display = 'block';
     }
@@ -914,7 +1596,7 @@
         const list = document.getElementById('cartItemsList');
         list.innerHTML = ''; let totalSum = 0;
         if (Object.keys(cart).length === 0) {
-            list.innerHTML = '<p style="text-align:center; color:var(--text-gray); margin-top:50px;">Корзина пуста</p>';
+            list.innerHTML = '<p style="text-align:center; color:var(--text-gray); margin:50px 15px;">Корзина пуста</p>';
             document.getElementById('cartTotalSum').innerText = '0'; return;
         }
         for (let key in cart) {
@@ -940,9 +1622,14 @@
         });
     }
 
-    // Инициализация
+    // ==========================================
+    // ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ
+    // ==========================================
     window.onload = () => {
-        updateProfileUI(); renderMarkers(); renderCart();
+        updateProfileUI(); 
+        renderMarkers(); 
+        renderCart();
+        
         window.onclick = function(event) {
             document.querySelectorAll('.modal-overlay').forEach(modal => {
                 if (event.target === modal) modal.style.display = "none";

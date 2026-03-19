@@ -42,6 +42,7 @@ const LEVEL_COLORS = {
     5: '#ffd700'  // Золотой/Желтый
 };
 
+
 async function init() {
     console.log("Запуск системы...");
     const loader = document.getElementById('loading-screen');
@@ -54,45 +55,38 @@ async function init() {
             State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
         }
 
-        // Загружаем данные
+        // Загружаем данные пользователя (это локально и быстро)
         if (window.api && typeof window.api.getUser === 'function') {
-    State.user = await window.api.getUser(State.userId);
-}
-
-if (!State.user) {
-    console.error("user не загрузился, создаём дефолт");
-
-    State.user = {
-        avatar: '',
-        name: 'Без имени',
-        balance: 0,
-        status: 'Без статуса',
-        showcase: [null, null, null],
-        unlockedAchievements: [],
-        unlockedStatuses: [],
-        taskProgress: {},
-    };
-}
-        if (typeof window.loadMarkersFromCSV === 'function') {
-            await window.loadMarkersFromCSV();
+            State.user = await window.api.getUser(State.userId);
         }
 
-        // Загружаем органайзеры, если функция есть в ui.js
-        if (typeof loadOrganizers === 'function') {
-            await loadOrganizers();
+        if (!State.user) {
+            console.warn("user не загрузился, создаём дефолт");
+            State.user = {
+                avatar: '', name: 'Без имени', balance: 0, status: 'Без статуса',
+                showcase: [null, null, null], unlockedAchievements: [], unlockedStatuses: [], taskProgress: {}
+            };
         }
 
-        // Отрисовываем интерфейс
+        // 1. СНАЧАЛА отрисовываем интерфейс (он мгновенно покажется пользователю)
         if (typeof renderProfile === 'function') renderProfile();
         if (typeof renderTasks === 'function') renderTasks();
         if (typeof updateCartBadge === 'function') updateCartBadge();
 
+        // 2. ЗАТЕМ запускаем запросы к Google Таблицам в фоне (УБРАЛИ await!)
+        if (typeof window.loadMarkersFromCSV === 'function') {
+            window.loadMarkersFromCSV(); 
+        }
+        if (typeof loadOrganizers === 'function') {
+            loadOrganizers(); 
+        }
+
     } catch (error) {
         console.error("Ошибка при инициализации:", error);
-        const loadeText = document.getElementById('loading-text');
-        if (loadeText) loadeText.innerText = "Ошибка загрузки данных.";
+        const loaderText = document.getElementById('loading-text');
+        if (loaderText) loaderText.innerText = "Ошибка загрузки: " + error.message;
     } finally {
-        // Убираем экран загрузки
+        // Теперь лоадер скроется гарантированно и без задержек
         setTimeout(() => {
             if (loader) {
                 loader.style.transition = "opacity 0.5s ease";
@@ -104,6 +98,7 @@ if (!State.user) {
         }, 500);
     }
 }
+
 
 // НАВИГАЦИЯ
 function tab(tabId) {

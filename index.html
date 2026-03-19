@@ -86,7 +86,7 @@
         }
 
         /* ==========================================
-           3. ПРОФИЛЬ И АВАТАР - ОРАНЖЕВЫЕ РАМКИ
+           3. ПРОФИЛЬ И АВАТАР
            ========================================== */
         .profile-header-block {
             background: var(--bg-header);
@@ -400,10 +400,6 @@
             border-top: 1px solid rgba(255,255,255,0.05);
         }
 
-        .tasks-content.visible {
-            display: block;
-        }
-
         .tasks-category {
             margin-bottom: 25px;
         }
@@ -714,7 +710,7 @@
         }
 
         /* ==========================================
-           11. МАРКЕРЫ
+           11. МАРКЕРЫ - ОБНОВЛЕНО
            ========================================== */
         .markers-section {
             padding: 0 15px;
@@ -722,12 +718,12 @@
 
         .marker-item {
             background: var(--bg-header);
-            padding: 14px 16px;
+            padding: 16px;
             border-radius: 18px;
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .marker-item.hidden {
@@ -735,11 +731,16 @@
         }
 
         .color-circle {
-            width: 42px;
-            height: 42px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.1);
             flex-shrink: 0;
+            background: var(--bg); /* Цвет фона блока по умолчанию */
+        }
+
+        .color-circle.trained {
+            border: 2px solid var(--accent);
         }
 
         .marker-info {
@@ -748,12 +749,53 @@
 
         .marker-number {
             font-weight: 800;
-            font-size: 16px;
+            font-size: 18px;
+            margin-bottom: 4px;
         }
 
-        .marker-name {
-            font-size: 12px;
-            color: var(--text-gray);
+        .marker-stock {
+            font-size: 14px;
+            color: var(--status-green);
+            font-weight: 600;
+        }
+
+        .marker-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg);
+            padding: 8px 12px;
+            border-radius: 30px;
+        }
+
+        .marker-controls button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .marker-controls button:active {
+            transform: scale(0.9);
+        }
+
+        .marker-controls span {
+            font-size: 16px;
+            font-weight: 700;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .marker-controls button.minus {
+            background: #444;
         }
 
         /* ==========================================
@@ -791,7 +833,40 @@
             color: var(--text);
         }
 
-        .book-card button {
+        .book-card .book-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .book-card .book-controls button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .book-card .book-controls button.minus {
+            background: #444;
+        }
+
+        .book-card .book-controls span {
+            font-size: 16px;
+            font-weight: 700;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .book-card .add-to-cart-btn {
             width: 100%;
             background: var(--accent);
             color: white;
@@ -801,13 +876,15 @@
             font-weight: 600;
             font-size: 14px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         /* ==========================================
-           13. КОРЗИНА
+           13. КОРЗИНА - ОБНОВЛЕНО
            ========================================== */
         .cart-items {
             padding: 0 15px;
+            margin-bottom: 100px;
         }
 
         .cart-item {
@@ -835,29 +912,60 @@
         .cart-item-info h4 {
             margin: 0 0 4px 0;
             color: var(--text);
+            font-size: 16px;
         }
 
         .cart-item-price {
             color: var(--text-gray);
             font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 8px;
         }
 
         .cart-item-controls {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             background: var(--bg);
-            padding: 5px 10px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 30px;
         }
 
         .cart-item-controls button {
-            background: none;
-            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--accent);
             color: white;
-            font-size: 18px;
-            padding: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            border: none;
+        }
+
+        .cart-item-controls button.minus {
+            background: #444;
+        }
+
+        .cart-item-controls span {
+            font-size: 15px;
+            font-weight: 700;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .cart-item-total {
+            font-weight: 700;
+            color: var(--accent);
         }
 
         .cart-footer {
@@ -871,6 +979,7 @@
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid rgba(255,255,255,0.05);
+            z-index: 1000;
         }
 
         .cart-total {
@@ -881,6 +990,7 @@
 
         .cart-total span {
             color: var(--accent);
+            font-size: 20px;
         }
 
         .checkout-btn {
@@ -894,7 +1004,7 @@
         }
 
         /* ==========================================
-           14. ИИ ПАЛИТРА - ОБНОВЛЕНО
+           14. ИИ ПАЛИТРА
            ========================================== */
         .ai-section {
             padding: 0 15px;
@@ -1188,6 +1298,9 @@
         document.documentElement.style.setProperty('--text', tg.themeParams.text_color || '#ffffff');
         document.documentElement.style.setProperty('--accent', '#ff9500');
 
+        // ID администратора
+        const ADMIN_ID = 496779756;
+
         // Данные
         const levelConfig = [
             { level: 1, name: "Новичок", xpReq: 0, color: "lvl-1" },
@@ -1250,12 +1363,27 @@
             { id: 'time_4', title: 'Градиент-мастер', description: 'Сделай градиент маркерами', reward: 8 }
         ];
 
+        // База данных обученных цветов (имитация сервера)
+        let trainedColors = JSON.parse(localStorage.getItem('trained_colors')) || {};
+
         // База данных маркеров (будет загружаться из Google Sheets)
         let markersDB = [];
 
         const products = {
-            'tome1': { name: 'Том 1', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png' },
-            'tome2': { name: 'Том 2', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png' }
+            'tome1': { 
+                id: 'tome1',
+                name: 'Том 1', 
+                price: 1500, 
+                img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png',
+                type: 'book'
+            },
+            'tome2': { 
+                id: 'tome2',
+                name: 'Том 2', 
+                price: 1500, 
+                img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png',
+                type: 'book'
+            }
         };
 
         let user = JSON.parse(localStorage.getItem('coloring_user')) || {
@@ -1272,17 +1400,28 @@
             timeTasksProgress: {},
             timeTasksReset: Date.now(),
             aiUsageCount: 0,
-            isAdmin: false // Будет установлено при загрузке
+            isAdmin: false
         };
 
+        // Корзина теперь хранит и маркеры, и книги
         let cart = JSON.parse(localStorage.getItem('coloring_cart')) || {};
+
+        // ========== ПРОВЕРКА АДМИНА ПО ID ==========
+        function checkAdmin() {
+            const userId = tg.initDataUnsafe?.user?.id;
+            user.isAdmin = (userId === ADMIN_ID);
+            if (user.isAdmin) {
+                document.getElementById('adminAiBlock').style.display = 'block';
+            }
+            console.log('User ID:', userId, 'Is Admin:', user.isAdmin);
+        }
 
         // ========== ЗАГРУЗКА МАРКЕРОВ ИЗ GOOGLE SHEETS ==========
         async function loadMarkers() {
             console.log('Загрузка маркеров из Google Sheets...');
             const markersContainer = document.getElementById('markersList');
             if (markersContainer) {
-                markersContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Загрузка маркеров...</div>';
+                markersContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка маркеров...</div>';
             }
 
             const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
@@ -1298,15 +1437,15 @@
                         let num = row[i];
                         if (num && !isNaN(num) && parseInt(num) > 10) {
                             let stock = parseInt(row[i+1] || row[i+2] || "0");
-                            // Генерируем случайный цвет для демонстрации
-                            const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#008000', '#800000'];
-                            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                            
+                            // Проверяем, есть ли обученный цвет для этого маркера
+                            const trainedColor = trainedColors[num];
                             
                             temp.push({ 
                                 num: num, 
-                                color: randomColor,
-                                name: `Маркер №${num}`,
-                                stock: stock 
+                                color: trainedColor ? trainedColor : null, // null = бесцветный
+                                stock: stock,
+                                trained: !!trainedColor
                             });
                             i++;
                         }
@@ -1317,12 +1456,6 @@
                 console.log('Загружено маркеров:', markersDB.length);
                 renderMarkers();
                 
-                // Проверка на админа
-                if (user.name.toLowerCase() === 'admin' || user.name.toLowerCase() === 'админ') {
-                    user.isAdmin = true;
-                    document.getElementById('adminAiBlock').style.display = 'block';
-                }
-                
             } catch (error) {
                 console.error('Ошибка загрузки маркеров:', error);
                 if (markersContainer) {
@@ -1331,11 +1464,11 @@
                 
                 // Демо-данные на случай ошибки
                 markersDB = [
-                    { num: '101', color: '#FF0000', name: 'Красный', stock: 5 },
-                    { num: '102', color: '#00FF00', name: 'Зеленый', stock: 3 },
-                    { num: '103', color: '#0000FF', name: 'Синий', stock: 7 },
-                    { num: '104', color: '#FFFF00', name: 'Желтый', stock: 2 },
-                    { num: '105', color: '#FF00FF', name: 'Розовый', stock: 4 }
+                    { num: '101', color: '#FF0000', stock: 5, trained: true },
+                    { num: '102', color: '#00FF00', stock: 3, trained: true },
+                    { num: '103', color: '#0000FF', stock: 7, trained: true },
+                    { num: '104', color: null, stock: 2, trained: false },
+                    { num: '105', color: null, stock: 4, trained: false }
                 ];
                 renderMarkers();
             }
@@ -1357,17 +1490,65 @@
                 const div = document.createElement('div');
                 div.className = 'marker-item';
                 div.setAttribute('data-num', m.num);
-                div.setAttribute('data-name', m.name.toLowerCase());
+                
+                // Определяем количество в корзине
+                const cartKey = `marker_${m.num}`;
+                const cartCount = cart[cartKey] || 0;
+                
+                // Цвет кружка: обученный цвет или бесцветный (фон блока)
+                const circleStyle = m.trained && m.color 
+                    ? `background-color: ${m.color};` 
+                    : 'background-color: var(--bg);';
+                
                 div.innerHTML = `
-                    <div class="color-circle" style="background-color: ${m.color};"></div>
+                    <div class="color-circle ${m.trained ? 'trained' : ''}" style="${circleStyle}"></div>
                     <div class="marker-info">
                         <div class="marker-number">№${m.num}</div>
-                        <div class="marker-name">${m.name}</div>
-                        <div style="font-size: 11px; color: var(--status-green);">В наличии: ${m.stock}</div>
+                        <div class="marker-stock">В наличии: ${m.stock}</div>
+                    </div>
+                    <div class="marker-controls">
+                        <button class="minus" onclick="updateMarkerCart('${m.num}', -1)">−</button>
+                        <span id="marker-count-${m.num}">${cartCount}</span>
+                        <button onclick="updateMarkerCart('${m.num}', 1)">+</button>
                     </div>
                 `;
                 container.appendChild(div);
             });
+        }
+
+        // ========== ОБНОВЛЕНИЕ КОРЗИНЫ С МАРКЕРАМИ ==========
+        function updateMarkerCart(num, delta) {
+            const cartKey = `marker_${num}`;
+            const currentCount = cart[cartKey] || 0;
+            const newCount = currentCount + delta;
+            
+            // Находим маркер в базе
+            const marker = markersDB.find(m => m.num === num);
+            if (!marker) return;
+            
+            // Проверяем наличие на складе
+            if (newCount > marker.stock) {
+                tg.showAlert(`Максимум доступно: ${marker.stock} шт.`);
+                return;
+            }
+            
+            if (newCount < 0) return;
+            
+            if (newCount === 0) {
+                delete cart[cartKey];
+            } else {
+                cart[cartKey] = newCount;
+            }
+            
+            // Обновляем отображение
+            const countSpan = document.getElementById(`marker-count-${num}`);
+            if (countSpan) {
+                countSpan.innerText = newCount;
+            }
+            
+            saveData();
+            renderCart();
+            updateCartBadge();
         }
 
         // ========== ПОИСК ПО МАРКЕРАМ ==========
@@ -1378,8 +1559,7 @@
             
             items.forEach(item => {
                 const num = item.getAttribute('data-num');
-                const name = item.getAttribute('data-name');
-                if (num.includes(query) || name.includes(query)) {
+                if (num.includes(query)) {
                     item.classList.remove('hidden');
                     visibleCount++;
                 } else {
@@ -1424,25 +1604,24 @@
             reader.onload = async function(e) {
                 const imageData = e.target.result;
                 
-                // Показываем загрузку
                 const statusDiv = document.getElementById('aiTrainStatus');
                 statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Создание вариаций изображения...';
                 
-                // Симуляция создания 25 вариаций с разной освещенностью
+                // Симуляция создания 25 вариаций
                 setTimeout(() => {
-                    // Здесь должен быть код отправки на сервер
-                    // В демо-режиме просто показываем сообщение
+                    // Извлекаем средний цвет из изображения (в реальности здесь будет анализ)
+                    // Для демо генерируем случайный цвет
+                    const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080'];
+                    const learnedColor = colors[Math.floor(Math.random() * colors.length)];
                     
-                    const variations = [];
-                    for (let i = 0; i < 25; i++) {
-                        variations.push({
-                            brightness: 0.5 + Math.random() * 0.5,
-                            contrast: 0.5 + Math.random() * 0.5,
-                            data: imageData.substring(0, 50) + '...' // В реальности - измененное изображение
-                        });
-                    }
+                    // Сохраняем обученный цвет
+                    trainedColors[number] = learnedColor;
+                    localStorage.setItem('trained_colors', JSON.stringify(trainedColors));
                     
-                    statusDiv.innerHTML = `✅ Обучение завершено! Создано 25 вариаций для маркера ${brand} №${number}`;
+                    statusDiv.innerHTML = `✅ Обучение завершено! Цвет маркера ${brand} №${number} сохранен.`;
+                    
+                    // Обновляем отображение маркеров
+                    loadMarkers();
                     
                     // Очищаем форму
                     fileInput.value = '';
@@ -1465,23 +1644,28 @@
                 resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Анализ изображения...</div>';
                 
                 setTimeout(() => {
-                    // Имитация распознавания
-                    const randomMarkers = markersDB.length > 0 
-                        ? markersDB.sort(() => 0.5 - Math.random()).slice(0, 3)
+                    // Имитация распознавания с использованием обученных цветов
+                    const trainedEntries = Object.entries(trainedColors);
+                    const recognizedMarkers = trainedEntries.length > 0 
+                        ? trainedEntries.slice(0, 3).map(([num, color]) => ({
+                            num, color, name: `Маркер №${num}`
+                        }))
                         : [
-                            { num: '101', color: '#FF0000', name: 'Красный' },
-                            { num: '102', color: '#00FF00', name: 'Зеленый' },
-                            { num: '103', color: '#0000FF', name: 'Синий' }
+                            { num: '101', color: '#FF0000', name: 'Маркер №101' },
+                            { num: '102', color: '#00FF00', name: 'Маркер №102' },
+                            { num: '103', color: '#0000FF', name: 'Маркер №103' }
                         ];
                     
                     let html = '<h4 style="margin-bottom:15px;">Распознанные маркеры:</h4>';
-                    randomMarkers.forEach(m => {
+                    recognizedMarkers.forEach(m => {
                         html += `
                             <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:var(--bg); padding:10px; border-radius:8px;">
                                 <div style="width:30px; height:30px; border-radius:5px; background:${m.color};"></div>
                                 <div>
                                     <div style="font-weight:bold;">№${m.num}</div>
-                                    <div style="font-size:12px; color:var(--text-gray);">${m.name}</div>
+                                    <button class="photo-upload-btn" style="padding:5px 10px; font-size:11px;" onclick="addToCartFromAI('${m.num}')">
+                                        <i class="fas fa-cart-plus"></i> Добавить в корзину
+                                    </button>
                                 </div>
                             </div>
                         `;
@@ -1493,6 +1677,36 @@
                     saveData();
                 }, 2000);
             }
+        }
+
+        // ========== ДОБАВЛЕНИЕ В КОРЗИНУ ИЗ РЕЗУЛЬТАТОВ ИИ ==========
+        function addToCartFromAI(num) {
+            updateMarkerCart(num, 1);
+            tg.showAlert(`Маркер №${num} добавлен в корзину`);
+        }
+
+        // ========== ОБНОВЛЕНИЕ КОРЗИНЫ С ТОМАМИ ==========
+        function updateBookCart(bookId, delta) {
+            const currentCount = cart[bookId] || 0;
+            const newCount = currentCount + delta;
+            
+            if (newCount < 0) return;
+            
+            if (newCount === 0) {
+                delete cart[bookId];
+            } else {
+                cart[bookId] = newCount;
+            }
+            
+            // Обновляем отображение
+            const countSpan = document.getElementById(`book-count-${bookId}`);
+            if (countSpan) {
+                countSpan.innerText = newCount;
+            }
+            
+            saveData();
+            renderCart();
+            updateCartBadge();
         }
 
         function saveData() {
@@ -1885,15 +2099,6 @@
                 saveData();
                 document.getElementById('nameModal').style.display = 'none';
                 tg.showAlert('Имя изменено!');
-                
-                // Проверка на админа
-                if (newName.toLowerCase() === 'admin' || newName.toLowerCase() === 'админ') {
-                    user.isAdmin = true;
-                    document.getElementById('adminAiBlock').style.display = 'block';
-                } else {
-                    user.isAdmin = false;
-                    document.getElementById('adminAiBlock').style.display = 'none';
-                }
             } else {
                 tg.showAlert("Имя должно быть от 1 до 20 символов");
             }
@@ -1988,13 +2193,77 @@
         }
 
         // ========== КОРЗИНА ==========
-        function changeCart(itemId, delta) {
-            if (!cart[itemId]) cart[itemId] = 0;
-            cart[itemId] += delta;
-            if (cart[itemId] <= 0) delete cart[itemId];
-            saveData(); 
-            renderCart(); 
-            updateCartBadge();
+        function renderCart() {
+            const list = document.getElementById('cartItemsList');
+            if (!list) return;
+            list.innerHTML = ''; 
+            let totalSum = 0;
+            
+            if (Object.keys(cart).length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding: 40px 0;">Корзина пуста</p>';
+                document.getElementById('cartTotalSum').innerText = '0'; 
+                return;
+            }
+            
+            for (let key in cart) {
+                const count = cart[key];
+                
+                if (key.startsWith('marker_')) {
+                    // Это маркер
+                    const num = key.replace('marker_', '');
+                    const marker = markersDB.find(m => m.num === num);
+                    if (!marker) continue;
+                    
+                    totalSum += 0; // Маркеры пока бесплатные, но можно добавить цену
+                    
+                    const div = document.createElement('div');
+                    div.className = 'cart-item';
+                    div.innerHTML = `
+                        <div class="color-circle" style="background-color: ${marker.color || 'var(--bg)'}; width: 50px; height: 50px;"></div>
+                        <div class="cart-item-info">
+                            <h4>Маркер №${num}</h4>
+                            <div class="cart-item-price">Цена: 0 ₽</div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-controls">
+                                    <button class="minus" onclick="updateMarkerCart('${num}', -1)">−</button>
+                                    <span>${count}</span>
+                                    <button onclick="updateMarkerCart('${num}', 1)">+</button>
+                                </div>
+                                <div class="cart-item-total">${count} шт</div>
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                    
+                } else {
+                    // Это книга
+                    const item = products[key];
+                    if (!item) continue;
+                    
+                    totalSum += item.price * count;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'cart-item';
+                    div.innerHTML = `
+                        <img src="${item.img}" alt="${item.name}">
+                        <div class="cart-item-info">
+                            <h4>${item.name}</h4>
+                            <div class="cart-item-price">${item.price} ₽</div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-controls">
+                                    <button class="minus" onclick="updateBookCart('${key}', -1)">−</button>
+                                    <span>${count}</span>
+                                    <button onclick="updateBookCart('${key}', 1)">+</button>
+                                </div>
+                                <div class="cart-item-total">${item.price * count} ₽</div>
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                }
+            }
+            
+            document.getElementById('cartTotalSum').innerText = totalSum;
         }
 
         function updateCartBadge() {
@@ -2009,51 +2278,34 @@
             }
         }
 
-        function renderCart() {
-            const list = document.getElementById('cartItemsList');
-            if (!list) return;
-            list.innerHTML = ''; 
-            let totalSum = 0;
-            
-            if (Object.keys(cart).length === 0) {
-                list.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding: 40px 0;">Корзина пуста</p>';
-                document.getElementById('cartTotalSum').innerText = '0'; 
-                return;
-            }
-            
-            for (let key in cart) {
-                const item = products[key]; 
-                const count = cart[key];
-                if (!item) continue;
-                totalSum += item.price * count;
-                
-                const div = document.createElement('div');
-                div.className = 'cart-item';
-                div.innerHTML = `
-                    <img src="${item.img}" alt="${item.name}">
-                    <div class="cart-item-info">
-                        <h4>${item.name}</h4>
-                        <div class="cart-item-price">${item.price} ₽</div>
-                    </div>
-                    <div class="cart-item-controls">
-                        <button onclick="changeCart('${key}', -1)">-</button>
-                        <span>${count}</span>
-                        <button onclick="changeCart('${key}', 1)">+</button>
-                    </div>
-                `;
-                list.appendChild(div);
-            }
-            document.getElementById('cartTotalSum').innerText = totalSum;
-        }
-
         function checkout() {
             if (Object.keys(cart).length === 0) { 
                 tg.showAlert("Ваша корзина пуста!"); 
                 return; 
             }
-            tg.showConfirm("Оформить заказ и перейти к оплате?", function(confirm) {
+            
+            // Подсчет итогов
+            let booksTotal = 0;
+            let markersCount = 0;
+            
+            for (let key in cart) {
+                if (key.startsWith('marker_')) {
+                    markersCount += cart[key];
+                } else {
+                    booksTotal += products[key]?.price * cart[key] || 0;
+                }
+            }
+            
+            const message = `В корзине:\n- Книги: ${booksTotal} ₽\n- Маркеры: ${markersCount} шт\n\nОформить заказ?`;
+            
+            tg.showConfirm(message, function(confirm) {
                 if (confirm) {
-                    tg.sendData(JSON.stringify({action: 'checkout', cart: cart}));
+                    tg.sendData(JSON.stringify({
+                        action: 'checkout', 
+                        cart: cart,
+                        total: booksTotal,
+                        markers: markersCount
+                    }));
                     cart = {}; 
                     saveData(); 
                     renderCart(); 
@@ -2070,6 +2322,7 @@
                 if (confirm) {
                     localStorage.removeItem('coloring_user');
                     localStorage.removeItem('coloring_cart');
+                    localStorage.removeItem('trained_colors');
                     window.location.reload();
                 }
             });
@@ -2078,9 +2331,23 @@
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         window.onload = () => {
             console.log('Страница загружена');
+            checkAdmin(); // Проверяем админа по ID
             updateUI();
-            loadMarkers(); // Загружаем маркеры при старте
+            loadMarkers();
             renderCart();
+            
+            // Обновляем отображение книг с счетчиками
+            const bookCards = document.querySelectorAll('.book-card');
+            bookCards.forEach(card => {
+                const bookId = card.querySelector('button')?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                if (bookId) {
+                    const countSpan = document.createElement('span');
+                    countSpan.id = `book-count-${bookId}`;
+                    countSpan.className = 'cart-item-controls span';
+                    countSpan.innerText = cart[bookId] || 0;
+                    // Здесь нужно добавить логику обновления счетчиков книг
+                }
+            });
             
             window.onclick = function(event) {
                 document.querySelectorAll('.modal-overlay').forEach(modal => {
@@ -2268,12 +2535,22 @@
             <div class="book-card">
                 <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" alt="Том 1">
                 <h4>Том 1</h4>
-                <button onclick="changeCart('tome1', 1)">В корзину (1500 ₽)</button>
+                <div class="book-controls">
+                    <button class="minus" onclick="updateBookCart('tome1', -1)">−</button>
+                    <span id="book-count-tome1">0</span>
+                    <button onclick="updateBookCart('tome1', 1)">+</button>
+                </div>
+                <button class="add-to-cart-btn" onclick="updateBookCart('tome1', 1)">В корзину</button>
             </div>
             <div class="book-card">
                 <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" alt="Том 2">
                 <h4>Том 2</h4>
-                <button onclick="changeCart('tome2', 1)">В корзину (1500 ₽)</button>
+                <div class="book-controls">
+                    <button class="minus" onclick="updateBookCart('tome2', -1)">−</button>
+                    <span id="book-count-tome2">0</span>
+                    <button onclick="updateBookCart('tome2', 1)">+</button>
+                </div>
+                <button class="add-to-cart-btn" onclick="updateBookCart('tome2', 1)">В корзину</button>
             </div>
         </div>
     </div>
@@ -2289,9 +2566,9 @@
         </div>
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
         
-        <!-- Админ-панель для обучения ИИ -->
+        <!-- Админ-панель для обучения ИИ (видна только админу с ID 496779756) -->
         <div id="adminAiBlock" class="admin-panel" style="display:none;">
-            <h4><i class="fas fa-robot"></i> Обучение ИИ</h4>
+            <h4><i class="fas fa-robot"></i> Обучение ИИ (Админ)</h4>
             <div class="form-group">
                 <label>Изображение маркера</label>
                 <input type="file" id="aiTrainFile" accept="image/*">

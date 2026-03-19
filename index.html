@@ -1,523 +1,282 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Coloring App</title>
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --bg: var(--tg-theme-bg-color, #ffffff);
-            --text: var(--tg-theme-text-color, #000000);
-            --accent: var(--tg-theme-button-color, #007aff);
-            --accent-text: var(--tg-theme-button-text-color, #ffffff);
-            --secondary: var(--tg-theme-secondary-bg-color, #f2f2f7);
-            --gray: #8e8e93;
-            --card-bg: var(--tg-theme-secondary-bg-color, #f1f1f1);
-            --gold: #f1c40f; 
-        }
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script>
+        // Глобальный перехват ошибок для отладки внутри Telegram
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error("Глобальная ошибка:", message, "Линия:", lineno);
+            return false;
+        };
 
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 100px; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-        .header { padding: 20px 15px; font-size: 24px; font-weight: 800; }
-        .page { display: none; padding: 0 15px; }
-        .page.active { display: block; }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: var(--card-bg); border-radius: 18px; overflow: hidden; border: 0.5px solid rgba(128,128,128,0.2); display: flex; flex-direction: column; }
-        .card img { width: 100%; height: 180px; object-fit: cover; cursor: pointer; background: #eee; }
-        .card-label { padding: 10px; font-weight: 600; font-size: 14px; text-align: center; flex-grow: 1; }
-        
-        .buy-btn { background: var(--accent); color: var(--accent-text); border: none; padding: 12px; font-weight: bold; cursor: pointer; width: 100%; transition: opacity 0.2s; }
-        .buy-btn:active { opacity: 0.7; }
-        
-        .btn-qty { background: var(--accent); color: var(--accent-text); border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: bold; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .btn-qty:disabled { opacity: 0.2; }
-        
-        .btn-qty-sm { background: var(--accent); color: var(--accent-text); border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .btn-qty-sm:disabled { opacity: 0.2; }
-
-        .row-item { background: var(--card-bg); padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border: 0.5px solid rgba(128,128,128,0.1); }
-        
-        .item-info { flex: 1; padding-right: 10px; }
-        .item-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        .qty-num { font-weight: bold; min-width: 24px; text-align: center; font-size: 16px; }
-        .marker-qty { font-weight: bold; font-size: 14px; min-width: 18px; text-align: center; color: var(--accent); }
-
-        .marker-num { font-weight: 800; font-size: 18px; color: var(--text); }
-        .stock-badge { font-size: 13px; font-weight: bold; margin-top: 4px; display: block; }
-        .category-title { margin: 20px 0 10px; font-size: 14px; color: var(--gray); text-transform: uppercase; font-weight: bold; }
-
-        .nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: var(--bg); display: flex; border-top: 0.5px solid rgba(128,128,128,0.3); z-index: 999; }
-        .nav-btn { position: relative; flex: 1; border: none; background: none; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: var(--gray); }
-        .nav-btn.active { color: var(--accent); }
-        .nav-icon { font-size: 22px; margin-bottom: 4px; }
-        
-        .badge { position: absolute; top: 5px; left: 55%; background: #ff3b30; color: white; border-radius: 10px; padding: 2px 7px; font-size: 11px; font-weight: bold; }
-
-        .gold-book { color: var(--gold); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-
-        .balance-card { background: linear-gradient(135deg, #FF8C00 0%, #E65100 100%); border-radius: 20px; padding: 25px 20px; color: white; text-align: center; box-shadow: 0 10px 20px rgba(230, 81, 0, 0.3); margin-top: 10px; }
-        .balance-amount { font-size: 48px; font-weight: 800; margin: 10px 0; display: flex; align-items: center; justify-content: center; gap: 15px; }
-        .bonus-badge { color: white; font-weight: bold; margin-top: 5px; font-size: 14px; opacity: 0.9; }
-
-        .reward-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        .reward-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid rgba(128,128,128,0.1); }
-        .reward-card img { width: 100%; height: 110px; object-fit: cover; background: #ddd; }
-        .reward-info { padding: 10px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-        .reward-info b { display: block; font-size: 13px; line-height: 1.2; margin-bottom: 4px; }
-        .spend-btn { background: #E65100; color: white; border: none; padding: 10px; font-weight: bold; font-size: 13px; cursor: pointer; }
-
-        #viewer { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 1000; }
-        .viewer-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); border-bottom: 0.5px solid rgba(128,128,128,0.2); }
-        
-        input { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--secondary); color: var(--text); margin-bottom: 15px; box-sizing: border-box; outline: none; }
-    </style>
+        window.addEventListener("unhandledrejection", function(event) {
+            console.error("Ошибка в Promise:", event.reason);
+        });
+    </script>
 </head>
 <body>
 
-    <div id="answers" class="page active">
-        <div class="header">Ответы</div>
-        <input type="text" id="bookSearch" placeholder="Поиск тома..." oninput="filterBooks()">
-        <div id="booksGrid" class="grid"></div>
-    </div>
-
-    <div id="palettes" class="page">
-        <div class="header">Палитры</div>
-        <div class="category-title">GuangNa</div>
-        <div id="paletteList1"></div>
-        <div class="category-title">Другие</div>
-        <div id="paletteList2"></div>
-    </div>
-
-    <div id="shop" class="page">
-        <div class="header">Маркеры</div>
-        <div class="category-title" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px;">
-            <span>GuangNa</span>
-            <span style="color: var(--accent); text-transform: none; font-size: 15px;">75 руб./шт.</span>
-        </div>
-        <input type="text" id="markerSearch" placeholder="Поиск номера..." oninput="filterMarkers()">
-        <div id="markersList"></div>
-    </div>
-
-    <div id="cart" class="page">
-        <div class="header">Корзина</div>
-        <div id="cartList"></div>
-        <button id="mainOrderBtn" class="buy-btn" style="border-radius: 15px; padding: 18px; margin-top:20px; display: none;" onclick="checkout()">Оформить заказ</button>
-    </div>
-
-    <div id="profile" class="page">
-        <div class="header">Профиль</div>
-
-        <div class="balance-card">
-            <p style="margin:0; opacity:0.9; font-size: 14px; letter-spacing: 1px;">ВАШ БАЛАНС</p>
-            <div class="balance-amount">
-                <span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i>
+<div id="profile" class="page active">
+    
+    <div class="profile-header-block">
+        <div class="avatar-section">
+            <div class="avatar-wrapper" onclick="toggleAvatarEditor()" style="position: relative; z-index: 10;">
+                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png" alt="Avatar">
+                <div class="avatar-edit-icon"><i class="fas fa-pencil-alt"></i></div>
             </div>
-            <p style="margin:0; font-weight: 500; margin-bottom: 10px;">ашетиков накоплено</p>
-            <button class="buy-btn" style="background:rgba(255,255,255,0.2); border:1px solid white; border-radius:12px; padding:8px;" onclick="toggleRewards()">Потратить ашетики 🎁</button>
-        </div>
-
-        <div id="rewards-section" style="display:none;">
-            <div class="category-title">Магазин наград</div>
-            <div class="reward-grid" id="rewardGrid"></div>
-            <button class="buy-btn" style="background:none; color:var(--gray); margin-top:15px; font-size: 14px;" onclick="toggleRewards()">← Назад к лояльности</button>
-        </div>
-
-        <div id="loyalty-info">
-            <div class="category-title" style="margin-top:25px;">Программа лояльности</div>
-            <div id="loyaltyItems"></div>
-        </div>
-
-        <div id="avatarShowcase" style="margin-top:20px;">
-            <div class="category-title">Ваша витрина</div>
-            <div class="grid" id="avatarsGrid"></div>
-        </div>
-
-        <div style="font-size: 12px; color: var(--gray); padding: 10px;">ID: <span id="userIdDisplay">---</span></div>
-    </div>
-
-    <div id="viewer">
-        <div class="viewer-header">
-            <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="closeBook()">Назад</button>
-            <div id="page-counter" style="color:var(--text); font-weight:bold;"></div>
-        </div>
-        <div id="viewer-content" style="height: 85vh; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none;" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
-            <img src="" id="current-page" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-        </div>
-    </div>
-
-    <nav class="nav">
-        <button id="btn-answers" class="nav-btn active" onclick="tab('answers')"><span class="nav-icon">📚</span>Ответы</button>
-        <button id="btn-palettes" class="nav-btn" onclick="tab('palettes')"><span class="nav-icon">🎨</span>Палитры</button>
-        <button id="btn-shop" class="nav-btn" onclick="tab('shop')"><span class="nav-icon">🖍️</span>Маркеры</button>
-        <button id="btn-cart" class="nav-btn" onclick="tab('cart')">
-            <span class="nav-icon">🛒</span>Корзина
-            <span id="cartBadge" class="badge" style="display:none">0</span>
-        </button>
-        <button id="btn-profile" class="nav-btn" onclick="tab('profile')"><span class="nav-icon">👤</span>Профиль</button>
-    </nav>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-
-        // БАЗОВЫЕ ССЫЛКИ
-        const BASE_URL = "https://hachettelittleheroes.github.io/ColoringWithAI/";
-
-        let markersData = [], cart = [], markersLoaded = false;
-        const bookNames = ["Les Grands Classiques tome 11", "Les Grands Classiques tome 3", "Vitraux tome 2", "Trompe L'oeil Babies", "Trompe L'oeil Grand Bloc", "Stitch Au numero", "Sous L'Ocean", "Saisons", "Romantasy", "Princesses tome 1", "Princesses tome 2", "Princes&Heros", "Portraits De Famille", "Pokemon", "Pixar", "Petites Princesses", "Petites Betes", "Mondes Fantastiques", "Mickey, Donald&Co", "Mechants", "Marsupilami", "Love Stories", "Looney Tunes tome 3", "Lilo Et Stitch", "Les Grands Classiques Special Debutants tome 1", "Les Grands Classiques Special Debutants tome 2", "Les Grands Classiques Au numero", "La Petite Sirene", "Les Schtroumpfs tome 1", "Les Schtroumpfs tome 2", "L'age Glace", "Hiver", "Heros&Mechants La Battle", "Grands Classiques Grand Bloc", "Les Grands Classiques Coliector", "Girl Power", "Fees, Sorciers Et Magiciens", "Famille", "Escapades Merveilleuses Douce France", "Chiots&Chiens", "Chevaux", "Bisounours tome 1", "Best Of Pixar", "Best Of Les Grands Classiques", "La Belle Et La Bete", "Bestiaire", "Best Of Heroines"];
-
-        // ========================== ОТВЕТЫ (КНИГИ) ==========================
-        function renderBooks(list = bookNames) {
-            const grid = document.getElementById('booksGrid');
-            grid.innerHTML = list.map((name) => {
-                const originalId = bookNames.indexOf(name) + 1;
-                const safeName = name.replace(/'/g, "\\'");
-                const itemInCart = cart.find(c => c.key === 'Раскраска-' + originalId);
-                const btnText = itemInCart ? `В корзине: ${itemInCart.qty}` : 'В корзину';
-                return `
-                <div class="card">
-                    <img src="${BASE_URL}img/t${originalId}.png" onclick="startBook(${originalId}, 26)">
-                    <div class="card-label">${name}<br><span style="color:var(--accent); font-weight:bold;">2890 руб.</span><br><small style="color:var(--gray);">📦 Под заказ</small></div>
-                    <button class="buy-btn" onclick="addToCart('Раскраска', '${safeName}', ${originalId}, 99, 2890)">${btnText}</button>
-                </div>`;
-            }).join('');
-        }
-
-        function filterBooks() {
-            const query = document.getElementById('bookSearch').value.toLowerCase();
-            renderBooks(bookNames.filter(name => name.toLowerCase().includes(query)));
-        }
-
-        // ========================== ПАЛИТРЫ ==========================
-        function renderPalettes() {
-            const guangna = [
-                { id: "guangna120", name: "GuangNa 120" },
-                { id: "guangna168", name: "GuangNa 168" },
-                { id: "guangna240", name: "GuangNa 240" },
-                { id: "guangna360", name: "GuangNa 360" }
-            ];
-            const others = [
-                { id: "tooliart", name: "Tooli-Art" },
-                { id: "grasp168", name: "Grasp 168" },
-                { id: "zibeef240", name: "Zibeef 240" }
-            ];
-
-            const renderList = (arr) => arr.map(p => `
-                <div class="row-item">
-                    <span>${p.name}</span>
-                    <button class="buy-btn" style="width:auto; border-radius:8px; padding: 8px 15px;" onclick="tg.openLink('${BASE_URL}palitri/${p.id}.pdf')">PDF</button>
+            <div class="profile-meta">
+                <div class="name-row" onclick="changeNickname()">
+                    <h2 id="displayUsername">Без имени</h2>
+                    <i class="fas fa-pencil-alt edit-icon"></i>
                 </div>
-            `).join('');
+                <div id="currentStatus" class="status-badge" onclick="openStatusInfo()">Новичок</div>
+            </div>
+        </div>
+    </div>
 
-            document.getElementById('paletteList1').innerHTML = renderList(guangna);
-            document.getElementById('paletteList2').innerHTML = renderList(others);
-        }
+    <div id="avatarEditorBlock" class="expandable-block" style="display:none;">
+        <p class="section-subtitle">Выберите аватарку:</p>
+        <div class="preset-avatars" id="avatarPresets"></div>
+        <input type="file" id="customAvatarInput" style="display:none;" onchange="handleCustomAvatar(event)">
+        <button class="blue-action-btn" onclick="document.getElementById('customAvatarInput').click()">
+            <i class="fas fa-camera"></i> Загрузить фото
+        </button>
+    </div>
 
-        // ========================== МАРКЕРЫ (МАГАЗИН) ==========================
-        async function loadMarkers() {
-            if (markersLoaded) return;
-            const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
-            try {
-                const res = await fetch(csvUrl);
-                const text = await res.text();
-                const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, '').trim()));
-                let temp = [];
-                rows.forEach(row => {
-                    for (let i = 0; i < row.length; i++) {
-                        let num = row[i];
-                        if (num && !isNaN(num) && parseInt(num) > 10) {
-                            let stock = parseInt(row[i+1] || row[i+2] || "0");
-                            temp.push({ number: num, stock: stock });
-                            i++;
-                        }
-                    }
-                });
-                markersData = temp.filter((v, i, a) => a.findIndex(t => (t.number === v.number)) === i);
-                cart.forEach(item => {
-                    if (item.type === 'Маркер') {
-                        const m = markersData.find(md => md.number == item.id);
-                        if (m) { item.max = m.stock; if (item.qty > m.stock) item.qty = m.stock; }
-                    }
-                });
-                markersLoaded = true;
-                renderMarkers(markersData);
-                updateUI();
-            } catch (e) { console.error(e); }
-        }
+    <div class="balance-card">
+        <p class="balance-label">ВАШ БАЛАНС</p>
+        <div class="balance-main">
+            <span id="userBalance">0</span> 
+            <i class="fas fa-book-open gold-book"></i>
+        </div>
+        <div class="balance-controls">
+            <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🎁</button>
+            <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
+        </div>
+    </div>
 
-        function renderMarkers(data) {
-            const list = document.getElementById('markersList');
-            const q = document.getElementById('markerSearch').value.toLowerCase();
-            const filtered = data.filter(m => m.number.includes(q)).sort((a, b) => a.number - b.number);
-            list.innerHTML = filtered.map(m => {
-                const cartIndex = cart.findIndex(c => c.key === 'Маркер-' + m.number);
-                const currentQty = cartIndex > -1 ? cart[cartIndex].qty : 0;
-                const canAdd = currentQty < m.stock;
-                let color = m.stock >= 2 ? "#34c759" : (m.stock === 1 ? "#ff9500" : "#ff3b30");
-                return `
-                <div class="row-item">
-                    <div class="item-info">
-                        <span class="marker-num">№ ${m.number}</span>
-                        <span class="stock-badge" style="color:${color}">${m.stock >= 1 ? `В наличии: ${m.stock} шт.` : "Нет в наличии"}</span>
-                    </div>
-                    <div class="item-controls">
-                        ${m.stock > 0 ? (currentQty > 0 ? `
-                            <button class="btn-qty-sm" onclick="changeQty(${cartIndex}, -1)">-</button>
-                            <span class="marker-qty">${currentQty}</span>
-                            <button class="btn-qty-sm" ${!canAdd ? 'disabled' : ''} onclick="changeQty(${cartIndex}, 1)">+</button>
-                        ` : `<button class="btn-qty-sm" onclick="addToCart('Маркер', '${m.number}', ${m.number}, ${m.stock}, 75)">+</button>`) : ''}
-                    </div>
-                </div>`;
-            }).join('');
-        }
+    <div id="rewards-section" class="sub-page-block" style="display:none;">
+        <div class="section-header">Товары за ашетики</div>
+        <div class="reward-grid">
+            <div class="reward-card">
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b1.png" class="reward-img" alt="Закладка">
+                <h4>Закладка</h4>
+                <div class="reward-price">750 <i class="fas fa-book-open gold-book"></i></div>
+            </div>
+            <div class="reward-card">
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img" alt="Спиртовая раскраска">
+                <h4>Спиртовая раскраска</h4>
+                <div class="reward-price">1250 <i class="fas fa-book-open gold-book"></i></div>
+            </div>
+            <div class="reward-card">
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b3.png" class="reward-img" alt="Petites Poepees">
+                <h4>Раскраска Petites Poepees</h4>
+                <div class="reward-price">1250 <i class="fas fa-book-open gold-book"></i></div>
+            </div>
+            <div class="reward-card">
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том Hachette">
+                <h4>Любой том Hachette A4</h4>
+                <div class="reward-price">1500 <i class="fas fa-book-open gold-book"></i></div>
+            </div>
+        </div>
+    </div>
 
-        function filterMarkers() { renderMarkers(markersData); }
+    <div id="earn-section" class="sub-page-block" style="display:none;">
+        <div class="section-header">Как получить ашетики</div>
+        <div class="earn-info">
+            <div class="earn-card"><p>За отзыв</p><span class="earn-bonus">+25 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 3 000 ₽</p><span class="earn-bonus">+10 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 5 000 ₽</p><span class="earn-bonus">+20 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 7 500 ₽</p><span class="earn-bonus">+30 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 10 000 ₽</p><span class="earn-bonus">+40 <i class="fas fa-book-open gold-book"></i></span></div>
+        </div>
+    </div>
 
-        // ========================== КОРЗИНА И ОФОРМЛЕНИЕ ==========================
-        function addToCart(type, name, id, max, price) {
-            const key = type + '-' + id;
-            const existing = cart.find(i => i.key === key);
-            if (existing) { if (existing.qty < max) existing.qty++; else return; }
-            else { cart.push({ key, type, name, id, qty: 1, max, price }); }
-            updateUI();
-            if(type === 'Маркер') renderMarkers(markersData);
-            if(type === 'Раскраска') renderBooks();
-            tg.HapticFeedback.impactOccurred('light');
-        }
+    <div class="tasks-container">
+        <div class="section-tab" onclick="toggleTasks()">
+            <span>Задания на статус</span>
+            <i class="fas fa-chevron-down" id="tasksArrow" style="transition: transform 0.3s;"></i>
+        </div>
+        <div id="tasksList" class="collapsible-content" style="display:none; padding: 15px; background: var(--bg-header); border-radius: 0 0 15px 15px; margin-top: -10px;"></div>
+        <input type="file" id="taskFileInput" accept="image/*" multiple style="display:none;" onchange="handleTaskFile(event)">
+    </div>
 
-        function updateUI() {
-            const total = cart.reduce((sum, i) => sum + i.qty, 0);
-            const badge = document.getElementById('cartBadge');
-            badge.innerText = total;
-            badge.style.display = total > 0 ? 'block' : 'none';
-            document.getElementById('mainOrderBtn').style.display = total > 0 ? 'block' : 'none';
-        }
+    <div class="showcase-container">
+        <div class="section-header" style="margin-bottom: 5px;">Витрина Топ-3</div>
+        <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 15px;">Нажми на слот, чтобы установить достижение</p>
+        <div class="showcase-grid">
+            <div class="showcase-slot" id="slot-0"><i class="fas fa-lock"></i></div>
+            <div class="showcase-slot" id="slot-1"><i class="fas fa-lock"></i></div>
+            <div class="showcase-slot" id="slot-2"><i class="fas fa-lock"></i></div>
+        </div>
+    </div>
+</div>
 
-        function renderCart() {
-            const list = document.getElementById('cartList');
-            if (cart.length === 0) { list.innerHTML = '<div style="text-align:center; padding:50px; color:var(--gray)">Корзина пуста</div>'; return; }
-            const totalSum = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            
-            let bonus = 0;
-            if (totalSum >= 3000 && totalSum < 5000) bonus = 20;
-            else if (totalSum >= 5000 && totalSum < 7500) bonus = 30;
-            else if (totalSum >= 7500 && totalSum < 10000) bonus = 40;
-            else if (totalSum >= 10000) bonus = 50;
+<div id="markers" class="page">
+    <div class="header">Маркеры</div>
+    <div class="brand-section">
+        <h3 class="brand-title">GUANGNA</h3>
+        <div id="markersList" class="marker-list-container">
+            </div>
+    </div>
+</div>
 
-            list.innerHTML = cart.map((item, index) => `
-                <div class="row-item">
-                    <div class="item-info"><b>${item.type === 'Маркер' ? '№ ' : ''}${item.name}</b><div style="font-size:12px; color:var(--gray)">${item.price} руб./шт.</div></div>
-                    <div class="item-controls">
-                        <button class="btn-qty" onclick="changeQty(${index}, -1)">-</button>
-                        <span class="qty-num">${item.qty}</span>
-                        <button class="btn-qty" ${item.qty >= item.max ? 'disabled' : ''} onclick="changeQty(${index}, 1)">+</button>
-                    </div>
-                </div>`).join('') + `
-                <div style="margin-top:20px; padding:15px; background:var(--secondary); border-radius:15px; text-align:right;">
-                    <span style="color:var(--gray); font-size:14px;">Итого к оплате:</span>
-                    <div style="font-size:20px; font-weight:800; color:var(--accent);">${totalSum} руб.</div>
-                    <div class="bonus-badge" style="color:#E65100">Будет начислено: +${bonus} <i class="fas fa-book-open"></i></div>
-                </div>`;
-        }
+<div id="answers" class="page">
+    <div class="header">Ответы и Тома</div>
+    <div class="reward-grid" style="padding: 15px;">
+        <div class="reward-card">
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 1" onclick="openBook(1, 50)">
+            <h4 onclick="openBook(1, 50)">Том 1</h4>
+            <button class="balance-btn" style="width:100%; margin-top:10px;" onclick="changeCart('tome1', 1)">В корзину (1500 ₽)</button>
+        </div>
+        <div class="reward-card">
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 2" onclick="openBook(2, 50)">
+            <h4 onclick="openBook(2, 50)">Том 2</h4>
+            <button class="balance-btn" style="width:100%; margin-top:10px;" onclick="changeCart('tome2', 1)">В корзину (1500 ₽)</button>
+        </div>
+    </div>
+</div>
 
-        function changeQty(index, delta) {
-            const item = cart[index];
-            if (delta > 0 && item.qty >= item.max) return;
-            item.qty += delta;
-            if (item.qty <= 0) cart.splice(index, 1);
-            updateUI();
-            if (document.getElementById('cart').classList.contains('active')) renderCart();
-            if (document.getElementById('shop').classList.contains('active')) renderMarkers(markersData);
-            if (document.getElementById('answers').classList.contains('active')) renderBooks();
-        }
+<div id="answersGalleryModal" class="modal-overlay" style="display:none; background: rgba(0,0,0,0.9); z-index: 100000;" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
+    <div class="modal-content" style="background: transparent; box-shadow: none; text-align: center; width: 100%; padding: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white;">
+            <button class="btn-circle" onclick="prevGalleryPage()"><i class="fas fa-arrow-left"></i></button>
+            <span id="galleryPageIndicator" style="font-weight: bold; font-size: 18px;">Страница 1</span>
+            <button class="btn-circle" onclick="nextGalleryPage()"><i class="fas fa-arrow-right"></i></button>
+        </div>
+        <img id="galleryMainImage" style="width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-bottom: 20px; display: none;">
+        <button class="blue-action-btn" onclick="closeBook()">Закрыть</button>
+    </div>
+</div>
 
-        function checkout() {
-            if (cart.length === 0) return;
-            let markersCount = 0;
-            cart.forEach(item => { if (item.type === 'Маркер') markersCount += item.qty; });
-            if (markersCount > 0 && markersCount < 3) {
-                tg.showAlert("⚠️ Минимальный заказ маркеров — от 3 штук.");
-                return;
-            }
-            let totalSum = 0, hasPreorder = false;
-            let details = `🛍 **ДЕТАЛИ ЗАКАЗА:**\n`;
-            cart.forEach(item => {
-                const sum = item.price * item.qty; 
-                totalSum += sum;
-                if (item.type === 'Раскраска') hasPreorder = true;
-                details += `▪️ ${item.type} ${item.type === 'Маркер' ? '№' : '"'}${item.name}${item.type === 'Маркер' ? '' : '"'}\n   - ${item.qty} шт. x ${item.price} = ${sum} руб.\n`;
-            });
-
-            let bonusToEarn = 0;
-            if (totalSum >= 3000 && totalSum < 5000) bonusToEarn = 20;
-            else if (totalSum >= 5000 && totalSum < 7500) bonusToEarn = 30;
-            else if (totalSum >= 7500 && totalSum < 10000) bonusToEarn = 40;
-            else if (totalSum >= 10000) bonusToEarn = 50;
-            
-            details += `\n💰 **ИТОГО: ${totalSum} руб.**`;
-            details += `\n📖 **БОНУС К НАЧИСЛЕНИЮ: ${bonusToEarn}**`;
-            details += `\n👤 **ТЕКУЩИЙ БАЛАНС ЮЗЕРА: ${document.getElementById('userBalance').innerText}**`;
-            
-            if (hasPreorder) {
-                tg.showConfirm("В вашем заказе есть раскраски (ПОД ЗАКАЗ). Оформить?", (c) => { 
-                    if(c) { tg.sendData(JSON.stringify({ details: details })); tg.close(); }
-                });
-            } else { 
-                tg.sendData(JSON.stringify({ details: details })); tg.close(); 
-            }
-        }
-
-        // ========================== ПРОФИЛЬ ==========================
-        const loyaltyData = [
-            { title: "Приветственный бонус", points: 100 },
-            { title: "Бонус за отзыв", points: 25 },
-            { title: "Бонус за покупку от 3000₽", points: 20 },
-            { title: "Бонусы за крупные покупки", points: 30, note: "от 5к - 30 / от 7.5к - 40 / от 10к - 50" },
-            { title: "Событие «Baby Boom»", points: 50 },
-            { title: "1 место в челленджах", points: 150 }
-        ];
-
-        const avatarsData = [
-            { img: "avatars/a1.png", name: "Аватар 1" },
-            { img: "avatars/a2.png", name: "Аватар 2" },
-            { img: "avatars/a3.png", name: "Аватар 3" },
-            { img: "avatars/a4.png", name: "Аватар 4" }
-        ];
-
-        const rewardsData = [
-            { img:"bonusi/b1.png", name:"Книжная закладка Hachette", price:750 },
-            { img:"bonusi/b2.png", name:"Petites Poupees", price:950 },
-            { img:"bonusi/b3.png", name:"Трекер Hachette", price:950 },
-            { img:"bonusi/b4.png", name:"Спиртовая раскраска", price:1250 },
-            { img:"bonusi/b5.png", name:"Hachette Coloriages A4", price:1500 }
-        ];
-
-        function renderLoyalty() {
-            document.getElementById('loyaltyItems').innerHTML = loyaltyData.map(l => `
-                <div class="row-item">
-                    <div style="display:flex; flex-direction:column;">
-                        <span>${l.title}</span>
-                        ${l.note ? `<small style="color:var(--gray); font-size:11px;">${l.note}</small>` : ''}
-                    </div>
-                    <b class="gold-book">${l.points} <i class="fas fa-book-open"></i></b>
-                </div>`).join('');
-        }
-
-        function renderAvatars() {
-            document.getElementById('avatarsGrid').innerHTML = avatarsData.map(a => `
-                <div class="card">
-                    <img src="${BASE_URL}${a.img}">
-                    <div class="card-label">${a.name}</div>
-                    <button class="buy-btn" onclick="selectAvatar('${a.name}', '${BASE_URL}${a.img}')">Выбрать</button>
-                </div>`).join('');
-        }
-
-        function renderRewards() {
-            document.getElementById('rewardGrid').innerHTML = rewardsData.map(r => `
-                <div class="reward-card" style="${r.name.includes('A4')?'grid-column: span 2;':''}">
-                    <img src="${BASE_URL}${r.img}">
-                    <div class="reward-info"><b>${r.name}</b></div>
-                    <button class="spend-btn" onclick="buyReward('${r.name}', ${r.price})">${r.price} <i class="fas fa-book-open"></i></button>
-                </div>`).join('');
-        }
-
-        function selectAvatar(name, img) {
-            tg.showConfirm(`Вы действительно хотите выбрать аватар "${name}"?`, (c) => {
-                if(c) {
-                    tg.sendData(JSON.stringify({ action: 'select_avatar', name: name, img: img, user_id: document.getElementById('userIdDisplay').innerText }));
-                    tg.HapticFeedback.impactOccurred('medium');
-                }
-            });
-        }
-
-        function toggleRewards() {
-            const rs = document.getElementById('rewards-section');
-            const li = document.getElementById('loyalty-info');
-            if (rs.style.display === 'block') {
-                rs.style.display = 'none';
-                li.style.display = 'block';
-            } else {
-                rs.style.display = 'block';
-                li.style.display = 'none';
-            }
-            tg.HapticFeedback.impactOccurred('medium');
-        }
-
-        function buyReward(name, price) {
-            const currentBalance = parseInt(document.getElementById('userBalance').innerText);
-            if (currentBalance < price) {
-                tg.showAlert("❌ Недостаточно ашетиков для этого товара!");
-                return;
-            }
-            tg.showConfirm(`Вы действительно хотите обменять ${price} ашетиков на "${name}"?`, (confirm) => {
-                if (confirm) {
-                    tg.sendData(JSON.stringify({ action: 'buy_reward', reward: name, price: price, user_id: document.getElementById('userIdDisplay').innerText }));
-                    tg.close();
-                }
-            });
-        }
-
-        // ========================== ЧИТАЛКА (ВЬЮВЕР) ==========================
-        let currentVol, currentPage, maxPages, touchStartX, touchStartY;
+<div id="aipalette" class="page">
+    <div class="header">ИИ Палитра ✨</div>
+    <div class="ai-upload-box">
+        <div class="upload-area" onclick="document.getElementById('aiInput').click()">
+            <i class="fas fa-camera"></i>
+            <p>Загрузить фото для определения цвета</p>
+        </div>
+        <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
         
-        function startBook(v, m) { 
-            currentVol = v; maxPages = m; currentPage = 1; 
-            document.getElementById('viewer').style.display = 'block'; 
-            updatePage(); 
-        }
-        
-        function closeBook() { document.getElementById('viewer').style.display = 'none'; }
-        
-        function updatePage() {
-            const img = document.getElementById('current-page');
-            const counter = document.getElementById('page-counter');
-            const formats = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG'];
-            let fIndex = 0;
-            
-            function tryLoad() { img.src = `${BASE_URL}otveti/t${currentVol}/${currentPage}${formats[fIndex]}`; }
-            img.onerror = () => { fIndex++; if (fIndex < formats.length) tryLoad(); };
-            
-            tryLoad(); 
-            counter.innerText = `${currentPage} / ${maxPages}`;
-        }
+        <div id="adminAiBlock" style="margin-top: 30px; padding: 15px; background: var(--bg-header); border: 1px dashed var(--status-green); border-radius: 12px; display: none;">
+            <h4 style="color: var(--status-green); margin-bottom: 15px; text-align: center;"><i class="fas fa-user-shield"></i> Обучение ИИ (Админ)</h4>
+            <input type="file" id="adminAiInput" accept="image/*" style="margin-bottom:10px; width:100%; color: var(--text-gray);">
+            <input type="text" id="adminAiBrand" placeholder="Бренд" style="width:100%; padding:12px; margin-bottom:10px; background:var(--bg); color:white; border:none; border-radius:8px;">
+            <input type="text" id="adminAiNumber" placeholder="Номер маркера" style="width:100%; padding:12px; margin-bottom:15px; background:var(--bg); color:white; border:none; border-radius:8px;">
+            <button class="blue-action-btn" style="background: var(--status-green);" onclick="submitAdminAiTrain()">Загрузить данные</button>
+        </div>
+        <div id="aiResult" class="ai-result-card" style="display:none;"></div>
+    </div>
+</div>
 
-        function handleTouchStart(e) { 
-            touchStartX = e.touches[0].screenX; 
-            touchStartY = e.touches[0].screenY; 
-        }
-        
-        function handleTouchEnd(e) {
-            let dx = touchStartX - e.changedTouches[0].screenX;
-            let dy = touchStartY - e.changedTouches[0].screenY;
-            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-                if (dx > 0 && currentPage < maxPages) { currentPage++; updatePage(); }
-                else if (dx < 0 && currentPage > 1) { currentPage--; updatePage(); }
-            }
-        }
+<div id="cart" class="page">
+    <div class="header">Корзина</div>
+    <div id="cartItemsList" class="cart-container" style="padding: 15px;">
+        </div>
+    <div class="cart-footer">
+        <div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div>
+        <button class="buy-btn" onclick="checkout()">Оформить заказ</button>
+    </div>
+</div>
 
-        // ========================== НАВИГАЦИЯ И ИНИЦИАЛИЗАЦИЯ ==========================
-        function tab(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.getElementById('btn-' + id).classList.add('active');
-            if (id === 'shop') loadMarkers();
-            if (id === 'cart') renderCart();
-        }
+<div id="taskUploadModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content" style="text-align:center;">
+        <h3>Отправка на проверку</h3>
+        <div id="taskPhotoPreviewContainer" class="photo-preview-container"></div>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button class="balance-btn" style="background:#333; border:none;" onclick="closeTaskUploadModal()">Отмена</button>
+            <button class="blue-action-btn" style="flex:1;" onclick="submitTaskPhoto()">Отправить</button>
+        </div>
+    </div>
+</div>
 
-        window.onload = () => {
-            const params = new URLSearchParams(window.location.search);
-            document.getElementById('userBalance').innerText = params.get('balance') || 0;
-            document.getElementById('userIdDisplay').innerText = params.get('id') || tg.initDataUnsafe?.user?.id || "---";
-            
-            renderBooks();
-            renderPalettes();
-            renderLoyalty();
-            renderAvatars();
-            renderRewards();
-        }
-    </script>
+<div id="showcaseModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <h3 style="text-align: center; margin-bottom: 15px;">Выберите достижение</h3>
+        <div id="availableAchievementsList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"></div>
+        <div id="clearSlotBtnContainer"></div>
+        <button class="balance-btn" style="background:#333; border:none; margin-top:15px; width: 100%;" onclick="document.getElementById('showcaseModal').style.display='none'">Отмена</button>
+    </div>
+</div>
+
+<div id="achInfoModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content" style="text-align:center;">
+        <h3 id="achInfoTitle">Название</h3>
+        <img id="achInfoImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 15px auto; display: block;">
+        <p id="achInfoDesc" style="color: var(--text-gray); margin-bottom: 20px; font-size: 14px;"></p>
+        <div style="display:flex; gap:10px;">
+            <button class="balance-btn" style="background:#333; border:none;" onclick="document.getElementById('achInfoModal').style.display='none'">Закрыть</button>
+            <button class="blue-action-btn" style="flex:1;" onclick="replaceShowcaseSlot()">Изменить слот</button>
+        </div>
+    </div>
+</div>
+
+<div id="achievementAlert" class="modal-overlay" style="display:none; align-items: flex-start; padding-top: 50px;">
+    <div class="modal-content" style="background: var(--accent-gradient); text-align:center;">
+        <h3 id="alertTitle" style="color: white; margin-bottom: 10px;">🏆 Новое достижение!</h3>
+        <img id="alertAchImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 10px auto; display: none;">
+        <p id="alertAchText" style="color: white; font-weight: bold; font-size: 18px;"></p>
+        <button class="balance-btn" style="margin-top:15px; background: rgba(0,0,0,0.3); border: none;" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
+    </div>
+</div>
+
+<div id="statusSelectModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content" style="text-align:center;">
+        <h3>Выберите статус</h3>
+        <div id="availableStatusesList" style="margin-top: 15px;"></div>
+        <button class="balance-btn" style="background:#333; border:none; margin-top:15px; width:100%;" onclick="document.getElementById('statusSelectModal').style.display = 'none';">Отмена</button>
+    </div>
+</div>
+
+<div id="avatarConfirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content" style="text-align:center;">
+        <h3>Установить аватар?</h3>
+        <img id="avatarPreview" src="" style="width:100px; height:100px; border-radius:50%; margin:20px auto; border:3px solid var(--accent); object-fit:cover; display:block;">
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button class="balance-btn" style="background:#333; border:none;" onclick="closeAvatarConfirm()">Отмена</button>
+            <button class="blue-action-btn" style="flex:1;" onclick="applyAvatar()">Применить</button>
+        </div>
+    </div>
+</div>
+
+<div id="nameModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <h3>Настройки профиля</h3>
+        <input type="text" id="newNameInput" placeholder="Введите ник..." style="width:100%; padding:14px; background:var(--bg); border:none; border-radius:12px; color:white; margin-top:15px;">
+        <button class="blue-action-btn" style="margin-top:15px; background:var(--accent);" onclick="saveNewNickname()">Сохранить ник</button>
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #333;">
+        <button class="balance-btn" style="background:var(--status-red); border:none; width:100%; font-size:14px;" onclick="resetAllData()">Сбросить весь прогресс</button>
+        <button class="balance-btn" style="background:#333; border:none; margin-top:10px; width: 100%;" onclick="document.getElementById('nameModal').style.display='none'">Отмена</button>
+    </div>
+</div>
+
+<nav class="nav">
+    <button id="btn-profile" class="nav-btn active" onclick="tab('profile')">
+        <i class="fas fa-user"></i><span>Профиль</span>
+    </button>
+    <button id="btn-markers" class="nav-btn" onclick="tab('markers')">
+        <i class="fas fa-pen"></i><span>Маркеры</span>
+    </button>
+    <button id="btn-answers" class="nav-btn" onclick="tab('answers')">
+        <i class="fas fa-book"></i><span>Ответы</span>
+    </button>
+    <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')">
+        <i class="fas fa-magic"></i><span>ИИ Палитра</span>
+    </button>
+    <button id="btn-cart" class="nav-btn" onclick="tab('cart')">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Корзина</span>
+        <span id="cartBadge" class="badge" style="display:none;">0</span>
+    </button>
+</nav>
+
+<script src="app.js"></script>
+
 </body>
 </html>

@@ -2863,7 +2863,8 @@ function saveDataLocal() {
             
             // Устанавливаем тему
             setTheme(user.theme);
-            
+            fetchUserFromServer();
+
             // Проверяем админа
             console.log('User ID:', userId, 'Is Admin:', user.isAdmin);
             if (user.isAdmin) {

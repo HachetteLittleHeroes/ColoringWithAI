@@ -75,6 +75,9 @@ button {
     cursor: pointer;
     transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto !important;
 }
 
 button:active { 
@@ -133,6 +136,8 @@ button:active {
     font-size: 14px;
     border: 3px solid var(--bg-header);
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 10;
+    pointer-events: auto !important;
 }
 
 .profile-meta h2 { 
@@ -158,6 +163,9 @@ button:active {
     letter-spacing: 0.5px;
     color: #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 10;
+    pointer-events: auto !important;
 }
 
 /* Классы уровней для JS */
@@ -229,6 +237,9 @@ button:active {
     font-weight: 700;
     border-radius: 16px;
     backdrop-filter: blur(5px);
+    position: relative;
+    z-index: 10;
+    pointer-events: auto !important;
 }
 
 /* ==========================================
@@ -259,6 +270,8 @@ button:active {
     cursor: pointer; 
     position: relative;
     transition: all 0.2s ease;
+    z-index: 10;
+    pointer-events: auto !important;
 }
 
 .showcase-slot.filled {
@@ -317,6 +330,9 @@ button:active {
     flex-direction: column;
     justify-content: space-between;
     min-height: 180px;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto !important;
 }
 
 .reward-img { 
@@ -421,6 +437,8 @@ button:active {
     font-size: 10px; 
     gap: 5px;
     position: relative;
+    z-index: 10;
+    pointer-events: auto !important;
     transition: color 0.2s;
 }
 
@@ -445,6 +463,8 @@ button:active {
     border-radius: 10px;
     font-weight: 900;
     box-shadow: 0 2px 5px rgba(255,59,48,0.4);
+    z-index: 10;
+    pointer-events: auto !important;
 }
 
 /* ==========================================
@@ -488,6 +508,9 @@ button:active {
     font-weight: 700;
     margin-top: 15px;
     box-shadow: 0 4px 12px rgba(0,122,255,0.3);
+    position: relative;
+    z-index: 10;
+    pointer-events: auto !important;
 }
 
 /* ==========================================
@@ -516,7 +539,13 @@ button:active {
     font-weight: 800; 
     font-size: 15px;
     box-shadow: 0 4px 12px rgba(52,199,89,0.3);
+    position: relative;
+    z-index: 10;
+    pointer-events: auto !important;
 }
+
+/* ==========================================
+   12. ИИ ПАЛИТРА И ЗАГ
 
 /* ==========================================
    12. ИИ ПАЛИТРА И ЗАГРУЗКА

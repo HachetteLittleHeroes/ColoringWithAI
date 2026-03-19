@@ -86,7 +86,7 @@
         }
 
         /* ==========================================
-           3. ПРОФИЛЬ И АВАТАР
+           3. ПРОФИЛЬ И АВАТАР - ОРАНЖЕВЫЕ РАМКИ
            ========================================== */
         .profile-header-block {
             background: var(--bg-header);
@@ -103,7 +103,7 @@
             width: 90px; 
             height: 90px;
             border-radius: 50%;
-            border: 3px solid var(--accent);
+            border: 3px solid var(--accent) !important; /* Оранжевая рамка */
             padding: 3px;
             background: var(--bg);
             position: relative;
@@ -152,6 +152,7 @@
             font-size: 22px; 
             font-weight: 700;
             margin: 0;
+            color: var(--text);
         }
 
         .status-badge { 
@@ -204,10 +205,11 @@
         .preset-avatar-item {
             aspect-ratio: 1/1;
             border-radius: 50%;
-            border: 3px solid var(--accent);
+            border: 3px solid var(--accent) !important; /* Оранжевая рамка */
             padding: 3px;
             cursor: pointer;
             transition: all 0.2s;
+            overflow: hidden;
         }
 
         .preset-avatar-item:hover {
@@ -219,6 +221,7 @@
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
+            display: block;
         }
 
         .upload-photo-btn {
@@ -319,6 +322,7 @@
         .rewards-section h3 {
             margin: 0 0 15px 0;
             font-size: 18px;
+            color: var(--text);
         }
 
         .rewards-grid {
@@ -362,7 +366,7 @@
         }
 
         /* ==========================================
-           7. ЗАДАНИЯ
+           7. ЗАДАНИЯ - ИСПРАВЛЕНО
            ========================================== */
         .tasks-section {
             background: var(--bg-header);
@@ -379,6 +383,9 @@
             cursor: pointer;
             font-weight: 700;
             font-size: 16px;
+            background: var(--bg-header);
+            position: relative;
+            z-index: 10;
         }
 
         .tasks-header i {
@@ -388,6 +395,7 @@
         .tasks-content {
             padding: 0 20px 20px;
             display: none;
+            background: var(--bg-header);
         }
 
         .tasks-category {
@@ -542,7 +550,7 @@
         .task-status.pending { color: var(--status-yellow); }
 
         /* ==========================================
-           8. ВИТРИНА ДОСТИЖЕНИЙ
+           8. ВИТРИНА ДОСТИЖЕНИЙ - ИСПРАВЛЕНО
            ========================================== */
         .showcase-container {
             background: var(--bg-header);
@@ -550,11 +558,13 @@
             padding: 20px;
             border-radius: 24px;
             border: 2px solid var(--accent);
+            cursor: pointer;
         }
 
         .showcase-container h3 {
             margin: 0 0 5px 0;
             font-size: 18px;
+            color: var(--text);
         }
 
         .showcase-grid {
@@ -635,6 +645,7 @@
         .achievement-info h4 {
             font-size: 16px;
             margin: 0 0 4px 0;
+            color: var(--text);
         }
 
         .achievement-info p {
@@ -726,6 +737,7 @@
             font-size: 16px;
             margin: 0 0 12px 0;
             cursor: pointer;
+            color: var(--text);
         }
 
         .book-card button {
@@ -771,6 +783,7 @@
 
         .cart-item-info h4 {
             margin: 0 0 4px 0;
+            color: var(--text);
         }
 
         .cart-item-price {
@@ -812,6 +825,7 @@
         .cart-total {
             font-size: 18px;
             font-weight: 700;
+            color: var(--text);
         }
 
         .cart-total span {
@@ -982,6 +996,7 @@
         .modal-content h3 {
             text-align: center;
             margin: 0 0 20px 0;
+            color: var(--text);
         }
 
         .modal-close-btn {
@@ -1061,7 +1076,7 @@
 
         document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color || '#121212');
         document.documentElement.style.setProperty('--text', tg.themeParams.text_color || '#ffffff');
-        document.documentElement.style.setProperty('--accent', tg.themeParams.button_color || '#ff9500');
+        document.documentElement.style.setProperty('--accent', '#ff9500'); // Принудительно оранжевый
 
         // Данные
         const levelConfig = [
@@ -1158,8 +1173,8 @@
             xp: 0,
             level: 1,
             avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
-            status: null,
-            unlockedStatuses: [],
+            status: 'Новичок',
+            unlockedStatuses: ['Новичок'],
             achievements: [],
             showcase: [null, null, null],
             levelTasksProgress: [false, false, false, false, false],
@@ -1184,7 +1199,8 @@
             const statusBadge = document.getElementById('currentStatus');
             if (user.status) {
                 statusBadge.innerText = user.status;
-                statusBadge.style.background = getStatusColor(user.status);
+                const statusColor = getStatusColor(user.status);
+                statusBadge.style.background = statusColor;
                 statusBadge.style.color = user.status === 'Легенда' ? 'black' : 'white';
             } else {
                 statusBadge.innerText = 'Без статуса';
@@ -1244,7 +1260,7 @@
         function toggleSection(sectionId) {
             const section = document.getElementById(sectionId);
             if (section.style.display === 'none' || section.style.display === '') {
-                document.querySelectorAll('.rewards-section, .earn-section').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.rewards-section').forEach(el => el.style.display = 'none');
                 section.style.display = 'block';
             } else {
                 section.style.display = 'none';
@@ -1508,7 +1524,11 @@
                 const url = `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av${i}.png`;
                 const div = document.createElement('div');
                 div.className = 'preset-avatar-item';
-                div.innerHTML = `<img src="${url}" alt="Avatar ${i}" onclick="showAvatarConfirm('${url}')">`;
+                div.onclick = () => showAvatarConfirm(url);
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = `Avatar ${i}`;
+                div.appendChild(img);
                 container.appendChild(div);
             }
         }
@@ -1591,7 +1611,7 @@
                 if (isActive) {
                     actionHtml = '<span style="color: var(--status-green);"><i class="fas fa-check"></i> Выбран</span>';
                 } else if (isUnlocked) {
-                    actionHtml = `<button class="balance-btn" style="padding: 8px 16px; font-size: 13px;" onclick="selectStatus('${lvl.name}')">Выбрать</button>`;
+                    actionHtml = `<button class="balance-btn" style="padding: 8px 16px; font-size: 13px; width: auto;" onclick="selectStatus('${lvl.name}')">Выбрать</button>`;
                 } else {
                     actionHtml = `<span style="color: var(--text-gray);">С ${lvl.xpReq} XP</span>`;
                 }
@@ -1713,6 +1733,23 @@
             });
         }
 
+        // ========== ИИ ПАЛИТРА ==========
+        function processAI(event) {
+            const file = event.target.files[0];
+            if (file) {
+                tg.showAlert("Анализ изображения... (демо-режим)");
+                setTimeout(() => {
+                    const resultDiv = document.getElementById('aiResult');
+                    resultDiv.style.display = 'block';
+                    resultDiv.innerHTML = '<h4>Распознанные цвета:</h4><p>Демо-режим: здесь будут результаты анализа</p>';
+                }, 1000);
+            }
+        }
+
+        function submitAdminAiTrain() {
+            tg.showAlert("Функция обучения ИИ в разработке");
+        }
+
         // ========== СБРОС ==========
         function resetAllData() {
             tg.showConfirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?", function(confirm) {
@@ -1754,7 +1791,7 @@
                 <h2 id="displayUsername">Серджио</h2>
                 <i class="fas fa-pencil-alt" style="color: var(--text-gray); font-size: 14px;"></i>
             </div>
-            <button id="currentStatus" class="status-badge" onclick="openStatusInfo()">Без статуса</button>
+            <button id="currentStatus" class="status-badge" onclick="openStatusInfo()">Новичок</button>
         </div>
     </div>
 
@@ -1870,15 +1907,15 @@
     </div>
 
     <!-- Витрина достижений -->
-    <div class="showcase-container">
+    <div class="showcase-container" onclick="openAchievementsGallery()">
         <h3>Витрина Топ-3</h3>
         <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 15px;">Нажми на слот, чтобы увидеть достижения</p>
         <div class="showcase-grid">
-            <div class="showcase-slot" id="slot-0"><i class="fas fa-plus"></i></div>
-            <div class="showcase-slot" id="slot-1"><i class="fas fa-plus"></i></div>
-            <div class="showcase-slot" id="slot-2"><i class="fas fa-plus"></i></div>
+            <div class="showcase-slot" id="slot-0" onclick="event.stopPropagation(); openAchievementsGallery()"><i class="fas fa-plus"></i></div>
+            <div class="showcase-slot" id="slot-1" onclick="event.stopPropagation(); openAchievementsGallery()"><i class="fas fa-plus"></i></div>
+            <div class="showcase-slot" id="slot-2" onclick="event.stopPropagation(); openAchievementsGallery()"><i class="fas fa-plus"></i></div>
         </div>
-        <div class="showcase-info">Нажмите на слот для просмотра всех достижений</div>
+        <div class="showcase-info">Нажмите для просмотра всех достижений</div>
     </div>
 </div>
 
@@ -1897,13 +1934,13 @@
     <div class="books-section">
         <div class="books-grid">
             <div class="book-card">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" alt="Том 1" onclick="openBook(1)">
-                <h4 onclick="openBook(1)">Том 1</h4>
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" alt="Том 1">
+                <h4>Том 1</h4>
                 <button onclick="changeCart('tome1', 1)">В корзину (1500 ₽)</button>
             </div>
             <div class="book-card">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" alt="Том 2" onclick="openBook(2)">
-                <h4 onclick="openBook(2)">Том 2</h4>
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" alt="Том 2">
+                <h4>Том 2</h4>
                 <button onclick="changeCart('tome2', 1)">В корзину (1500 ₽)</button>
             </div>
         </div>

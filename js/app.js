@@ -41,13 +41,11 @@ const LEVEL_COLORS = {
     4: '#ff3b30', // Красный
     5: '#ffd700'  // Золотой/Желтый
 };
-
-
 async function init() {
     console.log("Запуск системы...");
 
     try {
-        // Telegram WebApp API
+        // 1. Инициализация Telegram WebApp
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.expand();
@@ -55,12 +53,12 @@ async function init() {
             State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
         }
 
-        // Загружаем данные пользователя (локально или через API)
+        // 2. Получаем данные пользователя
         if (window.api && typeof window.api.getUser === 'function') {
             State.user = await window.api.getUser(State.userId);
         }
 
-        // Если пользователь не загрузился, создаём дефолт
+        // 3. Если пользователь не загрузился, создаём дефолт
         if (!State.user) {
             console.warn("user не загрузился, создаём дефолт");
             State.user = {
@@ -75,37 +73,26 @@ async function init() {
             };
         }
 
-        // 1. ОТРИСОВКА интерфейса сразу
+        // 4. ОТРИСОВКА интерфейса сразу
         if (typeof renderProfile === 'function') renderProfile();
         if (typeof renderTasks === 'function') renderTasks();
         if (typeof updateCartBadge === 'function') updateCartBadge();
 
-        // 2. ЗАПУСК фона (запросы к Google Таблицам и маркеры)
-        if (typeof window.loadMarkersFromCSV === 'function') {
-            window.loadMarkersFromCSV(); 
-        }
-        if (typeof loadOrganizers === 'function') {
-            loadOrganizers(); 
-        }
+        // 5. Фоновая загрузка маркеров и организаторов
+        if (typeof window.loadMarkersFromCSV === 'function') window.loadMarkersFromCSV(); 
+        if (typeof loadOrganizers === 'function') loadOrganizers(); 
 
-        // 3. Привязка событий к кнопкам (чтобы всё сразу работало)
+        // 6. Привязка событий к кнопкам и интерактиву
         if (typeof bindUIEvents === 'function') bindUIEvents();
 
     } catch (error) {
         console.error("Ошибка при инициализации:", error);
         alert("Ошибка загрузки приложения: " + error.message);
     }
-
-    // 4. Убираем лоадер сразу, без задержек
-    const loader = document.getElementById('loading-screen');
-    if (loader) {
-        loader.style.display = "none";
-    }
 }
 
-// Вызовем init сразу
+// Запускаем инициализацию сразу при загрузке скрипта
 init();
-
 // НАВИГАЦИЯ
 function tab(tabId) {
     const pages = document.querySelectorAll('.page');
@@ -757,4 +744,3 @@ window.openAnswersGallery = function(tome) {
     // Вызываем новую функцию, ставим 50 страниц по умолчанию
     window.openBook(tome, 50);
 };
-init();

@@ -1,6 +1,221 @@
-/**
- * app.js — Полный контроллер
- */
+// ==========================================
+// 1. КОНФИГ И API (ранее api.js)
+// ==========================================
+const CONFIG = {
+    MARKERS_CSV: 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv',
+    SERVER_URL: 'https://hlhbot-hachettelittleheroes.amvera.io',
+    GITHUB_BASE: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/'
+};
+
+const Api = {
+    async fetchMarkers() {
+        try {
+            const response = await fetch(`${CONFIG.MARKERS_CSV}&cache=${Date.now()}`);
+            const csvText = await response.text();
+            const rows = csvText.split('\n').map(row => 
+                row.split(',').map(cell => cell.replace(/"/g, '').trim())
+            );
+            let markers = [];
+            rows.forEach(row => {
+                for (let i = 0; i < row.length; i++) {
+                    let num = row[i];
+                    if (num && !isNaN(num) && parseInt(num) > 10) {
+                        let stockStr = row[i+1] || "0";
+                        let stock = parseInt(stockStr.replace(/[^0-9]/g, ''));
+                        
+                        markers.push({
+                            id: num,
+                            number: num,
+                            stock: isNaN(stock) ? 0 : stock,
+                            price: 75,
+                            brand: 'GUANGNA'
+                        });
+                        i++; 
+                    }
+                }
+            });
+            return markers.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
+        } catch (error) {
+            console.error("Ошибка загрузки маркеров:", error);
+            return [];
+        }
+    },
+
+    async getUser(userId) {
+        try {
+            let savedProgress = JSON.parse(localStorage.getItem('task_progress')) || {};
+            
+            const defaultProgress = {
+                'status_progression': { currentLevel: 1, currentScore: 0 },
+                'master_colorist': { currentLevel: 1, currentScore: 0 }
+            };
+
+            return {
+                id: userId,
+                name: localStorage.getItem('user_name') || "Без имени",
+                balance: parseInt(localStorage.getItem('user_balance')) || 0,
+                avatar: localStorage.getItem('user_avatar') || `${CONFIG.GITHUB_BASE}avatars/av2.png`,
+                status: localStorage.getItem('user_status') || "Новичок",
+                unlockedStatuses: JSON.parse(localStorage.getItem('unlocked_statuses')) || ["Новичок"],
+                unlockedAchievements: JSON.parse(localStorage.getItem('unlocked_achievements')) || [],
+                showcase: JSON.parse(localStorage.getItem('showcase_slots')) || [null, null, null],
+                taskProgress: { ...defaultProgress, ...savedProgress }
+            };
+        } catch (e) {
+            console.error("Ошибка в api.getUser:", e);
+            return null;
+        }
+    },
+
+    saveUserState(user) {
+        localStorage.setItem('user_balance', user.balance); 
+        localStorage.setItem('user_status', user.status);
+        localStorage.setItem('unlocked_statuses', JSON.stringify(user.unlockedStatuses));
+        localStorage.setItem('unlocked_achievements', JSON.stringify(user.unlockedAchievements));
+        localStorage.setItem('showcase_slots', JSON.stringify(user.showcase));
+        localStorage.setItem('task_progress', JSON.stringify(user.taskProgress));
+    },
+
+    getCart() {
+        return JSON.parse(localStorage.getItem('cart') || '[]');
+    },
+
+    saveCart(cart) {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        if (window.updateCartBadge) window.updateCartBadge();
+    } // Запятая убрана, getTaskData перенесен вниз
+};
+
+Api.getTaskData = function() {
+    return [
+        {
+            id: 'status_progression',
+            title: 'Путь художника',
+            statusReward: 'Мастер',
+            achReward: 'ach1',
+            levels: [
+                { lv: 1, target: 5, text: "Раскрасить 5 картинок", reward: 50 },
+                { lv: 2, target: 10, text: "Раскрасить 10 картинок", reward: 100 },
+                { lv: 3, target: 20, text: "Раскрасить 20 картинок", reward: 200 },
+                { lv: 4, target: 35, text: "Раскрасить 35 картинок", reward: 350 },
+                { lv: 5, target: 50, text: "Раскрасить 50 картинок", reward: 500 }
+            ]
+        },
+        {
+            id: 'master_colorist',
+            title: 'Мастер штриховки',
+            statusReward: 'Легенда',
+            achReward: 'ach2',
+            levels: [
+                { lv: 1, target: 3, text: "Применить 3 разных цвета на 1 фото", reward: 10 },
+                { lv: 2, target: 5, text: "Использовать ИИ Палитру 5 раз", reward: 20 },
+                { lv: 3, target: 1, text: "Написать 1 отзыв", reward: 30 },
+                { lv: 4, target: 1, text: "Поделиться с другом", reward: 50 },
+                { lv: 5, target: 1, text: "Сделать заказ с маркерами", reward: 100 }
+            ]
+        }
+    ];
+};
+
+window.api = Api;
+window.CONFIG = CONFIG;
+
+
+// ==========================================
+// 2. ВИЗУАЛЬНЫЕ ХЕЛПЕРЫ (ранее ui.js)
+// ==========================================
+
+function updateCartBadge(count) {
+    const badge = document.getElementById('cartBadge');
+    if (!badge) return;
+    if (count > 0) {
+        badge.style.display = 'inline-block';
+        badge.innerText = count;
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function showAlert(msg) {
+    alert(msg);
+}
+
+function syncProfileUI(user) {
+    const nameEl = document.getElementById('displayUsername');
+    const balanceEl = document.getElementById('userBalance');
+    const avatarEl = document.getElementById('user-avatar');
+
+    if (nameEl) nameEl.innerText = user.name || "Без имени";
+    if (balanceEl) balanceEl.innerText = user.balance || 0;
+    if (avatarEl && user.avatar) avatarEl.src = user.avatar;
+}
+
+async function loadOrganizers() {
+    const container = document.getElementById('organizersList');
+    const userId = document.getElementById('userIdDisplay')?.innerText;
+    if (!container || !userId || !window.api?.getOrganizers) return;
+
+    const organizers = await window.api.getOrganizers(userId);
+    container.innerHTML = '';
+    organizers.forEach(org => {
+        const div = document.createElement('div');
+        div.className = 'organizer-card';
+        div.innerText = org.name;
+        div.onclick = () => openOrganizerView(org.id, org.name);
+        container.appendChild(div);
+    });
+}
+
+function openOrganizerView(orgId, title) {
+    const view = document.getElementById('organizerDetailView');
+    if (view) {
+        view.style.display = 'block';
+        document.getElementById('viewOrgTitle').innerText = title;
+        loadOrganizerMarkers(orgId);
+    }
+}
+
+async function loadOrganizerMarkers(orgId) {
+    const grid = document.getElementById('gridContainer');
+    if (!grid || !window.api?.getOrganizerMarkers) return;
+    const markers = await window.api.getOrganizerMarkers(orgId);
+    grid.innerHTML = '';
+    markers.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'organizer-cell';
+        div.innerText = m.name;
+        div.onclick = () => openCellModal(m.id, m.name);
+        grid.appendChild(div);
+    });
+}
+
+function openTasks() {
+    const container = document.getElementById('questsListContainer');
+    if (container) {
+        container.style.display = container.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function openSheet(contentHTML) {
+    const sheet = document.getElementById('bottomSheet');
+    const content = document.getElementById('sheetContent');
+    const overlay = document.getElementById('sheetOverlay');
+    if (sheet && content && overlay) {
+        content.innerHTML = contentHTML;
+        sheet.classList.add('active');
+        overlay.classList.add('active');
+    }
+}
+
+function closeSheet() {
+    document.getElementById('bottomSheet')?.classList.remove('active');
+    document.getElementById('sheetOverlay')?.classList.remove('active');
+}
+
+
+// ==========================================
+// 3. КОНТРОЛЛЕР И СОСТОЯНИЕ (ранее app.js)
+// ==========================================
 
 const State = {
     user: null,
@@ -10,30 +225,23 @@ const State = {
     userId: '496779756',
     activeUploadBranchId: null
 };
-window.CONFIG = {
-    GITHUB_BASE: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/'
-};
-
 
 let pendingAvatarUrl = '';
 let activeShowcaseSlot = null;
-let currentInfoSlot = null; // Для модалки с описанием
+let currentInfoSlot = null; 
 
-// ОБЪЯВЛЯЕМ ПЕРЕМЕННЫЕ ГАЛЕРЕИ ОДИН РАЗ
 let currentGalleryTome = 1;
 let currentGalleryPage = 1;
 let maxGalleryPages = 50;
 let touchStartX = 0;
 let touchStartY = 0;
-let currentVol, currentPage, maxPages; // Для старых функций, если нужны
+let currentVol, currentPage, maxPages; 
 
-// БАЗА ОПИСАНИЙ ДОСТИЖЕНИЙ
 const ACH_DATA = {
     'ach1': { title: 'Смена имиджа!', desc: 'Вы успешно изменили свой аватар.' },
     'ach2': { title: 'Легенда штриховки', desc: 'Завершено 5 заданий в ветке мастера.' }
 };
 
-// ОБНОВЛЕННЫЕ ЦВЕТА ДЛЯ УРОВНЕЙ
 const LEVEL_COLORS = {
     1: '#a3a3a3', // Серый
     2: '#34bdeb', // Голубой
@@ -41,11 +249,11 @@ const LEVEL_COLORS = {
     4: '#ff3b30', // Красный
     5: '#ffd700'  // Золотой/Желтый
 };
+
 async function init() {
     console.log("Запуск системы...");
 
     try {
-        // 1. Инициализация Telegram WebApp
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.expand();
@@ -53,12 +261,10 @@ async function init() {
             State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
         }
 
-        // 2. Получаем данные пользователя
         if (window.api && typeof window.api.getUser === 'function') {
             State.user = await window.api.getUser(State.userId);
         }
 
-        // 3. Если пользователь не загрузился, создаём дефолт
         if (!State.user) {
             console.warn("user не загрузился, создаём дефолт");
             State.user = {
@@ -73,17 +279,12 @@ async function init() {
             };
         }
 
-        // 4. ОТРИСОВКА интерфейса сразу
         if (typeof renderProfile === 'function') renderProfile();
         if (typeof renderTasks === 'function') renderTasks();
         if (typeof updateCartBadge === 'function') updateCartBadge();
 
-        // 5. Фоновая загрузка маркеров и организаторов
         if (typeof window.loadMarkersFromCSV === 'function') window.loadMarkersFromCSV(); 
         if (typeof loadOrganizers === 'function') loadOrganizers(); 
-
-        // 6. Привязка событий к кнопкам и интерактиву
-        if (typeof bindUIEvents === 'function') bindUIEvents();
 
     } catch (error) {
         console.error("Ошибка при инициализации:", error);
@@ -91,23 +292,18 @@ async function init() {
     }
 }
 
-// Запускаем инициализацию сразу при загрузке скрипта
-init();
-// НАВИГАЦИЯ
 function tab(tabId) {
     const pages = document.querySelectorAll('.page');
     const buttons = document.querySelectorAll('.nav-btn');
 
-    // Скрываем всё
     pages.forEach(p => {
         p.style.setProperty('display', 'none', 'important');
         p.classList.remove('active');
     });
     buttons.forEach(b => b.classList.remove('active'));
 
-    // Скрываем админку по умолчанию
     const adminBlock = document.getElementById('adminAiBlock');
-    if (adminBlock) adminBlock.style.display = 'none';
+    if (adminBlock) adminBlock.style.setProperty('display', 'none', 'important');
 
     const targetPage = document.getElementById(tabId);
     const targetBtn = document.getElementById('btn-' + tabId);
@@ -117,13 +313,11 @@ function tab(tabId) {
         targetPage.classList.add('active');
         targetBtn.classList.add('active');
         
-        // Защита: State может быть не инициализирован
         if (window.State) {
             State.currentTab = tabId;
-            // Проверка админа
             if (tabId === 'aipalette' && adminBlock) {
                 if (String(State.userId) === '496779756' || State.userId === 'твой_настоящий_tg_id') {
-                    adminBlock.style.display = 'block';
+                    adminBlock.style.setProperty('display', 'block', 'important');
                 }
             }
         }
@@ -131,14 +325,18 @@ function tab(tabId) {
     }
 }
 
-// ПРОФИЛЬ И АВАТАРКИ
 function renderProfile() {
     if (!State.user) return;
 
-    document.getElementById('user-avatar').src = State.user.avatar;
-    document.getElementById('displayUsername').innerText = State.user.name;
-    document.getElementById('userBalance').innerText = State.user.balance;
-    document.getElementById('currentStatus').innerText = State.user.status;
+    const avatarEl = document.getElementById('user-avatar');
+    const nameEl = document.getElementById('displayUsername');
+    const balanceEl = document.getElementById('userBalance');
+    const statusEl = document.getElementById('currentStatus');
+
+    if (avatarEl) avatarEl.src = State.user.avatar;
+    if (nameEl) nameEl.innerText = State.user.name;
+    if (balanceEl) balanceEl.innerText = State.user.balance;
+    if (statusEl) statusEl.innerText = State.user.status;
 
     const presetGrid = document.getElementById('avatarPresets');
     if (presetGrid && presetGrid.children.length === 0) {
@@ -157,7 +355,7 @@ function renderProfile() {
         if (!slotEl) continue;
         const achId = State.user.showcase[i];
         if (achId) {
-            slotEl.innerHTML = `<img src="${window.CONFIG.GITHUB_BASE}achievements/${achId}.png" alt="Achievement">`;
+            slotEl.innerHTML = `<img src="${window.CONFIG.GITHUB_BASE}achievements/${achId}.png" alt="Achievement" style="width:100%; height:100%; object-fit:contain;">`;
             slotEl.onclick = () => showAchievementInfo(achId, i);
         } else {
             slotEl.innerHTML = '<i class="fas fa-lock"></i>';
@@ -217,10 +415,18 @@ async function saveNewNickname() {
 
 function toggleSection(id) {
     const el = document.getElementById(id);
+    const rewards = document.getElementById('rewards-section');
+    const earn = document.getElementById('earn-section');
+    
     const isVisible = el.style.display === 'block';
-    document.getElementById('rewards-section').style.display = 'none';
-    document.getElementById('earn-section').style.display = 'none';
-    if (!isVisible) el.style.display = 'block';
+    
+    // Скрываем обе секции, используя !important, чтобы перебить настройки табов
+    if (rewards) rewards.style.setProperty('display', 'none', 'important');
+    if (earn) earn.style.setProperty('display', 'none', 'important');
+    
+    if (!isVisible) {
+        el.style.setProperty('display', 'block', 'important');
+    }
 }
 
 window.loadMarkersFromCSV = async function() {
@@ -254,7 +460,6 @@ window.loadMarkersFromCSV = async function() {
     }
 };
 
-// ДОСТИЖЕНИЯ И АЛЕРТЫ
 function grantAchievement(achId, defaultText) {
     if (!State.user.unlockedAchievements.includes(achId)) {
         State.user.unlockedAchievements.push(achId);
@@ -294,13 +499,17 @@ function openShowcaseModal(slotIndex) {
     activeShowcaseSlot = slotIndex;
     const list = document.getElementById('availableAchievementsList');
     list.innerHTML = '';
+    
     if (State.user.unlockedAchievements.length === 0) {
         list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">У вас пока нет достижений.</p>';
     } else {
         State.user.unlockedAchievements.forEach(achId => {
             const isEquipped = State.user.showcase.includes(achId);
             const isCurrentSlot = State.user.showcase[slotIndex] === achId;
-            if (isEquipped && !isCurrentSlot) return; // Запрещаем установку одного достижения в несколько слотов
+            
+            // Запрещаем установку одного достижения в несколько слотов
+            if (isEquipped && !isCurrentSlot) return; 
+            
             const div = document.createElement('div');
             div.className = 'ach-list-item';
             if (isCurrentSlot) div.style.borderColor = 'var(--status-green)';
@@ -308,10 +517,12 @@ function openShowcaseModal(slotIndex) {
             div.onclick = () => pinAchievement(achId);
             list.appendChild(div);
         });
+        
         if (list.innerHTML === '') {
             list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">Все доступные достижения уже установлены.</p>';
         }
     }
+    
     const clearBtnContainer = document.getElementById('clearSlotBtnContainer');
     if (State.user.showcase[slotIndex]) {
         clearBtnContainer.innerHTML = `<button class="balance-btn" style="background:var(--status-red); border:none; margin-top:10px; width: 100%;" onclick="clearAchievementSlot()">Снять достижение</button>`;
@@ -339,7 +550,6 @@ function pinAchievement(achId) {
     document.getElementById('showcaseModal').style.display = 'none';
 }
 
-// ЗАДАНИЯ И ПРОГРЕССИЯ
 function toggleTasks() {
     const content = document.getElementById('tasksList');
     const arrow = document.getElementById('tasksArrow');
@@ -352,23 +562,17 @@ function renderTasks() {
     const container = document.getElementById('tasksList');
     if (!container) return;
 
-    // защита API
     if (!window.api || typeof window.api.getTaskData !== 'function') {
-        console.error("API не готов");
         container.innerHTML = '<p style="color:red;">Ошибка API</p>';
         return;
     }
 
-    // защита user
     if (!State.user) {
-        console.error("State.user отсутствует");
         container.innerHTML = '<p style="color:red;">Нет данных пользователя</p>';
         return;
     }
 
-    // защита taskProgress
     if (!State.user.taskProgress) {
-        console.warn("taskProgress отсутствует, создаём");
         State.user.taskProgress = {};
     }
 
@@ -376,11 +580,9 @@ function renderTasks() {
     const progressData = State.user.taskProgress;
 
     container.innerHTML = branches.map(branch => {
-
         const userProg = progressData[branch.id] || { currentLevel: 1, currentScore: 0 };
         const activeLevel = branch.levels.find(lv => lv.lv === userProg.currentLevel);
 
-        // если всё пройдено
         if (!activeLevel) {
             return `
             <div style="margin-bottom: 15px;">
@@ -402,7 +604,6 @@ function renderTasks() {
                 </h4>
 
                 <div class="task-level" style="border-color: ${levelColor};">
-
                     <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
                         <span style="font-size:14px; font-weight:bold;">
                             ${activeLevel.text}
@@ -433,7 +634,6 @@ function renderTasks() {
                         onclick="testAdminAddPoint('${branch.id}', ${activeLevel.target})">
                         <i class="fas fa-wrench"></i> Тест: админ дал +1 очко
                     </button>
-
                 </div>
             </div>
         `;
@@ -518,7 +718,6 @@ function submitTaskPhoto() {
     alert("Фотографии отправлены!");
 }
 
-// МАРКЕРЫ И КОРЗИНА
 function renderMarkers() {
     const container = document.getElementById('markersList');
     if (!container) return;
@@ -561,15 +760,6 @@ function changeCart(id, delta) {
     renderMarkers(); updateCartBadge();
 }
 
-function updateCartBadge() {
-    const badge = document.getElementById('cartBadge');
-    if (!badge) return;
-    const totalCount = State.cart.reduce((sum, item) => sum + item.count, 0);
-    badge.innerText = totalCount;
-    badge.style.display = totalCount > 0 ? 'block' : 'none';
-}
-
-// --- ВЫБОР СТАТУСА ---
 window.openStatusInfo = function() {
     const list = document.getElementById('availableStatusesList');
     list.innerHTML = State.user.unlockedStatuses.map(st => `
@@ -585,7 +775,6 @@ window.selectStatus = function(st) {
     document.getElementById('statusSelectModal').style.display = 'none';
 }
 
-// --- ГАЛЕРЕЯ ОТВЕТОВ ---
 window.startBook = function(v, m) { 
     currentVol = v; 
     maxPages = m; 
@@ -641,18 +830,17 @@ window.openBook = function(tome, max) {
     currentGalleryTome = tome;
     maxGalleryPages = max;
     currentGalleryPage = 1;
-    const modal = document.getElementById('answersGalleryModal'); // Исправленный ID
+    const modal = document.getElementById('answersGalleryModal');
     if (modal) modal.style.display = 'flex'; 
     window.updatePage();
 };
 
 window.closeBook = function() {
-    const modal = document.getElementById('answersGalleryModal'); // Исправленный ID
+    const modal = document.getElementById('answersGalleryModal');
     if (modal) modal.style.display = 'none';
 };
 
-window.closeAnswersGallery = window.closeBook; // Чтобы работала кнопка из HTML
-
+window.closeAnswersGallery = window.closeBook; 
 
 window.checkout = function() {
     const cart = window.State.cart;
@@ -691,7 +879,6 @@ window.checkout = function() {
     window.Telegram.WebApp.close(); 
 };
 
-// --- АДМИН-ПАНЕЛЬ ИИ ---
 window.submitAdminAiTrain = function() {
     const file = document.getElementById('adminAiInput').files[0];
     const brand = document.getElementById('adminAiBrand').value.trim();
@@ -709,7 +896,6 @@ window.submitAdminAiTrain = function() {
     document.getElementById('adminAiNumber').value = '';
 }
 
-// ФУНКЦИЯ ПОЛНОГО СБРОСА
 window.resetAllData = function() {
     if(confirm("Вы уверены, что хотите полностью сбросить прогресс? Все данные будут удалены.")) {
         localStorage.clear();
@@ -719,14 +905,8 @@ window.resetAllData = function() {
 
 window.updateCartBadge = updateCartBadge;
 
-// Инициализация при старте
-if (document.readyState === "complete" || document.readyState === "interactive") {
-    init();
-} else {
-    document.addEventListener("DOMContentLoaded", init);
-}
 window.State = State;
-// Функции для кнопок-стрелок в модалке ответов
+
 window.nextGalleryPage = function() {
     currentGalleryPage++;
     window.updatePage();
@@ -739,8 +919,13 @@ window.prevGalleryPage = function() {
     }
 };
 
-// Заглушка для старого названия, чтобы не летели ошибки
 window.openAnswersGallery = function(tome) {
-    // Вызываем новую функцию, ставим 50 страниц по умолчанию
     window.openBook(tome, 50);
 };
+
+// Запуск инициализации
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    init();
+} else {
+    document.addEventListener("DOMContentLoaded", init);
+}

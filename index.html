@@ -1777,17 +1777,18 @@ const defaultUser = {
     achievements: [],
     showcase: [null, null, null],
     levelTasksProgress: [0, 0, 0, 0, 0],
+    // Твои новые ветки
     branchProgress: {
         alcohol_markers: [0, 0, 0, 0, 0],
         pencils: [0, 0, 0, 0, 0]
     },
-    unlockedStatuses: []
-};
+    unlockedStatuses: [],
     timeTasksProgress: {},
     timeTasksReset: Date.now(),
     aiUsageCount: 0,
     theme: localStorage.getItem('app_theme') || 'light'
-};
+}; // Только одна закрывающая скобка здесь!
+
 
 // 3. БЕЗОПАСНОЕ СЛИЯНИЕ
 // Берем старые данные из кэша, но если там чего-то нет (например, новых заданий) - берем из defaultUser

@@ -1705,26 +1705,43 @@
         };
 
         // Получаем ID пользователя
-        const userId = tg.initDataUnsafe?.user?.id;
-        console.log('User ID:', userId);
+        
+        // 1. ПОЛУЧАЕМ ID (с безопасным фолбэком для тестов в браузере)
+const tgUserId = tg.initDataUnsafe?.user?.id;
+const userId = tgUserId || 496779756; // Если зашли из браузера, подставляем твой ID
+console.log('Текущий User ID:', userId);
 
-        let user = JSON.parse(localStorage.getItem('coloring_user')) || {
-            name: tg.initDataUnsafe?.user?.first_name || 'Серджио',
-            balance: 0,
-            xp: 0,
-            level: 1,
-            avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
-            status: 'Новичок',
-            unlockedStatuses: ['Новичок'],
-            achievements: [],
-            showcase: [null, null, null],
-            levelTasksProgress: [false, false, false, false, false],
-            timeTasksProgress: {},
-            timeTasksReset: Date.now(),
-            aiUsageCount: 0,
-            isAdmin: userId === ADMIN_ID,
-            theme: localStorage.getItem('app_theme') || 'light'
-        };
+// 2. ДЕФОЛТНЫЕ ДАННЫЕ (эталон)
+const defaultUser = {
+    name: tg.initDataUnsafe?.user?.first_name || 'Серджио',
+    balance: 0,
+    xp: 0,
+    level: 1,
+    avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
+    status: 'Новичок',
+    unlockedStatuses: ['Новичок'],
+    achievements: [],
+    showcase: [null, null, null],
+    levelTasksProgress: [false, false, false, false, false],
+    timeTasksProgress: {},
+    timeTasksReset: Date.now(),
+    aiUsageCount: 0,
+    theme: localStorage.getItem('app_theme') || 'light'
+};
+
+// 3. БЕЗОПАСНОЕ СЛИЯНИЕ
+// Берем старые данные из кэша, но если там чего-то нет (например, новых заданий) - берем из defaultUser
+let savedLocalUser = JSON.parse(localStorage.getItem('coloring_user')) || {};
+let user = { ...defaultUser, ...savedLocalUser };
+
+// Защита от старых крашей корзины и заданий (если в кэше лежал битый тип данных)
+if (!Array.isArray(user.levelTasksProgress)) user.levelTasksProgress = [...defaultUser.levelTasksProgress];
+if (!user.timeTasksProgress) user.timeTasksProgress = {};
+if (!Array.isArray(user.unlockedStatuses)) user.unlockedStatuses = ['Новичок'];
+
+// ЖЕСТКО задаем админку каждый раз (чтобы кэш не перебивал)
+user.isAdmin = (userId === ADMIN_ID);
+
 
         // Корзина
         let cart = JSON.parse(localStorage.getItem('coloring_cart')) || {};

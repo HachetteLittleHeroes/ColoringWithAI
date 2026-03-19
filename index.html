@@ -170,13 +170,13 @@
     <div class="header">Ответы и Тома</div>
     <div class="reward-grid" style="padding: 15px;">
         <div class="reward-card">
-            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 1" onclick="openAnswersGallery(1)">
-            <h4 onclick="openAnswersGallery(1)">Том 1</h4>
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 1" onclick="openBook(1,26)">
+            <h4 onclick="openBook(1,26)">Том 1</h4>
             <button class="balance-btn" style="width:100%; margin-top:10px;" onclick="changeCart('tome1', 1)">В корзину (1500 ₽)</button>
         </div>
         <div class="reward-card">
-            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 2" onclick="openAnswersGallery(2)">
-            <h4 onclick="openAnswersGallery(2)">Том 2</h4>
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 2" onclick="openBook(2,26)">
+            <h4 onclick="openBook(2,26)">Том 2</h4>
             <button class="balance-btn" style="width:100%; margin-top:10px;" onclick="changeCart('tome2', 1)">В корзину (1500 ₽)</button>
         </div>
     </div>
@@ -185,7 +185,6 @@
 <div id="answersGalleryModal" class="modal-overlay" style="display:none; background: rgba(0,0,0,0.9);">
     <div class="modal-content" style="background: transparent; box-shadow: none; text-align: center; width: 100%; padding: 10px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white;">
-            <button class="btn-circle" onclick="prevGalleryPage()"><i class="fas fa-arrow-left"></i></button>
             <span id="galleryPageIndicator" style="font-weight: bold; font-size: 18px;">Страница 1</span>
             <button class="btn-circle" onclick="nextGalleryPage()"><i class="fas fa-arrow-right"></i></button>
         </div>

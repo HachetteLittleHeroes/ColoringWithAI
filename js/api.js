@@ -39,26 +39,35 @@ const Api = {
         }
     },
 
-    async getUser(userId) {
+    
+        async getUser(userId) {
         try {
+            // Загружаем прогресс и проверяем, что это объект
+            let savedProgress = JSON.parse(localStorage.getItem('task_progress')) || {};
+            
+            // Гарантируем наличие веток заданий, даже если localStorage пуст
+            const defaultProgress = {
+                'status_progression': { currentLevel: 1, currentScore: 0 },
+                'master_colorist': { currentLevel: 1, currentScore: 0 }
+            };
+
             return {
                 id: userId,
                 name: localStorage.getItem('user_name') || "Без имени",
-                balance: 0,
+                balance: parseInt(localStorage.getItem('user_balance')) || 0,
                 avatar: localStorage.getItem('user_avatar') || `${CONFIG.GITHUB_BASE}avatars/av2.png`,
-                status: localStorage.getItem('user_status') || "Новичок",
-                unlockedStatuses: JSON.parse(localStorage.getItem('unlocked_statuses')) || ["Новичок"],
+                status: localStorage.getItem('user_status') || "Без статуса",
+                unlockedStatuses: JSON.parse(localStorage.getItem('unlocked_statuses')) || ["Без статуса"],
                 unlockedAchievements: JSON.parse(localStorage.getItem('unlocked_achievements')) || [],
                 showcase: JSON.parse(localStorage.getItem('showcase_slots')) || [null, null, null],
-                taskProgress: JSON.parse(localStorage.getItem('task_progress')) || {
-                    'status_progression': { currentLevel: 1, currentScore: 0 },
-                    'master_colorist': { currentLevel: 1, currentScore: 0 }
-                }
+                taskProgress: { ...defaultProgress, ...savedProgress } // Слияние данных
             };
         } catch (e) {
+            console.error("Ошибка в api.getUser:", e);
             return null;
         }
     },
+
 
     saveUserState(user) {
         localStorage.setItem('user_status', user.status);

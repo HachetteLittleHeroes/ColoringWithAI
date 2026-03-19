@@ -3125,43 +3125,43 @@ setInterval(updateTimers, 60000);
         </div>
     </div>
 
-    <!-- ЗАДАНИЯ -->
-   <div class="tasks-section">
-    <button class="tasks-header" onclick="toggleTasks()">
-        <span>Задания</span>
-        <i class="fas fa-chevron-down" id="tasksArrow"></i>
-    </button>
-    
-    <div id="tasksContent" class="tasks-content">
+    <div class="tasks-section">
+        <button class="tasks-header" onclick="toggleTasks()">
+            <span>Задания</span>
+            <i class="fas fa-chevron-down" id="tasksArrow"></i>
+        </button>
         
-        <div class="level-info-card" style="background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border-color);">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                <span class="current-level-label" style="font-weight: bold; color: var(--accent);">Уровень 1</span>
-                <span style="font-size: 12px; color: var(--text-gray);">Прогресс статуса</span>
+        <div id="tasksContent" class="tasks-content">
+            
+            <div class="level-info-card" style="background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border-color);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span class="current-level-label" style="font-weight: bold; color: var(--accent);">Уровень 1</span>
+                    <span style="font-size: 12px; color: var(--text-gray);">Прогресс статуса</span>
+                </div>
+                <div class="task-progress-bg" style="background: var(--border-color); height: 14px; border-radius: 7px; overflow: hidden; position: relative;">
+                    <div class="task-progress-fill" style="width: 0%; background: var(--accent-gradient); height: 100%; transition: width 0.4s ease;"></div>
+                    <div class="task-progress-text" style="position: absolute; width: 100%; text-align: center; font-size: 10px; line-height: 14px; color: #fff; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">0 / 5</div>
+                </div>
             </div>
-            <div class="task-progress-bg" style="background: var(--border-color); height: 14px; border-radius: 7px; overflow: hidden; position: relative;">
-                <div class="task-progress-fill" style="width: 0%; background: var(--accent-gradient); height: 100%; transition: width 0.4s ease;"></div>
-                <div class="task-progress-text" style="position: absolute; width: 100%; text-align: center; font-size: 10px; line-height: 14px; color: #fff; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">0 / 5</div>
+
+            <div class="tasks-category">
+                <h4>Задания на статус</h4>
+                <div id="levelTasksList"></div>
             </div>
-        </div>
-
-        <div class="tasks-category">
-            <h4>Задания на статус</h4>
-            <div id="levelTasksList"></div>
-        </div>
-        
-        </div>
-</div>
-
-
-            <!-- Временные задания -->
+            
             <div class="tasks-category">
                 <h4>Временные задания (неделя)</h4>
                 <div id="timeTasksList"></div>
             </div>
-        </div>
-        <input type="file" id="taskFileInput" accept="image/*" multiple style="display:none;" onchange="handleTaskFile(event)">
-    </div>
+
+            <input type="file" id="taskFileInput" accept="image/*" multiple style="display:none;" onchange="handleTaskFile(event)">
+            
+        </div> </div> ```
+
+Теперь все элементы лежат строго внутри `#tasksContent`, и кнопка должна снова плавно всё разворачивать. 
+
+Проверь, открывается ли теперь блок? Если да, можем переходить к бэкенду на Python для сохранения прогресса!
+
 
     <!-- Витрина достижений -->
     <div class="showcase-container" onclick="openAchievementsGallery()">

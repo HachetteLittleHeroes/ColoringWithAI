@@ -1603,6 +1603,63 @@
             object-fit: cover;
             display: block;
         }
+        /* Золотая книжка-ашетик */
+.gold-book {
+    color: #FFD700;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+/* Обводка для еженедельных заданий */
+.time-task {
+    border: 2px solid var(--accent);
+    /* остальной твой стиль для .time-task сохраняется */
+}
+
+/* Шкала прогресса для заданий */
+.task-progress-bg {
+    background: var(--border-color);
+    border-radius: 10px;
+    height: 12px;
+    width: 100%;
+    margin: 10px 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.task-progress-fill {
+    background: var(--accent-gradient);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.task-progress-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    color: #fff;
+    line-height: 12px;
+    font-weight: bold;
+    text-shadow: 0px 0px 2px rgba(0,0,0,0.8);
+}
+
+/* Стилизация админ-панели под общий дизайн */
+.admin-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.admin-card h4 {
+    margin-top: 0;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
     </style>
 
     <script>
@@ -1748,18 +1805,16 @@ user.isAdmin = (userId === ADMIN_ID);
 
         // ========== УПРАВЛЕНИЕ ТЕМАМИ ==========
         function setTheme(themeName) {
-            document.documentElement.setAttribute('data-theme', themeName);
-            user.theme = themeName;
-            localStorage.setItem('app_theme', themeName);
-            
+    document.documentElement.setAttribute('data-theme', themeName);
+    user.theme = themeName;
+    localStorage.setItem('app_theme', themeName); // Сохраняем при выходе
+    saveDataLocal(); // Сохраняем в объект пользователя
             // Обновляем активный класс в UI
-            document.querySelectorAll('.theme-option').forEach(opt => {
-                opt.classList.remove('active');
-                if (opt.dataset.theme === themeName) {
-                    opt.classList.add('active');
-                }
-            });
-        }
+            document.querySelectorAll('.theme-option').forEach(el => {
+        el.classList.remove('active');
+        if (el.dataset.theme === themeName) el.classList.add('active');
+    });
+}
 
         function applyCustomTheme() {
             const bgMode = document.getElementById('themeBgMode').value;
@@ -2293,22 +2348,40 @@ function saveDataLocal() {
         }
 
         function updateStatusProgress() {
-            const dots = document.querySelectorAll('.level-dot');
-            const completedCount = user.levelTasksProgress.filter(Boolean).length;
-            
-            dots.forEach((dot, index) => {
-                dot.className = 'level-dot';
-                if (index < completedCount) {
-                    dot.classList.add('completed');
-                }
-            });
+    // 1. Ищем индекс текущего активного уровня (первый, который еще не до конца заполнен)
+    let activeLevelIndex = user.levelTasksProgress.findIndex((prog, idx) => {
+        const max = levelTasks[idx]?.maxProgress || 1;
+        return prog < max;
+    });
 
-            if (completedCount === 5 && !user.status) {
-                user.status = 'Новичок';
-                user.unlockedStatuses.push('Новичок');
-                saveData();
-            }
+    // Если все уровни пройдены, фиксируемся на последнем
+    if (activeLevelIndex === -1) activeLevelIndex = levelTasks.length - 1;
+
+    const currentTask = levelTasks[activeLevelIndex];
+    const currentProgress = user.levelTasksProgress[activeLevelIndex] || 0;
+    const maxProgress = currentTask?.maxProgress || 1;
+    const progressPercent = Math.min(100, (currentProgress / maxProgress) * 100);
+
+    // 2. Обновляем прогресс-бар в интерфейсе (нужно, чтобы в HTML были эти классы)
+    const progressBar = document.querySelector('.task-progress-fill');
+    const progressText = document.querySelector('.task-progress-text');
+    const levelLabel = document.querySelector('.current-level-label');
+
+    if (progressBar) progressBar.style.width = `${progressPercent}%`;
+    if (progressText) progressText.innerText = `${currentProgress} / ${maxProgress}`;
+    if (levelLabel) levelLabel.innerText = `Уровень ${activeLevelIndex + 1}`;
+
+    // 3. Логика автоматической смены статуса
+    // Пример: если пройден первый уровень (индекс 0), даем статус "Спиртесса"
+    if (activeLevelIndex > 0 || (activeLevelIndex === 0 && currentProgress >= maxProgress)) {
+        if (!user.unlockedStatuses.includes('Спиртесса')) {
+            user.status = 'Спиртесса';
+            user.unlockedStatuses.push('Спиртесса');
+            saveDataLocal(); // Сохраняем изменения
         }
+    }
+}
+
 
         // ========== НАВИГАЦИЯ ==========
         function tab(pageId) {
@@ -2364,88 +2437,110 @@ function saveDataLocal() {
         }
 
         function renderLevelTasks() {
-            const container = document.getElementById('levelTasksList');
-            if (!container) return;
-            container.innerHTML = '';
-
+    const container = document.getElementById('levelTasksList');
+    if (!container) return;
+    container.innerHTML = '';
+  let firstUncompletedFound = false;
             levelTasks.forEach((task, index) => {
+        if (firstUncompletedFound) return; // Блокируем отображение следующих уровней
                 const isCompleted = user.levelTasksProgress[index];
                 const level = index + 1;
                 
                 const div = document.createElement('div');
-                div.className = `level-task lvl-${level}`;
-                
-                div.innerHTML = `
-                    <div class="task-header">
-                        <span class="level-badge">Уровень ${level}</span>
-                        ${isCompleted ? '<span class="task-status completed">✓ Выполнено</span>' : ''}
-                    </div>
-                    <div class="task-title">${task.title}</div>
-                    <div class="task-description">${task.description} +${task.xp} XP</div>
-                    ${!isCompleted ? `
-                        <div class="task-footer">
-                            <button class="photo-upload-btn" onclick="openTaskUpload('level_${index}')">
-                                <i class="fas fa-camera"></i> Отправить фото
-                            </button>
-                        </div>
-                    ` : ''}
-                `;
-                
-                container.appendChild(div);
-            });
+        div.className = `level-task`; // Убрали цветовую индикацию .lvl-X
+        
+div.innerHTML = `
+            <div class="task-header">
+                <span class="level-badge" style="background: var(--card-bg); color: var(--text); border: 1px solid var(--border-color);">Уровень ${level}</span>
+                ${isCompleted ? '<span class="task-status completed">✓ Выполнено</span>' : ''}
+            </div>
+            <div class="task-title">${task.title}</div>
+            <div class="task-description">${task.description} <span style="color:var(--accent); font-weight:bold;">+${task.xp} XP</span></div>
+            
+            <div class="task-progress-bg">
+                <div class="task-progress-fill" style="width: ${progressPercent}%;"></div>
+                <div class="task-progress-text">${currentProgress} / ${task.maxProgress}</div>
+            </div>
+
+            ${!isCompleted ? `
+                <div class="task-footer">
+                    <button class="photo-upload-btn" onclick="openTaskUpload('level_${index}')">
+                        <i class="fas fa-camera"></i> Отправить фото
+                    </button>
+                </div>
+            ` : ''}
+        `;
+        
+        container.appendChild(div);
+
+        if (!isCompleted) {
+            firstUncompletedFound = true; // Следующие уровни не отрендерятся
         }
+    });
+}
+        // ========== ТАЙМЕРЫ ЕЖЕНЕДЕЛЬНЫХ ЗАДАНИЙ ==========
+function renderTimeTasks() {
+    const container = document.getElementById('timeTasksList');
+    if (!container) return;
+    container.innerHTML = '';
 
-        function renderTimeTasks() {
-            const container = document.getElementById('timeTasksList');
-            if (!container) return;
-            container.innerHTML = '';
+    timeTasks.forEach(task => {
+        const status = user.timeTasksProgress[task.id] || 'available';
+        const div = document.createElement('div');
+        div.className = 'time-task'; // Обводка будет применена из CSS
+        
+        let statusHtml = '';
+        if (status === 'completed') statusHtml = '<span class="task-status completed">✓ Выполнено</span>';
+        else if (status === 'pending') statusHtml = '<span class="task-status pending">⏳ На проверке</span>';
 
-            const oneWeek = 7 * 24 * 60 * 60 * 1000;
-            if (Date.now() - user.timeTasksReset > oneWeek) {
-                user.timeTasksProgress = {};
-                user.timeTasksReset = Date.now();
-                saveData();
-            }
+        div.innerHTML = `
+            <div class="task-header">
+                <span class="time-badge time-countdown"><i class="far fa-clock"></i> Вычисление...</span>
+                <span class="task-reward">+${task.reward} <i class="fas fa-book-open gold-book"></i></span>
+            </div>
+            <div class="task-title">${task.title}</div>
+            <div class="task-description">${task.description}</div>
+            ${statusHtml}
+            ${status === 'available' ? `
+                <div class="task-footer">
+                    <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')">
+                        <i class="fas fa-camera"></i> Отправить фото
+                    </button>
+                </div>
+            ` : ''}
+        `;
+        container.appendChild(div);
+    });
+    updateTimers(); // Сразу запускаем обновление текста таймера
+}
 
-            timeTasks.forEach(task => {
-                const status = user.timeTasksProgress[task.id] || 'available';
-                
-                const div = document.createElement('div');
-                div.className = 'time-task';
-                
-                let statusHtml = '';
-                if (status === 'completed') {
-                    statusHtml = '<span class="task-status completed">✓ Выполнено</span>';
-                } else if (status === 'pending') {
-                    statusHtml = '<span class="task-status pending">⏳ На проверке</span>';
-                }
+function updateTimers() {
+    const oneWeek = 7 * 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    const resetTime = user.timeTasksReset + oneWeek;
+    const diff = resetTime - now;
 
-                div.innerHTML = `
-                    <div class="task-header">
-                        <span class="time-badge"><i class="far fa-clock"></i> 7 дней</span>
-                        <span class="task-reward">+${task.reward} 📖</span>
-                    </div>
-                    <div class="task-title">${task.title}</div>
-                    <div class="task-description">${task.description}</div>
-                    ${statusHtml}
-                    ${status === 'available' ? `
-                        <div class="task-footer">
-                            <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')">
-                                <i class="fas fa-camera"></i> Отправить фото
-                            </button>
-                        </div>
-                    ` : ''}
-                `;
-                
-                container.appendChild(div);
-            });
-        }
+    if (diff <= 0) {
+        // Сброс заданий
+        user.timeTasksProgress = {};
+        user.timeTasksReset = Date.now();
+        saveDataLocal();
+        renderTasks();
+        return;
+    }
 
-        let activeTaskId = null, tempTaskPhotos = [];
-        function openTaskUpload(taskId) { 
-            activeTaskId = taskId; 
-            document.getElementById('taskFileInput').click(); 
-        }
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / 1000 / 60) % 60);
+
+    document.querySelectorAll('.time-countdown').forEach(el => {
+        el.innerHTML = `<i class="far fa-clock"></i> Осталось: ${d}д ${h}ч ${m}м`;
+    });
+}
+
+// Обновляем таймеры каждую минуту
+setInterval(updateTimers, 60000);
+
 
         function handleTaskFile(event) {
             const files = event.target.files;

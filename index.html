@@ -1663,6 +1663,47 @@
     </style>
 
     <script>
+    // 1. ВСТАВИТЬ В САМОЕ НАЧАЛО <SCRIPT> (ДО defaultUser)
+
+(function loadSavedCustomTheme() {
+    // Проверяем, есть ли флаг кастомной темы
+    const isCustom = localStorage.getItem('app_custom_theme_active') === 'true';
+    if (!isCustom) return;
+
+    // Список всех наших переменных
+    const keys = ['bg', 'card-bg', 'text', 'text-gray', 'accent', 'accent-gradient', 'border-color', 'status-green'];
+    const root = document.documentElement;
+
+    keys.forEach(key => {
+        // Загружаем каждое значение отдельно
+        const savedValue = localStorage.getItem(`theme_val_${key}`);
+        if (savedValue) {
+            root.style.setProperty(`--${key}`, savedValue);
+        }
+    });
+    console.log("✓ Кастомная тема загружена из localStorage");
+})();
+
+// ==========================================
+
+// 2. ВНУТРИ <SCRIPT>, заменяем старую saveThemeToLocalStorage
+
+function saveCustomThemeToLocalStorage(themeData) {
+    if (!themeData) return;
+
+    // Ставим флаг активности кастомной темы
+    localStorage.setItem('app_custom_theme_active', 'true');
+
+    // Сохраняем каждое значение отдельно
+    for (let key in themeData) {
+        localStorage.setItem(`theme_val_${key}`, themeData[key]);
+    }
+
+    // Сохраняем имя темы как 'custom', чтобы не путалось с лайт/дарк
+    localStorage.setItem('app_theme', 'custom'); 
+    tg.showAlert("Кастомная тема сохранена! ✓");
+}
+
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
@@ -2578,29 +2619,62 @@ function updateTimers() {
 
 // Обновляем таймеры каждую минуту
 setInterval(updateTimers, 60000);
+// Переменная для хранения выбранных файлов
+let selectedFilesForUpload = []; 
+// Переменная для ID текущего задания (для кого шлем)
+let currentTaskForUpload = null; 
 
+// 1. Выбор файла (Открывает твое модальное окно)
+function handleTaskFile(event) {
+    selectedFilesForUpload = Array.from(event.target.files);
+    if (selectedFilesForUpload.length === 0) return;
 
-        function handleTaskFile(event) {
-            const files = event.target.files;
-            tempTaskPhotos = [];
-            const container = document.getElementById('taskPhotoPreviewContainer');
-            container.innerHTML = '';
-            
-            if (files.length > 0) {
-                Array.from(files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        tempTaskPhotos.push(e.target.result);
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        container.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                });
-                document.getElementById('taskUploadModal').style.display = 'flex';
-            }
-        }
+    // Ссылка на превью в твоем модальном окне
+    const previewImg = document.getElementById('modalPreviewImage'); 
+    
+    // Показываем превью первого файла
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        if (previewImg) previewImg.src = e.target.result;
+    }
+    reader.readAsDataURL(selectedFilesForUpload[0]);
 
+    // ТВОЯ ФУНКЦИЯ: Открыть модальное окно подтверждения
+    openModalConfirm(); 
+}
+
+// 2. Функция, которую должна вызывать кнопка "Отправить" ВНУТРИ МОДАЛЬНОГО ОКНА
+function confirmUpload() {
+    // ВАЖНО: Сразу закрываем модальное окно!
+    closeModalConfirm(); 
+
+    // Показываем стандартный лоадер Telegram
+    tg.MainButton.setText("Отправка на проверку...").show();
+    tg.MainButton.enable();
+
+    // Имитируем отправку на сервер
+    setTimeout(() => {
+        // Скрываем лоадер
+        tg.MainButton.hide();
+
+        // ОБЯЗАТЕЛЬНО: Показываем уведомление об успехе!
+        tg.showAlert("✓ Фотографии успешно отправлены админу! Результаты проверки появятся в профиле. 🎨");
+        
+        // Очищаем инпут и массив
+        document.getElementById('taskFileInput').value = '';
+        selectedFilesForUpload = [];
+        currentTaskForUpload = null; 
+    }, 2000); // 2 секунды на имитацию
+}
+
+// 3. Функция, которую должна вызывать кнопка "Отмена" ВНУТРИ МОДАЛЬНОГО ОКНА
+function cancelUpload() {
+    closeModalConfirm();
+    document.getElementById('taskFileInput').value = ''; // Очищаем выбор
+    selectedFilesForUpload = [];
+}
+
+        
         function closeTaskUploadModal() {
             document.getElementById('taskUploadModal').style.display = 'none';
             tempTaskPhotos = []; 
@@ -3110,7 +3184,13 @@ setInterval(updateTimers, 60000);
         </div>
         <div class="balance-controls">
             <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🏆</button>
-            <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
+          <button class="spend-btn profile-action-btn" onclick="openEarnAestheticsConfirm()">
+    <span>Заработать ашетики</span>
+    <span style="color: var(--status-green); font-weight: bold;">
+        0 <i class="fas fa-book-open gold-book" style="color: #FFD700; text-shadow: 0 0 3px rgba(255, 215, 0, 0.4);"></i>
+    </span>
+</button>
+
         </div>
     </div>
 
@@ -3168,27 +3248,29 @@ setInterval(updateTimers, 60000);
         </div>
     </div>
 
-    <div class="tasks-section">
-        <button class="tasks-header" onclick="toggleTasks()">
+      <div class="tasks-section" style="background: var(--bg); color: var(--text);">
+        <button class="tasks-header" onclick="toggleTasks()" style="border-bottom: 1px solid var(--border-color); background: transparent;">
             <span>Задания</span>
             <i class="fas fa-chevron-down" id="tasksArrow"></i>
         </button>
         
-        <div id="tasksContent" class="tasks-content">
+        <div id="tasksContent" class="tasks-content" style="display: none; background: transparent; padding: 15px 0;">
             
-            <div class="tasks-category">
-                <h4>Задания на статус</h4>
+            <div class="tasks-category" style="margin-bottom: 20px;">
+                <h4 style="color: var(--text-gray); font-size: 13px; text-transform: uppercase; margin: 0 15px 15px 15px; font-weight: normal; background: transparent;">Задания на статус</h4>
                 <div id="levelTasksList"></div>
             </div>
             
             <div class="tasks-category">
-                <h4>Временные задания (неделя)</h4>
+                <h4 style="color: var(--text-gray); font-size: 13px; text-transform: uppercase; margin: 0 15px 15px 15px; font-weight: normal; background: transparent;">Временные задания (неделя)</h4>
                 <div id="timeTasksList"></div>
             </div>
 
             <input type="file" id="taskFileInput" accept="image/*" multiple style="display:none;" onchange="handleTaskFile(event)">
             
-        </div> </div>
+        </div>
+    </div>
+
 
     <!-- Витрина достижений -->
     <div class="showcase-container" onclick="openAchievementsGallery()">

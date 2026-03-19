@@ -672,3 +672,21 @@ if (document.readyState === "complete" || document.readyState === "interactive")
     document.addEventListener("DOMContentLoaded", init);
 }
 window.State = State;
+// Функции для кнопок-стрелок в модалке ответов
+window.nextGalleryPage = function() {
+    currentGalleryPage++;
+    window.updatePage();
+};
+
+window.prevGalleryPage = function() {
+    if (currentGalleryPage > 1) {
+        currentGalleryPage--;
+        window.updatePage();
+    }
+};
+
+// Заглушка для старого названия, чтобы не летели ошибки
+window.openAnswersGallery = function(tome) {
+    // Вызываем новую функцию, ставим 50 страниц по умолчанию
+    window.openBook(tome, 50);
+};

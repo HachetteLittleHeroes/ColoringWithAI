@@ -55,9 +55,24 @@ async function init() {
         }
 
         // Загружаем данные
-        if (window.api) {
-            State.user = await window.api.getUser(State.userId);
-        }
+        if (window.api && typeof window.api.getUser === 'function') {
+    State.user = await window.api.getUser(State.userId);
+}
+
+if (!State.user) {
+    console.error("user не загрузился, создаём дефолт");
+
+    State.user = {
+        avatar: '',
+        name: 'Без имени',
+        balance: 0,
+        status: 'Без статуса',
+        showcase: [null, null, null],
+        unlockedAchievements: [],
+        unlockedStatuses: [],
+        taskProgress: {},
+    };
+}
         if (typeof window.loadMarkersFromCSV === 'function') {
             await window.loadMarkersFromCSV();
         }

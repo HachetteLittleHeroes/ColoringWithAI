@@ -1,5 +1,5 @@
 /**
- * app.js — Полный контроллер (исправлен для вечной загрузки)
+ * app.js — Полный контроллер
  */
 
 const State = {
@@ -54,27 +54,25 @@ async function init() {
             State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
         }
 
-        // Загружаем данные пользователя
+        // Загружаем данные
         if (window.api && typeof window.api.getUser === 'function') {
-            State.user = await window.api.getUser(State.userId);
-        }
+    State.user = await window.api.getUser(State.userId);
+}
 
-        if (!State.user) {
-            console.error("user не загрузился, создаём дефолт");
+if (!State.user) {
+    console.error("user не загрузился, создаём дефолт");
 
-            State.user = {
-                avatar: '',
-                name: 'Без имени',
-                balance: 0,
-                status: 'Без статуса',
-                showcase: [null, null, null],
-                unlockedAchievements: [],
-                unlockedStatuses: [],
-                taskProgress: {},
-            };
-        }
-
-        // Загружаем маркеры
+    State.user = {
+        avatar: '',
+        name: 'Без имени',
+        balance: 0,
+        status: 'Без статуса',
+        showcase: [null, null, null],
+        unlockedAchievements: [],
+        unlockedStatuses: [],
+        taskProgress: {},
+    };
+}
         if (typeof window.loadMarkersFromCSV === 'function') {
             await window.loadMarkersFromCSV();
         }
@@ -94,7 +92,7 @@ async function init() {
         const loadeText = document.getElementById('loading-text');
         if (loadeText) loadeText.innerText = "Ошибка загрузки данных.";
     } finally {
-        // Убираем экран загрузки в любом случае
+        // Убираем экран загрузки
         setTimeout(() => {
             if (loader) {
                 loader.style.transition = "opacity 0.5s ease";
@@ -237,9 +235,6 @@ function toggleSection(id) {
     if (!isVisible) el.style.display = 'block';
 }
 
-/* ===============================================
-   Исправленный и безопасный loadMarkersFromCSV
-   =============================================== */
 window.loadMarkersFromCSV = async function() {
     const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
     try {
@@ -253,38 +248,296 @@ window.loadMarkersFromCSV = async function() {
                 let num = row[i];
                 if (num && !isNaN(num) && parseInt(num) > 10) {
                     let stock = parseInt(row[i+1] || row[i+2] || "0");
-                    temp.push({ id: String(num), number: String(num), stock: stock, price: 75, brand: 'GUANGNA' });
+                    temp.push({ id: String(num), number: String(num), stock: stock });
                     i++; 
                 }
             }
         });
+        
+        const uniqueMarkers = temp.filter((v, i, a) => 
+            a.findIndex(t => t.number === v.number) === i
+        );
 
-        State.markers = temp.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
-        if (!State.markers.length) {
-            console.warn("CSV пустой или нет маркеров > 10");
-        }
-
+        State.markers = uniqueMarkers;
         renderMarkers();
         console.log("Маркеры успешно загружены из CSV:", State.markers.length);
     } catch (e) { 
         console.error("Ошибка загрузки CSV:", e); 
-        State.markers = []; // важно!
-        renderMarkers();    // показать пустой список вместо “Загрузка...”
     }
 };
 
-/* ===============================================
-   Исправленный renderMarkers
-   =============================================== */
-function renderMarkers() {
-    const container = document.getElementById('markersList');
+// ДОСТИЖЕНИЯ И АЛЕРТЫ
+function grantAchievement(achId, defaultText) {
+    if (!State.user.unlockedAchievements.includes(achId)) {
+        State.user.unlockedAchievements.push(achId);
+        window.api.saveUserState(State.user);
+        const data = ACH_DATA[achId] || { title: 'Новое достижение!', desc: defaultText };
+        document.getElementById('alertTitle').innerText = '🏆 ' + data.title;
+        const imgEl = document.getElementById('alertAchImg');
+        imgEl.src = `${window.CONFIG.GITHUB_BASE}achievements/${achId}.png`;
+        imgEl.style.display = 'block';
+        document.getElementById('alertAchText').innerText = data.desc;
+        document.getElementById('achievementAlert').style.display = 'flex';
+    }
+}
+
+function showStatusAlert(statusName) {
+    document.getElementById('alertTitle').innerText = '✨ Новый статус!';
+    document.getElementById('alertAchImg').style.display = 'none'; 
+    document.getElementById('alertAchText').innerText = statusName;
+    document.getElementById('achievementAlert').style.display = 'flex';
+}
+
+function showAchievementInfo(achId, slotIndex) {
+    currentInfoSlot = slotIndex;
+    const data = ACH_DATA[achId] || { title: 'Достижение', desc: 'Описание пока скрыто.' };
+    document.getElementById('achInfoTitle').innerText = data.title;
+    document.getElementById('achInfoImg').src = `${window.CONFIG.GITHUB_BASE}achievements/${achId}.png`;
+    document.getElementById('achInfoDesc').innerText = data.desc;
+    document.getElementById('achInfoModal').style.display = 'flex';
+}
+
+function replaceShowcaseSlot() {
+    document.getElementById('achInfoModal').style.display = 'none';
+    openShowcaseModal(currentInfoSlot);
+}
+
+function openShowcaseModal(slotIndex) {
+    activeShowcaseSlot = slotIndex;
+    const list = document.getElementById('availableAchievementsList');
+    list.innerHTML = '';
+    if (State.user.unlockedAchievements.length === 0) {
+        list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">У вас пока нет достижений.</p>';
+    } else {
+        State.user.unlockedAchievements.forEach(achId => {
+            const isEquipped = State.user.showcase.includes(achId);
+            const isCurrentSlot = State.user.showcase[slotIndex] === achId;
+            if (isEquipped && !isCurrentSlot) return; // Запрещаем установку одного достижения в несколько слотов
+            const div = document.createElement('div');
+            div.className = 'ach-list-item';
+            if (isCurrentSlot) div.style.borderColor = 'var(--status-green)';
+            div.innerHTML = `<img src="${window.CONFIG.GITHUB_BASE}achievements/${achId}.png">`;
+            div.onclick = () => pinAchievement(achId);
+            list.appendChild(div);
+        });
+        if (list.innerHTML === '') {
+            list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">Все доступные достижения уже установлены.</p>';
+        }
+    }
+    const clearBtnContainer = document.getElementById('clearSlotBtnContainer');
+    if (State.user.showcase[slotIndex]) {
+        clearBtnContainer.innerHTML = `<button class="balance-btn" style="background:var(--status-red); border:none; margin-top:10px; width: 100%;" onclick="clearAchievementSlot()">Снять достижение</button>`;
+    } else {
+        clearBtnContainer.innerHTML = '';
+    }
+    document.getElementById('showcaseModal').style.display = 'flex';
+}
+
+function clearAchievementSlot() {
+    if (activeShowcaseSlot !== null) {
+        State.user.showcase[activeShowcaseSlot] = null;
+        window.api.saveUserState(State.user);
+        renderProfile();
+    }
+    document.getElementById('showcaseModal').style.display = 'none';
+}
+
+function pinAchievement(achId) {
+    if (activeShowcaseSlot !== null) {
+        State.user.showcase[activeShowcaseSlot] = achId;
+        window.api.saveUserState(State.user);
+        renderProfile();
+    }
+    document.getElementById('showcaseModal').style.display = 'none';
+}
+
+// ЗАДАНИЯ И ПРОГРЕССИЯ
+function toggleTasks() {
+    const content = document.getElementById('tasksList');
+    const arrow = document.getElementById('tasksArrow');
+    const isHidden = content.style.display === 'none';
+    content.style.display = isHidden ? 'block' : 'none';
+    arrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function renderTasks() {
+    const container = document.getElementById('tasksList');
     if (!container) return;
 
-    if (!State.markers.length) {
-        container.innerHTML = '<p style="padding:15px; text-align:center; color:#888;">Нет доступных маркеров.</p>';
+    // защита API
+    if (!window.api || typeof window.api.getTaskData !== 'function') {
+        console.error("API не готов");
+        container.innerHTML = '<p style="color:red;">Ошибка API</p>';
         return;
     }
 
+    // защита user
+    if (!State.user) {
+        console.error("State.user отсутствует");
+        container.innerHTML = '<p style="color:red;">Нет данных пользователя</p>';
+        return;
+    }
+
+    // защита taskProgress
+    if (!State.user.taskProgress) {
+        console.warn("taskProgress отсутствует, создаём");
+        State.user.taskProgress = {};
+    }
+
+    const branches = window.api.getTaskData();
+    const progressData = State.user.taskProgress;
+
+    container.innerHTML = branches.map(branch => {
+
+        const userProg = progressData[branch.id] || { currentLevel: 1, currentScore: 0 };
+        const activeLevel = branch.levels.find(lv => lv.lv === userProg.currentLevel);
+
+        // если всё пройдено
+        if (!activeLevel) {
+            return `
+            <div style="margin-bottom: 15px;">
+                <h4 style="color:var(--status-green); margin-bottom:10px; font-size:16px;">${branch.title}</h4>
+                <div class="task-level" style="text-align:center; color:var(--status-green); border-color: var(--status-green);">
+                    <i class="fas fa-check-circle" style="font-size:24px; margin-bottom:10px;"></i>
+                    <br>Все уровни пройдены!
+                </div>
+            </div>`;
+        }
+
+        const percent = Math.min(100, (userProg.currentScore / activeLevel.target) * 100);
+        const levelColor = LEVEL_COLORS[activeLevel.lv] || 'var(--accent)';
+
+        return `
+            <div style="margin-bottom: 15px;">
+                <h4 style="color:${levelColor}; margin-bottom:10px; font-size:16px;">
+                    ${branch.title} (Уровень ${activeLevel.lv})
+                </h4>
+
+                <div class="task-level" style="border-color: ${levelColor};">
+
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                        <span style="font-size:14px; font-weight:bold;">
+                            ${activeLevel.text}
+                        </span>
+                        <span style="color:#FFD700; font-weight:bold;">
+                            +${activeLevel.reward} <i class="fas fa-book-open"></i>
+                        </span>
+                    </div>
+
+                    <div class="progress-bar-container">
+                        <div class="progress-fill"
+                             style="width: ${percent}%; background-color: ${levelColor};">
+                        </div>
+                    </div>
+
+                    <div style="font-size:12px; color:var(--text-gray); text-align:right; margin-bottom: 12px;">
+                        Прогресс: ${userProg.currentScore} / ${activeLevel.target}
+                    </div>
+
+                    <button class="blue-action-btn"
+                        style="padding: 10px; font-size: 14px; background-color: ${levelColor}; color: #000;"
+                        onclick="initTaskUpload('${branch.id}')">
+                        <i class="fas fa-camera"></i> Прикрепить фото
+                    </button>
+
+                    <button class="balance-btn"
+                        style="margin-top: 10px; padding: 6px; font-size: 12px; border: 1px dashed ${levelColor}; color: ${levelColor}; background: transparent;"
+                        onclick="testAdminAddPoint('${branch.id}', ${activeLevel.target})">
+                        <i class="fas fa-wrench"></i> Тест: админ дал +1 очко
+                    </button>
+
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function initTaskUpload(branchId) {
+    State.activeUploadBranchId = branchId;
+    document.getElementById('taskFileInput').click();
+}
+
+window.testAdminAddPoint = function(branchId, target) {
+    let prog = State.user.taskProgress[branchId];
+    prog.currentScore += 1;
+    
+    if (prog.currentScore >= target) {
+        const branch = window.api.getTaskData().find(b => b.id === branchId);
+        
+        if (prog.currentLevel < 5) {
+            prog.currentLevel += 1;
+            prog.currentScore = 0;
+            const nextLevel = branch.levels.find(l => l.lv === prog.currentLevel);
+            
+            document.getElementById('alertTitle').innerText = '🌟 Новый уровень!';
+            document.getElementById('alertAchImg').style.display = 'none'; 
+            document.getElementById('alertAchText').innerText = `Уровень ${nextLevel.lv}\n${nextLevel.text}\nЦель: ${nextLevel.target}`;
+            document.getElementById('achievementAlert').style.display = 'flex';
+            
+        } else if (prog.currentLevel === 5) {
+            prog.currentLevel = 6; 
+            prog.currentScore = target;
+            
+            if (branch.statusReward && !State.user.unlockedStatuses.includes(branch.statusReward)) {
+                State.user.unlockedStatuses.push(branch.statusReward);
+                State.user.status = branch.statusReward; 
+                document.getElementById('currentStatus').innerText = branch.statusReward;
+                
+                setTimeout(() => {
+                    document.getElementById('alertTitle').innerText = '👑 Достигнут новый статус!';
+                    document.getElementById('alertAchImg').style.display = 'none';
+                    document.getElementById('alertAchText').innerText = branch.statusReward;
+                    document.getElementById('achievementAlert').style.display = 'flex';
+                }, 500);
+            }
+            
+            if (branch.achReward) {
+                setTimeout(() => { 
+                    grantAchievement(branch.achReward, 'Задание полностью выполнено!'); 
+                }, 2000); 
+            }
+        }
+    }
+    window.api.saveUserState(State.user);
+    renderTasks();
+};
+
+function handleTaskFile(event) {
+    const files = event.target.files;
+    if (!files.length) return;
+    const container = document.getElementById('taskPhotoPreviewContainer');
+    container.innerHTML = '';
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
+    document.getElementById('taskUploadModal').style.display = 'flex';
+    event.target.value = '';
+}
+
+function closeTaskUploadModal() {
+    document.getElementById('taskUploadModal').style.display = 'none';
+    State.activeUploadBranchId = null;
+}
+
+function submitTaskPhoto() {
+    closeTaskUploadModal();
+    alert("Фотографии отправлены!");
+}
+
+// МАРКЕРЫ И КОРЗИНА
+function renderMarkers() {
+    const container = document.getElementById('markersList');
+    if (!container) return;
+    if (!State.markers.length) {
+        container.innerHTML = '<p style="padding:15px; text-align:center; color:#888;">Загрузка...</p>';
+        return;
+    }
     container.innerHTML = State.markers.map(m => {
         const cartItem = State.cart.find(item => item.id === m.id);
         const count = cartItem ? cartItem.count : 0;
@@ -303,8 +556,6 @@ function renderMarkers() {
         `;
     }).join('');
 }
-
-// … остальной код app.js (от маркеров, корзины, заданий, аватарок, галереи, статусов, админки и т.д.) остаётся без изменений …
 
 function changeCart(id, delta) {
     const marker = State.markers.find(m => m.id === id);

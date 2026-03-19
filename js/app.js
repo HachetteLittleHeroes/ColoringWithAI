@@ -10,6 +10,10 @@ const State = {
     userId: '496779756',
     activeUploadBranchId: null
 };
+window.CONFIG = {
+    GITHUB_BASE: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/'
+};
+
 
 let pendingAvatarUrl = '';
 let activeShowcaseSlot = null;
@@ -592,13 +596,18 @@ window.openBook = function(tome, max) {
     currentGalleryTome = tome;
     maxGalleryPages = max;
     currentGalleryPage = 1;
-    document.getElementById('viewer').style.display = 'block';
+    const modal = document.getElementById('answersGalleryModal'); // Исправленный ID
+    if (modal) modal.style.display = 'flex'; 
     window.updatePage();
 };
 
 window.closeBook = function() {
-    document.getElementById('viewer').style.display = 'none';
+    const modal = document.getElementById('answersGalleryModal'); // Исправленный ID
+    if (modal) modal.style.display = 'none';
 };
+
+window.closeAnswersGallery = window.closeBook; // Чтобы работала кнопка из HTML
+
 
 window.checkout = function() {
     const cart = window.State.cart;

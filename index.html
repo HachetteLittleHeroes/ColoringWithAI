@@ -1732,10 +1732,7 @@
 ];
 
 const timeTasks = [
-    { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 },
-    { id: 'time_2', title: 'Вечерний скетчинг', description: 'Раскрась страницу вечером', reward: 5 },
-    { id: 'time_3', title: 'Цветной выходной', description: 'Раскрась 2 страницы в выходные', reward: 10 },
-    { id: 'time_4', title: 'Градиент-мастер', description: 'Сделай градиент маркерами', reward: 8 }
+    { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 }
 ];
 
 
@@ -1961,6 +1958,29 @@ function saveDataLocal() {
     updateUI();
 }
 
+const taskBranches = {
+    alcohol_markers: {
+        name: "Спиртовые маркеры",
+        levels: [
+            { title: "Новичок спирта", maxProgress: 1, desc: "Раскрась 1 работу" },
+            { title: "Любитель градиентов", maxProgress: 3, desc: "Раскрась 3 работы" },
+            { title: "Мастер блендинга", maxProgress: 5, desc: "Раскрась 5 работ" },
+            { title: "Профи заливки", maxProgress: 10, desc: "Раскрась 10 работ" },
+            { title: "Амбассадор Спирта", maxProgress: 20, desc: "Раскрась 20 работ" }
+        ]
+    },
+    pencils: {
+        name: "Цветные карандаши",
+        levels: [
+            { title: "Штриховальщик", maxProgress: 1, desc: "1 работа карандашами" },
+            { title: "Штриховальщик 2", maxProgress: 3, desc: "Раскрась 3 работы" },
+            { title: "Штриховальщик 3", maxProgress: 5, desc: "Раскрась 5 работ" },
+            { title: "Штриховальщик 4", maxProgress: 10, desc: "Раскрась 10 работ" },
+            { title: "Штриховальщик 5", maxProgress: 20, desc: "Раскрась 20 работ" }
+        ]
+    }
+    // Сюда можно добавлять сколько угодно новых веток
+};
 
         // ========== ЗАГРУЗКА МАРКЕРОВ ИЗ GOOGLE SHEETS ==========
         async function loadMarkers() {

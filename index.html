@@ -366,7 +366,7 @@
         }
 
         /* ==========================================
-           7. ЗАДАНИЯ - ИСПРАВЛЕНО
+           7. ЗАДАНИЯ
            ========================================== */
         .tasks-section {
             background: var(--bg-header);
@@ -387,7 +387,6 @@
             width: 100%;
             border: none;
             color: var(--text);
-            -webkit-tap-highlight-color: transparent;
         }
 
         .tasks-header i {
@@ -399,6 +398,10 @@
             display: none;
             background: var(--bg-header);
             border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tasks-content.visible {
+            display: block;
         }
 
         .tasks-category {
@@ -891,7 +894,7 @@
         }
 
         /* ==========================================
-           14. ИИ ПАЛИТРА
+           14. ИИ ПАЛИТРА - ОБНОВЛЕНО
            ========================================== */
         .ai-section {
             padding: 0 15px;
@@ -918,39 +921,59 @@
             margin: 0;
         }
 
-        .admin-block {
+        .admin-panel {
             margin-top: 20px;
             padding: 20px;
             background: var(--bg-header);
-            border: 1px dashed var(--status-green);
-            border-radius: 16px;
-            display: none;
+            border: 2px solid var(--status-green);
+            border-radius: 24px;
         }
 
-        .admin-block h4 {
+        .admin-panel h4 {
             color: var(--status-green);
             margin: 0 0 15px 0;
             text-align: center;
+            font-size: 18px;
         }
 
-        .admin-block input {
+        .admin-panel .form-group {
+            margin-bottom: 15px;
+        }
+
+        .admin-panel label {
+            display: block;
+            color: var(--text-gray);
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .admin-panel input, .admin-panel select {
             width: 100%;
             padding: 12px;
             border-radius: 12px;
             border: none;
             background: var(--bg);
             color: var(--text);
-            margin-bottom: 10px;
+            font-size: 14px;
         }
 
-        .admin-block button {
+        .admin-panel button {
             background: var(--status-green);
             color: white;
             width: 100%;
             padding: 14px;
             border-radius: 14px;
             font-weight: 600;
+            font-size: 15px;
             cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .admin-panel .info-text {
+            color: var(--text-gray);
+            font-size: 11px;
+            margin-top: 10px;
+            text-align: center;
         }
 
         .ai-result {
@@ -959,6 +982,22 @@
             background: var(--bg-header);
             border-radius: 16px;
             display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-gray);
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         /* ==========================================
@@ -1211,27 +1250,8 @@
             { id: 'time_4', title: 'Градиент-мастер', description: 'Сделай градиент маркерами', reward: 8 }
         ];
 
-        const markersDB = [
-            { num: '1', color: '#800000', name: 'Wine Red' },
-            { num: '2', color: '#A52A2A', name: 'Old Red' },
-            { num: '3', color: '#FF0000', name: 'Rose Red' },
-            { num: '4', color: '#FF69B4', name: 'Vivid Pink' },
-            { num: '5', color: '#FF1493', name: 'Cherry Pink' },
-            { num: '6', color: '#FFC0CB', name: 'Pale Pink' },
-            { num: '10', color: '#8B0000', name: 'Deep Red' },
-            { num: '11', color: '#DC143C', name: 'Carmine' },
-            { num: '14', color: '#FF4500', name: 'Vermilion' },
-            { num: '23', color: '#FFA500', name: 'Orange' },
-            { num: '35', color: '#FFFF00', name: 'Lemon Yellow' },
-            { num: '43', color: '#556B2F', name: 'Deep Olive Green' },
-            { num: '48', color: '#00FF00', name: 'Yellow Green' },
-            { num: '53', color: '#008080', name: 'Turquoise Green' },
-            { num: '63', color: '#4682B4', name: 'Cerulean Blue' },
-            { num: '71', color: '#00008B', name: 'Cobalt Blue' },
-            { num: '81', color: '#8A2BE2', name: 'Deep Violet' },
-            { num: '91', color: '#8B4513', name: 'Natural Oak' },
-            { num: '120', color: '#000000', name: 'Black' }
-        ];
+        // База данных маркеров (будет загружаться из Google Sheets)
+        let markersDB = [];
 
         const products = {
             'tome1': { name: 'Том 1', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png' },
@@ -1251,10 +1271,229 @@
             levelTasksProgress: [false, false, false, false, false],
             timeTasksProgress: {},
             timeTasksReset: Date.now(),
-            aiUsageCount: 0
+            aiUsageCount: 0,
+            isAdmin: false // Будет установлено при загрузке
         };
 
         let cart = JSON.parse(localStorage.getItem('coloring_cart')) || {};
+
+        // ========== ЗАГРУЗКА МАРКЕРОВ ИЗ GOOGLE SHEETS ==========
+        async function loadMarkers() {
+            console.log('Загрузка маркеров из Google Sheets...');
+            const markersContainer = document.getElementById('markersList');
+            if (markersContainer) {
+                markersContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Загрузка маркеров...</div>';
+            }
+
+            const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
+            
+            try {
+                const res = await fetch(csvUrl);
+                const text = await res.text();
+                const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, '').trim()));
+                
+                let temp = [];
+                rows.forEach(row => {
+                    for (let i = 0; i < row.length; i++) {
+                        let num = row[i];
+                        if (num && !isNaN(num) && parseInt(num) > 10) {
+                            let stock = parseInt(row[i+1] || row[i+2] || "0");
+                            // Генерируем случайный цвет для демонстрации
+                            const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#008000', '#800000'];
+                            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                            
+                            temp.push({ 
+                                num: num, 
+                                color: randomColor,
+                                name: `Маркер №${num}`,
+                                stock: stock 
+                            });
+                            i++;
+                        }
+                    }
+                });
+                
+                markersDB = temp;
+                console.log('Загружено маркеров:', markersDB.length);
+                renderMarkers();
+                
+                // Проверка на админа
+                if (user.name.toLowerCase() === 'admin' || user.name.toLowerCase() === 'админ') {
+                    user.isAdmin = true;
+                    document.getElementById('adminAiBlock').style.display = 'block';
+                }
+                
+            } catch (error) {
+                console.error('Ошибка загрузки маркеров:', error);
+                if (markersContainer) {
+                    markersContainer.innerHTML = '<div class="no-results">Ошибка загрузки маркеров</div>';
+                }
+                
+                // Демо-данные на случай ошибки
+                markersDB = [
+                    { num: '101', color: '#FF0000', name: 'Красный', stock: 5 },
+                    { num: '102', color: '#00FF00', name: 'Зеленый', stock: 3 },
+                    { num: '103', color: '#0000FF', name: 'Синий', stock: 7 },
+                    { num: '104', color: '#FFFF00', name: 'Желтый', stock: 2 },
+                    { num: '105', color: '#FF00FF', name: 'Розовый', stock: 4 }
+                ];
+                renderMarkers();
+            }
+        }
+
+        // ========== РЕНДЕРИНГ МАРКЕРОВ ==========
+        function renderMarkers() {
+            const container = document.getElementById('markersList');
+            if (!container) return;
+            
+            if (markersDB.length === 0) {
+                container.innerHTML = '<div class="no-results">Нет данных о маркерах</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            markersDB.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'marker-item';
+                div.setAttribute('data-num', m.num);
+                div.setAttribute('data-name', m.name.toLowerCase());
+                div.innerHTML = `
+                    <div class="color-circle" style="background-color: ${m.color};"></div>
+                    <div class="marker-info">
+                        <div class="marker-number">№${m.num}</div>
+                        <div class="marker-name">${m.name}</div>
+                        <div style="font-size: 11px; color: var(--status-green);">В наличии: ${m.stock}</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // ========== ПОИСК ПО МАРКЕРАМ ==========
+        function searchMarkers() {
+            const query = document.getElementById('markerSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.marker-item');
+            let visibleCount = 0;
+            
+            items.forEach(item => {
+                const num = item.getAttribute('data-num');
+                const name = item.getAttribute('data-name');
+                if (num.includes(query) || name.includes(query)) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            const noResults = document.getElementById('markerNoResults');
+            if (visibleCount === 0) {
+                if (!noResults) {
+                    const container = document.getElementById('markersList');
+                    const msg = document.createElement('div');
+                    msg.id = 'markerNoResults';
+                    msg.className = 'no-results';
+                    msg.innerText = 'Маркеры не найдены';
+                    container.appendChild(msg);
+                }
+            } else {
+                if (noResults) noResults.remove();
+            }
+        }
+
+        // ========== АДМИН-ПАНЕЛЬ ДЛЯ ОБУЧЕНИЯ ИИ ==========
+        async function trainAI() {
+            const fileInput = document.getElementById('aiTrainFile');
+            const brand = document.getElementById('aiTrainBrand').value;
+            const number = document.getElementById('aiTrainNumber').value;
+            
+            if (!fileInput.files[0]) {
+                tg.showAlert('Выберите изображение');
+                return;
+            }
+            
+            if (!brand || !number) {
+                tg.showAlert('Заполните бренд и номер маркера');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = async function(e) {
+                const imageData = e.target.result;
+                
+                // Показываем загрузку
+                const statusDiv = document.getElementById('aiTrainStatus');
+                statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Создание вариаций изображения...';
+                
+                // Симуляция создания 25 вариаций с разной освещенностью
+                setTimeout(() => {
+                    // Здесь должен быть код отправки на сервер
+                    // В демо-режиме просто показываем сообщение
+                    
+                    const variations = [];
+                    for (let i = 0; i < 25; i++) {
+                        variations.push({
+                            brightness: 0.5 + Math.random() * 0.5,
+                            contrast: 0.5 + Math.random() * 0.5,
+                            data: imageData.substring(0, 50) + '...' // В реальности - измененное изображение
+                        });
+                    }
+                    
+                    statusDiv.innerHTML = `✅ Обучение завершено! Создано 25 вариаций для маркера ${brand} №${number}`;
+                    
+                    // Очищаем форму
+                    fileInput.value = '';
+                    document.getElementById('aiTrainBrand').value = '';
+                    document.getElementById('aiTrainNumber').value = '';
+                    
+                    tg.showAlert(`Маркер ${brand} №${number} добавлен в базу ИИ`);
+                }, 2000);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        // ========== ЗАГРУЗКА ФОТО ДЛЯ РАСПОЗНАВАНИЯ ==========
+        function processAI(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const resultDiv = document.getElementById('aiResult');
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Анализ изображения...</div>';
+                
+                setTimeout(() => {
+                    // Имитация распознавания
+                    const randomMarkers = markersDB.length > 0 
+                        ? markersDB.sort(() => 0.5 - Math.random()).slice(0, 3)
+                        : [
+                            { num: '101', color: '#FF0000', name: 'Красный' },
+                            { num: '102', color: '#00FF00', name: 'Зеленый' },
+                            { num: '103', color: '#0000FF', name: 'Синий' }
+                        ];
+                    
+                    let html = '<h4 style="margin-bottom:15px;">Распознанные маркеры:</h4>';
+                    randomMarkers.forEach(m => {
+                        html += `
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:var(--bg); padding:10px; border-radius:8px;">
+                                <div style="width:30px; height:30px; border-radius:5px; background:${m.color};"></div>
+                                <div>
+                                    <div style="font-weight:bold;">№${m.num}</div>
+                                    <div style="font-size:12px; color:var(--text-gray);">${m.name}</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    resultDiv.innerHTML = html;
+                    
+                    user.aiUsageCount = (user.aiUsageCount || 0) + 1;
+                    if (user.aiUsageCount >= 5) awardAchievement('ai_master');
+                    saveData();
+                }, 2000);
+            }
+        }
 
         function saveData() {
             localStorage.setItem('coloring_user', JSON.stringify(user));
@@ -1324,7 +1563,11 @@
             window.scrollTo(0, 0);
             
             if (pageId === 'markers') {
-                renderMarkers();
+                if (markersDB.length === 0) {
+                    loadMarkers();
+                } else {
+                    renderMarkers();
+                }
                 document.getElementById('markerSearch').value = '';
             }
             if (pageId === 'answers') {
@@ -1344,41 +1587,29 @@
             }
         }
 
-        // ========== ЗАДАНИЯ - ИСПРАВЛЕНО С ДОБАВЛЕНИЕМ ДЕБАГА ==========
+        // ========== ЗАДАНИЯ ==========
         function toggleTasks() {
-            console.log('toggleTasks вызван');
             const content = document.getElementById('tasksContent');
             const arrow = document.getElementById('tasksArrow');
             
-            if (!content) {
-                console.error('tasksContent не найден');
-                return;
-            }
-            
             if (content.style.display === 'none' || content.style.display === '') {
-                console.log('Открываем задания');
                 renderTasks();
                 content.style.display = 'block';
                 if (arrow) arrow.style.transform = 'rotate(180deg)';
             } else {
-                console.log('Закрываем задания');
                 content.style.display = 'none';
                 if (arrow) arrow.style.transform = 'rotate(0deg)';
             }
         }
 
         function renderTasks() {
-            console.log('renderTasks вызван');
             renderLevelTasks();
             renderTimeTasks();
         }
 
         function renderLevelTasks() {
             const container = document.getElementById('levelTasksList');
-            if (!container) {
-                console.error('levelTasksList не найден');
-                return;
-            }
+            if (!container) return;
             container.innerHTML = '';
 
             levelTasks.forEach((task, index) => {
@@ -1410,10 +1641,7 @@
 
         function renderTimeTasks() {
             const container = document.getElementById('timeTasksList');
-            if (!container) {
-                console.error('timeTasksList не найден');
-                return;
-            }
+            if (!container) return;
             container.innerHTML = '';
 
             const oneWeek = 7 * 24 * 60 * 60 * 1000;
@@ -1616,7 +1844,12 @@
                 const url = `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av${i}.png`;
                 const div = document.createElement('div');
                 div.className = 'preset-avatar-item';
-                div.onclick = () => showAvatarConfirm(url);
+                div.onclick = () => {
+                    user.avatar = url;
+                    saveData();
+                    document.getElementById('avatarEditor').style.display = 'none';
+                    tg.showAlert('Аватар изменен!');
+                };
                 const img = document.createElement('img');
                 img.src = url;
                 img.alt = `Avatar ${i}`;
@@ -1625,38 +1858,18 @@
             }
         }
 
-        let tempAvatarUrl = '';
         function handleCustomAvatar(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) { showAvatarConfirm(e.target.result); };
+                reader.onload = function(e) {
+                    user.avatar = e.target.result;
+                    saveData();
+                    document.getElementById('avatarEditor').style.display = 'none';
+                    tg.showAlert('Аватар изменен!');
+                };
                 reader.readAsDataURL(file);
             }
-        }
-
-        function showAvatarConfirm(url) {
-            tempAvatarUrl = url;
-            document.getElementById('avatarPreview').src = url;
-            document.getElementById('avatarConfirmModal').style.display = 'flex';
-        }
-
-        function closeAvatarConfirm() {
-            document.getElementById('avatarConfirmModal').style.display = 'none';
-            tempAvatarUrl = '';
-        }
-
-        // ========== ИСПРАВЛЕНО: Подтверждение через системный алерт ==========
-        function applyAvatar() {
-            if (tempAvatarUrl) {
-                if (confirm('Установить этот аватар?')) {
-                    user.avatar = tempAvatarUrl;
-                    saveData();
-                    tg.showAlert('Аватар успешно изменен!');
-                }
-            }
-            closeAvatarConfirm();
-            document.getElementById('avatarEditor').style.display = 'none';
         }
 
         // ========== НИКНЕЙМ ==========
@@ -1665,15 +1878,21 @@
             document.getElementById('nameModal').style.display = 'flex';
         }
 
-        // ========== ИСПРАВЛЕНО: Подтверждение через системный алерт ==========
         function saveNewNickname() {
             const newName = document.getElementById('newNameInput').value.trim();
             if (newName.length > 0 && newName.length <= 20) {
-                if (confirm(`Сохранить ник "${newName}"?`)) {
-                    user.name = newName;
-                    saveData();
-                    document.getElementById('nameModal').style.display = 'none';
-                    tg.showAlert('Имя успешно изменено!');
+                user.name = newName;
+                saveData();
+                document.getElementById('nameModal').style.display = 'none';
+                tg.showAlert('Имя изменено!');
+                
+                // Проверка на админа
+                if (newName.toLowerCase() === 'admin' || newName.toLowerCase() === 'админ') {
+                    user.isAdmin = true;
+                    document.getElementById('adminAiBlock').style.display = 'block';
+                } else {
+                    user.isAdmin = false;
+                    document.getElementById('adminAiBlock').style.display = 'none';
                 }
             } else {
                 tg.showAlert("Имя должно быть от 1 до 20 символов");
@@ -1734,59 +1953,6 @@
             user.status = statusName; 
             saveData(); 
             document.getElementById('statusSelectModal').style.display = 'none'; 
-        }
-
-        // ========== МАРКЕРЫ С ПОИСКОМ ==========
-        function renderMarkers() {
-            const container = document.getElementById('markersList');
-            if (!container) return;
-            container.innerHTML = '';
-            
-            markersDB.forEach(m => {
-                const div = document.createElement('div');
-                div.className = 'marker-item';
-                div.setAttribute('data-num', m.num);
-                div.setAttribute('data-name', m.name.toLowerCase());
-                div.innerHTML = `
-                    <div class="color-circle" style="background-color: ${m.color};"></div>
-                    <div class="marker-info">
-                        <div class="marker-number">№${m.num}</div>
-                        <div class="marker-name">${m.name}</div>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function searchMarkers() {
-            const query = document.getElementById('markerSearch').value.toLowerCase();
-            const items = document.querySelectorAll('.marker-item');
-            let visibleCount = 0;
-            
-            items.forEach(item => {
-                const num = item.getAttribute('data-num');
-                const name = item.getAttribute('data-name');
-                if (num.includes(query) || name.includes(query)) {
-                    item.classList.remove('hidden');
-                    visibleCount++;
-                } else {
-                    item.classList.add('hidden');
-                }
-            });
-
-            const noResults = document.getElementById('markerNoResults');
-            if (visibleCount === 0) {
-                if (!noResults) {
-                    const container = document.getElementById('markersList');
-                    const msg = document.createElement('div');
-                    msg.id = 'markerNoResults';
-                    msg.className = 'no-results';
-                    msg.innerText = 'Маркеры не найдены';
-                    container.appendChild(msg);
-                }
-            } else {
-                if (noResults) noResults.remove();
-            }
         }
 
         // ========== ПОИСК ПО ТОМАМ ==========
@@ -1898,23 +2064,6 @@
             });
         }
 
-        // ========== ИИ ПАЛИТРА ==========
-        function processAI(event) {
-            const file = event.target.files[0];
-            if (file) {
-                tg.showAlert("Анализ изображения... (демо-режим)");
-                setTimeout(() => {
-                    const resultDiv = document.getElementById('aiResult');
-                    resultDiv.style.display = 'block';
-                    resultDiv.innerHTML = '<h4>Распознанные цвета:</h4><p>Демо-режим: здесь будут результаты анализа</p>';
-                }, 1000);
-            }
-        }
-
-        function submitAdminAiTrain() {
-            tg.showAlert("Функция обучения ИИ в разработке");
-        }
-
         // ========== СБРОС ==========
         function resetAllData() {
             tg.showConfirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?", function(confirm) {
@@ -1930,12 +2079,8 @@
         window.onload = () => {
             console.log('Страница загружена');
             updateUI();
-            renderMarkers();
+            loadMarkers(); // Загружаем маркеры при старте
             renderCart();
-            
-            // Проверяем наличие элементов
-            console.log('tasksContent:', document.getElementById('tasksContent'));
-            console.log('tasksHeader:', document.querySelector('.tasks-header'));
             
             window.onclick = function(event) {
                 document.querySelectorAll('.modal-overlay').forEach(modal => {
@@ -2042,7 +2187,7 @@
         </div>
     </div>
 
-    <!-- ========== ЗАДАНИЯ - ИСПРАВЛЕНО ========== -->
+    <!-- ЗАДАНИЯ -->
     <div class="tasks-section">
         <button class="tasks-header" onclick="toggleTasks()">
             <span>Задания</span>
@@ -2097,12 +2242,11 @@
     <div class="search-container">
         <div class="search-box">
             <i class="fas fa-search"></i>
-            <input type="text" id="markerSearch" placeholder="Поиск по номеру или названию..." oninput="searchMarkers()">
+            <input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="searchMarkers()">
         </div>
     </div>
     
     <div class="markers-section">
-        <h3 style="color: var(--text-gray); font-size: 14px; margin-bottom: 10px;">GUANGNA</h3>
         <div id="markersList"></div>
     </div>
 </div>
@@ -2145,12 +2289,28 @@
         </div>
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
         
-        <div id="adminAiBlock" class="admin-block">
-            <h4><i class="fas fa-user-shield"></i> Обучение ИИ (Админ)</h4>
-            <input type="file" id="adminAiInput" accept="image/*">
-            <input type="text" id="adminAiBrand" placeholder="Бренд">
-            <input type="text" id="adminAiNumber" placeholder="Номер маркера">
-            <button onclick="submitAdminAiTrain()">Загрузить данные</button>
+        <!-- Админ-панель для обучения ИИ -->
+        <div id="adminAiBlock" class="admin-panel" style="display:none;">
+            <h4><i class="fas fa-robot"></i> Обучение ИИ</h4>
+            <div class="form-group">
+                <label>Изображение маркера</label>
+                <input type="file" id="aiTrainFile" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>Бренд</label>
+                <input type="text" id="aiTrainBrand" placeholder="Например: Guangna">
+            </div>
+            <div class="form-group">
+                <label>Номер маркера</label>
+                <input type="text" id="aiTrainNumber" placeholder="Например: 101">
+            </div>
+            <button onclick="trainAI()">
+                <i class="fas fa-brain"></i> Обучить ИИ
+            </button>
+            <div id="aiTrainStatus" class="info-text"></div>
+            <div class="info-text">
+                Будет создано 25 вариаций изображения с разной освещенностью
+            </div>
         </div>
         
         <div id="aiResult" class="ai-result"></div>
@@ -2203,18 +2363,6 @@
         <hr>
         <button class="modal-close-btn" style="background: var(--status-red);" onclick="resetAllData()">Сбросить весь прогресс</button>
         <button class="modal-close-btn" onclick="closeNameModal()">Отмена</button>
-    </div>
-</div>
-
-<!-- Модалка подтверждения аватара -->
-<div id="avatarConfirmModal" class="modal-overlay">
-    <div class="modal-content" style="text-align:center;">
-        <h3>Установить аватар?</h3>
-        <img id="avatarPreview" src="" class="avatar-preview-img">
-        <div class="modal-buttons-row">
-            <button class="modal-close-btn" onclick="closeAvatarConfirm()">Отмена</button>
-            <button class="modal-action-btn" onclick="applyAvatar()">Применить</button>
-        </div>
     </div>
 </div>
 

@@ -1,48 +1,54 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <script>
-    // Ловим обычные ошибки (опечатки, синтаксис, отсутствие переменных)
-    window.onerror = function(message, source, lineno, colno, error) {
-        const loaderText = document.getElementById('loading-text');
-        if (loaderText) {
-            loaderText.style.color = "#ff3b30"; // Делаем текст красным
-            loaderText.innerText = `ОШИБКА: ${message} (Файл: ${source.split('/').pop()}, Строка: ${lineno})`;
-        }
-        return false;
-    };
-
-    // Ловим ошибки асинхронных запросов (например, если отвалился fetch)
-    window.addEventListener("unhandledrejection", function(event) {
-        const loaderText = document.getElementById('loading-text');
-        if (loaderText) {
-            loaderText.style.color = "#ff3b30";
-            loaderText.innerText = `ОШИБКА ЗАГРУЗКИ ДАННЫХ: ${event.reason}`;
-        }
-    });
-</script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Coloring App</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script>
+        // Ловим ошибки до загрузки основных скриптов
+        window.onerror = function(message, source, lineno, colno, error) {
+            const loaderText = document.getElementById('loading-text');
+            if (loaderText) {
+                loaderText.style.color = "#ff3b30";
+                loaderText.innerText = `ОШИБКА: ${message} (Строка: ${lineno})`;
+            }
+            return false;
+        };
+
+        window.addEventListener("unhandledrejection", function(event) {
+            const loaderText = document.getElementById('loading-text');
+            if (loaderText) {
+                loaderText.style.color = "#ff3b30";
+                loaderText.innerText = `ОШИБКА ЗАГРУЗКИ: ${event.reason}`;
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #333;
+            border-top: 4px solid #ff9500;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
+
 <div id="loading-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#121212; z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-    <div style="width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid #ff9500; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
+    <div class="loading-spinner"></div>
     <div id="loading-text" style="color:#ff9500; font-weight:bold; font-size:18px; font-family: sans-serif;">Загружаем ашетики…</div>
-</div>
-
-<style>
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-</style>
-
-    <div style="color:var(--accent); font-weight:bold; font-size:18px;">Загрузка...</div>
 </div>
 
 <div id="profile" class="page active">
@@ -50,7 +56,7 @@
     <div class="profile-header-block">
         <div class="avatar-section">
             <div class="avatar-wrapper" onclick="toggleAvatarEditor()" style="position: relative; z-index: 10;">
-                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png" alt="">
+                <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png" alt="Avatar">
                 <div class="avatar-edit-icon"><i class="fas fa-pencil-alt"></i></div>
             </div>
             <div class="profile-meta">
@@ -65,8 +71,7 @@
 
     <div id="avatarEditorBlock" class="expandable-block" style="display:none;">
         <p class="section-subtitle">Выберите аватарку:</p>
-        <div class="preset-avatars" id="avatarPresets">
-            </div>
+        <div class="preset-avatars" id="avatarPresets"></div>
         <input type="file" id="customAvatarInput" style="display:none;" onchange="handleCustomAvatar(event)">
         <button class="blue-action-btn" onclick="document.getElementById('customAvatarInput').click()">
             <i class="fas fa-camera"></i> Загрузить фото
@@ -114,26 +119,11 @@
     <div id="earn-section" class="sub-page-block" style="display:none;">
         <div class="section-header">Как получить ашетики</div>
         <div class="earn-info">
-            <div class="earn-card">
-                <p>За отзыв</p>
-                <span class="earn-bonus">+25 <i class="fas fa-book-open gold-book"></i></span>
-            </div>
-            <div class="earn-card">
-                <p>За покупку от 3 000 ₽</p>
-                <span class="earn-bonus">+10 <i class="fas fa-book-open gold-book"></i></span>
-            </div>
-            <div class="earn-card">
-                <p>За покупку от 5 000 ₽</p>
-                <span class="earn-bonus">+20 <i class="fas fa-book-open gold-book"></i></span>
-            </div>
-            <div class="earn-card">
-                <p>За покупку от 7 500 ₽</p>
-                <span class="earn-bonus">+30 <i class="fas fa-book-open gold-book"></i></span>
-            </div>
-            <div class="earn-card">
-                <p>За покупку от 10 000 ₽</p>
-                <span class="earn-bonus">+40 <i class="fas fa-book-open gold-book"></i></span>
-            </div>
+            <div class="earn-card"><p>За отзыв</p><span class="earn-bonus">+25 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 3 000 ₽</p><span class="earn-bonus">+10 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 5 000 ₽</p><span class="earn-bonus">+20 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 7 500 ₽</p><span class="earn-bonus">+30 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 10 000 ₽</p><span class="earn-bonus">+40 <i class="fas fa-book-open gold-book"></i></span></div>
         </div>
     </div>
 
@@ -142,8 +132,7 @@
             <span>Задания на статус</span>
             <i class="fas fa-chevron-down" id="tasksArrow" style="transition: transform 0.3s;"></i>
         </div>
-        <div id="tasksList" class="collapsible-content" style="display:none; padding: 15px; background: var(--bg-header); border-radius: 0 0 15px 15px; margin-top: -10px;">
-            </div>
+        <div id="tasksList" class="collapsible-content" style="display:none; padding: 15px; background: var(--bg-header); border-radius: 0 0 15px 15px; margin-top: -10px;"></div>
         <input type="file" id="taskFileInput" accept="image/*" multiple style="display:none;" onchange="handleTaskFile(event)">
     </div>
 
@@ -170,32 +159,29 @@
     <div class="header">Ответы и Тома</div>
     <div class="reward-grid" style="padding: 15px;">
         <div class="reward-card">
-            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 1" onclick="openBook(1,26)">
-            <h4 onclick="openBook(1,26)">Том 1</h4>
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 1" onclick="openBook(1, 50)">
+            <h4 onclick="openBook(1, 50)">Том 1</h4>
             <button class="balance-btn" style="width:100%; margin-top:10px;" onclick="changeCart('tome1', 1)">В корзину (1500 ₽)</button>
         </div>
         <div class="reward-card">
-            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 2" onclick="openBook(2,26)">
-            <h4 onclick="openBook(2,26)">Том 2</h4>
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 2" onclick="openBook(2, 50)">
+            <h4 onclick="openBook(2, 50)">Том 2</h4>
             <button class="balance-btn" style="width:100%; margin-top:10px;" onclick="changeCart('tome2', 1)">В корзину (1500 ₽)</button>
         </div>
     </div>
 </div>
 
-<div id="answersGalleryModal" class="modal-overlay" style="display:none; background: rgba(0,0,0,0.9);">
+<div id="answersGalleryModal" class="modal-overlay" style="display:none; background: rgba(0,0,0,0.9); z-index: 100000;" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
     <div class="modal-content" style="background: transparent; box-shadow: none; text-align: center; width: 100%; padding: 10px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white;">
+            <button class="btn-circle" onclick="prevGalleryPage()"><i class="fas fa-arrow-left"></i></button>
             <span id="galleryPageIndicator" style="font-weight: bold; font-size: 18px;">Страница 1</span>
             <button class="btn-circle" onclick="nextGalleryPage()"><i class="fas fa-arrow-right"></i></button>
         </div>
-        
-     <img id="galleryMainImage" style="width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-bottom: 20px; display: none;">
-
-        
-        <button class="blue-action-btn" onclick="closeAnswersGallery()">Закрыть</button>
+        <img id="galleryMainImage" style="width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-bottom: 20px; display: none;">
+        <button class="blue-action-btn" onclick="closeBook()">Закрыть</button>
     </div>
 </div>
-
 
 <div id="aipalette" class="page">
     <div class="header">ИИ Палитра ✨</div>
@@ -205,13 +191,14 @@
             <p>Загрузить фото для определения цвета</p>
         </div>
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
-                <div id="adminAiBlock" style="margin-top: 30px; padding: 15px; background: var(--bg-header); border: 1px dashed var(--status-green); border-radius: 12px; display: none;">
-        <h4 style="color: var(--status-green); margin-bottom: 15px; text-align: center;"><i class="fas fa-user-shield"></i> Обучение ИИ (Админ)</h4>
-        <input type="file" id="adminAiInput" accept="image/*" style="margin-bottom:10px; width:100%; color: var(--text-gray);">
-        <input type="text" id="adminAiBrand" placeholder="Бренд (например, GUANGNA)" style="width:100%; padding:12px; margin-bottom:10px; background:var(--bg); color:white; border:none; border-radius:8px;">
-        <input type="text" id="adminAiNumber" placeholder="Номер маркера (например, 120)" style="width:100%; padding:12px; margin-bottom:15px; background:var(--bg); color:white; border:none; border-radius:8px;">
-        <button class="blue-action-btn" style="background: var(--status-green);" onclick="submitAdminAiTrain()">Загрузить данные</button>
-    </div>
+        
+        <div id="adminAiBlock" style="margin-top: 30px; padding: 15px; background: var(--bg-header); border: 1px dashed var(--status-green); border-radius: 12px; display: none;">
+            <h4 style="color: var(--status-green); margin-bottom: 15px; text-align: center;"><i class="fas fa-user-shield"></i> Обучение ИИ (Админ)</h4>
+            <input type="file" id="adminAiInput" accept="image/*" style="margin-bottom:10px; width:100%; color: var(--text-gray);">
+            <input type="text" id="adminAiBrand" placeholder="Бренд" style="width:100%; padding:12px; margin-bottom:10px; background:var(--bg); color:white; border:none; border-radius:8px;">
+            <input type="text" id="adminAiNumber" placeholder="Номер маркера" style="width:100%; padding:12px; margin-bottom:15px; background:var(--bg); color:white; border:none; border-radius:8px;">
+            <button class="blue-action-btn" style="background: var(--status-green);" onclick="submitAdminAiTrain()">Загрузить данные</button>
+        </div>
         <div id="aiResult" class="ai-result-card" style="display:none;"></div>
     </div>
 </div>
@@ -221,17 +208,14 @@
     <div id="cartItemsList" class="cart-container"></div>
     <div class="cart-footer">
         <div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div>
-        <button class="buy-btn">Оформить заказ</button>
+        <button class="buy-btn" onclick="checkout()">Оформить заказ</button>
     </div>
 </div>
 
 <div id="taskUploadModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="text-align:center;">
         <h3>Отправка на проверку</h3>
-        <p style="font-size: 14px; color: var(--text-gray); margin: 10px 0;">Фото будут отправлены администратору на проверку</p>
-        
         <div id="taskPhotoPreviewContainer" class="photo-preview-container"></div>
-        
         <div style="display:flex; gap:10px; margin-top:15px;">
             <button class="balance-btn" style="background:#333; border:none;" onclick="closeTaskUploadModal()">Отмена</button>
             <button class="blue-action-btn" style="flex:1;" onclick="submitTaskPhoto()">Отправить</button>
@@ -242,8 +226,7 @@
 <div id="showcaseModal" class="modal-overlay" style="display:none;">
     <div class="modal-content">
         <h3 style="text-align: center; margin-bottom: 15px;">Выберите достижение</h3>
-        <div id="availableAchievementsList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-            </div>
+        <div id="availableAchievementsList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"></div>
         <div id="clearSlotBtnContainer"></div>
         <button class="balance-btn" style="background:#333; border:none; margin-top:15px; width: 100%;" onclick="document.getElementById('showcaseModal').style.display='none'">Отмена</button>
     </div>
@@ -252,7 +235,7 @@
 <div id="achInfoModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="text-align:center;">
         <h3 id="achInfoTitle">Название</h3>
-        <img id="achInfoImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 15px auto; display: block; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+        <img id="achInfoImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 15px auto; display: block;">
         <p id="achInfoDesc" style="color: var(--text-gray); margin-bottom: 20px; font-size: 14px;"></p>
         <div style="display:flex; gap:10px;">
             <button class="balance-btn" style="background:#333; border:none;" onclick="document.getElementById('achInfoModal').style.display='none'">Закрыть</button>
@@ -262,9 +245,9 @@
 </div>
 
 <div id="achievementAlert" class="modal-overlay" style="display:none; align-items: flex-start; padding-top: 50px;">
-    <div class="modal-content" style="background: var(--accent-gradient); text-align:center; animation: slideDown 0.3s ease-out;">
+    <div class="modal-content" style="background: var(--accent-gradient); text-align:center;">
         <h3 id="alertTitle" style="color: white; margin-bottom: 10px;">🏆 Новое достижение!</h3>
-        <img id="alertAchImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 10px auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); display: none;">
+        <img id="alertAchImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 10px auto; display: none;">
         <p id="alertAchText" style="color: white; font-weight: bold; font-size: 18px;"></p>
         <button class="balance-btn" style="margin-top:15px; background: rgba(0,0,0,0.3); border: none;" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
     </div>
@@ -273,12 +256,10 @@
 <div id="statusSelectModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="text-align:center;">
         <h3>Выберите статус</h3>
-        <p style="margin: 10px 0; font-size: 12px; color: var(--text-gray);">Новые статусы открываются за полное прохождение веток заданий (5 уровней).</p>
         <div id="availableStatusesList" style="margin-top: 15px;"></div>
         <button class="balance-btn" style="background:#333; border:none; margin-top:15px; width:100%;" onclick="document.getElementById('statusSelectModal').style.display = 'none';">Отмена</button>
     </div>
 </div>
-
 
 <div id="avatarConfirmModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="text-align:center;">
@@ -296,9 +277,7 @@
         <h3>Настройки профиля</h3>
         <input type="text" id="newNameInput" placeholder="Введите ник..." style="width:100%; padding:14px; background:var(--bg); border:none; border-radius:12px; color:white; margin-top:15px;">
         <button class="blue-action-btn" style="margin-top:15px; background:var(--accent);" onclick="saveNewNickname()">Сохранить ник</button>
-        
         <hr style="margin: 20px 0; border: none; border-top: 1px solid #333;">
-        <p style="color: var(--text-gray); font-size: 12px; margin-bottom: 10px; text-align: center;">ОПАСНАЯ ЗОНА</p>
         <button class="balance-btn" style="background:var(--status-red); border:none; width:100%; font-size:14px;" onclick="resetAllData()">Сбросить весь прогресс</button>
         <button class="balance-btn" style="background:#333; border:none; margin-top:10px; width: 100%;" onclick="document.getElementById('nameModal').style.display='none'">Отмена</button>
     </div>
@@ -324,10 +303,9 @@
     </button>
 </nav>
 
-    <script src="api.js"></script>
-    <script src="ui.js"></script>
-    <script src="app.js"></script>
-</body>
+<script src="api.js"></script>
+<script src="ui.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>

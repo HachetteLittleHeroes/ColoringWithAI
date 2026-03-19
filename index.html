@@ -4,17 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Coloring App</title>
-    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
+    <style>
+        /* БАЗОВЫЕ СТИЛИ И ТЕМА ТЕЛЕГРАМ */
+        :root {
+            --bg: var(--tg-theme-bg-color, #1e1e1e);
+            --bg-header: var(--tg-theme-secondary-bg-color, #2c2c2e);
+            --text: var(--tg-theme-text-color, #ffffff);
+            --text-gray: var(--tg-theme-hint-color, #8e8e93);
+            --accent: var(--tg-theme-button-color, #0a84ff);
+            --status-green: #34c759;
+            --status-yellow: #ffcc00;
+            --status-red: #ff3b30;
+            --accent-gradient: linear-gradient(135deg, #0a84ff, #005bb5);
+        }
+
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; }
+        
+        /* СТРАНИЦЫ И НАВИГАЦИЯ */
+        .page { display: none; padding: 15px; padding-bottom: 90px; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .header { font-size: 24px; font-weight: bold; margin-bottom: 20px; }
+        
+        .nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--bg-header); display: flex; border-top: 1px solid rgba(128,128,128,0.2); z-index: 999; }
+        .nav-btn { flex: 1; background: none; border: none; color: var(--text-gray); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; gap: 4px; position: relative; cursor: pointer; }
+        .nav-btn.active { color: var(--accent); }
+        .nav-btn i { font-size: 20px; }
+        .badge { position: absolute; top: 5px; right: 15px; background: var(--status-red); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; }
+
+        /* КАРТОЧКИ И БЛОКИ */
+        .balance-card, .reward-card, .sub-page-block, .task-card, .expandable-block { background: var(--bg-header); border-radius: 16px; padding: 15px; margin-bottom: 15px; }
+        .balance-card { text-align: center; background: var(--accent-gradient); color: white; }
+        .balance-label { font-size: 12px; opacity: 0.8; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px; }
+        .balance-main { font-size: 36px; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .balance-controls { display: flex; gap: 10px; }
+        .balance-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; background: rgba(255,255,255,0.2); color: white; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .blue-action-btn { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; }
+        .buy-btn { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px; }
+
+        /* ПРОФИЛЬ И АВАТАРЫ */
+        .profile-header-block { display: flex; align-items: center; margin-bottom: 20px; }
+        .avatar-wrapper { position: relative; width: 80px; height: 80px; margin-right: 15px; flex-shrink: 0; }
+        .avatar-wrapper img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+        .avatar-edit-icon { position: absolute; bottom: 0; right: 0; background: var(--accent); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 12px; cursor: pointer; }
+        .name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; cursor: pointer; }
+        .name-row h2 { margin: 0; font-size: 20px; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        
+        .preset-avatars { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 5px; }
+        .preset-avatars img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer; }
+
+        /* ВИТРИНА ДОСТИЖЕНИЙ */
+        .showcase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .showcase-slot { background: var(--bg-header); height: 80px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 24px; color: var(--text-gray); overflow: hidden; border: 1px dashed var(--text-gray); cursor: pointer; }
+        .showcase-slot.filled { border: none; }
+        .showcase-slot img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* ГРИДЫ (НАГРАДЫ) */
+        .reward-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .reward-img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; background: #eee; }
+        .reward-card h4 { margin: 0 0 5px 0; font-size: 14px; }
+        .reward-price { color: var(--text-gray); font-size: 14px; font-weight: bold; }
+
+        /* ЗАДАНИЯ И ИИ */
+        .section-tab { display: flex; justify-content: space-between; align-items: center; background: var(--bg-header); padding: 15px; border-radius: 15px; cursor: pointer; font-weight: bold; z-index: 2; position: relative; }
+        .task-card { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(128,128,128,0.2); }
+        .task-card:last-child { border-bottom: none; }
+        .earn-info { display: flex; flex-direction: column; gap: 10px; }
+        .earn-card { display: flex; justify-content: space-between; background: var(--bg); padding: 12px; border-radius: 8px; font-size: 14px; }
+        .earn-card p { margin: 0; }
+        
+        .ai-upload-box { text-align: center; padding: 20px 0; }
+        .upload-area { border: 2px dashed var(--accent); padding: 40px 20px; border-radius: 20px; cursor: pointer; color: var(--accent); font-size: 16px; font-weight: bold; }
+        .upload-area i { font-size: 40px; margin-bottom: 15px; }
+
+        /* МАРКЕРЫ И КОРЗИНА */
+        .marker-item { display: flex; align-items: center; gap: 15px; padding: 12px; border-bottom: 1px solid rgba(128,128,128,0.2); background: var(--bg-header); margin-bottom: 5px; border-radius: 10px; }
+        .color-circle { width: 30px; height: 30px; border-radius: 50%; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
+        .marker-number { font-weight: bold; font-size: 16px; }
+        .marker-name { font-size: 12px; color: var(--text-gray); }
+        
+        .cart-item { display: flex; gap: 15px; background: var(--bg-header); padding: 15px; border-radius: 15px; margin-bottom: 10px; align-items: center; }
+        .cart-footer { padding: 15px; background: var(--bg-header); border-radius: 15px; margin-top: 20px; }
+        .cart-total { font-size: 18px; font-weight: bold; margin-bottom: 15px; text-align: right; }
+
+        /* МОДАЛЬНЫЕ ОКНА */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 10000; padding: 20px; }
+        .modal-content { background: var(--bg-header); padding: 20px; border-radius: 20px; width: 100%; max-width: 380px; max-height: 90vh; overflow-y: auto; }
+        .btn-circle { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); border: none; color: white; display: flex; justify-content: center; align-items: center; font-size: 18px; cursor: pointer; }
+        
+        .gold-book { color: #FFD700; filter: drop-shadow(0 0 2px rgba(255,215,0,0.5)); }
+        .photo-preview-container img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin: 5px; }
+        input[type="text"] { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--bg); color: var(--text); outline: none; }
+    </style>
+
     <script>
         // Глобальный перехват ошибок для отладки внутри Telegram
         window.onerror = function(message, source, lineno, colno, error) {
             console.error("Глобальная ошибка:", message, "Линия:", lineno);
             return false;
         };
-
         window.addEventListener("unhandledrejection", function(event) {
             console.error("Ошибка в Promise:", event.reason);
         });
@@ -26,22 +120,22 @@
     
     <div class="profile-header-block">
         <div class="avatar-section">
-            <div class="avatar-wrapper" onclick="toggleAvatarEditor()" style="position: relative; z-index: 10;">
+            <div class="avatar-wrapper" onclick="toggleAvatarEditor()">
                 <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png" alt="Avatar">
                 <div class="avatar-edit-icon"><i class="fas fa-pencil-alt"></i></div>
             </div>
-            <div class="profile-meta">
-                <div class="name-row" onclick="changeNickname()">
-                    <h2 id="displayUsername">Без имени</h2>
-                    <i class="fas fa-pencil-alt edit-icon"></i>
-                </div>
-                <div id="currentStatus" class="status-badge" onclick="openStatusInfo()">Новичок</div>
+        </div>
+        <div class="profile-meta">
+            <div class="name-row" onclick="changeNickname()">
+                <h2 id="displayUsername">Без имени</h2>
+                <i class="fas fa-pencil-alt edit-icon" style="color: var(--text-gray); font-size: 14px;"></i>
             </div>
+            <div id="currentStatus" class="status-badge" onclick="openStatusInfo()">Новичок</div>
         </div>
     </div>
 
     <div id="avatarEditorBlock" class="expandable-block" style="display:none;">
-        <p class="section-subtitle">Выберите аватарку:</p>
+        <p style="margin-top:0; color: var(--text-gray); font-size: 14px;">Выберите аватарку:</p>
         <div class="preset-avatars" id="avatarPresets"></div>
         <input type="file" id="customAvatarInput" style="display:none;" onchange="handleCustomAvatar(event)">
         <button class="blue-action-btn" onclick="document.getElementById('customAvatarInput').click()">
@@ -56,13 +150,13 @@
             <i class="fas fa-book-open gold-book"></i>
         </div>
         <div class="balance-controls">
-            <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🎁</button>
-            <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
+            <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить 🎁</button>
+            <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать 💰</button>
         </div>
     </div>
 
     <div id="rewards-section" class="sub-page-block" style="display:none;">
-        <div class="section-header">Товары за ашетики</div>
+        <h3 style="margin-top:0;">Товары за ашетики</h3>
         <div class="reward-grid">
             <div class="reward-card">
                 <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b1.png" class="reward-img" alt="Закладка">
@@ -88,17 +182,17 @@
     </div>
 
     <div id="earn-section" class="sub-page-block" style="display:none;">
-        <div class="section-header">Как получить ашетики</div>
+        <h3 style="margin-top:0;">Как получить ашетики</h3>
         <div class="earn-info">
-            <div class="earn-card"><p>За отзыв</p><span class="earn-bonus">+25 <i class="fas fa-book-open gold-book"></i></span></div>
-            <div class="earn-card"><p>За покупку от 3 000 ₽</p><span class="earn-bonus">+10 <i class="fas fa-book-open gold-book"></i></span></div>
-            <div class="earn-card"><p>За покупку от 5 000 ₽</p><span class="earn-bonus">+20 <i class="fas fa-book-open gold-book"></i></span></div>
-            <div class="earn-card"><p>За покупку от 7 500 ₽</p><span class="earn-bonus">+30 <i class="fas fa-book-open gold-book"></i></span></div>
-            <div class="earn-card"><p>За покупку от 10 000 ₽</p><span class="earn-bonus">+40 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За отзыв</p><span class="earn-bonus" style="color:var(--status-green); font-weight:bold;">+25 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 3 000 ₽</p><span class="earn-bonus" style="color:var(--status-green); font-weight:bold;">+10 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 5 000 ₽</p><span class="earn-bonus" style="color:var(--status-green); font-weight:bold;">+20 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 7 500 ₽</p><span class="earn-bonus" style="color:var(--status-green); font-weight:bold;">+30 <i class="fas fa-book-open gold-book"></i></span></div>
+            <div class="earn-card"><p>За покупку от 10 000 ₽</p><span class="earn-bonus" style="color:var(--status-green); font-weight:bold;">+40 <i class="fas fa-book-open gold-book"></i></span></div>
         </div>
     </div>
 
-    <div class="tasks-container">
+    <div class="tasks-container" style="margin-bottom: 15px;">
         <div class="section-tab" onclick="toggleTasks()">
             <span>Задания на статус</span>
             <i class="fas fa-chevron-down" id="tasksArrow" style="transition: transform 0.3s;"></i>
@@ -108,7 +202,7 @@
     </div>
 
     <div class="showcase-container">
-        <div class="section-header" style="margin-bottom: 5px;">Витрина Топ-3</div>
+        <h3 style="margin-bottom: 5px;">Витрина Топ-3</h3>
         <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 15px;">Нажми на слот, чтобы установить достижение</p>
         <div class="showcase-grid">
             <div class="showcase-slot" id="slot-0"><i class="fas fa-lock"></i></div>
@@ -121,37 +215,24 @@
 <div id="markers" class="page">
     <div class="header">Маркеры</div>
     <div class="brand-section">
-        <h3 class="brand-title">GUANGNA</h3>
-        <div id="markersList" class="marker-list-container">
-            </div>
+        <h3 style="color: var(--text-gray); font-size: 14px; text-transform: uppercase;">GUANGNA</h3>
+        <div id="markersList" class="marker-list-container"></div>
     </div>
 </div>
 
 <div id="answers" class="page">
     <div class="header">Ответы и Тома</div>
-    <div class="reward-grid" style="padding: 15px;">
+    <div class="reward-grid">
         <div class="reward-card">
-            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 1" onclick="openBook(1, 50)">
-            <h4 onclick="openBook(1, 50)">Том 1</h4>
-            <button class="balance-btn" style="width:100%; margin-top:10px;" onclick="changeCart('tome1', 1)">В корзину (1500 ₽)</button>
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 1" onclick="openBook(1, 50)" style="cursor:pointer;">
+            <h4 onclick="openBook(1, 50)" style="cursor:pointer;">Том 1</h4>
+            <button class="balance-btn" style="width:100%; margin-top:10px; background:var(--accent);" onclick="changeCart('tome1', 1)">В корзину (1500 ₽)</button>
         </div>
         <div class="reward-card">
-            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 2" onclick="openBook(2, 50)">
-            <h4 onclick="openBook(2, 50)">Том 2</h4>
-            <button class="balance-btn" style="width:100%; margin-top:10px;" onclick="changeCart('tome2', 1)">В корзину (1500 ₽)</button>
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том 2" onclick="openBook(2, 50)" style="cursor:pointer;">
+            <h4 onclick="openBook(2, 50)" style="cursor:pointer;">Том 2</h4>
+            <button class="balance-btn" style="width:100%; margin-top:10px; background:var(--accent);" onclick="changeCart('tome2', 1)">В корзину (1500 ₽)</button>
         </div>
-    </div>
-</div>
-
-<div id="answersGalleryModal" class="modal-overlay" style="display:none; background: rgba(0,0,0,0.9); z-index: 100000;" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
-    <div class="modal-content" style="background: transparent; box-shadow: none; text-align: center; width: 100%; padding: 10px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white;">
-            <button class="btn-circle" onclick="prevGalleryPage()"><i class="fas fa-arrow-left"></i></button>
-            <span id="galleryPageIndicator" style="font-weight: bold; font-size: 18px;">Страница 1</span>
-            <button class="btn-circle" onclick="nextGalleryPage()"><i class="fas fa-arrow-right"></i></button>
-        </div>
-        <img id="galleryMainImage" style="width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-bottom: 20px; display: none;">
-        <button class="blue-action-btn" onclick="closeBook()">Закрыть</button>
     </div>
 </div>
 
@@ -160,99 +241,110 @@
     <div class="ai-upload-box">
         <div class="upload-area" onclick="document.getElementById('aiInput').click()">
             <i class="fas fa-camera"></i>
-            <p>Загрузить фото для определения цвета</p>
+            <p style="margin:0;">Загрузить фото для определения цвета</p>
         </div>
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
         
         <div id="adminAiBlock" style="margin-top: 30px; padding: 15px; background: var(--bg-header); border: 1px dashed var(--status-green); border-radius: 12px; display: none;">
             <h4 style="color: var(--status-green); margin-bottom: 15px; text-align: center;"><i class="fas fa-user-shield"></i> Обучение ИИ (Админ)</h4>
-            <input type="file" id="adminAiInput" accept="image/*" style="margin-bottom:10px; width:100%; color: var(--text-gray);">
-            <input type="text" id="adminAiBrand" placeholder="Бренд" style="width:100%; padding:12px; margin-bottom:10px; background:var(--bg); color:white; border:none; border-radius:8px;">
-            <input type="text" id="adminAiNumber" placeholder="Номер маркера" style="width:100%; padding:12px; margin-bottom:15px; background:var(--bg); color:white; border:none; border-radius:8px;">
+            <input type="file" id="adminAiInput" accept="image/*" style="margin-bottom:10px; width:100%;">
+            <input type="text" id="adminAiBrand" placeholder="Бренд" style="margin-bottom:10px;">
+            <input type="text" id="adminAiNumber" placeholder="Номер маркера" style="margin-bottom:15px;">
             <button class="blue-action-btn" style="background: var(--status-green);" onclick="submitAdminAiTrain()">Загрузить данные</button>
         </div>
-        <div id="aiResult" class="ai-result-card" style="display:none;"></div>
+        <div id="aiResult" class="expandable-block" style="display:none; margin-top: 20px; text-align: left;"></div>
     </div>
 </div>
 
 <div id="cart" class="page">
     <div class="header">Корзина</div>
-    <div id="cartItemsList" class="cart-container" style="padding: 15px;">
-        </div>
+    <div id="cartItemsList"></div>
     <div class="cart-footer">
-        <div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div>
+        <div class="cart-total">Итого: <span id="cartTotalSum" style="color: var(--accent);">0</span> ₽</div>
         <button class="buy-btn" onclick="checkout()">Оформить заказ</button>
     </div>
 </div>
 
-<div id="taskUploadModal" class="modal-overlay" style="display:none;">
+<div id="answersGalleryModal" class="modal-overlay" style="background: rgba(0,0,0,0.95);" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
+    <div class="modal-content" style="background: transparent; box-shadow: none; text-align: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white;">
+            <button class="btn-circle" onclick="prevGalleryPage()"><i class="fas fa-arrow-left"></i></button>
+            <span id="galleryPageIndicator" style="font-weight: bold; font-size: 16px;">Страница 1</span>
+            <button class="btn-circle" onclick="nextGalleryPage()"><i class="fas fa-arrow-right"></i></button>
+        </div>
+        <img id="galleryMainImage" style="width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-bottom: 20px; display: none; background: white;">
+        <button class="blue-action-btn" onclick="closeBook()">Закрыть</button>
+    </div>
+</div>
+
+<div id="taskUploadModal" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
-        <h3>Отправка на проверку</h3>
-        <div id="taskPhotoPreviewContainer" class="photo-preview-container"></div>
+        <h3 style="margin-top:0;">Отправка на проверку</h3>
+        <div id="taskPhotoPreviewContainer" style="display:flex; justify-content:center; flex-wrap:wrap;"></div>
         <div style="display:flex; gap:10px; margin-top:15px;">
-            <button class="balance-btn" style="background:#333; border:none;" onclick="closeTaskUploadModal()">Отмена</button>
+            <button class="balance-btn" style="background:#444;" onclick="closeTaskUploadModal()">Отмена</button>
             <button class="blue-action-btn" style="flex:1;" onclick="submitTaskPhoto()">Отправить</button>
         </div>
     </div>
 </div>
 
-<div id="showcaseModal" class="modal-overlay" style="display:none;">
+<div id="showcaseModal" class="modal-overlay">
     <div class="modal-content">
-        <h3 style="text-align: center; margin-bottom: 15px;">Выберите достижение</h3>
+        <h3 style="text-align: center; margin-top:0; margin-bottom: 15px;">Выберите достижение</h3>
         <div id="availableAchievementsList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"></div>
         <div id="clearSlotBtnContainer"></div>
-        <button class="balance-btn" style="background:#333; border:none; margin-top:15px; width: 100%;" onclick="document.getElementById('showcaseModal').style.display='none'">Отмена</button>
+        <button class="balance-btn" style="background:#444; width: 100%; margin-top:15px;" onclick="document.getElementById('showcaseModal').style.display='none'">Отмена</button>
     </div>
 </div>
 
-<div id="achInfoModal" class="modal-overlay" style="display:none;">
+<div id="achInfoModal" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
-        <h3 id="achInfoTitle">Название</h3>
+        <h3 id="achInfoTitle" style="margin-top:0;">Название</h3>
         <img id="achInfoImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 15px auto; display: block;">
         <p id="achInfoDesc" style="color: var(--text-gray); margin-bottom: 20px; font-size: 14px;"></p>
         <div style="display:flex; gap:10px;">
-            <button class="balance-btn" style="background:#333; border:none;" onclick="document.getElementById('achInfoModal').style.display='none'">Закрыть</button>
+            <button class="balance-btn" style="background:#444;" onclick="document.getElementById('achInfoModal').style.display='none'">Закрыть</button>
             <button class="blue-action-btn" style="flex:1;" onclick="replaceShowcaseSlot()">Изменить слот</button>
         </div>
     </div>
 </div>
 
-<div id="achievementAlert" class="modal-overlay" style="display:none; align-items: flex-start; padding-top: 50px;">
+<div id="achievementAlert" class="modal-overlay" style="align-items: flex-start; padding-top: 50px;">
     <div class="modal-content" style="background: var(--accent-gradient); text-align:center;">
-        <h3 id="alertTitle" style="color: white; margin-bottom: 10px;">🏆 Новое достижение!</h3>
+        <h3 id="alertTitle" style="color: white; margin-top:0; margin-bottom: 10px;">🏆 Новое достижение!</h3>
         <img id="alertAchImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 10px auto; display: none;">
         <p id="alertAchText" style="color: white; font-weight: bold; font-size: 18px;"></p>
-        <button class="balance-btn" style="margin-top:15px; background: rgba(0,0,0,0.3); border: none;" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
+        <button class="balance-btn" style="margin-top:15px; width:100%; background: rgba(0,0,0,0.3);" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
     </div>
 </div>
 
-<div id="statusSelectModal" class="modal-overlay" style="display:none;">
+<div id="statusSelectModal" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
-        <h3>Выберите статус</h3>
-        <div id="availableStatusesList" style="margin-top: 15px;"></div>
-        <button class="balance-btn" style="background:#333; border:none; margin-top:15px; width:100%;" onclick="document.getElementById('statusSelectModal').style.display = 'none';">Отмена</button>
+        <h3 style="margin-top:0;">Выберите статус</h3>
+        <div id="availableStatusesList" style="margin-top: 15px; text-align: left;"></div>
+        <button class="balance-btn" style="background:#444; width:100%; margin-top:15px;" onclick="document.getElementById('statusSelectModal').style.display = 'none';">Отмена</button>
     </div>
 </div>
 
-<div id="avatarConfirmModal" class="modal-overlay" style="display:none;">
+<div id="avatarConfirmModal" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
-        <h3>Установить аватар?</h3>
+        <h3 style="margin-top:0;">Установить аватар?</h3>
         <img id="avatarPreview" src="" style="width:100px; height:100px; border-radius:50%; margin:20px auto; border:3px solid var(--accent); object-fit:cover; display:block;">
         <div style="display:flex; gap:10px; margin-top:15px;">
-            <button class="balance-btn" style="background:#333; border:none;" onclick="closeAvatarConfirm()">Отмена</button>
+            <button class="balance-btn" style="background:#444;" onclick="closeAvatarConfirm()">Отмена</button>
             <button class="blue-action-btn" style="flex:1;" onclick="applyAvatar()">Применить</button>
         </div>
     </div>
 </div>
 
-<div id="nameModal" class="modal-overlay" style="display:none;">
+<div id="nameModal" class="modal-overlay">
     <div class="modal-content">
-        <h3>Настройки профиля</h3>
-        <input type="text" id="newNameInput" placeholder="Введите ник..." style="width:100%; padding:14px; background:var(--bg); border:none; border-radius:12px; color:white; margin-top:15px;">
-        <button class="blue-action-btn" style="margin-top:15px; background:var(--accent);" onclick="saveNewNickname()">Сохранить ник</button>
-        <hr style="margin: 20px 0; border: none; border-top: 1px solid #333;">
-        <button class="balance-btn" style="background:var(--status-red); border:none; width:100%; font-size:14px;" onclick="resetAllData()">Сбросить весь прогресс</button>
-        <button class="balance-btn" style="background:#333; border:none; margin-top:10px; width: 100%;" onclick="document.getElementById('nameModal').style.display='none'">Отмена</button>
+        <h3 style="margin-top:0; text-align:center;">Настройки профиля</h3>
+        <input type="text" id="newNameInput" placeholder="Введите ник...">
+        <button class="blue-action-btn" style="margin-top:15px;" onclick="saveNewNickname()">Сохранить ник</button>
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(128,128,128,0.2);">
+        <button class="balance-btn" style="background:var(--status-red); width:100%;" onclick="resetAllData()">Сбросить весь прогресс</button>
+        <button class="balance-btn" style="background:#444; margin-top:10px; width: 100%;" onclick="document.getElementById('nameModal').style.display='none'">Отмена</button>
     </div>
 </div>
 
@@ -276,7 +368,588 @@
     </button>
 </nav>
 
-<script src="app.js"></script>
+<script>
+    // ==========================================
+    // ИНИЦИАЛИЗАЦИЯ TELEGRAM WEB APP
+    // ==========================================
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.ready();
+
+    document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color || '#1e1e1e');
+    document.documentElement.style.setProperty('--text', tg.themeParams.text_color || '#ffffff');
+    document.documentElement.style.setProperty('--accent', tg.themeParams.button_color || '#0a84ff');
+
+    // ==========================================
+    // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И ДАННЫЕ
+    // ==========================================
+    const levelConfig = [
+        { level: 1, name: "Новичок", xpReq: 0, color: "gray" },
+        { level: 2, name: "Любитель", xpReq: 100, color: "blue" },
+        { level: 3, name: "Художник", xpReq: 300, color: "purple" },
+        { level: 4, name: "Мастер", xpReq: 600, color: "red" },
+        { level: 5, name: "Легенда", xpReq: 1000, color: "gold" }
+    ];
+
+    const achievementsDB = {
+        'first_task': { id: 'first_task', name: 'Первый шаг', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach1.png', desc: 'Выполнено первое задание.' },
+        'rich_boy': { id: 'rich_boy', name: 'Копилка', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach2.png', desc: 'Накоплено 1000 ашетиков.' },
+        'ai_master': { id: 'ai_master', name: 'Техно-маг', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach3.png', desc: 'ИИ Палитра использована 5 раз.' },
+        'shopaholic': { id: 'shopaholic', name: 'Шопоголик', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach4.png', desc: 'Сделан первый заказ в корзине.' },
+        'collector': { id: 'collector', name: 'Коллекционер', img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach5.png', desc: 'Разблокировано 3 статуса.' }
+    };
+
+    const tasksList = [
+        { id: 'task_1', title: 'Раскрась 1 страницу Hachette', reward: 50, xp: 20 },
+        { id: 'task_2', title: 'Раскрась 3 страницы', reward: 150, xp: 50 },
+        { id: 'task_3', title: 'Сделай градиент маркерами', reward: 100, xp: 40 },
+        { id: 'task_4', title: 'Оставь отзыв с фото', reward: 200, xp: 100 },
+        { id: 'task_5', title: 'Купи любую книгу', reward: 300, xp: 150 }
+    ];
+
+    const markersDB = [
+        { id: 'g1', num: '1', color: '#800000', name: 'Wine Red' },
+        { id: 'g2', num: '2', color: '#A52A2A', name: 'Old Red' },
+        { id: 'g3', num: '3', color: '#FF0000', name: 'Rose Red' },
+        { id: 'g4', num: '4', color: '#FF69B4', name: 'Vivid Pink' },
+        { id: 'g5', num: '5', color: '#FF1493', name: 'Cherry Pink' },
+        { id: 'g6', num: '6', color: '#FFC0CB', name: 'Pale Pink' },
+        { id: 'g10', num: '10', color: '#8B0000', name: 'Deep Red' },
+        { id: 'g11', num: '11', color: '#DC143C', name: 'Carmine' },
+        { id: 'g14', num: '14', color: '#FF4500', name: 'Vermilion' },
+        { id: 'g23', num: '23', color: '#FFA500', name: 'Orange' },
+        { id: 'g35', num: '35', color: '#FFFF00', name: 'Lemon Yellow' },
+        { id: 'g43', num: '43', color: '#556B2F', name: 'Deep Olive Green' },
+        { id: 'g48', num: '48', color: '#00FF00', name: 'Yellow Green' },
+        { id: 'g53', num: '53', color: '#008080', name: 'Turquoise Green' },
+        { id: 'g63', num: '63', color: '#4682B4', name: 'Cerulean Blue' },
+        { id: 'g71', num: '71', color: '#00008B', name: 'Cobalt Blue' },
+        { id: 'g81', num: '81', color: '#8A2BE2', name: 'Deep Violet' },
+        { id: 'g91', num: '91', color: '#8B4513', name: 'Natural Oak' },
+        { id: 'g120', num: '120', color: '#000000', name: 'Black' }
+    ];
+
+    const products = {
+        'tome1': { name: 'Том 1', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png' },
+        'tome2': { name: 'Том 2', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png' }
+    };
+
+    let user = JSON.parse(localStorage.getItem('coloring_user')) || {
+        name: tg.initDataUnsafe?.user?.first_name || 'Без имени',
+        balance: 0,
+        xp: 0,
+        level: 1,
+        avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
+        status: 'Новичок',
+        unlockedStatuses: ['Новичок'],
+        achievements: [],
+        showcase: [null, null, null],
+        tasksProgress: {}, 
+        aiUsageCount: 0
+    };
+
+    let cart = JSON.parse(localStorage.getItem('coloring_cart')) || {};
+
+    function saveData() {
+        localStorage.setItem('coloring_user', JSON.stringify(user));
+        localStorage.setItem('coloring_cart', JSON.stringify(cart));
+        updateProfileUI();
+    }
+
+    // ==========================================
+    // ОБНОВЛЕНИЕ ИНТЕРФЕЙСА (UI)
+    // ==========================================
+    function updateProfileUI() {
+        document.getElementById('displayUsername').innerText = user.name;
+        document.getElementById('user-avatar').src = user.avatar;
+        document.getElementById('userBalance').innerText = user.balance;
+
+        let currentLevelObj = levelConfig[0];
+        for (let i = 0; i < levelConfig.length; i++) {
+            if (user.xp >= levelConfig[i].xpReq) currentLevelObj = levelConfig[i];
+        }
+        user.level = currentLevelObj.level;
+        
+        const statusBadge = document.getElementById('currentStatus');
+        statusBadge.innerText = user.status;
+        statusBadge.className = 'status-badge'; 
+        
+        if (currentLevelObj.color === 'gray') statusBadge.style.background = '#8e8e93';
+        if (currentLevelObj.color === 'blue') statusBadge.style.background = '#0a84ff';
+        if (currentLevelObj.color === 'purple') statusBadge.style.background = '#bf5af2';
+        if (currentLevelObj.color === 'red') statusBadge.style.background = '#ff453a';
+        if (currentLevelObj.color === 'gold') statusBadge.style.background = '#ffd60a';
+        statusBadge.style.color = currentLevelObj.color === 'gold' ? '#000' : '#FFF';
+
+        renderShowcase();
+        updateCartBadge();
+    }
+
+    // ==========================================
+    // НАВИГАЦИЯ (ВКЛАДКИ И СЕКЦИИ)
+    // ==========================================
+    function tab(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        document.getElementById('btn-' + pageId).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function toggleSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (section.style.display === 'none' || section.style.display === '') {
+            document.querySelectorAll('.sub-page-block').forEach(el => el.style.display = 'none');
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    }
+
+    // ==========================================
+    // НАСТРОЙКИ ПРОФИЛЯ
+    // ==========================================
+    function changeNickname() {
+        document.getElementById('newNameInput').value = user.name;
+        document.getElementById('nameModal').style.display = 'flex';
+    }
+
+    function saveNewNickname() {
+        const newName = document.getElementById('newNameInput').value.trim();
+        if (newName.length > 0 && newName.length <= 20) {
+            user.name = newName;
+            saveData();
+            document.getElementById('nameModal').style.display = 'none';
+        } else {
+            tg.showAlert("Имя должно быть от 1 до 20 символов");
+        }
+    }
+
+    function toggleAvatarEditor() {
+        const editor = document.getElementById('avatarEditorBlock');
+        if (editor.style.display === 'none' || editor.style.display === '') {
+            editor.style.display = 'block';
+            renderAvatarPresets();
+        } else {
+            editor.style.display = 'none';
+        }
+    }
+
+    function renderAvatarPresets() {
+        const container = document.getElementById('avatarPresets');
+        container.innerHTML = '';
+        for (let i = 1; i <= 6; i++) {
+            const url = `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av${i}.png`;
+            const img = document.createElement('img');
+            img.src = url;
+            img.onclick = () => showAvatarConfirm(url);
+            container.appendChild(img);
+        }
+    }
+
+    let tempAvatarUrl = '';
+    function handleCustomAvatar(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) { showAvatarConfirm(e.target.result); };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function showAvatarConfirm(url) {
+        tempAvatarUrl = url;
+        document.getElementById('avatarPreview').src = url;
+        document.getElementById('avatarConfirmModal').style.display = 'flex';
+    }
+
+    function closeAvatarConfirm() {
+        document.getElementById('avatarConfirmModal').style.display = 'none';
+        tempAvatarUrl = '';
+    }
+
+    function applyAvatar() {
+        if (tempAvatarUrl) { user.avatar = tempAvatarUrl; saveData(); }
+        closeAvatarConfirm();
+        document.getElementById('avatarEditorBlock').style.display = 'none';
+    }
+
+    function resetAllData() {
+        tg.showConfirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?", function(confirm) {
+            if (confirm) {
+                localStorage.removeItem('coloring_user');
+                localStorage.removeItem('coloring_cart');
+                window.location.reload();
+            }
+        });
+    }
+
+    // ==========================================
+    // ВИТРИНА ДОСТИЖЕНИЙ
+    // ==========================================
+    let currentSlotIndex = null;
+    function renderShowcase() {
+        for (let i = 0; i < 3; i++) {
+            const slot = document.getElementById(`slot-${i}`);
+            const achId = user.showcase[i];
+            slot.innerHTML = ''; 
+            
+            if (achId && achievementsDB[achId]) {
+                const img = document.createElement('img');
+                img.src = achievementsDB[achId].img;
+                img.onclick = () => openAchievementInfo(i, achId);
+                slot.appendChild(img);
+                slot.classList.add('filled');
+            } else {
+                slot.innerHTML = '<i class="fas fa-plus"></i>';
+                slot.classList.remove('filled');
+                slot.onclick = () => openShowcaseModal(i);
+            }
+        }
+    }
+
+    function openShowcaseModal(slotIndex) {
+        currentSlotIndex = slotIndex;
+        const list = document.getElementById('availableAchievementsList');
+        list.innerHTML = '';
+        
+        if (user.achievements.length === 0) {
+            list.innerHTML = '<p style="grid-column: 1 / -1; color: var(--text-gray); font-size: 14px;">У вас пока нет достижений.</p>';
+        } else {
+            user.achievements.forEach(achId => {
+                const ach = achievementsDB[achId];
+                if (!ach) return;
+                
+                const div = document.createElement('div');
+                div.style.background = 'var(--bg)';
+                div.style.padding = '10px';
+                div.style.borderRadius = '12px';
+                div.style.cursor = 'pointer';
+                if (user.showcase.includes(achId)) div.style.opacity = '0.4';
+                
+                div.innerHTML = `<img src="${ach.img}" style="width: 50px; height: 50px; object-fit: contain;">`;
+                div.onclick = () => selectAchievementForSlot(achId);
+                list.appendChild(div);
+            });
+        }
+
+        const clearContainer = document.getElementById('clearSlotBtnContainer');
+        clearContainer.innerHTML = '';
+        if (user.showcase[slotIndex] !== null) {
+            clearContainer.innerHTML = `<button class="balance-btn" style="background:var(--status-red); width:100%; margin-top:15px;" onclick="clearSlot(${slotIndex})">Очистить слот</button>`;
+        }
+        document.getElementById('showcaseModal').style.display = 'flex';
+    }
+
+    function clearSlot(index) {
+        user.showcase[index] = null;
+        saveData();
+        document.getElementById('showcaseModal').style.display = 'none';
+    }
+
+    function selectAchievementForSlot(achId) {
+        for (let i = 0; i < 3; i++) {
+            if (i !== currentSlotIndex && user.showcase[i] === achId) {
+                tg.showAlert("Это достижение уже установлено в другом слоте!"); return;
+            }
+        }
+        user.showcase[currentSlotIndex] = achId;
+        saveData();
+        document.getElementById('showcaseModal').style.display = 'none';
+    }
+
+    function openAchievementInfo(slotIndex, achId) {
+        currentSlotIndex = slotIndex;
+        const ach = achievementsDB[achId];
+        document.getElementById('achInfoTitle').innerText = ach.name;
+        document.getElementById('achInfoImg').src = ach.img;
+        document.getElementById('achInfoDesc').innerText = ach.desc;
+        document.getElementById('achInfoModal').style.display = 'flex';
+    }
+
+    function replaceShowcaseSlot() {
+        document.getElementById('achInfoModal').style.display = 'none';
+        openShowcaseModal(currentSlotIndex);
+    }
+
+    function awardAchievement(achId) {
+        if (!user.achievements.includes(achId) && achievementsDB[achId]) {
+            user.achievements.push(achId);
+            saveData();
+            const ach = achievementsDB[achId];
+            document.getElementById('alertAchImg').src = ach.img;
+            document.getElementById('alertAchImg').style.display = 'block';
+            document.getElementById('alertAchText').innerText = ach.name;
+            document.getElementById('achievementAlert').style.display = 'flex';
+        }
+    }
+
+    // ==========================================
+    // ЗАДАНИЯ И СТАТУСЫ
+    // ==========================================
+    function toggleTasks() {
+        const list = document.getElementById('tasksList');
+        const arrow = document.getElementById('tasksArrow');
+        if (list.style.display === 'none' || list.style.display === '') {
+            renderTasks();
+            list.style.display = 'block';
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            list.style.display = 'none';
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    function renderTasks() {
+        const list = document.getElementById('tasksList');
+        list.innerHTML = '';
+        tasksList.forEach(task => {
+            const status = user.tasksProgress[task.id] || 'available'; 
+            const div = document.createElement('div');
+            div.className = 'task-card';
+            
+            let actionHtml = '';
+            if (status === 'available') actionHtml = `<button class="balance-btn" style="font-size:11px;" onclick="openTaskUpload('${task.id}')">Сдать фото</button>`;
+            else if (status === 'pending') actionHtml = `<span style="color:var(--status-yellow); font-size:12px;"><i class="fas fa-clock"></i> Проверка</span>`;
+            else if (status === 'completed') actionHtml = `<span style="color:var(--status-green); font-size:12px;"><i class="fas fa-check-circle"></i> Готово</span>`;
+            
+            div.innerHTML = `
+                <div style="flex:1;">
+                    <h4 style="margin:0 0 5px 0; font-size:14px;">${task.title}</h4>
+                    <p style="margin:0; font-size:11px; color:var(--text-gray);">Награда: ${task.reward} 📖 | ${task.xp} XP</p>
+                </div>
+                <div>${actionHtml}</div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    let activeTaskId = null, tempTaskPhotos = [];
+    function openTaskUpload(taskId) { activeTaskId = taskId; document.getElementById('taskFileInput').click(); }
+
+    function handleTaskFile(event) {
+        const files = event.target.files;
+        tempTaskPhotos = [];
+        const container = document.getElementById('taskPhotoPreviewContainer');
+        container.innerHTML = '';
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempTaskPhotos.push(e.target.result);
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+            document.getElementById('taskUploadModal').style.display = 'flex';
+        }
+    }
+
+    function closeTaskUploadModal() {
+        document.getElementById('taskUploadModal').style.display = 'none';
+        tempTaskPhotos = []; activeTaskId = null;
+    }
+
+    function submitTaskPhoto() {
+        if (tempTaskPhotos.length > 0 && activeTaskId) {
+            user.tasksProgress[activeTaskId] = 'pending';
+            saveData();
+            setTimeout(() => adminApproveTask(activeTaskId), 3000); // Симуляция админа
+            closeTaskUploadModal();
+            renderTasks();
+            tg.showAlert("Фото отправлены на проверку администратору!");
+            if (Object.keys(user.tasksProgress).length === 1) awardAchievement('first_task');
+        }
+    }
+
+    function adminApproveTask(taskId) {
+        if (user.tasksProgress[taskId] === 'pending') {
+            user.tasksProgress[taskId] = 'completed';
+            const task = tasksList.find(t => t.id === taskId);
+            if (task) {
+                user.balance += task.reward; user.xp += task.xp; saveData();
+                if (user.balance >= 1000) awardAchievement('rich_boy');
+                tg.showAlert(`✅ Задание проверено!\nНачислено: ${task.reward} 📖 и ${task.xp} XP`);
+            }
+            if (document.getElementById('profile').classList.contains('active')) renderTasks();
+        }
+    }
+
+    function openStatusInfo() {
+        const list = document.getElementById('availableStatusesList');
+        list.innerHTML = '';
+        levelConfig.forEach(lvl => {
+            const isUnlocked = user.level >= lvl.level;
+            const isActive = user.status === lvl.name;
+            const div = document.createElement('div');
+            div.style.padding = '12px'; div.style.margin = '8px 0'; div.style.borderRadius = '10px';
+            div.style.background = isActive ? 'rgba(10, 132, 255, 0.2)' : 'var(--bg)';
+            div.style.border = isActive ? '1px solid var(--accent)' : 'none';
+            div.style.display = 'flex'; div.style.justifyContent = 'space-between'; div.style.alignItems = 'center';
+            
+            let colorHex = '#8e8e93';
+            if (lvl.color === 'blue') colorHex = '#0a84ff';
+            if (lvl.color === 'purple') colorHex = '#bf5af2';
+            if (lvl.color === 'red') colorHex = '#ff453a';
+            if (lvl.color === 'gold') colorHex = '#ffd60a';
+
+            let actionHtml = isActive ? `<span style="color:var(--status-green);"><i class="fas fa-check"></i> Выбран</span>` :
+                             isUnlocked ? `<button class="balance-btn" style="padding:6px 12px;" onclick="selectStatus('${lvl.name}')">Выбрать</button>` :
+                             `<span style="color:var(--text-gray); font-size:12px;"><i class="fas fa-lock"></i> С ${lvl.xpReq} XP</span>`;
+            
+            div.innerHTML = `<div style="display:flex; align-items:center; gap:10px;"><div style="width:15px; height:15px; border-radius:50%; background:${colorHex};"></div><span style="font-weight:bold; color: ${isUnlocked ? 'white' : 'gray'}">${lvl.name}</span></div><div>${actionHtml}</div>`;
+            list.appendChild(div);
+        });
+        document.getElementById('statusSelectModal').style.display = 'flex';
+    }
+
+    function selectStatus(statusName) { user.status = statusName; saveData(); document.getElementById('statusSelectModal').style.display = 'none'; }
+
+    // ==========================================
+    // МАРКЕРЫ И ОТВЕТЫ
+    // ==========================================
+    function renderMarkers() {
+        const container = document.getElementById('markersList');
+        container.innerHTML = '';
+        markersDB.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'marker-item';
+            div.innerHTML = `<div class="color-circle" style="background-color: ${m.color};"></div><div class="marker-info"><div class="marker-number">№${m.num}</div><div class="marker-name">${m.name}</div></div>`;
+            container.appendChild(div);
+        });
+    }
+
+    let currentTome = 1, currentGalleryPage = 1, totalGalleryPages = 50;
+    const githubPagesPath = "https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/pages/";
+
+    function openBook(tome, total) {
+        currentTome = tome; totalGalleryPages = total; currentGalleryPage = 1;
+        updateGalleryImage();
+        document.getElementById('answersGalleryModal').style.display = 'flex';
+    }
+
+    function updateGalleryImage() {
+        const img = document.getElementById('galleryMainImage');
+        const indicator = document.getElementById('galleryPageIndicator');
+        img.style.display = 'none'; indicator.innerText = `Загрузка...`;
+        
+        const imgUrl = `${githubPagesPath}tome${currentTome}/page${currentGalleryPage}.jpg`;
+        img.onload = () => { img.style.display = 'block'; indicator.innerText = `Страница ${currentGalleryPage} из ${totalGalleryPages}`; };
+        img.onerror = () => { img.src = "https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png"; img.style.display = 'block'; indicator.innerText = `Нет превью (Стр ${currentGalleryPage})`; }
+        img.src = imgUrl;
+    }
+
+    function nextGalleryPage() { if (currentGalleryPage < totalGalleryPages) { currentGalleryPage++; updateGalleryImage(); } }
+    function prevGalleryPage() { if (currentGalleryPage > 1) { currentGalleryPage--; updateGalleryImage(); } }
+    function closeBook() { document.getElementById('answersGalleryModal').style.display = 'none'; }
+
+    let touchStartX = 0, touchEndX = 0;
+    function handleTouchStart(e) { touchStartX = e.changedTouches[0].screenX; }
+    function handleTouchEnd(e) { touchEndX = e.changedTouches[0].screenX; const swipeThreshold = 50; if (touchEndX < touchStartX - swipeThreshold) nextGalleryPage(); if (touchEndX > touchStartX + swipeThreshold) prevGalleryPage(); }
+
+    // ==========================================
+    // ИИ ПАЛИТРА
+    // ==========================================
+    function processAI(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                tg.MainButton.show(); tg.MainButton.text = "Анализирую цвета..."; tg.MainButton.showProgress();
+                setTimeout(() => {
+                    tg.MainButton.hideProgress(); tg.MainButton.hide();
+                    const resultDiv = document.getElementById('aiResult');
+                    resultDiv.style.display = 'block';
+                    const selected = markersDB.sort(() => 0.5 - Math.random()).slice(0, 3);
+                    let html = '<h4 style="margin-top:0; margin-bottom:15px;">Распознанные маркеры:</h4>';
+                    selected.forEach(m => {
+                        html += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:var(--bg); padding:10px; border-radius:8px;"><div style="width:30px; height:30px; border-radius:5px; background:${m.color};"></div><div><div style="font-weight:bold;">GUANGNA №${m.num}</div><div style="font-size:12px; color:var(--text-gray);">${m.name}</div></div></div>`;
+                    });
+                    resultDiv.innerHTML = html;
+                    
+                    user.aiUsageCount = (user.aiUsageCount || 0) + 1;
+                    if (user.aiUsageCount >= 5) awardAchievement('ai_master');
+                    saveData();
+                }, 2000);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Проверка админа (с подстраховкой)
+    if (user && user.name && (user.name.toLowerCase() === 'admin' || user.name.toLowerCase() === 'админ')) {
+        document.getElementById('adminAiBlock').style.display = 'block';
+    }
+
+    function submitAdminAiTrain() {
+        const file = document.getElementById('adminAiInput').files[0];
+        const brand = document.getElementById('adminAiBrand').value;
+        const num = document.getElementById('adminAiNumber').value;
+        if (file && brand && num) { tg.showAlert("Данные отправлены на сервер обучения ИИ!"); document.getElementById('adminAiBrand').value = ''; document.getElementById('adminAiNumber').value = ''; }
+        else { tg.showAlert("Заполните все поля для обучения."); }
+    }
+
+    // ==========================================
+    // КОРЗИНА
+    // ==========================================
+    function changeCart(itemId, delta) {
+        if (!cart[itemId]) cart[itemId] = 0;
+        cart[itemId] += delta;
+        if (cart[itemId] <= 0) delete cart[itemId];
+        saveData(); renderCart(); updateCartBadge();
+        if (delta > 0) tg.HapticFeedback.impactOccurred('light');
+    }
+
+    function updateCartBadge() {
+        let totalItems = 0;
+        for (let key in cart) totalItems += cart[key];
+        const badge = document.getElementById('cartBadge');
+        if (totalItems > 0) { badge.innerText = totalItems; badge.style.display = 'block'; }
+        else { badge.style.display = 'none'; }
+    }
+
+    function renderCart() {
+        const list = document.getElementById('cartItemsList');
+        list.innerHTML = ''; let totalSum = 0;
+        if (Object.keys(cart).length === 0) {
+            list.innerHTML = '<p style="text-align:center; color:var(--text-gray); margin-top:50px;">Корзина пуста</p>';
+            document.getElementById('cartTotalSum').innerText = '0'; return;
+        }
+        for (let key in cart) {
+            const item = products[key]; const count = cart[key];
+            if (!item) continue;
+            totalSum += item.price * count;
+            const div = document.createElement('div');
+            div.className = 'cart-item';
+            div.innerHTML = `<img src="${item.img}" style="width:60px; height:60px; object-fit:contain; border-radius:8px; background:white;"><div style="flex:1;"><h4 style="margin:0 0 5px 0;">${item.name}</h4><div style="color:var(--text-gray); font-size:14px;">${item.price} ₽</div></div><div style="display:flex; align-items:center; gap:10px; background:var(--bg); padding:5px 10px; border-radius:20px;"><button onclick="changeCart('${key}', -1)" style="background:none; border:none; color:white; font-size:18px; padding:0 5px;">-</button><span style="font-weight:bold; min-width:20px; text-align:center;">${count}</span><button onclick="changeCart('${key}', 1)" style="background:none; border:none; color:white; font-size:18px; padding:0 5px;">+</button></div>`;
+            list.appendChild(div);
+        }
+        document.getElementById('cartTotalSum').innerText = totalSum;
+    }
+
+    function checkout() {
+        if (Object.keys(cart).length === 0) { tg.showAlert("Ваша корзина пуста!"); return; }
+        tg.showConfirm("Оформить заказ и перейти к оплате?", function(confirm) {
+            if (confirm) {
+                tg.sendData(JSON.stringify({action: 'checkout', cart: cart}));
+                cart = {}; saveData(); renderCart(); updateCartBadge();
+                awardAchievement('shopaholic'); tg.showAlert("Заказ успешно оформлен!");
+            }
+        });
+    }
+
+    // Инициализация
+    window.onload = () => {
+        updateProfileUI(); renderMarkers(); renderCart();
+        window.onclick = function(event) {
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                if (event.target === modal) modal.style.display = "none";
+            });
+        }
+    };
+</script>
 
 </body>
 </html>

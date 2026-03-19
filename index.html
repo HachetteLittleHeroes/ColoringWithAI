@@ -384,10 +384,9 @@
             font-weight: 700;
             font-size: 16px;
             background: var(--bg-header);
-            position: relative;
-            z-index: 10;
             width: 100%;
             border: none;
+            color: var(--text);
         }
 
         .tasks-header i {
@@ -399,6 +398,10 @@
             display: none;
             background: var(--bg-header);
             border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tasks-content.visible {
+            display: block;
         }
 
         .tasks-category {
@@ -608,7 +611,7 @@
         }
 
         /* ==========================================
-           9. ПОИСК - ОБЩИЙ СТИЛЬ
+           9. ПОИСК
            ========================================== */
         .search-container {
             padding: 0 15px 15px;
@@ -1129,7 +1132,6 @@
             font-size: 16px;
         }
 
-        /* Специально для модалки подтверждения аватара */
         .avatar-preview-img {
             width: 120px;
             height: 120px;
@@ -1345,9 +1347,11 @@
             }
         }
 
+        // ========== ЗАДАНИЯ - ИСПРАВЛЕНО ==========
         function toggleTasks() {
             const content = document.getElementById('tasksContent');
             const arrow = document.getElementById('tasksArrow');
+            
             if (content.style.display === 'none' || content.style.display === '') {
                 renderTasks();
                 content.style.display = 'block';
@@ -1358,7 +1362,6 @@
             }
         }
 
-        // ========== ЗАДАНИЯ ==========
         function renderTasks() {
             renderLevelTasks();
             renderTimeTasks();
@@ -1631,6 +1634,7 @@
             tempAvatarUrl = '';
         }
 
+        // ========== ИСПРАВЛЕНО: Применить аватар и закрыть окно ==========
         function applyAvatar() {
             if (tempAvatarUrl) { 
                 user.avatar = tempAvatarUrl; 
@@ -1646,6 +1650,7 @@
             document.getElementById('nameModal').style.display = 'flex';
         }
 
+        // ========== ИСПРАВЛЕНО: Сохранить ник и закрыть окно ==========
         function saveNewNickname() {
             const newName = document.getElementById('newNameInput').value.trim();
             if (newName.length > 0 && newName.length <= 20) {
@@ -2014,7 +2019,7 @@
         </div>
     </div>
 
-    <!-- Задания -->
+    <!-- ========== ЗАДАНИЯ - ИСПРАВЛЕНО ========== -->
     <div class="tasks-section">
         <button class="tasks-header" onclick="toggleTasks()">
             <span>Задания</span>
@@ -2178,7 +2183,7 @@
     </div>
 </div>
 
-<!-- Модалка подтверждения аватара - исправленные размеры кнопок -->
+<!-- Модалка подтверждения аватара -->
 <div id="avatarConfirmModal" class="modal-overlay">
     <div class="modal-content" style="text-align:center;">
         <h3>Установить аватар?</h3>

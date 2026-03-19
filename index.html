@@ -1773,11 +1773,16 @@ const defaultUser = {
     xp: 0,
     level: 1,
     avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
-    status: 'Новичок',
-    unlockedStatuses: ['Новичок'],
+    status: 'Без статуса',
     achievements: [],
     showcase: [null, null, null],
     levelTasksProgress: [0, 0, 0, 0, 0],
+    branchProgress: {
+        alcohol_markers: [0, 0, 0, 0, 0],
+        pencils: [0, 0, 0, 0, 0]
+    },
+    unlockedStatuses: []
+};
     timeTasksProgress: {},
     timeTasksReset: Date.now(),
     aiUsageCount: 0,
@@ -2465,48 +2470,75 @@ function updateStatusProgress() {
             renderTimeTasks();
         }
 
-        function renderLevelTasks() {
+        // Переменная для хранения выбранной ветки (по умолчанию первая)
+let selectedBranch = 'alcohol_markers'; 
+
+function renderLevelTasks() {
     const container = document.getElementById('levelTasksList');
     if (!container) return;
     container.innerHTML = '';
 
+    // 1. Создаем кнопки переключения веток
+    const tabsDiv = document.createElement('div');
+    tabsDiv.style = "display: flex; gap: 10px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 5px;";
+    
+    Object.keys(taskBranches).forEach(branchKey => {
+        const branch = taskBranches[branchKey];
+        const isActive = selectedBranch === branchKey;
+        tabsDiv.innerHTML += `
+            <button onclick="switchBranch('${branchKey}')" style="
+                padding: 8px 15px; 
+                border-radius: 20px; 
+                white-space: nowrap;
+                border: 1px solid ${isActive ? 'var(--accent)' : 'var(--border-color)'};
+                background: ${isActive ? 'var(--accent-gradient)' : 'transparent'};
+                color: ${isActive ? 'white' : 'var(--text-gray)'};
+                font-size: 12px; font-weight: bold;
+            ">${branch.name}</button>
+        `;
+    });
+    container.appendChild(tabsDiv);
+
+    // 2. Отрисовываем текущий уровень в выбранной ветке
+    const branch = taskBranches[selectedBranch];
+    // Прогресс теперь храним как объект: user.branchProgress['alcohol_markers'] = [0,0,0,0,0]
+    const branchProgress = user.branchProgress[selectedBranch] || [0, 0, 0, 0, 0];
+    
     let firstLocked = false;
 
-    levelTasks.forEach((task, index) => {
+    branch.levels.forEach((lvl, idx) => {
         if (firstLocked) return;
 
-        const currentProgress = user.levelTasksProgress[index] || 0;
-        const maxProgress = task.maxProgress || 5;
-        const isCompleted = currentProgress >= maxProgress;
+        const current = branchProgress[idx] || 0;
+        const isDone = current >= lvl.maxProgress;
 
         const div = document.createElement('div');
-        div.className = 'level-task-item';
-        div.style = "background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-color);";
-        
+        div.style = "background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 10px;";
         div.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-weight: bold; font-size: 15px;">${task.title}</span>
-                ${isCompleted ? '<span style="color: var(--status-green); font-weight: bold;">✓ Уровень пройден</span>' : ''}
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span style="font-weight: bold;">Уровень ${idx + 1}: ${lvl.title}</span>
+                ${isDone ? '<span style="color:var(--status-green)">✓</span>' : ''}
             </div>
-            <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 10px;">${task.description}</p>
-            
-            <div class="task-progress-bg" style="background: var(--border-color); height: 10px; border-radius: 5px; overflow: hidden; position: relative;">
-                <div class="task-progress-fill" style="width: ${(currentProgress/maxProgress)*100}%; background: var(--accent-gradient); height: 100%; transition: width 0.4s ease;"></div>
+            <p style="font-size: 12px; color: var(--text-gray);">${lvl.desc}</p>
+            <div style="background: var(--border-color); height: 6px; border-radius: 3px; margin: 10px 0; overflow: hidden;">
+                <div style="width: ${(current/lvl.maxProgress)*100}%; background: var(--accent-gradient); height: 100%;"></div>
             </div>
-            
-            <div style="text-align: right; font-size: 11px; color: var(--text-gray); margin-top: 5px; margin-bottom: 10px;">
-                Подтверждено работ: ${currentProgress} / ${maxProgress}
-            </div>
-
-            <button class="photo-upload-btn" onclick="openTaskUpload('level_${index}')" style="width: 100%; padding: 10px; border-radius: 8px; background: var(--accent); color: white; border: none; font-weight: bold;">
-                <i class="fas fa-camera"></i> Отправить готовую работу
+            <button onclick="openTaskUpload('${selectedBranch}_${idx}')" style="width: 100%; padding: 8px; border-radius: 8px; background: var(--accent); border:none; color:white; font-size:12px;">
+                Отправить фото
             </button>
         `;
-        
         container.appendChild(div);
-        if (!isCompleted) firstLocked = true;
+
+        if (!isDone) firstLocked = true;
     });
 }
+
+// Функция переключения веток
+function switchBranch(key) {
+    selectedBranch = key;
+    renderLevelTasks();
+}
+
 
 function renderTimeTasks() {
     const container = document.getElementById('timeTasksList');

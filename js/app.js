@@ -18,6 +18,10 @@ let currentInfoSlot = null; // Для модалки с описанием
 // ОБЪЯВЛЯЕМ ПЕРЕМЕННЫЕ ГАЛЕРЕИ ОДИН РАЗ
 let currentGalleryTome = 1;
 let currentGalleryPage = 1;
+let maxGalleryPages = 50;
+let touchStartX = 0;
+let touchStartY = 0;
+let currentVol, currentPage, maxPages; // Для старых функций, если нужны
 
 // БАЗА ОПИСАНИЙ ДОСТИЖЕНИЙ
 const ACH_DATA = {
@@ -33,6 +37,7 @@ const LEVEL_COLORS = {
     4: '#ff3b30', // Красный
     5: '#ffd700'  // Золотой/Желтый
 };
+
 async function init() {
     console.log("Запуск системы...");
     const loader = document.getElementById('loading-screen');
@@ -49,7 +54,14 @@ async function init() {
         if (window.api) {
             State.user = await window.api.getUser(State.userId);
         }
-        await window.loadMarkersFromCSV();
+        if (typeof window.loadMarkersFromCSV === 'function') {
+            await window.loadMarkersFromCSV();
+        }
+
+        // Загружаем органайзеры, если функция есть в ui.js
+        if (typeof loadOrganizers === 'function') {
+            await loadOrganizers();
+        }
 
         // Отрисовываем интерфейс
         if (typeof renderProfile === 'function') renderProfile();
@@ -72,12 +84,7 @@ async function init() {
             }
         }, 500);
     }
-} // <--- ВОТ ЭТА ЖИЗНЕННО ВАЖНАЯ СКОБКА ТЕПЕРЬ НА МЕСТЕ!
-
-// НАВИГАЦИЯ
-function tab(tabId) {
-// ... дальше идет твой старый код функции tab ...
-
+}
 
 // НАВИГАЦИЯ
 function tab(tabId) {
@@ -210,7 +217,6 @@ function toggleSection(id) {
 }
 
 window.loadMarkersFromCSV = async function() {
-    // Используем твою идеальную ссылку
     const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
     try {
         const res = await fetch(csvUrl);
@@ -221,32 +227,25 @@ window.loadMarkersFromCSV = async function() {
         rows.forEach(row => {
             for (let i = 0; i < row.length; i++) {
                 let num = row[i];
-                // Ищем номера маркеров (числа больше 10)
                 if (num && !isNaN(num) && parseInt(num) > 10) {
                     let stock = parseInt(row[i+1] || row[i+2] || "0");
                     temp.push({ id: String(num), number: String(num), stock: stock });
-                    i++; // Перепрыгиваем колонку с количеством
+                    i++; 
                 }
             }
         });
         
-                // 1. Убираем дубликаты
         const uniqueMarkers = temp.filter((v, i, a) => 
             a.findIndex(t => t.number === v.number) === i
         );
 
-        // 2. Сохраняем напрямую в наш объект State (без window)
         State.markers = uniqueMarkers;
-
-        // 3. Вызываем отрисовку
         renderMarkers();
-
         console.log("Маркеры успешно загружены из CSV:", State.markers.length);
     } catch (e) { 
         console.error("Ошибка загрузки CSV:", e); 
     }
 };
-
 
 // ДОСТИЖЕНИЯ И АЛЕРТЫ
 function grantAchievement(achId, defaultText) {
@@ -294,7 +293,7 @@ function openShowcaseModal(slotIndex) {
         State.user.unlockedAchievements.forEach(achId => {
             const isEquipped = State.user.showcase.includes(achId);
             const isCurrentSlot = State.user.showcase[slotIndex] === achId;
-            if (isEquipped && !isCurrentSlot) return;
+            if (isEquipped && !isCurrentSlot) return; // Запрещаем установку одного достижения в несколько слотов
             const div = document.createElement('div');
             div.className = 'ach-list-item';
             if (isCurrentSlot) div.style.borderColor = 'var(--status-green)';
@@ -405,29 +404,24 @@ window.testAdminAddPoint = function(branchId, target) {
         const branch = window.api.getTaskData().find(b => b.id === branchId);
         
         if (prog.currentLevel < 5) {
-            // Переход на следующий уровень
             prog.currentLevel += 1;
             prog.currentScore = 0;
             const nextLevel = branch.levels.find(l => l.lv === prog.currentLevel);
             
-            // Алерт: Новый уровень
             document.getElementById('alertTitle').innerText = '🌟 Новый уровень!';
             document.getElementById('alertAchImg').style.display = 'none'; 
             document.getElementById('alertAchText').innerText = `Уровень ${nextLevel.lv}\n${nextLevel.text}\nЦель: ${nextLevel.target}`;
             document.getElementById('achievementAlert').style.display = 'flex';
             
         } else if (prog.currentLevel === 5) {
-            // Задание полностью пройдено!
-            prog.currentLevel = 6; // Отмечаем как завершенное
+            prog.currentLevel = 6; 
             prog.currentScore = target;
             
-            // Выдаем статус
             if (branch.statusReward && !State.user.unlockedStatuses.includes(branch.statusReward)) {
                 State.user.unlockedStatuses.push(branch.statusReward);
-                State.user.status = branch.statusReward; // Автоматически устанавливаем новый статус
+                State.user.status = branch.statusReward; 
                 document.getElementById('currentStatus').innerText = branch.statusReward;
                 
-                // Показываем алерт статуса с небольшой задержкой
                 setTimeout(() => {
                     document.getElementById('alertTitle').innerText = '👑 Достигнут новый статус!';
                     document.getElementById('alertAchImg').style.display = 'none';
@@ -436,11 +430,10 @@ window.testAdminAddPoint = function(branchId, target) {
                 }, 500);
             }
             
-            // Выдаем достижение
             if (branch.achReward) {
                 setTimeout(() => { 
                     grantAchievement(branch.achReward, 'Задание полностью выполнено!'); 
-                }, 2000); // Показываем после алерта статуса
+                }, 2000); 
             }
         }
     }
@@ -542,10 +535,8 @@ window.selectStatus = function(st) {
     document.getElementById('currentStatus').innerText = st;
     document.getElementById('statusSelectModal').style.display = 'none';
 }
-// --- ГАЛЕРЕЯ ОТВЕТОВ (Финальная битва с алертом) ---
 
-let currentVol, currentPage, maxPages, touchStartX, touchStartY;
-
+// --- ГАЛЕРЕЯ ОТВЕТОВ ---
 window.startBook = function(v, m) { 
     currentVol = v; 
     maxPages = m; 
@@ -553,19 +544,6 @@ window.startBook = function(v, m) {
     document.getElementById('viewer').style.display = 'block'; 
     window.updatePage(); 
 };
-
-window.closeBook = function() { 
-    document.getElementById('viewer').style.display = 'none'; 
-};
-
-// --- ГАЛЕРЕЯ ОТВЕТОВ ---
-
-// Используем единые названия переменных
-let currentGalleryTome = 1;
-let currentGalleryPage = 1;
-let maxGalleryPages = 50; // Установи примерное или точное кол-во страниц
-let touchStartX = 0;
-let touchStartY = 0;
 
 window.updatePage = function() {
     const img = document.getElementById('galleryMainImage');
@@ -575,13 +553,11 @@ window.updatePage = function() {
 
     img.style.display = 'block';
     
-    // Формируем путь. Убедись, что папка на GitHub называется именно так
     const currentSrc = `${window.CONFIG.GITHUB_BASE}otveti/tome${currentGalleryTome}/page${currentGalleryPage}.png`;
     
     img.src = currentSrc;
     counter.innerText = `${currentGalleryPage} / ${maxGalleryPages}`;
 
-    // Обработка ошибки (если картинки нет)
     img.onerror = () => {
         img.onerror = null; 
         alert('Больше страниц нет!');
@@ -592,7 +568,6 @@ window.updatePage = function() {
     };
 };
 
-// Свайпы для мобилок (исправленные переменные)
 window.handleTouchStart = function(e) { 
     touchStartX = e.touches[0].screenX; 
     touchStartY = e.touches[0].screenY; 
@@ -602,21 +577,17 @@ window.handleTouchEnd = function(e) {
     let dx = touchStartX - e.changedTouches[0].screenX;
     let dy = touchStartY - e.changedTouches[0].screenY;
     
-    // Проверка: это был горизонтальный свайп?
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
         if (dx > 0) { 
-            // Свайп влево — следующая страница
             currentGalleryPage++; 
             window.updatePage(); 
         } else if (dx < 0 && currentGalleryPage > 1) { 
-            // Свайп вправо — предыдущая страница
             currentGalleryPage--; 
             window.updatePage(); 
         }
     }
 };
 
-// Функции открытия/закрытия
 window.openBook = function(tome, max) {
     currentGalleryTome = tome;
     maxGalleryPages = max;
@@ -629,14 +600,12 @@ window.closeBook = function() {
     document.getElementById('viewer').style.display = 'none';
 };
 
-
 window.checkout = function() {
     const cart = window.State.cart;
     if (cart.length === 0) return;
     
     let markersCount = 0;
     cart.forEach(item => { 
-        // Если у нас маркеры, считаем их общее количество
         if (!item.type || item.type === 'Маркер') markersCount += item.count; 
     });
     
@@ -649,14 +618,12 @@ window.checkout = function() {
     let details = `🛍 **ДЕТАЛИ ЗАКАЗА:**\n`;
     
     cart.forEach(item => {
-        // Допустим, цена маркера 75 руб. (можешь поменять логику, если в корзине не только маркеры)
         const price = item.price || 75; 
         const sum = price * item.count; 
         totalSum += sum;
         details += `▪️ Маркер №${item.number}\n   - ${item.count} шт. x ${price} = ${sum} руб.\n`;
     });
 
-    // Считаем бонусы по твоей идеальной формуле
     let bonusToEarn = 0;
     if (totalSum >= 3000 && totalSum < 5000) bonusToEarn = 20;
     else if (totalSum >= 5000 && totalSum < 7500) bonusToEarn = 30;
@@ -697,6 +664,11 @@ window.resetAllData = function() {
 };
 
 window.updateCartBadge = updateCartBadge;
-document.addEventListener('DOMContentLoaded', init);
-window.State = State;
 
+// Инициализация при старте
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    init();
+} else {
+    document.addEventListener("DOMContentLoaded", init);
+}
+window.State = State;

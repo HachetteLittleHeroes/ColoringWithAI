@@ -2346,23 +2346,22 @@ function saveDataLocal() {
             renderShowcase();
             updateCartBadge();
         }
-
-        function updateStatusProgress() {
-    // 1. Ищем индекс текущего активного уровня (первый, который еще не до конца заполнен)
-    let activeLevelIndex = user.levelTasksProgress.findIndex((prog, idx) => {
-        const max = levelTasks[idx]?.maxProgress || 1;
+function updateStatusProgress() {
+    // Безопасно ищем индекс активного задания
+    const activeLevelIndex = user.levelTasksProgress.findIndex((prog, idx) => {
+        const max = levelTasks[idx]?.maxProgress || 5;
+        return prog < max;
+    }) === -1 ? levelTasks.length - 1 : user.levelTasksProgress.findIndex((prog, idx) => {
+        const max = levelTasks[idx]?.maxProgress || 5;
         return prog < max;
     });
 
-    // Если все уровни пройдены, фиксируемся на последнем
-    if (activeLevelIndex === -1) activeLevelIndex = levelTasks.length - 1;
-
     const currentTask = levelTasks[activeLevelIndex];
     const currentProgress = user.levelTasksProgress[activeLevelIndex] || 0;
-    const maxProgress = currentTask?.maxProgress || 1;
+    const maxProgress = currentTask?.maxProgress || 5;
     const progressPercent = Math.min(100, (currentProgress / maxProgress) * 100);
 
-    // 2. Обновляем прогресс-бар в интерфейсе (нужно, чтобы в HTML были эти классы)
+    // ВАЖНО: Добавляем проверку на существование элементов (?.), чтобы скрипт не падал
     const progressBar = document.querySelector('.task-progress-fill');
     const progressText = document.querySelector('.task-progress-text');
     const levelLabel = document.querySelector('.current-level-label');
@@ -2371,17 +2370,13 @@ function saveDataLocal() {
     if (progressText) progressText.innerText = `${currentProgress} / ${maxProgress}`;
     if (levelLabel) levelLabel.innerText = `Уровень ${activeLevelIndex + 1}`;
 
-    // 3. Логика автоматической смены статуса
-    // Пример: если пройден первый уровень (индекс 0), даем статус "Спиртесса"
-    if (activeLevelIndex > 0 || (activeLevelIndex === 0 && currentProgress >= maxProgress)) {
-        if (!user.unlockedStatuses.includes('Спиртесса')) {
-            user.status = 'Спиртесса';
-            user.unlockedStatuses.push('Спиртесса');
-            saveDataLocal(); // Сохраняем изменения
-        }
+    // Проверка статуса (тоже безопасно)
+    if (activeLevelIndex > 0 && !user.unlockedStatuses.includes('Спиртесса')) {
+        user.status = 'Спиртесса';
+        user.unlockedStatuses.push('Спиртесса');
+        saveDataLocal();
     }
 }
-
 
         // ========== НАВИГАЦИЯ ==========
         function tab(pageId) {
@@ -3131,29 +3126,33 @@ setInterval(updateTimers, 60000);
     </div>
 
     <!-- ЗАДАНИЯ -->
-    <div class="tasks-section">
-        <button class="tasks-header" onclick="toggleTasks()">
-            <span>Задания</span>
-            <i class="fas fa-chevron-down" id="tasksArrow"></i>
-        </button>
-        <div id="tasksContent" class="tasks-content">
-            <!-- Прогресс статуса -->
-            <div class="status-progress">
-                <h5>Прогресс получения статуса</h5>
-                <div class="level-indicators">
-                    <div class="level-dot"></div>
-                    <div class="level-dot"></div>
-                    <div class="level-dot"></div>
-                    <div class="level-dot"></div>
-                    <div class="level-dot"></div>
-                </div>
+   <div class="tasks-section">
+    <button class="tasks-header" onclick="toggleTasks()">
+        <span>Задания</span>
+        <i class="fas fa-chevron-down" id="tasksArrow"></i>
+    </button>
+    
+    <div id="tasksContent" class="tasks-content">
+        
+        <div class="level-info-card" style="background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span class="current-level-label" style="font-weight: bold; color: var(--accent);">Уровень 1</span>
+                <span style="font-size: 12px; color: var(--text-gray);">Прогресс статуса</span>
             </div>
+            <div class="task-progress-bg" style="background: var(--border-color); height: 14px; border-radius: 7px; overflow: hidden; position: relative;">
+                <div class="task-progress-fill" style="width: 0%; background: var(--accent-gradient); height: 100%; transition: width 0.4s ease;"></div>
+                <div class="task-progress-text" style="position: absolute; width: 100%; text-align: center; font-size: 10px; line-height: 14px; color: #fff; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">0 / 5</div>
+            </div>
+        </div>
 
-            <!-- Многоуровневые задания -->
-            <div class="tasks-category">
-                <h4>Задания на статус</h4>
-                <div id="levelTasksList"></div>
-            </div>
+        <div class="tasks-category">
+            <h4>Задания на статус</h4>
+            <div id="levelTasksList"></div>
+        </div>
+        
+        </div>
+</div>
+
 
             <!-- Временные задания -->
             <div class="tasks-category">

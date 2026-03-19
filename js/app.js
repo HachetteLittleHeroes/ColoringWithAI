@@ -45,9 +45,9 @@ const LEVEL_COLORS = {
 
 async function init() {
     console.log("Запуск системы...");
-    const loader = document.getElementById('loading-screen');
-    
+
     try {
+        // Telegram WebApp API
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.expand();
@@ -55,25 +55,32 @@ async function init() {
             State.userId = tg.initDataUnsafe?.user?.id?.toString() || '496779756';
         }
 
-        // Загружаем данные пользователя (это локально и быстро)
+        // Загружаем данные пользователя (локально или через API)
         if (window.api && typeof window.api.getUser === 'function') {
             State.user = await window.api.getUser(State.userId);
         }
 
+        // Если пользователь не загрузился, создаём дефолт
         if (!State.user) {
             console.warn("user не загрузился, создаём дефолт");
             State.user = {
-                avatar: '', name: 'Без имени', balance: 0, status: 'Без статуса',
-                showcase: [null, null, null], unlockedAchievements: [], unlockedStatuses: [], taskProgress: {}
+                avatar: '',
+                name: 'Без имени',
+                balance: 0,
+                status: 'Без статуса',
+                showcase: [null, null, null],
+                unlockedAchievements: [],
+                unlockedStatuses: [],
+                taskProgress: {}
             };
         }
 
-        // 1. СНАЧАЛА отрисовываем интерфейс (он мгновенно покажется пользователю)
+        // 1. ОТРИСОВКА интерфейса сразу
         if (typeof renderProfile === 'function') renderProfile();
         if (typeof renderTasks === 'function') renderTasks();
         if (typeof updateCartBadge === 'function') updateCartBadge();
 
-        // 2. ЗАТЕМ запускаем запросы к Google Таблицам в фоне (УБРАЛИ await!)
+        // 2. ЗАПУСК фона (запросы к Google Таблицам и маркеры)
         if (typeof window.loadMarkersFromCSV === 'function') {
             window.loadMarkersFromCSV(); 
         }
@@ -81,24 +88,23 @@ async function init() {
             loadOrganizers(); 
         }
 
+        // 3. Привязка событий к кнопкам (чтобы всё сразу работало)
+        if (typeof bindUIEvents === 'function') bindUIEvents();
+
     } catch (error) {
         console.error("Ошибка при инициализации:", error);
-        const loaderText = document.getElementById('loading-text');
-        if (loaderText) loaderText.innerText = "Ошибка загрузки: " + error.message;
-    } finally {
-        // Теперь лоадер скроется гарантированно и без задержек
-        setTimeout(() => {
-            if (loader) {
-                loader.style.transition = "opacity 0.5s ease";
-                loader.style.opacity = "0";
-                setTimeout(() => {
-                    loader.style.display = "none";
-                }, 500);
-            }
-        }, 500);
+        alert("Ошибка загрузки приложения: " + error.message);
+    }
+
+    // 4. Убираем лоадер сразу, без задержек
+    const loader = document.getElementById('loading-screen');
+    if (loader) {
+        loader.style.display = "none";
     }
 }
 
+// Вызовем init сразу
+init();
 
 // НАВИГАЦИЯ
 function tab(tabId) {

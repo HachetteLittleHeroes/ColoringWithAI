@@ -9,22 +9,14 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <script>
-        // Ловим ошибки до загрузки основных скриптов
+        // Глобальный перехват ошибок для отладки внутри Telegram
         window.onerror = function(message, source, lineno, colno, error) {
-            const loaderText = document.getElementById('loading-text');
-            if (loaderText) {
-                loaderText.style.color = "#ff3b30";
-                loaderText.innerText = `ОШИБКА: ${message} (Строка: ${lineno})`;
-            }
+            console.error("Глобальная ошибка:", message, "Линия:", lineno);
             return false;
         };
 
         window.addEventListener("unhandledrejection", function(event) {
-            const loaderText = document.getElementById('loading-text');
-            if (loaderText) {
-                loaderText.style.color = "#ff3b30";
-                loaderText.innerText = `ОШИБКА ЗАГРУЗКИ: ${event.reason}`;
-            }
+            console.error("Ошибка в Promise:", event.reason);
         });
     </script>
 </head>
@@ -43,7 +35,7 @@
                     <h2 id="displayUsername">Без имени</h2>
                     <i class="fas fa-pencil-alt edit-icon"></i>
                 </div>
-                <div id="currentStatus" class="status-badge" onclick="openStatusInfo()">Без статуса</div>
+                <div id="currentStatus" class="status-badge" onclick="openStatusInfo()">Новичок</div>
             </div>
         </div>
     </div>
@@ -130,7 +122,8 @@
     <div class="header">Маркеры</div>
     <div class="brand-section">
         <h3 class="brand-title">GUANGNA</h3>
-        <div id="markersList" class="marker-list-container"></div>
+        <div id="markersList" class="marker-list-container">
+            </div>
     </div>
 </div>
 
@@ -184,7 +177,8 @@
 
 <div id="cart" class="page">
     <div class="header">Корзина</div>
-    <div id="cartItemsList" class="cart-container"></div>
+    <div id="cartItemsList" class="cart-container" style="padding: 15px;">
+        </div>
     <div class="cart-footer">
         <div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div>
         <button class="buy-btn" onclick="checkout()">Оформить заказ</button>
@@ -281,6 +275,7 @@
         <span id="cartBadge" class="badge" style="display:none;">0</span>
     </button>
 </nav>
+
 <script src="app.js"></script>
 
 </body>

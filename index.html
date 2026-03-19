@@ -1828,6 +1828,50 @@ user.isAdmin = (userId === ADMIN_ID);
         function openSupport() {
             window.open('https://boosty.to/coloringapp', '_blank');
         }
+        // ========== СИНХРОНИЗАЦИЯ С СЕРВЕРОМ ==========
+
+// Загружаем данные пользователя при входе
+async function fetchUserFromServer() {
+    try {
+        const response = await fetch(`${SERVER_URL}/api/user/${userId}`);
+        if (response.ok) {
+            const serverData = await response.json();
+            // Обновляем локальные данные серверными (сервер главнее)
+            user = { ...user, ...serverData };
+            user.isAdmin = (userId === ADMIN_ID); // Снова защищаем админку
+            saveDataLocal(); // Сохраняем в кэш и обновляем интерфейс
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки с сервера, используем локальные данные', error);
+    }
+}
+
+// Отправляем данные на сервер при любом изменении
+async function syncUserWithServer() {
+    try {
+        await fetch(`${SERVER_URL}/api/user/sync`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: userId, userData: user })
+        });
+    } catch (error) {
+        console.error('Ошибка сохранения на сервер', error);
+    }
+}
+
+// Изменяем старую функцию saveData
+function saveData() {
+    saveDataLocal();
+    syncUserWithServer(); // Отправляем на бэкенд в фоновом режиме
+}
+
+// Локальное сохранение (чтобы интерфейс обновлялся мгновенно)
+function saveDataLocal() {
+    localStorage.setItem('coloring_user', JSON.stringify(user));
+    localStorage.setItem('coloring_cart', JSON.stringify(cart));
+    updateUI();
+}
+
 
         // ========== ЗАГРУЗКА МАРКЕРОВ ИЗ GOOGLE SHEETS ==========
         async function loadMarkers() {

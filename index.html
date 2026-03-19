@@ -446,7 +446,7 @@
         }
 
         /* ==========================================
-           7. ЗАДАНИЯ - ПОЛНОСТЬЮ ПЕРЕДЕЛАНО
+           7. ЗАДАНИЯ
            ========================================== */
         .tasks-section {
             background: var(--bg-header);
@@ -1662,29 +1662,17 @@
     </style>
 
     <script>
-        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
 
-        // ID администратора
         const ADMIN_ID = 496779756;
-        
-        // URL сервера
         const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io';
-        
-        // Цена маркера
         const MARKER_PRICE = 75;
 
-        // Получаем ID пользователя (ИСПРАВЛЕНО)
-        let userId = null;
-        try {
-            userId = tg.initDataUnsafe?.user?.id || null;
-            console.log('User ID:', userId);
-            console.log('Init Data:', tg.initDataUnsafe);
-        } catch (e) {
-            console.error('Ошибка получения ID:', e);
-        }
+        // Получаем ID пользователя
+        const userId = tg.initDataUnsafe?.user?.id;
+        console.log('User ID:', userId);
 
         // Данные
         const levelConfig = [
@@ -2045,6 +2033,7 @@
                 cart[cartKey] = newCount;
             }
             
+            // Обновляем отображение в маркерах
             const countSpan = document.getElementById(`marker-count-${num}`);
             if (countSpan) {
                 countSpan.innerText = newCount;
@@ -2061,9 +2050,10 @@
                 if (plusBtn) plusBtn.disabled = !canAdd;
             }
             
-            saveData();
+            // Обновляем корзину сразу
             renderCart();
             updateCartBadge();
+            saveData();
         }
 
         function searchMarkers() {
@@ -2244,9 +2234,10 @@
                 }
             }
             
-            saveData();
+            // Обновляем корзину сразу
             renderCart();
             updateCartBadge();
+            saveData();
         }
 
         // ========== ЗАДАНИЯ ==========
@@ -3004,7 +2995,7 @@
         </div>
     </div>
 
-    <!-- ЗАДАНИЯ - ПОЛНОСТЬЮ ПЕРЕДЕЛАНО -->
+    <!-- ЗАДАНИЯ -->
     <div class="tasks-section">
         <button class="tasks-header" onclick="toggleTasks()">
             <span>Задания</span>

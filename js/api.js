@@ -17,7 +17,6 @@ const Api = {
                 for (let i = 0; i < row.length; i++) {
                     let num = row[i];
                     if (num && !isNaN(num) && parseInt(num) > 10) {
-                        // Очищаем строку от всего, кроме цифр, чтобы избежать NaN
                         let stockStr = row[i+1] || "0";
                         let stock = parseInt(stockStr.replace(/[^0-9]/g, ''));
                         
@@ -39,13 +38,10 @@ const Api = {
         }
     },
 
-    
-        async getUser(userId) {
+    async getUser(userId) {
         try {
-            // Загружаем прогресс и проверяем, что это объект
             let savedProgress = JSON.parse(localStorage.getItem('task_progress')) || {};
             
-            // Гарантируем наличие веток заданий, даже если localStorage пуст
             const defaultProgress = {
                 'status_progression': { currentLevel: 1, currentScore: 0 },
                 'master_colorist': { currentLevel: 1, currentScore: 0 }
@@ -56,11 +52,11 @@ const Api = {
                 name: localStorage.getItem('user_name') || "Без имени",
                 balance: parseInt(localStorage.getItem('user_balance')) || 0,
                 avatar: localStorage.getItem('user_avatar') || `${CONFIG.GITHUB_BASE}avatars/av2.png`,
-                status: localStorage.getItem('user_status') || "Без статуса",
-                unlockedStatuses: JSON.parse(localStorage.getItem('unlocked_statuses')) || ["Без статуса"],
+                status: localStorage.getItem('user_status') || "Новичок",
+                unlockedStatuses: JSON.parse(localStorage.getItem('unlocked_statuses')) || ["Новичок"],
                 unlockedAchievements: JSON.parse(localStorage.getItem('unlocked_achievements')) || [],
                 showcase: JSON.parse(localStorage.getItem('showcase_slots')) || [null, null, null],
-                taskProgress: { ...defaultProgress, ...savedProgress } // Слияние данных
+                taskProgress: { ...defaultProgress, ...savedProgress }
             };
         } catch (e) {
             console.error("Ошибка в api.getUser:", e);
@@ -68,8 +64,9 @@ const Api = {
         }
     },
 
-
     saveUserState(user) {
+        // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Добавлено сохранение баланса
+        localStorage.setItem('user_balance', user.balance); 
         localStorage.setItem('user_status', user.status);
         localStorage.setItem('unlocked_statuses', JSON.stringify(user.unlockedStatuses));
         localStorage.setItem('unlocked_achievements', JSON.stringify(user.unlockedAchievements));
@@ -91,8 +88,8 @@ const Api = {
             {
                 id: 'status_progression',
                 title: 'Путь художника',
-                statusReward: 'Мастер', // Выдается после 5 уровня
-                achReward: 'ach1',      // Достижение после 5 уровня
+                statusReward: 'Мастер',
+                achReward: 'ach1',
                 levels: [
                     { lv: 1, target: 5, text: "Раскрасить 5 картинок", reward: 50 },
                     { lv: 2, target: 10, text: "Раскрасить 10 картинок", reward: 100 },

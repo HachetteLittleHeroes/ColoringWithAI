@@ -387,6 +387,7 @@
             width: 100%;
             border: none;
             color: var(--text);
+            -webkit-tap-highlight-color: transparent;
         }
 
         .tasks-header i {
@@ -398,10 +399,6 @@
             display: none;
             background: var(--bg-header);
             border-top: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .tasks-content.visible {
-            display: block;
         }
 
         .tasks-category {
@@ -1347,29 +1344,41 @@
             }
         }
 
-        // ========== ЗАДАНИЯ - ИСПРАВЛЕНО ==========
+        // ========== ЗАДАНИЯ - ИСПРАВЛЕНО С ДОБАВЛЕНИЕМ ДЕБАГА ==========
         function toggleTasks() {
+            console.log('toggleTasks вызван');
             const content = document.getElementById('tasksContent');
             const arrow = document.getElementById('tasksArrow');
             
+            if (!content) {
+                console.error('tasksContent не найден');
+                return;
+            }
+            
             if (content.style.display === 'none' || content.style.display === '') {
+                console.log('Открываем задания');
                 renderTasks();
                 content.style.display = 'block';
-                arrow.style.transform = 'rotate(180deg)';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
             } else {
+                console.log('Закрываем задания');
                 content.style.display = 'none';
-                arrow.style.transform = 'rotate(0deg)';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
             }
         }
 
         function renderTasks() {
+            console.log('renderTasks вызван');
             renderLevelTasks();
             renderTimeTasks();
         }
 
         function renderLevelTasks() {
             const container = document.getElementById('levelTasksList');
-            if (!container) return;
+            if (!container) {
+                console.error('levelTasksList не найден');
+                return;
+            }
             container.innerHTML = '';
 
             levelTasks.forEach((task, index) => {
@@ -1401,7 +1410,10 @@
 
         function renderTimeTasks() {
             const container = document.getElementById('timeTasksList');
-            if (!container) return;
+            if (!container) {
+                console.error('timeTasksList не найден');
+                return;
+            }
             container.innerHTML = '';
 
             const oneWeek = 7 * 24 * 60 * 60 * 1000;
@@ -1634,11 +1646,14 @@
             tempAvatarUrl = '';
         }
 
-        // ========== ИСПРАВЛЕНО: Применить аватар и закрыть окно ==========
+        // ========== ИСПРАВЛЕНО: Подтверждение через системный алерт ==========
         function applyAvatar() {
-            if (tempAvatarUrl) { 
-                user.avatar = tempAvatarUrl; 
-                saveData(); 
+            if (tempAvatarUrl) {
+                if (confirm('Установить этот аватар?')) {
+                    user.avatar = tempAvatarUrl;
+                    saveData();
+                    tg.showAlert('Аватар успешно изменен!');
+                }
             }
             closeAvatarConfirm();
             document.getElementById('avatarEditor').style.display = 'none';
@@ -1650,13 +1665,16 @@
             document.getElementById('nameModal').style.display = 'flex';
         }
 
-        // ========== ИСПРАВЛЕНО: Сохранить ник и закрыть окно ==========
+        // ========== ИСПРАВЛЕНО: Подтверждение через системный алерт ==========
         function saveNewNickname() {
             const newName = document.getElementById('newNameInput').value.trim();
             if (newName.length > 0 && newName.length <= 20) {
-                user.name = newName;
-                saveData();
-                document.getElementById('nameModal').style.display = 'none';
+                if (confirm(`Сохранить ник "${newName}"?`)) {
+                    user.name = newName;
+                    saveData();
+                    document.getElementById('nameModal').style.display = 'none';
+                    tg.showAlert('Имя успешно изменено!');
+                }
             } else {
                 tg.showAlert("Имя должно быть от 1 до 20 символов");
             }
@@ -1910,9 +1928,14 @@
 
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         window.onload = () => {
+            console.log('Страница загружена');
             updateUI();
             renderMarkers();
             renderCart();
+            
+            // Проверяем наличие элементов
+            console.log('tasksContent:', document.getElementById('tasksContent'));
+            console.log('tasksHeader:', document.querySelector('.tasks-header'));
             
             window.onclick = function(event) {
                 document.querySelectorAll('.modal-overlay').forEach(modal => {

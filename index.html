@@ -2541,25 +2541,54 @@ function renderTimeTasks() {
         div.className = 'time-task-item';
         div.style = "border: 2px solid var(--accent); padding: 15px; border-radius: 12px; margin-bottom: 12px; background: var(--card-bg); position: relative; overflow: hidden;";
         
-        div.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span class="time-badge" style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">
-                    <i class="far fa-clock"></i> Таймер...
-                </span>
-                <span style="color: #FFD700; font-weight: bold; font-size: 14px;">
-                    +${task.reward} <i class="fas fa-book-open gold-book"></i>
-                </span>
-            </div>
-            <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px;">${task.title}</div>
-            <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 12px;">${task.description}</p>
+        function renderMarkers() {
+            const container = document.getElementById('markersList');
+            if (!container) return;
             
-            <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')" style="width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold;">
-                Выполнить и заработать
-            </button>
-        `;
+            if (markersDB.length === 0) {
+                container.innerHTML = '<div class="no-results">Нет данных о маркерах</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            markersDB.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'marker-item';
+                div.setAttribute('data-num', m.num);
+                
+                // Определяем количество в корзине
+                const cartKey = `marker_${m.num}`;
+                const cartCount = cart[cartKey] || 0;
+                
+                // Проверяем, можно ли добавить еще
+                const canAdd = cartCount < m.stock;
+                const canRemove = cartCount > 0;
+                
+                // Цвет кружка: обученный цвет или бесцветный
+                const circleStyle = m.trained && m.color 
+                    ? `background-color: ${m.color};` 
+                    : 'background-color: var(--bg);';
+                
+                const stockClass = getStockColor(m.stock);
+div.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span class="time-badge" style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">
+            <i class="far fa-clock"></i> ДО 29.03.2026
+        </span>
+        <span style="color: #FFD700; font-weight: bold; font-size: 14px;">
+            +${task.reward} <i class="fas fa-book-open gold-book"></i>
+        </span>
+    </div>
+    <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px;">${task.title}</div>
+    <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 12px;">${task.description}</p>
+    
+    <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')" style="width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold;">
+        <i class="fas fa-camera"></i> Отправить фото
+    </button>
+`;
         container.appendChild(div);
     });
-    updateWeeklyTimers(); 
 }
 
 

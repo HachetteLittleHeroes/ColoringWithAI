@@ -3641,92 +3641,124 @@ function toggleMarkerInBrand(brandName, number, isCollected) {
         // НАВИГАЦИЯ
         // ==========================================
         function tab(pageId) {
-    console.log('=== TAB SWITCH ===', pageId);
+    console.log('=== TAB SWITCH START ===');
+    console.log('Target page:', pageId);
     
     try {
-        // Скрываем все страницы
-        const pages = document.querySelectorAll('.page');
-        console.log('Found pages:', pages.length);
-        pages.forEach(p => {
-            p.classList.remove('active');
-        });
-        
-        // Снимаем активный класс со всех кнопок навигации
-        const navBtns = document.querySelectorAll('.nav-btn');
-        navBtns.forEach(b => {
-            b.classList.remove('active');
-        });
-        
-        // Показываем выбранную страницу
-        const page = document.getElementById(pageId);
-        if (page) {
-            page.classList.add('active');
-            console.log('✅ Page activated:', pageId);
-        } else {
+        // Проверяем существование страницы
+        const targetPage = document.getElementById(pageId);
+        if (!targetPage) {
             console.error('❌ Page not found:', pageId);
-            // Если страница не найдена, показываем профиль
-            const profilePage = document.getElementById('profile');
-            if (profilePage) profilePage.classList.add('active');
             return;
         }
         
-        // Активируем соответствующую кнопку навигации
-        const btn = document.getElementById('btn-' + pageId);
-        if (btn) {
-            btn.classList.add('active');
+        // Скрываем все страницы
+        const allPages = document.querySelectorAll('.page');
+        console.log('Found pages:', allPages.length);
+        allPages.forEach(p => {
+            p.classList.remove('active');
+            console.log('  Hidden:', p.id);
+        });
+        
+        // Показываем выбранную страницу
+        targetPage.classList.add('active');
+        console.log('✅ Activated page:', pageId);
+        
+        // Обновляем активную кнопку навигации
+        const allNavBtns = document.querySelectorAll('.nav-btn');
+        console.log('Found nav buttons:', allNavBtns.length);
+        allNavBtns.forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        const activeBtn = document.getElementById('btn-' + pageId);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+            console.log('✅ Activated button: btn-' + pageId);
         } else {
-            console.warn('Button not found: btn-' + pageId);
+            console.warn('⚠️ Button not found: btn-' + pageId);
         }
         
         window.scrollTo(0, 0);
         
-        // Обновляем содержимое при переключении
-        if (pageId === 'markers') {
-    if (markersLoading) {
-        renderMarkers(); // покажет "Загрузка..."
-    } else if (!markersLoaded && markersDB.length === 0) {
-        // Если данные не загружены, запускаем загрузку
-        loadMarkers();
-        renderMarkers(); // покажет "Загрузка..."
-    } else {
-        renderMarkers();
-    }
-    const searchInput = document.getElementById('markerSearch');
-    if (searchInput) searchInput.value = '';
-}
+        // Обновляем содержимое в зависимости от страницы
+        console.log('Updating content for page:', pageId);
         
-        if (pageId === 'answers') {
-            const volumeSearch = document.getElementById('volumeSearch');
-            if (volumeSearch) volumeSearch.value = '';
-            // Убеждаемся, что тома отрендерены
-            if (typeof renderVolumes === 'function' && document.getElementById('volumesContainer')?.children.length === 0) {
-                renderVolumes();
-            }
-        }
-        
-        if (pageId === 'cart') {
-            if (typeof renderCart === 'function') renderCart();
-        }
-        
-        if (pageId === 'aipalette') {
-            // ИИ палитра
-        }
-        
-        if (pageId === 'profile') {
-            // Обновляем UI
-            if (typeof updateUI === 'function') updateUI();
+        switch(pageId) {
+            case 'markers':
+                console.log('  → Loading markers...');
+                if (typeof loadMarkers === 'function') {
+                    if (markersDB.length === 0 && !markersLoading) {
+                        loadMarkers();
+                    } else {
+                        renderMarkers();
+                    }
+                } else {
+                    console.error('  ❌ loadMarkers not defined');
+                }
+                const markerSearch = document.getElementById('markerSearch');
+                if (markerSearch) markerSearch.value = '';
+                break;
+                
+            case 'answers':
+                console.log('  → Loading answers...');
+                if (typeof renderVolumes === 'function') {
+                    const volumesContainer = document.getElementById('volumesContainer');
+                    if (volumesContainer && volumesContainer.children.length === 0) {
+                        renderVolumes();
+                    }
+                } else {
+                    console.error('  ❌ renderVolumes not defined');
+                }
+                const volumeSearch = document.getElementById('volumeSearch');
+                if (volumeSearch) volumeSearch.value = '';
+                break;
+                
+            case 'cart':
+                console.log('  → Loading cart...');
+                if (typeof renderCart === 'function') {
+                    renderCart();
+                } else {
+                    console.error('  ❌ renderCart not defined');
+                }
+                break;
+                
+            case 'aipalette':
+                console.log('  → Loading AI palette...');
+                // ИИ палитра не требует обновления
+                break;
+                
+            case 'profile':
+                console.log('  → Updating profile...');
+                if (typeof updateUI === 'function') {
+                    updateUI();
+                } else {
+                    console.error('  ❌ updateUI not defined');
+                }
+                break;
+                
+            default:
+                console.log('  → No specific handler for:', pageId);
         }
         
         console.log('=== TAB SWITCH COMPLETE ===');
+        
     } catch (error) {
-        console.error('❌ TAB SWITCH ERROR:', error);
-        // Пытаемся показать профиль как запасной вариант
-        const profilePage = document.getElementById('profile');
-        if (profilePage) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            profilePage.classList.add('active');
-            const profileBtn = document.getElementById('btn-profile');
-            if (profileBtn) profileBtn.classList.add('active');
+        console.error('❌ FATAL ERROR in tab():', error);
+        console.error('Error stack:', error.stack);
+        
+        // Пытаемся восстановиться - показываем профиль
+        try {
+            const profilePage = document.getElementById('profile');
+            if (profilePage) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                profilePage.classList.add('active');
+                const profileBtn = document.getElementById('btn-profile');
+                if (profileBtn) profileBtn.classList.add('active');
+                console.log('✅ Fallback: switched to profile');
+            }
+        } catch (fallbackError) {
+            console.error('❌ Fallback failed:', fallbackError);
         }
     }
 }
@@ -3882,6 +3914,29 @@ function closeOrganizerView() {
                 console.log(`✅ Page found: ${pageId}`);
             }
         });
+        // Проверяем наличие всех страниц
+const requiredPages = ['profile', 'markers', 'answers', 'aipalette', 'cart'];
+requiredPages.forEach(pageId => {
+    const page = document.getElementById(pageId);
+    if (!page) {
+        console.error(`❌ Missing page: ${pageId}`);
+    } else {
+        console.log(`✅ Page found: ${pageId}`);
+        console.log(`   - Element exists, class: ${page.className}`);
+    }
+});
+
+// Проверяем кнопки навигации
+const navBtns = ['btn-profile', 'btn-markers', 'btn-answers', 'btn-aipalette', 'btn-cart'];
+navBtns.forEach(btnId => {
+    const btn = document.getElementById(btnId);
+    if (!btn) {
+        console.error(`❌ Missing nav button: ${btnId}`);
+    } else {
+        console.log(`✅ Nav button found: ${btnId}`);
+        console.log(`   - onclick: ${btn.onclick ? 'exists' : 'NOT SET'}`);
+    }
+});
         
         // Загружаем сохраненную тему
         const savedTheme = localStorage.getItem('app_theme');

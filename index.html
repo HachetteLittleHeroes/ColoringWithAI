@@ -1815,67 +1815,69 @@ user.isAdmin = (userId === ADMIN_ID);
         let cart = JSON.parse(localStorage.getItem('coloring_cart')) || {};
 
         // ========== УПРАВЛЕНИЕ ТЕМАМИ ==========
-        function setTheme(themeName) {
-    document.documentElement.setAttribute('data-theme', themeName);
+function setTheme(themeName) {
+    if (themeName === 'custom') {
+        // Если тема кастомная, подгружаем сохраненные цвета
+        applyCustomTheme(true);
+    } else {
+        // Удаляем кастомные стили, если переключаемся на стандартную тему
+        const oldStyle = document.getElementById('custom-theme-style');
+        if (oldStyle) oldStyle.remove();
+        
+        // Ставим стандартную тему
+        document.documentElement.setAttribute('data-theme', themeName);
+    }
+
+    // Сохраняем в объект пользователя и локальную память
     user.theme = themeName;
-    localStorage.setItem('app_theme', themeName); // Сохраняем при выходе
-    saveDataLocal(); // Сохраняем в объект пользователя
-            // Обновляем активный класс в UI
-            document.querySelectorAll('.theme-option').forEach(el => {
+    localStorage.setItem('app_theme', themeName); 
+    if (typeof saveDataLocal === 'function') saveDataLocal();
+
+    // Обновляем активный класс в UI (рамка вокруг выбранной темы)
+    document.querySelectorAll('.theme-option').forEach(el => {
         el.classList.remove('active');
         if (el.dataset.theme === themeName) el.classList.add('active');
     });
 }
 
-        function applyCustomTheme() {
-            const bgMode = document.getElementById('themeBgMode').value;
-            const accentColor = document.getElementById('themeAccentColor').value;
-            
-            // Создаем кастомную тему
-            const style = document.createElement('style');
-            style.id = 'custom-theme-style';
-            
-            // Удаляем предыдущую кастомную тему если есть
-            const oldStyle = document.getElementById('custom-theme-style');
-            if (oldStyle) oldStyle.remove();
-            
-            if (bgMode === 'light') {
-                style.textContent = `
-                    :root {
-                        --bg: #f5f5f7;
-                        --bg-secondary: #ffffff;
-                        --bg-header: #ffffff;
-                        --text: #1c1c1e;
-                        --text-gray: #8e8e93;
-                        --accent: ${accentColor};
-                        --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${adjustColor(accentColor, -30)} 100%);
-                        --border-color: rgba(0,0,0,0.1);
-                        --card-bg: #ffffff;
-                        --input-bg: #ffffff;
-                    }
-                `;
-            } else {
-                style.textContent = `
-                    :root {
-                        --bg: #121212;
-                        --bg-secondary: #1e1e1e;
-                        --bg-header: #1c1c1e;
-                        --text: #ffffff;
-                        --text-gray: #8e8e93;
-                        --accent: ${accentColor};
-                        --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${adjustColor(accentColor, -30)} 100%);
-                        --border-color: rgba(255,255,255,0.1);
-                        --card-bg: #1c1c1e;
-                        --input-bg: #2c2c2e;
-                    }
-                `;
-            }
-            
-            document.head.appendChild(style);
-            document.documentElement.removeAttribute('data-theme');
-            user.theme = 'custom';
-            localStorage.setItem('app_theme', 'custom');
-        }
+function applyCustomTheme(loadFromCache = false) {
+    let bgMode, accentColor;
+
+    if (loadFromCache) {
+        bgMode = localStorage.getItem('custom_theme_bg') || 'light';
+        accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
+        // Восстанавливаем значения в инпутах, если они есть на экране
+        if(document.getElementById('themeBgMode')) document.getElementById('themeBgMode').value = bgMode;
+        if(document.getElementById('themeAccentColor')) document.getElementById('themeAccentColor').value = accentColor;
+    } else {
+        bgMode = document.getElementById('themeBgMode').value;
+        accentColor = document.getElementById('themeAccentColor').value;
+        localStorage.setItem('custom_theme_bg', bgMode);
+        localStorage.setItem('custom_theme_accent', accentColor);
+    }
+    
+    const style = document.createElement('style');
+    style.id = 'custom-theme-style';
+    const oldStyle = document.getElementById('custom-theme-style');
+    if (oldStyle) oldStyle.remove();
+    
+    // Подставляем цвета (используем adjustColor, если функция существует)
+    const gradientEnd = typeof adjustColor === 'function' ? adjustColor(accentColor, -30) : accentColor;
+    
+    if (bgMode === 'light') {
+        style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${gradientEnd} 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; }`;
+    } else {
+        style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${gradientEnd} 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; }`;
+    }
+    
+    document.head.appendChild(style);
+    document.documentElement.removeAttribute('data-theme');
+    
+    user.theme = 'custom';
+    localStorage.setItem('app_theme', 'custom');
+    if (typeof saveDataLocal === 'function') saveDataLocal();
+}
+
 
         function adjustColor(hex, percent) {
             // Простая функция для затемнения/осветления цвета

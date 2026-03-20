@@ -1854,6 +1854,33 @@
     margin-left: 10px;
     vertical-align: middle;
 }
+/* Стили для брендов с номерами */
+.brand-content {
+    scrollbar-width: thin;
+}
+
+.brand-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.brand-content::-webkit-scrollbar-track {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.brand-content::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+/* Компактные ячейки органайзера */
+#selectedOrganizerGrid > div > div {
+    transition: transform 0.1s;
+}
+
+#selectedOrganizerGrid > div > div:active {
+    transform: scale(0.95);
+}
     </style>
 
     <script>
@@ -2916,80 +2943,49 @@ function loadInventory() {
     closeOrganizerModal();
     tg.showAlert('Органайзер создан!');
 }
-function renderOrganizers() {
-    const container = document.getElementById('organizersList');
+function renderOrganizerGrid(org) {
+    const container = document.getElementById('selectedOrganizerGrid');
     if (!container) return;
     
-    if (inventory.organizers.length === 0) {
-        container.innerHTML = '<div class="no-results">Нет органайзеров. Создайте первый!</div>';
-        return;
+    const gridWrapper = document.createElement('div');
+    gridWrapper.style.cssText = 'overflow-x: auto;';
+    
+    const gridContainer = document.createElement('div');
+    // Уменьшаем размер ячеек
+    gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, minmax(45px, 50px)); gap: 6px; justify-content: start;`;
+    
+    for (let row = 0; row < org.rows; row++) {
+        for (let col = 0; col < org.cols; col++) {
+            if (!org.cells[row]) org.cells[row] = [];
+            if (!org.cells[row][col]) org.cells[row][col] = [];
+            
+            const cellMarkers = org.cells[row][col];
+            const markerCount = cellMarkers.length;
+            const cellLabel = String.fromCharCode(65 + row) + (col + 1);
+            
+            const cellDiv = document.createElement('div');
+            cellDiv.style.cssText = `
+                background: var(--bg);
+                border: 1px solid ${markerCount > 0 ? 'var(--accent)' : 'var(--border-color)'};
+                border-radius: 8px;
+                padding: 6px 2px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                min-width: 40px;
+            `;
+            cellDiv.onclick = () => openCellModal(org.id, row, col);
+            cellDiv.innerHTML = `
+                <div style="font-size: 9px; color: var(--text-gray); margin-bottom: 2px;">${cellLabel}</div>
+                <div style="font-size: 13px; font-weight: bold; color: var(--accent);">${markerCount}</div>
+            `;
+            gridContainer.appendChild(cellDiv);
+        }
     }
     
+    gridWrapper.appendChild(gridContainer);
     container.innerHTML = '';
-    
-    inventory.organizers.forEach((org, orgIndex) => {
-        // Создаем карточку органайзера
-        const orgCard = document.createElement('div');
-        orgCard.style.cssText = 'background: var(--card-bg); border-radius: 20px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--border-color); overflow-x: auto;';
-        
-        // Заголовок с кнопками
-        const headerDiv = document.createElement('div');
-        headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;';
-        headerDiv.innerHTML = `
-            <h4 style="margin:0; font-size: 18px;">📦 ${org.name} (${org.rows}×${org.cols})</h4>
-            <div style="display: flex; gap: 8px;">
-                <button class="photo-upload-btn" style="padding: 8px 14px; font-size: 13px;" onclick="addMarkersToOrganizer('${org.id}')">
-                    <i class="fas fa-plus"></i> Добавить маркеры
-                </button>
-                <button class="photo-upload-btn" onclick="deleteOrganizer('${org.id}')" style="background: var(--status-red); color: white; padding: 8px 14px; font-size: 13px;">
-                    <i class="fas fa-trash"></i> Удалить
-                </button>
-            </div>
-        `;
-        orgCard.appendChild(headerDiv);
-        
-        // Создаем контейнер для сетки с возможностью скролла
-        const gridWrapper = document.createElement('div');
-        gridWrapper.style.cssText = 'overflow-x: auto;';
-        
-        const gridContainer = document.createElement('div');
-        const cellWidth = Math.min(70, Math.floor(100 / org.cols));
-        gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, minmax(60px, ${cellWidth}px)); gap: 8px; justify-content: start;`;
-        
-        // Заполняем ячейки
-        for (let row = 0; row < org.rows; row++) {
-            for (let col = 0; col < org.cols; col++) {
-                if (!org.cells[row]) org.cells[row] = [];
-                if (!org.cells[row][col]) org.cells[row][col] = [];
-                
-                const cellMarkers = org.cells[row][col];
-                const markerCount = cellMarkers.length;
-                const cellLabel = String.fromCharCode(65 + row) + (col + 1);
-                
-                const cellDiv = document.createElement('div');
-                cellDiv.style.cssText = `
-                    background: var(--bg);
-                    border: 2px solid ${markerCount > 0 ? 'var(--accent)' : 'var(--border-color)'};
-                    border-radius: 12px;
-                    padding: 10px 4px;
-                    text-align: center;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                    min-width: 50px;
-                `;
-                cellDiv.onclick = () => openCellModal(org.id, row, col);
-                cellDiv.innerHTML = `
-                    <div style="font-size: 11px; color: var(--text-gray); margin-bottom: 4px; font-weight: 500;">${cellLabel}</div>
-                    <div style="font-size: 18px; font-weight: bold; color: var(--accent);">${markerCount}</div>
-                `;
-                gridContainer.appendChild(cellDiv);
-            }
-        }
-        
-        gridWrapper.appendChild(gridContainer);
-        orgCard.appendChild(gridWrapper);
-        container.appendChild(orgCard);
-    });
+    container.appendChild(gridWrapper);
 }
         function openCellModal(orgId, row, col) {
     currentOrganizerId = orgId;
@@ -3118,8 +3114,7 @@ function closeAddMarkerModal() {
     if (!container) return;
     container.innerHTML = '';
     
-    // Получаем данные о маркерах с сервера (из обученных ИИ)
-    const markersData = markersDB; // markersDB загружается с сервера
+    const markersData = markersDB;
     
     brands.forEach(brand => {
         // Собираем уникальные номера маркеров этого бренда ИЗ ИНВЕНТАРЯ
@@ -3142,26 +3137,69 @@ function closeAddMarkerModal() {
         // Получаем все существующие номера для этого бренда из базы маркеров
         const existingNumbersForBrand = markersData
             .filter(m => m.num && parseInt(m.num) <= brand.total)
-            .map(m => m.num);
+            .map(m => m.num)
+            .slice(0, 50); // Показываем первые 50 для компактности
         
         const uniqueCount = uniqueNumbersInInventory.size;
-        const percent = Math.round((uniqueCount / brand.total) * 100);
         
+        // Создаем карточку бренда
         const div = document.createElement('div');
-        div.style.cssText = 'background: var(--card-bg); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border-color); cursor: pointer;';
-        div.onclick = () => openBrandDetail(brand.name, uniqueNumbersInInventory, existingNumbersForBrand);
-        div.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h4 style="margin:0; font-size: 16px;">${brand.name}</h4>
-                <span style="color: var(--accent); font-weight: bold;">${uniqueCount}/${brand.total}</span>
+        div.style.cssText = 'background: var(--card-bg); border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border-color); overflow: hidden;';
+        
+        // Заголовок бренда
+        const headerDiv = document.createElement('div');
+        headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; cursor: pointer; background: var(--bg);';
+        headerDiv.onclick = () => {
+            const content = div.querySelector('.brand-content');
+            const arrow = headerDiv.querySelector('.brand-arrow');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.display = 'none';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            }
+        };
+        headerDiv.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-palette" style="color: var(--accent);"></i>
+                <strong style="font-size: 16px;">${brand.name}</strong>
+                <span style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px;">${uniqueCount}/${existingNumbersForBrand.length}</span>
             </div>
-            <div style="background: var(--border-color); height: 6px; border-radius: 3px; overflow: hidden;">
-                <div style="width: ${percent}%; background: var(--accent-gradient); height: 100%;"></div>
-            </div>
-            <div style="margin-top: 8px;">
-                <small style="color: var(--text-gray);">Собрано маркеров: ${uniqueCount}</small>
-            </div>
+            <i class="fas fa-chevron-down brand-arrow" style="color: var(--text-gray); transition: transform 0.2s;"></i>
         `;
+        
+        // Контент с номерами маркеров
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'brand-content';
+        contentDiv.style.cssText = 'display: none; padding: 12px 15px; border-top: 1px solid var(--border-color); max-height: 200px; overflow-y: auto;';
+        
+        let numbersHtml = '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
+        existingNumbersForBrand.forEach(num => {
+            const isCollected = uniqueNumbersInInventory.has(num);
+            numbersHtml += `
+                <div onclick="toggleMarkerInBrand('${brand.name}', '${num}', ${isCollected})" style="
+                    width: 45px;
+                    padding: 6px 0;
+                    text-align: center;
+                    background: ${isCollected ? 'var(--accent)' : 'var(--bg)'};
+                    color: ${isCollected ? 'white' : 'var(--text)'};
+                    border-radius: 8px;
+                    border: 1px solid var(--border-color);
+                    font-size: 12px;
+                    font-weight: ${isCollected ? 'bold' : 'normal'};
+                    cursor: pointer;
+                    transition: all 0.2s;
+                ">
+                    ${num}
+                </div>
+            `;
+        });
+        numbersHtml += '</div>';
+        contentDiv.innerHTML = numbersHtml;
+        
+        div.appendChild(headerDiv);
+        div.appendChild(contentDiv);
         container.appendChild(div);
     });
 }
@@ -3621,6 +3659,14 @@ function closeOrganizerView() {
         renderCart();
         loadInventory();
         
+        // Рендерим задания
+        renderLevelTasks();
+        renderTimeTasks();
+        
+        // Рендерим бренды
+        renderBrands();
+        
+        // Восстанавливаем состояние корзины для книг
         for (let key in cart) {
             if (!key.startsWith('marker_')) {
                 const countSpan = document.getElementById(`book-count-${key}`);
@@ -3876,7 +3922,6 @@ function toggleMarkersBlock() {
         ИИ Палитра ✨
         <span class="ai-alpha-badge">Альфа-тест</span>
     </div>
-</div>
     <div class="ai-section">
         <div class="upload-area" onclick="document.getElementById('aiInput').click()"><i class="fas fa-camera"></i><p>Загрузить фото для определения цвета</p></div>
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">

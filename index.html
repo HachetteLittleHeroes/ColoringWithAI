@@ -1738,7 +1738,7 @@ const products = {
 
         // Пользователь
         const defaultUser = {
-            name: tg.initDataUnsafe?.user?.first_name || 'Тестер',
+            name: tg.initDataUnsafe?.user?.first_name || 'Без имени',
             balance: 0,
             xp: 0,
             level: 1,
@@ -1748,6 +1748,7 @@ const products = {
             showcase: [null, null, null],
             levelTasksProgress: [0, 0, 0, 0, 0],
             branchProgress: { alcohol_markers: [0, 0, 0, 0, 0], pencils: [0, 0, 0, 0, 0] },
+            branchCompleted: { alcohol_markers: false, pencils: false },
             unlockedStatuses: [],
             timeTasksProgress: {},
             timeTasksReset: Date.now(),
@@ -2151,10 +2152,15 @@ const products = {
     if (!container) return;
     container.innerHTML = '';
     
+    // Инициализируем branchCompleted если отсутствует
+    if (!user.branchCompleted) {
+        user.branchCompleted = { alcohol_markers: false, pencils: false };
+    }
+    
     for (let branchKey in taskBranches) {
         const branch = taskBranches[branchKey];
-        const progress = user.branchProgress[branchKey];
-        const isBranchCompleted = user.branchCompleted[branchKey];
+        const progress = user.branchProgress[branchKey] || [0, 0, 0, 0, 0];
+        const isBranchCompleted = user.branchCompleted[branchKey] || false;
         
         const branchDiv = document.createElement('div');
         branchDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px;';
@@ -2290,7 +2296,16 @@ function approveTaskByAdmin(taskId) {
     if (taskId.includes('_')) {
         const [branchKey, levelIdx] = taskId.split('_');
         const idx = parseInt(levelIdx);
-        const current = user.branchProgress[branchKey]?.[idx] || 0;
+        
+        // Инициализируем branchProgress если нужно
+        if (!user.branchProgress[branchKey]) {
+            user.branchProgress[branchKey] = [0, 0, 0, 0, 0];
+        }
+        if (!user.branchCompleted) {
+            user.branchCompleted = { alcohol_markers: false, pencils: false };
+        }
+        
+        const current = user.branchProgress[branchKey][idx] || 0;
         const maxProgress = taskBranches[branchKey]?.levels[idx]?.maxProgress;
         
         if (current < maxProgress) {
@@ -2383,11 +2398,20 @@ function approveTaskByAdmin(taskId) {
         function renderShowcase() {
     for (let i = 0; i < 3; i++) {
         const slot = document.getElementById(`slot-${i}`);
+        if (!slot) continue;
         const achId = user.showcase[i];
         slot.innerHTML = '';
+        // Убираем старый onclick и добавляем новый
+        slot.onclick = (function(index) {
+            return function() { openShowcaseSelector(index); };
+        })(i);
+        
         if (achId && achievementsDB[achId]) {
             const img = document.createElement('img');
             img.src = achievementsDB[achId].img;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
             slot.appendChild(img);
             slot.classList.add('filled');
         } else {
@@ -3127,13 +3151,6 @@ function openShowcaseSelector(slotIndex) {
 <div id="taskUploadModal" class="modal-overlay"><div class="modal-content"><h3>Отправка на проверку</h3><div id="taskPhotoPreviewContainer" class="photo-preview-container"></div><div class="modal-buttons-row"><button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button><button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button></div></div></div>
 <div id="organizerModal" class="modal-overlay"><div class="modal-content"><h3>Создать органайзер</h3><input type="text" id="organizerName" placeholder="Название органайзера"><div class="form-group"><label>Количество столбцов:</label><input type="number" id="organizerCols" value="3" min="1" max="10"></div><div class="form-group"><label>Количество строк:</label><input type="number" id="organizerRows" value="3" min="1" max="10"></div><button class="modal-action-btn" onclick="createOrganizer()">Создать</button><button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button></div></div>
 <div id="addMarkerModal" class="modal-overlay"><div class="modal-content"><h3>Добавить маркер</h3><div class="form-group"><label>Бренд:</label><select id="addMarkerBrand"><option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option><option value="Grasp">Grasp</option><option value="InfiArt">InfiArt</option><option value="Tooli-Art">Tooli-Art</option></select></div><div class="form-group"><label>Номер маркера:</label><input type="text" id="addMarkerNumber" placeholder="101"></div><div class="form-group"><label>Количество:</label><input type="number" id="addMarkerCount" value="1" min="1"></div><button class="modal-action-btn" onclick="confirmAddMarker()">Добавить</button><button class="modal-close-btn" onclick="closeAddMarkerModal()">Отмена</button></div></div>
-<div id="showcaseSelectorModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Выберите достижение</h3>
-        <div id="showcaseAchievementsList" class="achievements-grid"></div>
-        <button class="modal-close-btn" onclick="document.getElementById('showcaseSelectorModal').style.display='none'">Отмена</button>
-    </div>
-</div>
 <!-- Модалка выбора достижения для витрины -->
 <div id="showcaseSelectorModal" class="modal-overlay">
     <div class="modal-content">

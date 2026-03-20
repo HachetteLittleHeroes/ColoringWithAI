@@ -1814,10 +1814,9 @@ user.isAdmin = (userId === ADMIN_ID);
         // Корзина
         let cart = JSON.parse(localStorage.getItem('coloring_cart')) || {};
 
-        // ========== УПРАВЛЕНИЕ ТЕМАМИ ==========
-// ========== УПРАВЛЕНИЕ ТЕМАМИ (ИСПРАВЛЕНО) ==========
+        // ========== УПРАВЛЕНИЕ ТЕМАМИ (FIXED FOR REBOOT) ==========
+
 function setTheme(themeName) {
-    // 1. Очистка старых кастомных стилей перед переключением
     const oldStyle = document.getElementById('custom-theme-style');
     if (oldStyle) oldStyle.remove();
 
@@ -1827,16 +1826,18 @@ function setTheme(themeName) {
         document.documentElement.setAttribute('data-theme', themeName);
     }
 
-    // 2. Сохранение данных
+    // Сохраняем выбор
     user.theme = themeName;
     localStorage.setItem('app_theme', themeName);
-    if (typeof saveDataLocal === 'function') saveDataLocal();
-
-    // 3. Обновление визуального выбора в меню
-    document.querySelectorAll('.theme-option').forEach(el => {
-        el.classList.remove('active');
-        if (el.dataset.theme === themeName) el.classList.add('active');
-    });
+    
+    // БЕЗОПАСНОЕ обновление UI (только если элементы уже созданы)
+    const themeOptions = document.querySelectorAll('.theme-option');
+    if (themeOptions.length > 0) {
+        themeOptions.forEach(el => {
+            el.classList.remove('active');
+            if (el.dataset.theme === themeName) el.classList.add('active');
+        });
+    }
 }
 
 function applyCustomTheme(loadFromCache = false) {
@@ -1845,44 +1846,48 @@ function applyCustomTheme(loadFromCache = false) {
     if (loadFromCache) {
         bgMode = localStorage.getItem('custom_theme_bg') || 'light';
         accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
-        if(document.getElementById('themeBgMode')) document.getElementById('themeBgMode').value = bgMode;
-        if(document.getElementById('themeAccentColor')) document.getElementById('themeAccentColor').value = accentColor;
+        
+        // Проверяем наличие инпутов перед тем как менять их значения
+        const bgEl = document.getElementById('themeBgMode');
+        const accEl = document.getElementById('themeAccentColor');
+        if (bgEl) bgEl.value = bgMode;
+        if (accEl) accEl.value = accentColor;
     } else {
-        bgMode = document.getElementById('themeBgMode').value;
-        accentColor = document.getElementById('themeAccentColor').value;
+        const bgEl = document.getElementById('themeBgMode');
+        const accEl = document.getElementById('themeAccentColor');
+        bgMode = bgEl ? bgEl.value : 'light';
+        accentColor = accEl ? accEl.value : '#ff9500';
+        
         localStorage.setItem('custom_theme_bg', bgMode);
         localStorage.setItem('custom_theme_accent', accentColor);
     }
     
-    // Удаляем старый стиль перед созданием нового, чтобы не плодить их
     const oldStyle = document.getElementById('custom-theme-style');
     if (oldStyle) oldStyle.remove();
 
     const style = document.createElement('style');
     style.id = 'custom-theme-style';
     
-    // ВАЖНО: Добавляем z-index и pointer-events, чтобы кнопки всегда работали
-    const commonStyles = `
-        button, .marker-controls, .theme-option, .photo-upload-btn { 
-            position: relative !important; 
-            z-index: 5 !important; 
-            pointer-events: auto !important; 
-        }
-        .modal-overlay { z-index: 1000 !important; }
-    `;
+    const isLight = (bgMode === 'light');
+    const gradientColor = (typeof adjustColor === 'function') ? adjustColor(accentColor, -30) : accentColor;
 
-    if (bgMode === 'light') {
-        style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
-    } else {
-        style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; } ${commonStyles}`;
-    }
+    style.textContent = `
+        :root {
+            --bg: ${isLight ? '#f5f5f7' : '#121212'};
+            --bg-secondary: ${isLight ? '#ffffff' : '#1e1e1e'};
+            --text: ${isLight ? '#1c1c1e' : '#ffffff'};
+            --accent: ${accentColor};
+            --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${gradientColor} 100%);
+            --card-bg: ${isLight ? '#ffffff' : '#1c1c1e'};
+            --border-color: ${isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)'};
+        }
+    `;
     
     document.head.appendChild(style);
     document.documentElement.removeAttribute('data-theme');
-    
     user.theme = 'custom';
-    localStorage.setItem('app_theme', 'custom');
 }
+
 
 
         function adjustColor(hex, percent) {

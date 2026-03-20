@@ -44,6 +44,31 @@
             --card-bg: #1c1c1e;
             --input-bg: #2c2c2e;
         }
+        [data-theme="dark"] {
+    --bg: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-header: #1c1c1e;
+    --text: #ffffff;
+    --text-gray: #8e8e93;
+    --border-color: rgba(255,255,255,0.1);
+    --card-bg: #1c1c1e;
+    --input-bg: #2c2c2e;
+}
+
+[data-theme="dark"] .theme-option span,
+[data-theme="dark"] .theme-option .color-preview {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .theme-option {
+    background: #2c2c2e;
+    border-color: #3a3a3c;
+}
+
+[data-theme="dark"] .theme-option.active {
+    background: rgba(255,149,0,0.2);
+    border-color: var(--accent);
+}
 
         [data-theme="blue"] {
             --bg: #f0f9ff;
@@ -1570,6 +1595,60 @@
         .nav {
             z-index: 1000 !important;
         }
+        /* Стили для модальных окон органайзера */
+#organizerModal .modal-content,
+#addMarkerModal .modal-content {
+    background: var(--bg-header);
+}
+
+#organizerModal input,
+#organizerModal select,
+#addMarkerModal input,
+#addMarkerModal select {
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+#organizerModal .form-group {
+    margin-bottom: 15px;
+}
+
+#organizerModal label {
+    display: block;
+    color: var(--text-gray);
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+#organizersList {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Стили для ячеек при наведении */
+[style*="cursor: pointer"]:hover {
+    transform: scale(1.02);
+    transition: transform 0.2s;
+}
+
+/* Исправление для темной темы */
+[data-theme="dark"] .theme-option span,
+[data-theme="dark"] .custom-theme h4,
+[data-theme="dark"] .theme-row label {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .theme-row select,
+[data-theme="dark"] .theme-row input {
+    background: #2c2c2e;
+    color: #ffffff;
+    border-color: #3a3a3c;
+}
     </style>
 
     <script>
@@ -1771,62 +1850,65 @@
         `;
 
         function setTheme(themeName) {
-            const oldStyle = document.getElementById('custom-theme-style');
-            if (oldStyle) oldStyle.remove();
+    const oldStyle = document.getElementById('custom-theme-style');
+    if (oldStyle) oldStyle.remove();
 
-            if (themeName === 'custom') {
-                applyCustomTheme(true);
-            } else {
-                document.documentElement.setAttribute('data-theme', themeName);
-            }
-
-            user.theme = themeName;
-            localStorage.setItem('app_theme', themeName);
-            
-            if (themeName === 'custom') {
-                localStorage.setItem('custom_theme_bg', user.customThemeBg || 'light');
-                localStorage.setItem('custom_theme_accent', user.customThemeAccent || '#ff9500');
-            }
-            
-            document.querySelectorAll('.theme-option').forEach(el => {
-                el.classList.remove('active');
-                if (el.dataset.theme === themeName) el.classList.add('active');
-            });
-        }
+    if (themeName === 'custom') {
+        applyCustomTheme(true);
+    } else {
+        document.documentElement.setAttribute('data-theme', themeName);
+        // Сохраняем в localStorage
+        user.theme = themeName;
+        localStorage.setItem('app_theme', themeName);
+        // Удаляем кастомные настройки если переключились на стандартную тему
+        localStorage.removeItem('custom_theme_bg');
+        localStorage.removeItem('custom_theme_accent');
+    }
+    
+    document.querySelectorAll('.theme-option').forEach(el => {
+        el.classList.remove('active');
+        if (el.dataset.theme === themeName) el.classList.add('active');
+    });
+    
+    // Обновляем UI после смены темы
+    updateUI();
+}
 
         function applyCustomTheme(loadFromCache = false) {
-            let bgMode, accentColor;
-            if (loadFromCache) {
-                bgMode = localStorage.getItem('custom_theme_bg') || 'light';
-                accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
-                const bgEl = document.getElementById('themeBgMode');
-                const accEl = document.getElementById('themeAccentColor');
-                if(bgEl) bgEl.value = bgMode;
-                if(accEl) accEl.value = accentColor;
-            } else {
-                const bgEl = document.getElementById('themeBgMode');
-                const accEl = document.getElementById('themeAccentColor');
-                bgMode = bgEl ? bgEl.value : 'light';
-                accentColor = accEl ? accEl.value : '#ff9500';
-                localStorage.setItem('custom_theme_bg', bgMode);
-                localStorage.setItem('custom_theme_accent', accentColor);
-            }
-            
-            const oldStyle = document.getElementById('custom-theme-style');
-            if (oldStyle) oldStyle.remove();
-            const style = document.createElement('style');
-            style.id = 'custom-theme-style';
-            
-            if (bgMode === 'light') {
-                style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
-            } else {
-                style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; } ${commonStyles}`;
-            }
-            document.head.appendChild(style);
-            document.documentElement.removeAttribute('data-theme');
-            user.theme = 'custom';
-            localStorage.setItem('app_theme', 'custom');
-        }
+    let bgMode, accentColor;
+    if (loadFromCache) {
+        bgMode = localStorage.getItem('custom_theme_bg') || 'light';
+        accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
+        const bgEl = document.getElementById('themeBgMode');
+        const accEl = document.getElementById('themeAccentColor');
+        if(bgEl) bgEl.value = bgMode;
+        if(accEl) accEl.value = accentColor;
+    } else {
+        const bgEl = document.getElementById('themeBgMode');
+        const accEl = document.getElementById('themeAccentColor');
+        bgMode = bgEl ? bgEl.value : 'light';
+        accentColor = accEl ? accEl.value : '#ff9500';
+        localStorage.setItem('custom_theme_bg', bgMode);
+        localStorage.setItem('custom_theme_accent', accentColor);
+    }
+    
+    const oldStyle = document.getElementById('custom-theme-style');
+    if (oldStyle) oldStyle.remove();
+    const style = document.createElement('style');
+    style.id = 'custom-theme-style';
+    
+    if (bgMode === 'light') {
+        style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
+    } else {
+        style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; } ${commonStyles}`;
+    }
+    document.head.appendChild(style);
+    document.documentElement.removeAttribute('data-theme');
+    user.theme = 'custom';
+    localStorage.setItem('app_theme', 'custom');
+    
+    updateUI();
+}
 
         // ==========================================
         // СОХРАНЕНИЕ
@@ -2605,49 +2687,53 @@
         let currentCellCol = null;
 
         function renderOrganizers() {
-            const container = document.getElementById('organizersList');
-            if (!container) return;
-            if (inventory.organizers.length === 0) {
-                container.innerHTML = '<div class="no-results">Нет органайзеров. Создайте первый!</div>';
-                return;
-            }
-            container.innerHTML = '';
-            inventory.organizers.forEach(org => {
-                const orgDiv = document.createElement('div');
-                orgDiv.style.cssText = 'background: var(--card-bg); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color);';
-                orgDiv.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                        <h4 style="margin:0;">${org.name} (${org.rows}×${org.cols})</h4>
-                        <div>
-                            <button class="photo-upload-btn" style="padding: 6px 12px; margin-right: 8px; cursor:pointer;" onclick="addMarkersToOrganizer('${org.id}')"><i class="fas fa-plus"></i> Добавить</button>
-                            <button class="photo-upload-btn" onclick="deleteOrganizer('${org.id}')" style="background: var(--status-red); color: white; padding: 6px 12px; cursor:pointer;">🗑</button>
-                        </div>
+    const container = document.getElementById('organizersList');
+    if (!container) return;
+    if (inventory.organizers.length === 0) {
+        container.innerHTML = '<div class="no-results">Нет органайзеров. Создайте первый!</div>';
+        return;
+    }
+    container.innerHTML = '';
+    inventory.organizers.forEach(org => {
+        const orgDiv = document.createElement('div');
+        orgDiv.style.cssText = 'background: var(--card-bg); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color);';
+        orgDiv.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <h4 style="margin:0;">${org.name} (${org.rows}×${org.cols})</h4>
+                <div style="display: flex; gap: 8px;">
+                    <button class="photo-upload-btn" style="padding: 6px 12px; cursor:pointer;" onclick="addMarkersToOrganizer('${org.id}')"><i class="fas fa-plus"></i> Добавить</button>
+                    <button class="photo-upload-btn" onclick="deleteOrganizer('${org.id}')" style="background: var(--status-red); color: white; padding: 6px 12px; cursor:pointer;">🗑 Удалить</button>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(${org.cols}, 1fr); gap: 10px;">
+        `;
+        
+        // Создаем сетку ячеек
+        for (let row = 0; row < org.rows; row++) {
+            for (let col = 0; col < org.cols; col++) {
+                const cellMarkers = org.cells[row]?.[col] || [];
+                const cellLabel = String.fromCharCode(65 + row) + (col + 1);
+                orgDiv.innerHTML += `
+                    <div onclick="openCellModal('${org.id}', ${row}, ${col})" style="
+                        background: var(--bg);
+                        border: 2px solid ${cellMarkers.length > 0 ? 'var(--accent)' : 'var(--border-color)'};
+                        border-radius: 12px;
+                        padding: 12px 8px;
+                        text-align: center;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                    ">
+                        <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 5px;">${cellLabel}</div>
+                        <div style="font-size: 24px; font-weight: bold; color: var(--accent);">${cellMarkers.length}</div>
+                        <small style="font-size: 10px; color: var(--text-gray);">маркеров</small>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(${org.cols}, 1fr); gap: 8px;">
                 `;
-                for (let row = 0; row < org.rows; row++) {
-                    for (let col = 0; col < org.cols; col++) {
-                        const cellMarkers = org.cells[row]?.[col] || [];
-                        orgDiv.innerHTML += `
-                            <div onclick="openCellModal('${org.id}', ${row}, ${col})" style="
-                                background: var(--bg);
-                                border: 2px solid ${cellMarkers.length > 0 ? 'var(--accent)' : 'var(--border-color)'};
-                                border-radius: 12px;
-                                padding: 12px;
-                                text-align: center;
-                                cursor: pointer;
-                            ">
-                                <div style="font-size: 11px; color: var(--text-gray);">${String.fromCharCode(65+row)}${col+1}</div>
-                                <div style="font-size: 20px; font-weight: bold; color: var(--accent);">${cellMarkers.length}</div>
-                                <small style="font-size: 10px;">маркеров</small>
-                            </div>
-                        `;
-                    }
-                }
-                orgDiv.innerHTML += `</div></div>`;
-                container.appendChild(orgDiv);
-            });
+            }
         }
+        orgDiv.innerHTML += `</div></div>`;
+        container.appendChild(orgDiv);
+    });
+}
 
         function openCellModal(orgId, row, col) {
             currentOrganizerId = orgId;
@@ -2905,36 +2991,53 @@
         // ИНИЦИАЛИЗАЦИЯ
         // ==========================================
         window.onload = () => {
-            setTheme(user.theme);
-            updateUI();
-            loadMarkers();
-            renderCart();
-            loadInventory();
-            
-            for (let key in cart) {
-                if (!key.startsWith('marker_')) {
-                    const countSpan = document.getElementById(`book-count-${key}`);
-                    const controlsDiv = document.getElementById(`book-controls-${key}`);
-                    const addBtn = document.getElementById(`book-add-${key}`);
-                    if (countSpan) countSpan.innerText = cart[key];
-                    if (controlsDiv && addBtn && cart[key] > 0) {
-                        controlsDiv.style.display = 'flex';
-                        addBtn.style.display = 'none';
-                    }
+    try {
+        console.log('=== APP START ===');
+        
+        // Загружаем сохраненную тему
+        const savedTheme = localStorage.getItem('app_theme');
+        if (savedTheme === 'custom') {
+            applyCustomTheme(true);
+        } else if (savedTheme && savedTheme !== 'light') {
+            setTheme(savedTheme);
+        } else {
+            setTheme(user.theme || 'light');
+        }
+        
+        updateUI();
+        loadMarkers();
+        renderCart();
+        loadInventory();
+        
+        for (let key in cart) {
+            if (!key.startsWith('marker_')) {
+                const countSpan = document.getElementById(`book-count-${key}`);
+                const controlsDiv = document.getElementById(`book-controls-${key}`);
+                const addBtn = document.getElementById(`book-add-${key}`);
+                if (countSpan) countSpan.innerText = cart[key];
+                if (controlsDiv && addBtn && cart[key] > 0) {
+                    controlsDiv.style.display = 'flex';
+                    addBtn.style.display = 'none';
                 }
             }
-            
-            if (user.isAdmin) {
-                const adminBlock = document.getElementById('adminAiBlock');
-                if (adminBlock) adminBlock.style.display = 'block';
-            }
-            
-            window.onclick = function(event) {
-                document.querySelectorAll('.modal-overlay').forEach(modal => {
-                    if (event.target === modal) modal.style.display = "none";
-                });
-            };
+        }
+        
+        if (user.isAdmin) {
+            const adminBlock = document.getElementById('adminAiBlock');
+            if (adminBlock) adminBlock.style.display = 'block';
+        }
+        
+        window.onclick = function(event) {
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                if (event.target === modal) modal.style.display = "none";
+            });
         };
+        
+        console.log('=== APP READY ===');
+    } catch (error) {
+        console.error('=== APP ERROR ===', error);
+    }
+};
     </script>
 </head>
 <body>

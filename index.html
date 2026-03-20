@@ -34,6 +34,28 @@
             --card-bg: #ffffff;
             --input-bg: #ffffff;
         }
+        /* ==========================================
+   ГЛОБАЛЬНЫЙ ФИКС КЛИКОВ
+   ========================================== */
+button, 
+.marker-controls, 
+.theme-option, 
+.photo-upload-btn, 
+.nav-btn, 
+.upload-area,
+.showcase-slot,
+.reward-card,
+.avatar-wrapper { 
+    position: relative !important; 
+    z-index: 5 !important; 
+    pointer-events: auto !important; 
+    cursor: pointer !important;
+}
+
+.modal-overlay { 
+    z-index: 100000 !important; 
+}
+
 
         /* Темная тема */
         [data-theme="dark"] {
@@ -1861,16 +1883,6 @@ function applyCustomTheme(loadFromCache = false) {
     const style = document.createElement('style');
     style.id = 'custom-theme-style';
     
-    // ВАЖНО: Добавляем z-index и pointer-events, чтобы кнопки всегда работали
-    const commonStyles = `
-        button, .marker-controls, .theme-option, .photo-upload-btn { 
-            position: relative !important; 
-            z-index: 5 !important; 
-            pointer-events: auto !important; 
-        }
-        .modal-overlay { z-index: 1000 !important; }
-    `;
-
     if (bgMode === 'light') {
         style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
     } else {

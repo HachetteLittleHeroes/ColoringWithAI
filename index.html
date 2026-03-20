@@ -2697,6 +2697,8 @@
     inventory.organizers.forEach(org => {
         const orgDiv = document.createElement('div');
         orgDiv.style.cssText = 'background: var(--card-bg); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color);';
+        
+        // Заголовок органайзера с кнопками
         orgDiv.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <h4 style="margin:0;">${org.name} (${org.rows}×${org.cols})</h4>
@@ -2708,15 +2710,17 @@
             <div style="display: grid; grid-template-columns: repeat(${org.cols}, 1fr); gap: 10px;">
         `;
         
-        // Создаем сетку ячеек
+        // Создаем ячейки сеткой
         for (let row = 0; row < org.rows; row++) {
             for (let col = 0; col < org.cols; col++) {
-                const cellMarkers = org.cells[row]?.[col] || [];
+                const cellMarkers = (org.cells[row] && org.cells[row][col]) ? org.cells[row][col] : [];
                 const cellLabel = String.fromCharCode(65 + row) + (col + 1);
+                const markerCount = cellMarkers.length;
+                
                 orgDiv.innerHTML += `
                     <div onclick="openCellModal('${org.id}', ${row}, ${col})" style="
                         background: var(--bg);
-                        border: 2px solid ${cellMarkers.length > 0 ? 'var(--accent)' : 'var(--border-color)'};
+                        border: 2px solid ${markerCount > 0 ? 'var(--accent)' : 'var(--border-color)'};
                         border-radius: 12px;
                         padding: 12px 8px;
                         text-align: center;
@@ -2724,7 +2728,7 @@
                         transition: all 0.2s;
                     ">
                         <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 5px;">${cellLabel}</div>
-                        <div style="font-size: 24px; font-weight: bold; color: var(--accent);">${cellMarkers.length}</div>
+                        <div style="font-size: 24px; font-weight: bold; color: var(--accent);">${markerCount}</div>
                         <small style="font-size: 10px; color: var(--text-gray);">маркеров</small>
                     </div>
                 `;

@@ -4139,6 +4139,39 @@ function renderTimeTasks() {
         container.appendChild(div);
     });
 }
+// ==========================================
+// РАСКРЫТИЕ/СКРЫТИЕ БЛОКА ЗАДАНИЙ
+// ==========================================
+function toggleTasks() {
+    const content = document.getElementById('tasksContent');
+    const arrow = document.getElementById('tasksArrow');
+    
+    if (!content) {
+        console.error('tasksContent not found');
+        return;
+    }
+    
+    if (content.style.display === 'block') {
+        content.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    } else {
+        content.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+        
+        // Рендерим задания при открытии
+        if (typeof renderLevelTasks === 'function') {
+            renderLevelTasks();
+        } else {
+            console.error('renderLevelTasks not defined');
+        }
+        
+        if (typeof renderTimeTasks === 'function') {
+            renderTimeTasks();
+        } else {
+            console.error('renderTimeTasks not defined');
+        }
+    }
+}
 function openTaskUpload(taskId) {
     activeTaskId = taskId;
     const fileInput = document.getElementById('taskFileInput');

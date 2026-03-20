@@ -2252,6 +2252,8 @@
 
         let trainedColors = JSON.parse(localStorage.getItem('trained_colors')) || {};
         let markersDB = [];
+let markersLoading = false;
+let markersLoaded = false;
         let activeTaskId = null;
         let tempTaskPhotos = [];
 

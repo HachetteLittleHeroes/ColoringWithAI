@@ -2670,21 +2670,27 @@
         }
 
         function createOrganizer() {
-            const name = document.getElementById('organizerName').value.trim();
-            const cols = parseInt(document.getElementById('organizerCols').value);
-            const rows = parseInt(document.getElementById('organizerRows').value);
-            if (!name) { tg.showAlert('Введите название'); return; }
-            const cells = Array(rows).fill().map(() => Array(cols).fill().map(() => []));
-            inventory.organizers.push({ id: Date.now().toString(), name: name, cols: cols, rows: rows, cells: cells });
-            saveInventory();
-            renderOrganizers();
-            closeOrganizerModal();
-            tg.showAlert('Органайзер создан!');
-        }
-
-        let currentOrganizerId = null;
-        let currentCellRow = null;
-        let currentCellCol = null;
+    const name = document.getElementById('organizerName').value.trim();
+    const cols = parseInt(document.getElementById('organizerCols').value);
+    const rows = parseInt(document.getElementById('organizerRows').value);
+    if (!name) { tg.showAlert('Введите название'); return; }
+    if (cols < 1 || rows < 1) { tg.showAlert('Количество столбцов и строк должно быть не менее 1'); return; }
+    
+    // Создаем пустую сетку с правильными размерами
+    const cells = Array(rows).fill().map(() => Array(cols).fill().map(() => []));
+    
+    inventory.organizers.push({ 
+        id: Date.now().toString(), 
+        name: name, 
+        cols: cols, 
+        rows: rows, 
+        cells: cells 
+    });
+    saveInventory();
+    renderOrganizers();
+    closeOrganizerModal();
+    tg.showAlert('Органайзер создан!');
+}
 
         function renderOrganizers() {
     const container = document.getElementById('organizersList');

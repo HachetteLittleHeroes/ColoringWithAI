@@ -2252,8 +2252,8 @@
 
         let trainedColors = JSON.parse(localStorage.getItem('trained_colors')) || {};
         let markersDB = [];
-let markersLoading = false;
-let markersLoaded = false;
+        let markersLoading = false;
+        let markersLoaded = false;
         let activeTaskId = null;
         let tempTaskPhotos = [];
 
@@ -2261,148 +2261,145 @@ let markersLoaded = false;
             organizers: [],
             userMarkers: {}
         };
-        let markersLoaded = false;
-// Данные о томах с ответами
-const volumesData = [
-    { id: 't1', name: 'Том 1', pages: 26 },
-    { id: 't2', name: 'Том 2', pages: 26 },
-    { id: 't3', name: 'Том 3', pages: 26 },
-    { id: 't4', name: 'Том 4', pages: 26 },
-    { id: 't5', name: 'Том 5', pages: 26 },
-    { id: 't6', name: 'Том 6', pages: 26 },
-    { id: 't7', name: 'Том 7', pages: 26 },
-    { id: 't8', name: 'Том 8', pages: 26 },
-    { id: 't9', name: 'Том 9', pages: 26 },
-    { id: 't10', name: 'Том 10', pages: 26 },
-    { id: 't11', name: 'Том 11', pages: 26 },
-    { id: 't12', name: 'Том 12', pages: 26 },
-    { id: 't13', name: 'Том 13', pages: 26 },
-    { id: 't14', name: 'Том 14', pages: 26 },
-    { id: 't15', name: 'Том 15', pages: 26 },
-    { id: 't16', name: 'Том 16', pages: 26 },
-    { id: 't17', name: 'Том 17', pages: 26 },
-    { id: 't18', name: 'Том 18', pages: 26 },
-    { id: 't19', name: 'Том 19', pages: 26 },
-    { id: 't20', name: 'Том 20', pages: 26 },
-    { id: 't21', name: 'Том 21', pages: 26 },
-    { id: 't22', name: 'Том 22', pages: 26 },
-    { id: 't23', name: 'Том 23', pages: 26 },
-    { id: 't24', name: 'Том 24', pages: 26 },
-    { id: 't25', name: 'Том 25', pages: 26 },
-    { id: 't26', name: 'Том 26', pages: 26 },
-    { id: 't27', name: 'Том 27', pages: 26 },
-    { id: 't28', name: 'Том 28', pages: 26 },
-    { id: 't29', name: 'Том 29', pages: 26 },
-    { id: 't30', name: 'Том 30', pages: 26 },
-    { id: 't31', name: 'Том 31', pages: 26 },
-    { id: 't32', name: 'Том 32', pages: 26 },
-    { id: 't33', name: 'Том 33', pages: 26 },
-    { id: 't34', name: 'Том 34', pages: 26 },
-    { id: 't35', name: 'Том 35', pages: 26 },
-    { id: 't36', name: 'Том 36', pages: 26 },
-    { id: 't37', name: 'Том 37', pages: 26 },
-    { id: 't38', name: 'Том 38', pages: 26 },
-    { id: 't39', name: 'Том 39', pages: 26 },
-    { id: 't40', name: 'Том 40', pages: 26 },
-    { id: 't41', name: 'Том 41', pages: 26 },
-    { id: 't42', name: 'Том 42', pages: 26 },
-    { id: 't43', name: 'Том 43', pages: 26 },
-    { id: 't44', name: 'Том 44', pages: 26 },
-    { id: 't45', name: 'Том 45', pages: 26 },
-    { id: 't46', name: 'Том 46', pages: 26 },
-    { id: 't47', name: 'Том 47', pages: 26 }
-];
 
-// Функция для рендера всех томов
-function renderVolumes() {
-    const container = document.getElementById('volumesContainer');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    volumesData.forEach(volume => {
-        const volumeCard = document.createElement('div');
-        volumeCard.className = 'volume-card';
-        volumeCard.innerHTML = `
-            <div class="volume-header" onclick="toggleVolume('${volume.id}')">
-                <div class="volume-title">
-                    <i class="fas fa-book"></i>
-                    <span>${volume.name}</span>
-                </div>
-                <i class="fas fa-chevron-down volume-arrow" id="arrow-${volume.id}"></i>
-            </div>
-            <div class="volume-pages" id="pages-${volume.id}" style="display: none;">
-                <div class="pages-grid" id="grid-${volume.id}"></div>
-            </div>
-        `;
-        container.appendChild(volumeCard);
-        
-        // Создаем сетку страниц
-        const pagesGrid = document.getElementById(`grid-${volume.id}`);
-        if (pagesGrid) {
-            for (let i = 1; i <= volume.pages; i++) {
-                const pageDiv = document.createElement('div');
-                pageDiv.className = 'page-item';
-                pageDiv.onclick = () => openAnswerImage(volume.id, i);
-                pageDiv.innerHTML = `
-                    <div class="page-number">${i}</div>
-                    <div class="page-preview">
-                        <i class="fas fa-image"></i>
+        // Данные о томах с ответами
+        const volumesData = [
+            { id: 't1', name: 'Том 1', pages: 26 },
+            { id: 't2', name: 'Том 2', pages: 26 },
+            { id: 't3', name: 'Том 3', pages: 26 },
+            { id: 't4', name: 'Том 4', pages: 26 },
+            { id: 't5', name: 'Том 5', pages: 26 },
+            { id: 't6', name: 'Том 6', pages: 26 },
+            { id: 't7', name: 'Том 7', pages: 26 },
+            { id: 't8', name: 'Том 8', pages: 26 },
+            { id: 't9', name: 'Том 9', pages: 26 },
+            { id: 't10', name: 'Том 10', pages: 26 },
+            { id: 't11', name: 'Том 11', pages: 26 },
+            { id: 't12', name: 'Том 12', pages: 26 },
+            { id: 't13', name: 'Том 13', pages: 26 },
+            { id: 't14', name: 'Том 14', pages: 26 },
+            { id: 't15', name: 'Том 15', pages: 26 },
+            { id: 't16', name: 'Том 16', pages: 26 },
+            { id: 't17', name: 'Том 17', pages: 26 },
+            { id: 't18', name: 'Том 18', pages: 26 },
+            { id: 't19', name: 'Том 19', pages: 26 },
+            { id: 't20', name: 'Том 20', pages: 26 },
+            { id: 't21', name: 'Том 21', pages: 26 },
+            { id: 't22', name: 'Том 22', pages: 26 },
+            { id: 't23', name: 'Том 23', pages: 26 },
+            { id: 't24', name: 'Том 24', pages: 26 },
+            { id: 't25', name: 'Том 25', pages: 26 },
+            { id: 't26', name: 'Том 26', pages: 26 },
+            { id: 't27', name: 'Том 27', pages: 26 },
+            { id: 't28', name: 'Том 28', pages: 26 },
+            { id: 't29', name: 'Том 29', pages: 26 },
+            { id: 't30', name: 'Том 30', pages: 26 },
+            { id: 't31', name: 'Том 31', pages: 26 },
+            { id: 't32', name: 'Том 32', pages: 26 },
+            { id: 't33', name: 'Том 33', pages: 26 },
+            { id: 't34', name: 'Том 34', pages: 26 },
+            { id: 't35', name: 'Том 35', pages: 26 },
+            { id: 't36', name: 'Том 36', pages: 26 },
+            { id: 't37', name: 'Том 37', pages: 26 },
+            { id: 't38', name: 'Том 38', pages: 26 },
+            { id: 't39', name: 'Том 39', pages: 26 },
+            { id: 't40', name: 'Том 40', pages: 26 },
+            { id: 't41', name: 'Том 41', pages: 26 },
+            { id: 't42', name: 'Том 42', pages: 26 },
+            { id: 't43', name: 'Том 43', pages: 26 },
+            { id: 't44', name: 'Том 44', pages: 26 },
+            { id: 't45', name: 'Том 45', pages: 26 },
+            { id: 't46', name: 'Том 46', pages: 26 },
+            { id: 't47', name: 'Том 47', pages: 26 }
+        ];
+
+        // Функция для рендера всех томов
+        function renderVolumes() {
+            const container = document.getElementById('volumesContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            volumesData.forEach(volume => {
+                const volumeCard = document.createElement('div');
+                volumeCard.className = 'volume-card';
+                volumeCard.innerHTML = `
+                    <div class="volume-header" onclick="toggleVolume('${volume.id}')">
+                        <div class="volume-title">
+                            <i class="fas fa-book"></i>
+                            <span>${volume.name}</span>
+                        </div>
+                        <i class="fas fa-chevron-down volume-arrow" id="arrow-${volume.id}"></i>
+                    </div>
+                    <div class="volume-pages" id="pages-${volume.id}" style="display: none;">
+                        <div class="pages-grid" id="grid-${volume.id}"></div>
                     </div>
                 `;
-                pagesGrid.appendChild(pageDiv);
+                container.appendChild(volumeCard);
+                
+                const pagesGrid = document.getElementById(`grid-${volume.id}`);
+                if (pagesGrid) {
+                    for (let i = 1; i <= volume.pages; i++) {
+                        const pageDiv = document.createElement('div');
+                        pageDiv.className = 'page-item';
+                        pageDiv.onclick = () => openAnswerImage(volume.id, i);
+                        pageDiv.innerHTML = `
+                            <div class="page-number">${i}</div>
+                            <div class="page-preview">
+                                <i class="fas fa-image"></i>
+                            </div>
+                        `;
+                        pagesGrid.appendChild(pageDiv);
+                    }
+                }
+            });
+        }
+
+        function toggleVolume(volumeId) {
+            const pagesDiv = document.getElementById(`pages-${volumeId}`);
+            const arrow = document.getElementById(`arrow-${volumeId}`);
+            
+            if (pagesDiv.style.display === 'none' || pagesDiv.style.display === '') {
+                pagesDiv.style.display = 'block';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+            } else {
+                pagesDiv.style.display = 'none';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
             }
         }
-    });
-}
 
-// Функция для раскрытия/скрытия тома
-function toggleVolume(volumeId) {
-    const pagesDiv = document.getElementById(`pages-${volumeId}`);
-    const arrow = document.getElementById(`arrow-${volumeId}`);
-    
-    if (pagesDiv.style.display === 'none' || pagesDiv.style.display === '') {
-        pagesDiv.style.display = 'block';
-        if (arrow) arrow.style.transform = 'rotate(180deg)';
-    } else {
-        pagesDiv.style.display = 'none';
-        if (arrow) arrow.style.transform = 'rotate(0deg)';
-    }
-}
-
-// Функция для открытия изображения ответа
-function openAnswerImage(volumeId, pageNumber) {
-    const imageUrl = `assets/otveti/${volumeId}/${pageNumber}.png`;
-    
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.style.display = 'flex';
-    modal.innerHTML = `
-        <div class="modal-content answer-modal">
-            <h3>${volumeId.toUpperCase()} - Страница ${pageNumber}</h3>
-            <img src="${imageUrl}" class="answer-image" onerror="this.src='https://via.placeholder.com/300x400?text=Изображение+не+найдено'">
-            <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-}
-
-// Поиск по томам и страницам
-function searchVolumes() {
-    const query = document.getElementById('volumeSearch').value.toLowerCase();
-    const volumeCards = document.querySelectorAll('.volume-card');
-    
-    volumeCards.forEach(card => {
-        const title = card.querySelector('.volume-title span').innerText.toLowerCase();
-        if (title.includes(query)) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
+        function openAnswerImage(volumeId, pageNumber) {
+            const imageUrl = `assets/otveti/${volumeId}/${pageNumber}.png`;
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content answer-modal">
+                    <h3>${volumeId.toUpperCase()} - Страница ${pageNumber}</h3>
+                    <img src="${imageUrl}" class="answer-image" onerror="this.src='https://via.placeholder.com/300x400?text=Изображение+не+найдено'">
+                    <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
-    });
-}
+
+        function searchVolumes() {
+            const query = document.getElementById('volumeSearch').value.toLowerCase();
+            const volumeCards = document.querySelectorAll('.volume-card');
+            
+            volumeCards.forEach(card => {
+                const title = card.querySelector('.volume-title span').innerText.toLowerCase();
+                if (title.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
         // ==========================================
-        // ПОЛЬЗОВАТЕЛЬ (ИСПРАВЛЕНО - имя "Без имени" и добавлен branchCompleted)
+        // ПОЛЬЗОВАТЕЛЬ
         // ==========================================
         const defaultUser = {
             name: tg.initDataUnsafe?.user?.first_name || 'Без имени',
@@ -2450,65 +2447,62 @@ function searchVolumes() {
         `;
 
         function setTheme(themeName) {
-    const oldStyle = document.getElementById('custom-theme-style');
-    if (oldStyle) oldStyle.remove();
+            const oldStyle = document.getElementById('custom-theme-style');
+            if (oldStyle) oldStyle.remove();
 
-    if (themeName === 'custom') {
-        applyCustomTheme(true);
-    } else {
-        document.documentElement.setAttribute('data-theme', themeName);
-        // Сохраняем в localStorage
-        user.theme = themeName;
-        localStorage.setItem('app_theme', themeName);
-        // Удаляем кастомные настройки если переключились на стандартную тему
-        localStorage.removeItem('custom_theme_bg');
-        localStorage.removeItem('custom_theme_accent');
-    }
-    
-    document.querySelectorAll('.theme-option').forEach(el => {
-        el.classList.remove('active');
-        if (el.dataset.theme === themeName) el.classList.add('active');
-    });
-    
-    // Обновляем UI после смены темы
-    updateUI();
-}
+            if (themeName === 'custom') {
+                applyCustomTheme(true);
+            } else {
+                document.documentElement.setAttribute('data-theme', themeName);
+                user.theme = themeName;
+                localStorage.setItem('app_theme', themeName);
+                localStorage.removeItem('custom_theme_bg');
+                localStorage.removeItem('custom_theme_accent');
+            }
+            
+            document.querySelectorAll('.theme-option').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.theme === themeName) el.classList.add('active');
+            });
+            
+            updateUI();
+        }
 
         function applyCustomTheme(loadFromCache = false) {
-    let bgMode, accentColor;
-    if (loadFromCache) {
-        bgMode = localStorage.getItem('custom_theme_bg') || 'light';
-        accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
-        const bgEl = document.getElementById('themeBgMode');
-        const accEl = document.getElementById('themeAccentColor');
-        if(bgEl) bgEl.value = bgMode;
-        if(accEl) accEl.value = accentColor;
-    } else {
-        const bgEl = document.getElementById('themeBgMode');
-        const accEl = document.getElementById('themeAccentColor');
-        bgMode = bgEl ? bgEl.value : 'light';
-        accentColor = accEl ? accEl.value : '#ff9500';
-        localStorage.setItem('custom_theme_bg', bgMode);
-        localStorage.setItem('custom_theme_accent', accentColor);
-    }
-    
-    const oldStyle = document.getElementById('custom-theme-style');
-    if (oldStyle) oldStyle.remove();
-    const style = document.createElement('style');
-    style.id = 'custom-theme-style';
-    
-    if (bgMode === 'light') {
-        style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
-    } else {
-        style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; } ${commonStyles}`;
-    }
-    document.head.appendChild(style);
-    document.documentElement.removeAttribute('data-theme');
-    user.theme = 'custom';
-    localStorage.setItem('app_theme', 'custom');
-    
-    updateUI();
-}
+            let bgMode, accentColor;
+            if (loadFromCache) {
+                bgMode = localStorage.getItem('custom_theme_bg') || 'light';
+                accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
+                const bgEl = document.getElementById('themeBgMode');
+                const accEl = document.getElementById('themeAccentColor');
+                if(bgEl) bgEl.value = bgMode;
+                if(accEl) accEl.value = accentColor;
+            } else {
+                const bgEl = document.getElementById('themeBgMode');
+                const accEl = document.getElementById('themeAccentColor');
+                bgMode = bgEl ? bgEl.value : 'light';
+                accentColor = accEl ? accEl.value : '#ff9500';
+                localStorage.setItem('custom_theme_bg', bgMode);
+                localStorage.setItem('custom_theme_accent', accentColor);
+            }
+            
+            const oldStyle = document.getElementById('custom-theme-style');
+            if (oldStyle) oldStyle.remove();
+            const style = document.createElement('style');
+            style.id = 'custom-theme-style';
+            
+            if (bgMode === 'light') {
+                style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
+            } else {
+                style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; } ${commonStyles}`;
+            }
+            document.head.appendChild(style);
+            document.documentElement.removeAttribute('data-theme');
+            user.theme = 'custom';
+            localStorage.setItem('app_theme', 'custom');
+            
+            updateUI();
+        }
 
         // ==========================================
         // СОХРАНЕНИЕ
@@ -2543,51 +2537,83 @@ function searchVolumes() {
             if (progressBar) progressBar.style.width = '0%';
             if (progressText) progressText.innerText = '0 / 5';
         }
+
         // ==========================================
         // МАРКЕРЫ
         // ==========================================
-        function renderMarkers() {
-    const container = document.getElementById('markersList');
-    if (!container) return;
-    
-    if (markersLoading) {
-        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка маркеров...</div>';
-        return;
-    }
-    
-    if (!markersDB || markersDB.length === 0) {
-        container.innerHTML = '<div class="no-results">📦 Нет данных о маркерах. Нажмите "Обновить"</div>';
-        return;
-    }
-    
-    container.innerHTML = '';
-    markersDB.forEach(m => {
-        const cartKey = `marker_${m.num}`;
-        const cartCount = (cart && cart[cartKey]) ? cart[cartKey] : 0;
-        const canAdd = cartCount < m.stock;
-        const canRemove = cartCount > 0;
-        const stockClass = getStockColor(m.stock);
-        const div = document.createElement('div');
-        div.className = 'marker-item';
-        div.setAttribute('data-num', m.num);
-        div.innerHTML = `
-            <div class="color-circle" style="background-color: var(--bg);"></div>
-            <div class="marker-info">
-                <div class="marker-header">
-                    <span class="marker-number">№${m.num}</span>
-                    <span class="marker-price">${MARKER_PRICE} ₽</span>
-                </div>
-                <div class="marker-stock ${stockClass}">${getStockText(m.stock)}</div>
-            </div>
-            <div class="marker-controls">
-                <button class="minus" onclick="updateMarkerCart('${m.num}', -1)" ${!canRemove ? 'disabled' : ''}>−</button>
-                <span id="marker-count-${m.num}">${cartCount}</span>
-                <button onclick="updateMarkerCart('${m.num}', 1)" ${!canAdd ? 'disabled' : ''}>+</button>
-            </div>
-        `;
-        container.appendChild(div);
-    });
-}
+        async function loadMarkers() {
+            if (markersLoading || markersLoaded) return;
+            markersLoading = true;
+            
+            const markersContainer = document.getElementById('markersList');
+            if (markersContainer) {
+                markersContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка маркеров...</div>';
+            }
+            
+            const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => {
+                controller.abort();
+                console.error('Timeout: Загрузка маркеров превысила 10 секунд');
+            }, 10000);
+            
+            try {
+                const res = await fetch(csvUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                
+                const text = await res.text();
+                const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, '').trim()));
+                let temp = [];
+                rows.forEach(row => {
+                    for (let i = 0; i < row.length; i++) {
+                        let num = row[i];
+                        if (num && !isNaN(num) && parseInt(num) > 10) {
+                            let stock = parseInt(row[i+1] || row[i+2] || "0");
+                            temp.push({ num: num, stock: stock });
+                            i++;
+                        }
+                    }
+                });
+                
+                markersDB = temp.filter((v, i, a) => a.findIndex(t => (t.num === v.num)) === i);
+                markersLoaded = true;
+                
+                if (cart) {
+                    for (let key in cart) {
+                        if (key.startsWith('marker_')) {
+                            const num = key.replace('marker_', '');
+                            const marker = markersDB.find(m => m.num === num);
+                            if (marker && cart[key] > marker.stock) {
+                                cart[key] = marker.stock;
+                            }
+                        }
+                    }
+                    saveData();
+                }
+                
+                console.log('✅ Маркеры загружены:', markersDB.length);
+                
+                const activePage = document.querySelector('.page.active');
+                if (activePage && activePage.id === 'markers') {
+                    renderMarkers();
+                }
+                
+            } catch (error) {
+                clearTimeout(timeoutId);
+                console.error('Ошибка загрузки маркеров:', error);
+                markersDB = [];
+                
+                if (markersContainer) {
+                    markersContainer.innerHTML = '<div class="no-results">⚠️ Ошибка загрузки данных. Проверьте подключение к интернету.</div>';
+                }
+            } finally {
+                markersLoading = false;
+            }
+        }
+
         function getStockColor(stock) {
             if (stock === 0) return 'out-of-stock';
             if (stock === 1) return 'low-stock';
@@ -2602,47 +2628,48 @@ function searchVolumes() {
         }
 
         function renderMarkers() {
-    const container = document.getElementById('markersList');
-    if (!container) return;
-    
-    if (markersLoading) {
-        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка маркеров...</div>';
-        return;
-    }
-    
-    if (!markersDB || markersDB.length === 0) {
-        container.innerHTML = '<div class="no-results">📦 Нет данных о маркерах. Нажмите "Обновить"</div>';
-        return;
-    }
-    
-    container.innerHTML = '';
-    markersDB.forEach(m => {
-        const cartKey = `marker_${m.num}`;
-        const cartCount = (cart && cart[cartKey]) ? cart[cartKey] : 0;
-        const canAdd = cartCount < m.stock;
-        const canRemove = cartCount > 0;
-        const stockClass = getStockColor(m.stock);
-        const div = document.createElement('div');
-        div.className = 'marker-item';
-        div.setAttribute('data-num', m.num);
-        div.innerHTML = `
-            <div class="color-circle" style="background-color: var(--bg);"></div>
-            <div class="marker-info">
-                <div class="marker-header">
-                    <span class="marker-number">№${m.num}</span>
-                    <span class="marker-price">${MARKER_PRICE} ₽</span>
-                </div>
-                <div class="marker-stock ${stockClass}">${getStockText(m.stock)}</div>
-            </div>
-            <div class="marker-controls">
-                <button class="minus" onclick="updateMarkerCart('${m.num}', -1)" ${!canRemove ? 'disabled' : ''}>−</button>
-                <span id="marker-count-${m.num}">${cartCount}</span>
-                <button onclick="updateMarkerCart('${m.num}', 1)" ${!canAdd ? 'disabled' : ''}>+</button>
-            </div>
-        `;
-        container.appendChild(div);
-    });
-}
+            const container = document.getElementById('markersList');
+            if (!container) return;
+            
+            if (markersLoading) {
+                container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка маркеров...</div>';
+                return;
+            }
+            
+            if (!markersDB || markersDB.length === 0) {
+                container.innerHTML = '<div class="no-results">📦 Нет данных о маркерах. Нажмите "Обновить"</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            markersDB.forEach(m => {
+                const cartKey = `marker_${m.num}`;
+                const cartCount = (cart && cart[cartKey]) ? cart[cartKey] : 0;
+                const canAdd = cartCount < m.stock;
+                const canRemove = cartCount > 0;
+                const stockClass = getStockColor(m.stock);
+                const div = document.createElement('div');
+                div.className = 'marker-item';
+                div.setAttribute('data-num', m.num);
+                div.innerHTML = `
+                    <div class="color-circle" style="background-color: var(--bg);"></div>
+                    <div class="marker-info">
+                        <div class="marker-header">
+                            <span class="marker-number">№${m.num}</span>
+                            <span class="marker-price">${MARKER_PRICE} ₽</span>
+                        </div>
+                        <div class="marker-stock ${stockClass}">${getStockText(m.stock)}</div>
+                    </div>
+                    <div class="marker-controls">
+                        <button class="minus" onclick="updateMarkerCart('${m.num}', -1)" ${!canRemove ? 'disabled' : ''}>−</button>
+                        <span id="marker-count-${m.num}">${cartCount}</span>
+                        <button onclick="updateMarkerCart('${m.num}', 1)" ${!canAdd ? 'disabled' : ''}>+</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
         function updateMarkerCart(num, delta) {
             const cartKey = `marker_${num}`;
             const currentCount = cart[cartKey] || 0;
@@ -2687,341 +2714,6 @@ function searchVolumes() {
                 else item.classList.add('hidden');
             });
         }
-
-        // ==========================================
-        // КНИГИ И КОРЗИНА
-        // ==========================================
-        function updateBookCart(bookId, delta) {
-            const currentCount = cart[bookId] || 0;
-            const newCount = currentCount + delta;
-            if (newCount < 0) return;
-            if (newCount === 0) delete cart[bookId];
-            else cart[bookId] = newCount;
-            const countSpan = document.getElementById(`book-count-${bookId}`);
-            if (countSpan) countSpan.innerText = newCount;
-            const controlsDiv = document.getElementById(`book-controls-${bookId}`);
-            const addBtn = document.getElementById(`book-add-${bookId}`);
-            if (controlsDiv && addBtn) {
-                if (newCount > 0) { controlsDiv.style.display = 'flex'; addBtn.style.display = 'none'; }
-                else { controlsDiv.style.display = 'none'; addBtn.style.display = 'block'; }
-            }
-            saveData();
-            renderCart();
-            updateCartBadge();
-        }
-
-        function renderCart() {
-            const list = document.getElementById('cartItemsList');
-            if (!list) return;
-            list.innerHTML = '';
-            let totalSum = 0;
-            if (Object.keys(cart).length === 0) {
-                list.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding: 40px 0;">Корзина пуста</p>';
-                document.getElementById('cartTotalSum').innerText = '0';
-                return;
-            }
-            for (let key in cart) {
-                const count = cart[key];
-                if (key.startsWith('marker_')) {
-                    const num = key.replace('marker_', '');
-                    const marker = markersDB.find(m => m.num === num);
-                    if (!marker) continue;
-                    totalSum += count * MARKER_PRICE;
-                    const div = document.createElement('div');
-                    div.className = 'cart-item';
-                    div.innerHTML = `
-                        <div class="color-circle" style="background-color: ${marker.color || 'var(--bg)'}; width: 50px; height: 50px;"></div>
-                        <div class="cart-item-info">
-                            <h4>Маркер №${num}</h4>
-                            <div class="cart-item-price">${MARKER_PRICE} ₽ × ${count}</div>
-                            <div class="cart-item-details">
-                                <div class="cart-item-controls">
-                                    <button class="minus" onclick="updateMarkerCart('${num}', -1)" ${count <= 1 ? 'disabled' : ''}>−</button>
-                                    <span>${count}</span>
-                                    <button onclick="updateMarkerCart('${num}', 1)" ${count >= marker.stock ? 'disabled' : ''}>+</button>
-                                </div>
-                                <div class="cart-item-total">${MARKER_PRICE * count} ₽</div>
-                            </div>
-                        </div>
-                    `;
-                    list.appendChild(div);
-                } else {
-                    const item = products[key];
-                    if (!item) continue;
-                    totalSum += item.price * count;
-                    const div = document.createElement('div');
-                    div.className = 'cart-item';
-                    div.innerHTML = `
-                        <img src="${item.img}" alt="${item.name}">
-                        <div class="cart-item-info">
-                            <h4>${item.name}</h4>
-                            <div class="cart-item-price">${item.price} ₽ × ${count}</div>
-                            <div class="cart-item-details">
-                                <div class="cart-item-controls">
-                                    <button class="minus" onclick="updateBookCart('${key}', -1)" ${count <= 1 ? 'disabled' : ''}>−</button>
-                                    <span>${count}</span>
-                                    <button onclick="updateBookCart('${key}', 1)">+</button>
-                                </div>
-                                <div class="cart-item-total">${item.price * count} ₽</div>
-                            </div>
-                        </div>
-                    `;
-                    list.appendChild(div);
-                }
-            }
-            document.getElementById('cartTotalSum').innerText = totalSum;
-        }
-
-        function updateCartBadge() {
-            let totalItems = 0;
-            for (let key in cart) totalItems += cart[key];
-            const badge = document.getElementById('cartBadge');
-            if (badge) {
-                if (totalItems > 0) { badge.innerText = totalItems; badge.style.display = 'block'; }
-                else { badge.style.display = 'none'; }
-            }
-        }
-
-        function checkout() {
-            if (Object.keys(cart).length === 0) { tg.showAlert("Ваша корзина пуста!"); return; }
-            let totalMarkers = 0;
-            for (let key in cart) if (key.startsWith('marker_')) totalMarkers += cart[key];
-            if (totalMarkers > 0 && totalMarkers < 3) { tg.showAlert("Маркеры заказываются от 3 штук! Добавьте еще маркеров в корзину."); return; }
-            let total = 0;
-            for (let key in cart) {
-                if (key.startsWith('marker_')) total += cart[key] * MARKER_PRICE;
-                else total += products[key]?.price * cart[key] || 0;
-            }
-            tg.showConfirm(`В корзине товаров на сумму ${total} ₽\n\nОформить заказ?`, (confirm) => {
-                if (confirm) {
-                    tg.sendData(JSON.stringify({ action: 'checkout', cart: cart, userId: userId, total: total }));
-                    cart = {};
-                    saveData();
-                    renderCart();
-                    updateCartBadge();
-                    if (!user.achievements.includes('shopaholic')) {
-                        user.achievements.push('shopaholic');
-                        saveData();
-                        showAchievementAlert('shopaholic');
-                    }
-                    tg.showAlert("Заказ успешно оформлен!");
-                }
-            });
-        }
-
-        // ==========================================
-        // ЗАДАНИЯ
-        // ==========================================
-        function toggleTasks() {
-            const content = document.getElementById('tasksContent');
-            const arrow = document.getElementById('tasksArrow');
-            if (!content) return;
-            if (content.style.display === 'block') {
-                content.style.display = 'none';
-                if (arrow) arrow.style.transform = 'rotate(0deg)';
-            } else {
-                content.style.display = 'block';
-                if (arrow) arrow.style.transform = 'rotate(180deg)';
-                renderLevelTasks();
-                renderTimeTasks();
-            }
-        }
-
-        function renderLevelTasks() {
-            const container = document.getElementById('levelTasksList');
-            if (!container) return;
-            container.innerHTML = '';
-            
-            if (!user.branchCompleted) {
-                user.branchCompleted = { alcohol_markers: false, pencils: false };
-            }
-            
-            for (let branchKey in taskBranches) {
-                const branch = taskBranches[branchKey];
-                const progress = user.branchProgress[branchKey] || [0, 0, 0, 0, 0];
-                
-                const branchDiv = document.createElement('div');
-                branchDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px;';
-                branchDiv.innerHTML = `<div style="font-size:16px; font-weight:bold; color:var(--accent); margin-bottom:12px;">${branch.name}</div>`;
-                
-                let lastCompletedIndex = -1;
-                for (let i = 0; i < branch.levels.length; i++) {
-                    if ((progress[i] || 0) >= branch.levels[i].maxProgress) {
-                        lastCompletedIndex = i;
-                    } else {
-                        break;
-                    }
-                }
-                
-                for (let i = 0; i < branch.levels.length; i++) {
-                    const currentProgress = progress[i] || 0;
-                    const isCompleted = currentProgress >= branch.levels[i].maxProgress;
-                    const isActive = !isCompleted && (i === 0 || (progress[i-1] || 0) >= branch.levels[i-1].maxProgress);
-                    const isLastCompleted = i === lastCompletedIndex && isCompleted;
-                    
-                    if (!isActive && !isLastCompleted && i !== lastCompletedIndex + 1) continue;
-                    
-                    const percent = Math.min(100, (currentProgress / branch.levels[i].maxProgress) * 100);
-                    
-                    const taskDiv = document.createElement('div');
-                    taskDiv.className = `level-task lvl-${i + 1} ${isCompleted ? 'completed' : ''}`;
-                    taskDiv.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <span style="font-weight:bold;">Уровень ${i + 1}: ${branch.levels[i].title}</span>
-                            ${isCompleted ? '<span style="color:var(--status-green);">✓ Выполнено</span>' : ''}
-                        </div>
-                        <p style="font-size:12px; color:var(--text-gray); margin-bottom:8px;">${branch.levels[i].desc}</p>
-                        <div style="background:var(--border-color); height:8px; border-radius:4px; overflow:hidden; margin-bottom:10px;">
-                            <div style="width:${percent}%; background:var(--accent-gradient); height:100%;"></div>
-                        </div>
-                        ${isActive ? `
-                            <button class="photo-upload-btn" onclick="openTaskUpload('${branchKey}_${i}')" style="width:100%; background:var(--accent); color:white; cursor:pointer;">
-                                <i class="fas fa-camera"></i> Отправить на проверку
-                            </button>
-                        ` : ''}
-                    `;
-                    branchDiv.appendChild(taskDiv);
-                }
-                container.appendChild(branchDiv);
-            }
-        }
-
-        function renderTimeTasks() {
-            const container = document.getElementById('timeTasksList');
-            if (!container) return;
-            container.innerHTML = '';
-            timeTasks.forEach(task => {
-                const div = document.createElement('div');
-                div.className = 'time-task';
-                div.style = "border: 2px solid var(--accent); padding: 15px; border-radius: 12px; margin-bottom: 12px; background: var(--card-bg);";
-                div.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span class="time-badge" style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">
-                            <i class="far fa-clock"></i> ДО 29.03.2026
-                        </span>
-                        <span style="color: #FFD700; font-weight: bold; font-size: 14px;">
-                            +${task.reward} <i class="fas fa-book-open gold-book"></i>
-                        </span>
-                    </div>
-                    <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px;">${task.title}</div>
-                    <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 12px;">${task.description}</p>
-                    <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')" style="width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor:pointer;">
-                        <i class="fas fa-camera"></i> Отправить фото
-                    </button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function openTaskUpload(taskId) {
-            activeTaskId = taskId;
-            document.getElementById('taskFileInput').click();
-        }
-
-        function handleTaskFile(event) {
-            const files = event.target.files;
-            tempTaskPhotos = [];
-            const container = document.getElementById('taskPhotoPreviewContainer');
-            if (container) container.innerHTML = '';
-            if (files.length > 0) {
-                Array.from(files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        tempTaskPhotos.push(e.target.result);
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        if (container) container.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                });
-                document.getElementById('taskUploadModal').style.display = 'flex';
-            }
-        }
-
-        function closeTaskUploadModal() {
-            document.getElementById('taskUploadModal').style.display = 'none';
-            tempTaskPhotos = [];
-            activeTaskId = null;
-        }
-
-        function submitTaskPhoto() {
-            if (tempTaskPhotos.length > 0 && activeTaskId) {
-                tg.showAlert(`✅ Фото отправлено на проверку админу! Задание: ${activeTaskId}`);
-                
-                if (user.isAdmin) {
-                    tg.showConfirm('Вы админ. Одобрить задание?', (confirm) => {
-                        if (confirm) {
-                            approveTaskByAdmin(activeTaskId);
-                        }
-                    });
-                }
-                
-                closeTaskUploadModal();
-            } else {
-                tg.showAlert('Ошибка: Фото не выбрано');
-            }
-        }
-
-        function approveTaskByAdmin(taskId) {
-            if (taskId.includes('_')) {
-                const [branchKey, levelIdx] = taskId.split('_');
-                const idx = parseInt(levelIdx);
-                
-                if (!user.branchProgress[branchKey]) {
-                    user.branchProgress[branchKey] = [0, 0, 0, 0, 0];
-                }
-                if (!user.branchCompleted) {
-                    user.branchCompleted = { alcohol_markers: false, pencils: false };
-                }
-                
-                const current = user.branchProgress[branchKey][idx] || 0;
-                const maxProgress = taskBranches[branchKey]?.levels[idx]?.maxProgress;
-                
-                if (current < maxProgress) {
-                    user.branchProgress[branchKey][idx] = current + 1;
-                    
-                    if (user.branchProgress[branchKey][idx] >= maxProgress) {
-                        tg.showAlert(`✅ Уровень ${idx + 1} в ветке ${taskBranches[branchKey].name} выполнен!`);
-                        
-                        const allCompleted = user.branchProgress[branchKey].every((p, i) => p >= taskBranches[branchKey].levels[i].maxProgress);
-                        if (allCompleted && !user.branchCompleted[branchKey]) {
-                            user.branchCompleted[branchKey] = true;
-                            const statusName = statusRewards[branchKey];
-                            if (statusName && !user.unlockedStatuses.includes(statusName)) {
-                                user.unlockedStatuses.push(statusName);
-                                tg.showAlert(`🎉 Получен новый статус: ${statusName}!`);
-                            }
-                        }
-                    }
-                    saveData();
-                    renderLevelTasks();
-                }
-            } else {
-                if (!user.timeTasksProgress[taskId] || user.timeTasksProgress[taskId] !== 'completed') {
-                    user.timeTasksProgress[taskId] = 'completed';
-                    const task = timeTasks.find(t => t.id === taskId);
-                    if (task) {
-                        user.balance += task.reward;
-                        tg.showAlert(`✅ Задание выполнено! +${task.reward} ашетиков`);
-                        saveData();
-                    }
-                    renderTimeTasks();
-                }
-            }
-            updateUI();
-        }
-
-        function showAchievementAlert(achId) {
-            const ach = achievementsDB[achId];
-            if (ach) {
-                const alertImg = document.getElementById('alertAchImg');
-                const alertText = document.getElementById('alertAchText');
-                if (alertImg) alertImg.src = ach.img;
-                if (alertText) alertText.innerText = ach.name;
-                document.getElementById('achievementAlert').style.display = 'flex';
-            }
-        }
-
         // ==========================================
         // ДОСТИЖЕНИЯ И ВИТРИНА
         // ==========================================

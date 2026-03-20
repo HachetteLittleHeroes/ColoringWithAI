@@ -2101,6 +2101,7 @@
     </style>
 
     <script>
+    let activeTaskId = null;
         // ==========================================
         // ТЕСТИРОВАНИЕ В БРАУЗЕРЕ
         // ==========================================
@@ -3909,40 +3910,86 @@ function closeOrganizerView() {
         window.onload = () => {
     try {
         console.log('=== APP START ===');
-        
-        // Загружаем сохраненную тему
+
+        // ✅ ГАРАНТИРУЕМ user
+        let savedUser = localStorage.getItem('user');
+        window.user = savedUser ? JSON.parse(savedUser) : {};
+
+        // ✅ ИНИЦИАЛИЗАЦИЯ ВСЕХ НУЖНЫХ ПОЛЕЙ
+        if (!user.branchProgress) user.branchProgress = {};
+        if (!user.branchCompleted) user.branchCompleted = {};
+        if (!user.timeTasksProgress) user.timeTasksProgress = {};
+        if (!user.theme) user.theme = 'light';
+
+        // ✅ ГАРАНТИРУЕМ activeTaskId
+        window.activeTaskId = null;
+
+        console.log('user after init:', user);
+
+        // =========================
+        // 🎨 ТЕМА
+        // =========================
         const savedTheme = localStorage.getItem('app_theme');
+
         if (savedTheme === 'custom') {
-            if (typeof applyCustomTheme === 'function') applyCustomTheme(true);
+            if (typeof applyCustomTheme === 'function') {
+                applyCustomTheme(true);
+            }
         } else if (savedTheme && savedTheme !== 'light') {
-            if (typeof setTheme === 'function') setTheme(savedTheme);
+            if (typeof setTheme === 'function') {
+                setTheme(savedTheme);
+            }
         } else {
-            if (typeof setTheme === 'function') setTheme(user.theme || 'light');
+            if (typeof setTheme === 'function') {
+                setTheme(user.theme || 'light');
+            }
         }
-        
+
+        // =========================
+        // 📦 ОСНОВНЫЕ ДАННЫЕ
+        // =========================
         if (typeof updateUI === 'function') updateUI();
         if (typeof loadMarkers === 'function') loadMarkers();
         if (typeof renderCart === 'function') renderCart();
         if (typeof loadInventory === 'function') loadInventory();
-        
-        // Рендерим тома с ответами
+
+        // =========================
+        // 📚 ТОМА
+        // =========================
         if (typeof renderVolumes === 'function') renderVolumes();
-        
-        // Рендерим задания
-        if (typeof renderLevelTasks === 'function') renderLevelTasks();
-        if (typeof renderTimeTasks === 'function') renderTimeTasks();
-        
-        // Рендерим бренды
+
+        // =========================
+        // ✅ ЗАДАНИЯ (ВАЖНО)
+        // =========================
+        if (typeof renderLevelTasks === 'function') {
+            renderLevelTasks();
+        } else {
+            console.error('renderLevelTasks NOT FOUND');
+        }
+
+        if (typeof renderTimeTasks === 'function') {
+            renderTimeTasks();
+        } else {
+            console.error('renderTimeTasks NOT FOUND');
+        }
+
+        // =========================
+        // 🎨 БРЕНДЫ
+        // =========================
         if (typeof renderBrands === 'function') renderBrands();
-        
-        // Восстанавливаем состояние корзины для книг
-        if (typeof cart !== 'undefined') {
+
+        // =========================
+        // 🛒 ВОССТАНОВЛЕНИЕ КОРЗИНЫ
+        // =========================
+        if (typeof cart !== 'undefined' && cart !== null) {
             for (let key in cart) {
                 if (!key.startsWith('marker_')) {
                     const countSpan = document.getElementById(`book-count-${key}`);
                     const controlsDiv = document.getElementById(`book-controls-${key}`);
                     const addBtn = document.getElementById(`book-add-${key}`);
+
                     if (countSpan) countSpan.innerText = cart[key];
+
                     if (controlsDiv && addBtn && cart[key] > 0) {
                         controlsDiv.style.display = 'flex';
                         addBtn.style.display = 'none';
@@ -3950,23 +3997,37 @@ function closeOrganizerView() {
                 }
             }
         }
-        
+
+        // =========================
+        // 🤖 АДМИН БЛОК
+        // =========================
         if (user.isAdmin) {
             const adminBlock = document.getElementById('adminAiBlock');
-            if (adminBlock) adminBlock.style.display = 'block';
+            if (adminBlock) {
+                adminBlock.style.display = 'block';
+            }
         }
-        
+
+        // =========================
+        // 🪟 ЗАКРЫТИЕ МОДАЛОК
+        // =========================
         window.onclick = function(event) {
             document.querySelectorAll('.modal-overlay').forEach(modal => {
-                if (event.target === modal) modal.style.display = "none";
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
             });
         };
-        
+
         console.log('=== APP READY ===');
+
     } catch (error) {
         console.error('=== APP ERROR ===', error);
+
         if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.showAlert('Ошибка загрузки: ' + error.message);
+        } else {
+            alert('Ошибка загрузки: ' + error.message);
         }
     }
 };
@@ -4053,82 +4114,92 @@ function buyItem(itemId) {
 // ОТОБРАЖЕНИЕ ЗАДАНИЙ НА СТАТУС
 // ==========================================
 function renderLevelTasks() {
+    console.log('renderLevelTasks CALLED');
+
     const container = document.getElementById('levelTasksList');
     if (!container) {
         console.error('levelTasksList not found');
         return;
     }
     container.innerHTML = '';
-    
-    // Инициализируем branchCompleted если отсутствует
+
+    // ✅ ГАРАНТИЯ что user существует
+    if (!user) user = {};
+
+    // ✅ ИНИЦИАЛИЗАЦИЯ
     if (!user.branchCompleted) {
         user.branchCompleted = {
             trainer: false, alcohol: false, shock: false, lion: false,
             dragons: false, bear: false, fauna: false, sea: false, queen: false
         };
     }
-    
+
+    if (!user.branchProgress) {
+        user.branchProgress = {};
+    }
+
+    if (!taskBranches) {
+        console.error('taskBranches not defined');
+        return;
+    }
+
+    console.log('taskBranches:', taskBranches);
+    console.log('user:', user);
+
     // Проходим по всем веткам заданий
     for (let branchKey in taskBranches) {
         const branch = taskBranches[branchKey];
+
+        if (!branch.levels) continue;
+
         const progress = user.branchProgress[branchKey] || [0, 0, 0, 0, 0];
-        const isBranchCompleted = user.branchCompleted[branchKey] || false;
-        
-        // Создаем карточку ветки
+
         const branchDiv = document.createElement('div');
         branchDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px; border-left: 4px solid var(--accent);';
         branchDiv.innerHTML = `
             <div style="font-size: 16px; font-weight: bold; color: var(--accent); margin-bottom: 5px;">${branch.name}</div>
             <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 12px;">${branch.desc}</div>
-            ${branch.reward ? `<div style="font-size: 11px; color: var(--status-green); margin-bottom: 12px;">🎁 Награда за завершение: ${branch.reward}</div>` : ''}
         `;
-        
-        // Находим последний выполненный уровень
-        let lastCompletedIndex = -1;
+
+        // 🔥 УБРАЛИ ЛОМАЮЩИЙ ФИЛЬТР
         for (let i = 0; i < branch.levels.length; i++) {
-            if ((progress[i] || 0) >= branch.levels[i].maxProgress) {
-                lastCompletedIndex = i;
-            } else {
-                break;
-            }
-        }
-        
-        // Показываем уровни
-        for (let i = 0; i < branch.levels.length; i++) {
+            const level = branch.levels[i];
+            if (!level) continue;
+
             const currentProgress = progress[i] || 0;
-            const isCompleted = currentProgress >= branch.levels[i].maxProgress;
-            const isActive = !isCompleted && (i === 0 || (progress[i-1] || 0) >= branch.levels[i-1].maxProgress);
-            const isLastCompleted = i === lastCompletedIndex && isCompleted;
-            
-            // Показываем только активный и последний выполненный уровни
-            if (!isActive && !isLastCompleted && i !== lastCompletedIndex + 1) continue;
-            
-            const percent = Math.min(100, (currentProgress / branch.levels[i].maxProgress) * 100);
-            
+            const max = level.maxProgress || 1;
+            const isCompleted = currentProgress >= max;
+            const percent = Math.min(100, (currentProgress / max) * 100);
+
             const taskDiv = document.createElement('div');
-            taskDiv.className = `level-task ${isCompleted ? 'completed' : ''}`;
             taskDiv.style.cssText = 'background: var(--card-bg); padding: 16px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border-color);';
+
             taskDiv.innerHTML = `
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="font-weight: bold;">Уровень ${i + 1}: ${branch.levels[i].title}</span>
-                    ${isCompleted ? '<span style="color: var(--status-green);">✓ Выполнено</span>' : `<span style="color: var(--accent);">${currentProgress}/${branch.levels[i].maxProgress}</span>`}
+                    <span style="font-weight: bold;">Уровень ${i + 1}: ${level.title}</span>
+                    ${isCompleted 
+                        ? '<span style="color: var(--status-green);">✓ Выполнено</span>' 
+                        : `<span style="color: var(--accent);">${currentProgress}/${max}</span>`}
                 </div>
-                <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 8px;">${branch.levels[i].desc}</p>
+
+                <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 8px;">${level.desc}</p>
+
                 <div style="background: var(--border-color); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 10px;">
                     <div style="width: ${percent}%; background: var(--accent-gradient); height: 100%;"></div>
                 </div>
-                ${isActive ? `
-                    <button class="photo-upload-btn" onclick="openTaskUpload('${branchKey}_${i}')" style="width: 100%; background: var(--accent); color: white; cursor: pointer;">
-                        <i class="fas fa-camera"></i> Отправить на проверку
-                    </button>
-                ` : ''}
+
+                <button onclick="openTaskUpload('${branchKey}_${i}')" 
+                    style="width: 100%; background: var(--accent); color: white; padding:10px; border-radius:8px; cursor:pointer;">
+                    📷 Отправить
+                </button>
             `;
+
             branchDiv.appendChild(taskDiv);
         }
+
         container.appendChild(branchDiv);
     }
 }
-
 // ==========================================
 // ОТОБРАЖЕНИЕ ВРЕМЕННЫХ ЗАДАНИЙ
 // ==========================================
@@ -4183,7 +4254,11 @@ function toggleTasks() {
         if (arrow) arrow.style.transform = 'rotate(0deg)';
     } else {
         content.style.display = 'block';
-        if (arrow) arrow.style.transform = 'rotate(180deg)';
+if (arrow) arrow.style.transform = 'rotate(180deg)';
+
+// ✅ ВСЕГДА вызываем
+renderLevelTasks();
+renderTimeTasks();
         
         // Рендерим задания при открытии
         if (typeof renderLevelTasks === 'function') {

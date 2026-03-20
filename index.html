@@ -2000,6 +2000,113 @@
 .gold-book {
     color: #FFD700;
     font-size: 14px;
+}/* Стили для томов и ответов */
+.volumes-section {
+    padding: 0 15px;
+}
+
+.volumes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.volume-card {
+    background: var(--bg-header);
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.volume-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    cursor: pointer;
+    background: var(--bg-header);
+    transition: background 0.2s;
+}
+
+.volume-header:active {
+    background: rgba(0,0,0,0.05);
+}
+
+.volume-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text);
+}
+
+.volume-title i {
+    color: var(--accent);
+    font-size: 18px;
+}
+
+.volume-arrow {
+    color: var(--text-gray);
+    transition: transform 0.3s;
+}
+
+.volume-pages {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg);
+}
+
+.pages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 80px));
+    gap: 12px;
+}
+
+.page-item {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 10px 5px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+}
+
+.page-item:active {
+    transform: scale(0.95);
+    background: var(--accent);
+}
+
+.page-item:active .page-number {
+    color: white;
+}
+
+.page-number {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--accent);
+    margin-bottom: 6px;
+}
+
+.page-preview i {
+    font-size: 20px;
+    color: var(--text-gray);
+}
+
+/* Модальное окно с ответом */
+.answer-modal {
+    max-width: 400px;
+    text-align: center;
+}
+
+.answer-image {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 16px;
+    margin: 15px 0;
+    background: var(--bg);
 }
     </style>
 
@@ -2152,7 +2259,145 @@
             organizers: [],
             userMarkers: {}
         };
+// Данные о томах с ответами
+const volumesData = [
+    { id: 't1', name: 'Том 1', pages: 26 },
+    { id: 't2', name: 'Том 2', pages: 26 },
+    { id: 't3', name: 'Том 3', pages: 26 },
+    { id: 't4', name: 'Том 4', pages: 26 },
+    { id: 't5', name: 'Том 5', pages: 26 },
+    { id: 't6', name: 'Том 6', pages: 26 },
+    { id: 't7', name: 'Том 7', pages: 26 },
+    { id: 't8', name: 'Том 8', pages: 26 },
+    { id: 't9', name: 'Том 9', pages: 26 },
+    { id: 't10', name: 'Том 10', pages: 26 },
+    { id: 't11', name: 'Том 11', pages: 26 },
+    { id: 't12', name: 'Том 12', pages: 26 },
+    { id: 't13', name: 'Том 13', pages: 26 },
+    { id: 't14', name: 'Том 14', pages: 26 },
+    { id: 't15', name: 'Том 15', pages: 26 },
+    { id: 't16', name: 'Том 16', pages: 26 },
+    { id: 't17', name: 'Том 17', pages: 26 },
+    { id: 't18', name: 'Том 18', pages: 26 },
+    { id: 't19', name: 'Том 19', pages: 26 },
+    { id: 't20', name: 'Том 20', pages: 26 },
+    { id: 't21', name: 'Том 21', pages: 26 },
+    { id: 't22', name: 'Том 22', pages: 26 },
+    { id: 't23', name: 'Том 23', pages: 26 },
+    { id: 't24', name: 'Том 24', pages: 26 },
+    { id: 't25', name: 'Том 25', pages: 26 },
+    { id: 't26', name: 'Том 26', pages: 26 },
+    { id: 't27', name: 'Том 27', pages: 26 },
+    { id: 't28', name: 'Том 28', pages: 26 },
+    { id: 't29', name: 'Том 29', pages: 26 },
+    { id: 't30', name: 'Том 30', pages: 26 },
+    { id: 't31', name: 'Том 31', pages: 26 },
+    { id: 't32', name: 'Том 32', pages: 26 },
+    { id: 't33', name: 'Том 33', pages: 26 },
+    { id: 't34', name: 'Том 34', pages: 26 },
+    { id: 't35', name: 'Том 35', pages: 26 },
+    { id: 't36', name: 'Том 36', pages: 26 },
+    { id: 't37', name: 'Том 37', pages: 26 },
+    { id: 't38', name: 'Том 38', pages: 26 },
+    { id: 't39', name: 'Том 39', pages: 26 },
+    { id: 't40', name: 'Том 40', pages: 26 },
+    { id: 't41', name: 'Том 41', pages: 26 },
+    { id: 't42', name: 'Том 42', pages: 26 },
+    { id: 't43', name: 'Том 43', pages: 26 },
+    { id: 't44', name: 'Том 44', pages: 26 },
+    { id: 't45', name: 'Том 45', pages: 26 },
+    { id: 't46', name: 'Том 46', pages: 26 },
+    { id: 't47', name: 'Том 47', pages: 26 }
+];
 
+// Функция для рендера всех томов
+function renderVolumes() {
+    const container = document.getElementById('volumesContainer');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    volumesData.forEach(volume => {
+        const volumeCard = document.createElement('div');
+        volumeCard.className = 'volume-card';
+        volumeCard.innerHTML = `
+            <div class="volume-header" onclick="toggleVolume('${volume.id}')">
+                <div class="volume-title">
+                    <i class="fas fa-book"></i>
+                    <span>${volume.name}</span>
+                </div>
+                <i class="fas fa-chevron-down volume-arrow" id="arrow-${volume.id}"></i>
+            </div>
+            <div class="volume-pages" id="pages-${volume.id}" style="display: none;">
+                <div class="pages-grid" id="grid-${volume.id}"></div>
+            </div>
+        `;
+        container.appendChild(volumeCard);
+        
+        // Создаем сетку страниц
+        const pagesGrid = document.getElementById(`grid-${volume.id}`);
+        if (pagesGrid) {
+            for (let i = 1; i <= volume.pages; i++) {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page-item';
+                pageDiv.onclick = () => openAnswerImage(volume.id, i);
+                pageDiv.innerHTML = `
+                    <div class="page-number">${i}</div>
+                    <div class="page-preview">
+                        <i class="fas fa-image"></i>
+                    </div>
+                `;
+                pagesGrid.appendChild(pageDiv);
+            }
+        }
+    });
+}
+
+// Функция для раскрытия/скрытия тома
+function toggleVolume(volumeId) {
+    const pagesDiv = document.getElementById(`pages-${volumeId}`);
+    const arrow = document.getElementById(`arrow-${volumeId}`);
+    
+    if (pagesDiv.style.display === 'none' || pagesDiv.style.display === '') {
+        pagesDiv.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+    } else {
+        pagesDiv.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Функция для открытия изображения ответа
+function openAnswerImage(volumeId, pageNumber) {
+    const imageUrl = `assets/otveti/${volumeId}/${pageNumber}.png`;
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content answer-modal">
+            <h3>${volumeId.toUpperCase()} - Страница ${pageNumber}</h3>
+            <img src="${imageUrl}" class="answer-image" onerror="this.src='https://via.placeholder.com/300x400?text=Изображение+не+найдено'">
+            <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// Поиск по томам и страницам
+function searchVolumes() {
+    const query = document.getElementById('volumeSearch').value.toLowerCase();
+    const volumeCards = document.querySelectorAll('.volume-card');
+    
+    volumeCards.forEach(card => {
+        const title = card.querySelector('.volume-title span').innerText.toLowerCase();
+        if (title.includes(query)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
         // ==========================================
         // ПОЛЬЗОВАТЕЛЬ (ИСПРАВЛЕНО - имя "Без имени" и добавлен branchCompleted)
         // ==========================================
@@ -3779,6 +4024,9 @@ function closeOrganizerView() {
         renderCart();
         loadInventory();
         
+        // Рендерим тома с ответами
+        renderVolumes();
+        
         // Рендерим задания
         renderLevelTasks();
         renderTimeTasks();
@@ -4106,12 +4354,14 @@ function buyItem(itemId) {
 <!-- ========== ОТВЕТЫ И ТОМА ========== -->
 <div id="answers" class="page">
     <div class="header">Ответы и Тома</div>
-    <div class="search-container"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="bookSearch" placeholder="Поиск по названию тома..." oninput="searchBooks()"></div></div>
-    <div class="books-section">
-        <div class="books-grid">
-            <div class="book-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png"><h4>Том 1</h4><div class="book-price">1500 ₽</div><div id="book-controls-tome1" class="cart-controls" style="display: none;"><button class="minus" onclick="updateBookCart('tome1', -1)">−</button><span id="book-count-tome1">0</span><button onclick="updateBookCart('tome1', 1)">+</button></div><button id="book-add-tome1" class="add-to-cart-btn" onclick="updateBookCart('tome1', 1)">В корзину</button></div>
-            <div class="book-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png"><h4>Том 2</h4><div class="book-price">1500 ₽</div><div id="book-controls-tome2" class="cart-controls" style="display: none;"><button class="minus" onclick="updateBookCart('tome2', -1)">−</button><span id="book-count-tome2">0</span><button onclick="updateBookCart('tome2', 1)">+</button></div><button id="book-add-tome2" class="add-to-cart-btn" onclick="updateBookCart('tome2', 1)">В корзину</button></div>
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="volumeSearch" placeholder="Поиск по названию тома..." oninput="searchVolumes()">
         </div>
+    </div>
+    <div class="volumes-section">
+        <div id="volumesContainer" class="volumes-container"></div>
     </div>
 </div>
 

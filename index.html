@@ -393,6 +393,7 @@
             border-radius: 20px;
             text-align: center;
             border: 1px solid var(--border-color);
+            cursor: pointer;
         }
 
         .reward-img {
@@ -549,12 +550,6 @@
             border-radius: 24px;
             border: 2px solid var(--accent);
             cursor: pointer;
-        }
-
-        .showcase-container h3 {
-            margin: 0 0 5px 0;
-            font-size: 18px;
-            color: var(--text);
         }
 
         .showcase-grid {
@@ -969,8 +964,7 @@
             text-align: center;
             color: var(--text);
         }
-
-        /* ==========================================
+/* ==========================================
            14. ОТВЕТЫ И ТОМА
            ========================================== */
         .books-section {
@@ -1245,13 +1239,6 @@
             color: var(--accent);
             font-weight: 600;
             margin: 0;
-        }
-
-        .tasks-header {
-            border-bottom: none !important;
-        }
-        .tasks-content {
-            border-top: none !important;
         }
 
         .admin-panel {
@@ -1557,7 +1544,7 @@
         /* ГЛОБАЛЬНЫЙ ФИКС КЛИКОВ */
         button, 
         .nav-btn, 
-        .marker-controls, 
+        .marker-controls button,
         .theme-option, 
         .photo-upload-btn, 
         .upload-area, 
@@ -1565,10 +1552,13 @@
         .reward-card,
         .avatar-wrapper,
         .status-badge,
-        input, 
-        select {
-            position: relative !important;
-            z-index: 99 !important;
+        .balance-btn,
+        .modal-action-btn,
+        .modal-close-btn,
+        .checkout-btn,
+        .add-to-cart-btn,
+        .inventory-tab-btn,
+        .apply-theme-btn {
             pointer-events: auto !important;
             cursor: pointer !important;
         }
@@ -1593,7 +1583,7 @@
             showAlert: (msg) => alert(msg),
             showConfirm: (msg, callback) => callback(confirm(msg)),
             sendData: (data) => console.log('Send data:', data),
-            initDataUnsafe: { user: { id: 496779756, first_name: 'Тестер' } }
+            initDataUnsafe: { user: { id: 496779756, first_name: 'Без имени' } }
         };
 
         if (isTelegram) {
@@ -1664,58 +1654,55 @@
             { level: 5, title: 'Легенда раскрасок', description: 'Нужно подтвердить 20 раскрашенных страниц', maxProgress: 20, xp: 300 }
         ];
 
-        // ТОЛЬКО 1 ВРЕМЕННОЕ ЗАДАНИЕ
         const timeTasks = [
-    { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 }
-];
+            { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 }
+        ];
 
-        // Статусы, которые можно получить за прохождение всей ветки заданий
-const statusRewards = {
-    alcohol_markers: "Мастер спиртовых маркеров",
-    pencils: "Мастер карандашей"
-};
+        const statusRewards = {
+            alcohol_markers: "Мастер спиртовых маркеров",
+            pencils: "Мастер карандашей"
+        };
 
-const taskBranches = {
-    alcohol_markers: {
-        name: "Спиртовые маркеры",
-        levels: [
-            { title: "Новичок спирта", maxProgress: 1, desc: "Раскрась 1 работу" },
-            { title: "Любитель градиентов", maxProgress: 3, desc: "Раскрась 3 работы" },
-            { title: "Мастер блендинга", maxProgress: 5, desc: "Раскрась 5 работ" },
-            { title: "Профи заливки", maxProgress: 10, desc: "Раскрась 10 работ" },
-            { title: "Амбассадор Спирта", maxProgress: 20, desc: "Раскрась 20 работ" }
-        ]
-    },
-    pencils: {
-        name: "Цветные карандаши",
-        levels: [
-            { title: "Штриховальщик", maxProgress: 1, desc: "1 работа карандашами" },
-            { title: "Штриховальщик 2", maxProgress: 3, desc: "Раскрась 3 работы" },
-            { title: "Штриховальщик 3", maxProgress: 5, desc: "Раскрась 5 работ" },
-            { title: "Штриховальщик 4", maxProgress: 10, desc: "Раскрась 10 работ" },
-            { title: "Штриховальщик 5", maxProgress: 20, desc: "Раскрась 20 работ" }
-        ]
-    }
-};
+        const taskBranches = {
+            alcohol_markers: {
+                name: "Спиртовые маркеры",
+                levels: [
+                    { title: "Новичок спирта", maxProgress: 1, desc: "Раскрась 1 работу" },
+                    { title: "Любитель градиентов", maxProgress: 3, desc: "Раскрась 3 работы" },
+                    { title: "Мастер блендинга", maxProgress: 5, desc: "Раскрась 5 работ" },
+                    { title: "Профи заливки", maxProgress: 10, desc: "Раскрась 10 работ" },
+                    { title: "Амбассадор Спирта", maxProgress: 20, desc: "Раскрась 20 работ" }
+                ]
+            },
+            pencils: {
+                name: "Цветные карандаши",
+                levels: [
+                    { title: "Штриховальщик", maxProgress: 1, desc: "1 работа карандашами" },
+                    { title: "Штриховальщик 2", maxProgress: 3, desc: "Раскрась 3 работы" },
+                    { title: "Штриховальщик 3", maxProgress: 5, desc: "Раскрась 5 работ" },
+                    { title: "Штриховальщик 4", maxProgress: 10, desc: "Раскрась 10 работ" },
+                    { title: "Штриховальщик 5", maxProgress: 20, desc: "Раскрась 20 работ" }
+                ]
+            }
+        };
 
-const products = {
-    'tome1': { 
-        id: 'tome1', 
-        name: 'Том 1', 
-        price: 1500, 
-        img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', 
-        type: 'book' 
-    },
-    'tome2': { 
-        id: 'tome2', 
-        name: 'Том 2', 
-        price: 1500, 
-        img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', 
-        type: 'book' 
-    }
-};
+        const products = {
+            'tome1': { 
+                id: 'tome1', 
+                name: 'Том 1', 
+                price: 1500, 
+                img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', 
+                type: 'book' 
+            },
+            'tome2': { 
+                id: 'tome2', 
+                name: 'Том 2', 
+                price: 1500, 
+                img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', 
+                type: 'book' 
+            }
+        };
 
-        // Бренды для инвентаря
         const brands = [
             { name: 'GuangNa', total: 408, trained: 0 },
             { name: 'Languo', total: 288, trained: 0 },
@@ -1730,13 +1717,14 @@ const products = {
         let activeTaskId = null;
         let tempTaskPhotos = [];
 
-        // Инвентарь
         let inventory = {
             organizers: [],
             userMarkers: {}
         };
 
-        // Пользователь
+        // ==========================================
+        // ПОЛЬЗОВАТЕЛЬ (ИСПРАВЛЕНО - имя "Без имени" и добавлен branchCompleted)
+        // ==========================================
         const defaultUser = {
             name: tg.initDataUnsafe?.user?.first_name || 'Без имени',
             balance: 0,
@@ -1754,9 +1742,8 @@ const products = {
             timeTasksReset: Date.now(),
             aiUsageCount: 0,
             theme: localStorage.getItem('app_theme') || 'light',
-    customThemeBg: localStorage.getItem('custom_theme_bg') || 'light',
-    customThemeAccent: localStorage.getItem('custom_theme_accent') || '#ff9500'
-};
+            customThemeBg: localStorage.getItem('custom_theme_bg') || 'light',
+            customThemeAccent: localStorage.getItem('custom_theme_accent') || '#ff9500'
         };
 
         let savedLocalUser = JSON.parse(localStorage.getItem('coloring_user')) || {};
@@ -1764,6 +1751,7 @@ const products = {
         if (!Array.isArray(user.levelTasksProgress)) user.levelTasksProgress = [...defaultUser.levelTasksProgress];
         if (!user.timeTasksProgress) user.timeTasksProgress = {};
         if (!user.branchProgress) user.branchProgress = { alcohol_markers: [0, 0, 0, 0, 0], pencils: [0, 0, 0, 0, 0] };
+        if (!user.branchCompleted) user.branchCompleted = { alcohol_markers: false, pencils: false };
         user.isAdmin = (userId === ADMIN_ID);
 
         let cart = JSON.parse(localStorage.getItem('coloring_cart')) || {};
@@ -1783,29 +1771,28 @@ const products = {
         `;
 
         function setTheme(themeName) {
-    const oldStyle = document.getElementById('custom-theme-style');
-    if (oldStyle) oldStyle.remove();
+            const oldStyle = document.getElementById('custom-theme-style');
+            if (oldStyle) oldStyle.remove();
 
-    if (themeName === 'custom') {
-        applyCustomTheme(true);
-    } else {
-        document.documentElement.setAttribute('data-theme', themeName);
-    }
+            if (themeName === 'custom') {
+                applyCustomTheme(true);
+            } else {
+                document.documentElement.setAttribute('data-theme', themeName);
+            }
 
-    user.theme = themeName;
-    localStorage.setItem('app_theme', themeName);
-    
-    // Сохраняем кастомные настройки
-    if (themeName === 'custom') {
-        localStorage.setItem('custom_theme_bg', user.customThemeBg || 'light');
-        localStorage.setItem('custom_theme_accent', user.customThemeAccent || '#ff9500');
-    }
-    
-    document.querySelectorAll('.theme-option').forEach(el => {
-        el.classList.remove('active');
-        if (el.dataset.theme === themeName) el.classList.add('active');
-    });
-}
+            user.theme = themeName;
+            localStorage.setItem('app_theme', themeName);
+            
+            if (themeName === 'custom') {
+                localStorage.setItem('custom_theme_bg', user.customThemeBg || 'light');
+                localStorage.setItem('custom_theme_accent', user.customThemeAccent || '#ff9500');
+            }
+            
+            document.querySelectorAll('.theme-option').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.theme === themeName) el.classList.add('active');
+            });
+        }
 
         function applyCustomTheme(loadFromCache = false) {
             let bgMode, accentColor;
@@ -1874,7 +1861,9 @@ const products = {
             if (progressBar) progressBar.style.width = '0%';
             if (progressText) progressText.innerText = '0 / 5';
         }
+        ЧАСТЬ 3 (продолжение JavaScript - функции маркеров, корзины, заданий):
 
+```javascript
         // ==========================================
         // МАРКЕРЫ
         // ==========================================
@@ -1922,10 +1911,10 @@ const products = {
         }
 
         function getStockText(stock) {
-    if (stock === 0) return 'Нет в наличии';
-    if (stock === 1) return '1 шт.';
-    return `${stock} шт.`;
-}
+            if (stock === 0) return 'Нет в наличии';
+            if (stock === 1) return '1 шт.';
+            return `${stock} шт.`;
+        }
 
         function renderMarkers() {
             const container = document.getElementById('markersList');
@@ -1961,42 +1950,40 @@ const products = {
             });
         }
 
-       function updateMarkerCart(num, delta) {
-    const cartKey = `marker_${num}`;
-    const currentCount = cart[cartKey] || 0;
-    const newCount = currentCount + delta;
-    const marker = markersDB.find(m => m.num === num);
-    if (!marker) return;
-    
-    if (newCount > marker.stock) { 
-        tg.showAlert(`Максимум доступно: ${marker.stock} шт.`); 
-        return; 
-    }
-    if (newCount < 0) return;
-    
-    if (newCount === 0) {
-        delete cart[cartKey];
-    } else {
-        cart[cartKey] = newCount;
-    }
-    
-    // Обновляем отображение количества
-    const countSpan = document.getElementById(`marker-count-${num}`);
-    if (countSpan) countSpan.innerText = newCount;
-    
-    // Обновляем состояние кнопок (+ и -)
-    const markerItem = document.querySelector(`.marker-item[data-num="${num}"]`);
-    if (markerItem) {
-        const minusBtn = markerItem.querySelector('.minus');
-        const plusBtn = markerItem.querySelector('button:last-child');
-        if (minusBtn) minusBtn.disabled = (newCount === 0);
-        if (plusBtn) plusBtn.disabled = (newCount >= marker.stock);
-    }
-    
-    saveData();
-    renderCart();
-    updateCartBadge();
-}
+        function updateMarkerCart(num, delta) {
+            const cartKey = `marker_${num}`;
+            const currentCount = cart[cartKey] || 0;
+            const newCount = currentCount + delta;
+            const marker = markersDB.find(m => m.num === num);
+            if (!marker) return;
+            
+            if (newCount > marker.stock) { 
+                tg.showAlert(`Максимум доступно: ${marker.stock} шт.`); 
+                return; 
+            }
+            if (newCount < 0) return;
+            
+            if (newCount === 0) {
+                delete cart[cartKey];
+            } else {
+                cart[cartKey] = newCount;
+            }
+            
+            const countSpan = document.getElementById(`marker-count-${num}`);
+            if (countSpan) countSpan.innerText = newCount;
+            
+            const markerItem = document.querySelector(`.marker-item[data-num="${num}"]`);
+            if (markerItem) {
+                const minusBtn = markerItem.querySelector('.minus');
+                const plusBtn = markerItem.querySelector('button:last-child');
+                if (minusBtn) minusBtn.disabled = (newCount === 0);
+                if (plusBtn) plusBtn.disabled = (newCount >= marker.stock);
+            }
+            
+            saveData();
+            renderCart();
+            updateCartBadge();
+        }
 
         function searchMarkers() {
             const query = document.getElementById('markerSearch').value.toLowerCase();
@@ -2148,70 +2135,63 @@ const products = {
         }
 
         function renderLevelTasks() {
-    const container = document.getElementById('levelTasksList');
-    if (!container) return;
-    container.innerHTML = '';
-    
-    // Инициализируем branchCompleted если отсутствует
-    if (!user.branchCompleted) {
-        user.branchCompleted = { alcohol_markers: false, pencils: false };
-    }
-    
-    for (let branchKey in taskBranches) {
-        const branch = taskBranches[branchKey];
-        const progress = user.branchProgress[branchKey] || [0, 0, 0, 0, 0];
-        const isBranchCompleted = user.branchCompleted[branchKey] || false;
-        
-        const branchDiv = document.createElement('div');
-        branchDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px;';
-        branchDiv.innerHTML = `<div style="font-size:16px; font-weight:bold; color:var(--accent); margin-bottom:12px;">${branch.name}</div>`;
-        
-        let activeShown = false;
-        let lastCompletedIndex = -1;
-        
-        // Находим последний выполненный уровень
-        for (let i = 0; i < branch.levels.length; i++) {
-            if ((progress[i] || 0) >= branch.levels[i].maxProgress) {
-                lastCompletedIndex = i;
-            } else {
-                break;
+            const container = document.getElementById('levelTasksList');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            if (!user.branchCompleted) {
+                user.branchCompleted = { alcohol_markers: false, pencils: false };
+            }
+            
+            for (let branchKey in taskBranches) {
+                const branch = taskBranches[branchKey];
+                const progress = user.branchProgress[branchKey] || [0, 0, 0, 0, 0];
+                
+                const branchDiv = document.createElement('div');
+                branchDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px;';
+                branchDiv.innerHTML = `<div style="font-size:16px; font-weight:bold; color:var(--accent); margin-bottom:12px;">${branch.name}</div>`;
+                
+                let lastCompletedIndex = -1;
+                for (let i = 0; i < branch.levels.length; i++) {
+                    if ((progress[i] || 0) >= branch.levels[i].maxProgress) {
+                        lastCompletedIndex = i;
+                    } else {
+                        break;
+                    }
+                }
+                
+                for (let i = 0; i < branch.levels.length; i++) {
+                    const currentProgress = progress[i] || 0;
+                    const isCompleted = currentProgress >= branch.levels[i].maxProgress;
+                    const isActive = !isCompleted && (i === 0 || (progress[i-1] || 0) >= branch.levels[i-1].maxProgress);
+                    const isLastCompleted = i === lastCompletedIndex && isCompleted;
+                    
+                    if (!isActive && !isLastCompleted && i !== lastCompletedIndex + 1) continue;
+                    
+                    const percent = Math.min(100, (currentProgress / branch.levels[i].maxProgress) * 100);
+                    
+                    const taskDiv = document.createElement('div');
+                    taskDiv.className = `level-task lvl-${i + 1} ${isCompleted ? 'completed' : ''}`;
+                    taskDiv.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <span style="font-weight:bold;">Уровень ${i + 1}: ${branch.levels[i].title}</span>
+                            ${isCompleted ? '<span style="color:var(--status-green);">✓ Выполнено</span>' : ''}
+                        </div>
+                        <p style="font-size:12px; color:var(--text-gray); margin-bottom:8px;">${branch.levels[i].desc}</p>
+                        <div style="background:var(--border-color); height:8px; border-radius:4px; overflow:hidden; margin-bottom:10px;">
+                            <div style="width:${percent}%; background:var(--accent-gradient); height:100%;"></div>
+                        </div>
+                        ${isActive ? `
+                            <button class="photo-upload-btn" onclick="openTaskUpload('${branchKey}_${i}')" style="width:100%; background:var(--accent); color:white; cursor:pointer;">
+                                <i class="fas fa-camera"></i> Отправить на проверку
+                            </button>
+                        ` : ''}
+                    `;
+                    branchDiv.appendChild(taskDiv);
+                }
+                container.appendChild(branchDiv);
             }
         }
-        
-        // Показываем только последний выполненный и следующий активный
-        for (let i = 0; i < branch.levels.length; i++) {
-            const currentProgress = progress[i] || 0;
-            const isCompleted = currentProgress >= branch.levels[i].maxProgress;
-            const isActive = !isCompleted && (i === 0 || (progress[i-1] || 0) >= branch.levels[i-1].maxProgress);
-            const isLastCompleted = i === lastCompletedIndex && isCompleted;
-            
-            // Показываем только активный или последний выполненный
-            if (!isActive && !isLastCompleted && i !== lastCompletedIndex + 1) continue;
-            
-            const percent = Math.min(100, (currentProgress / branch.levels[i].maxProgress) * 100);
-            
-            const taskDiv = document.createElement('div');
-            taskDiv.className = `level-task lvl-${i + 1} ${isCompleted ? 'completed' : ''}`;
-            taskDiv.innerHTML = `
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <span style="font-weight:bold;">Уровень ${i + 1}: ${branch.levels[i].title}</span>
-                    ${isCompleted ? '<span style="color:var(--status-green);">✓ Выполнено</span>' : ''}
-                </div>
-                <p style="font-size:12px; color:var(--text-gray); margin-bottom:8px;">${branch.levels[i].desc}</p>
-                <div style="background:var(--border-color); height:8px; border-radius:4px; overflow:hidden; margin-bottom:10px;">
-                    <div style="width:${percent}%; background:var(--accent-gradient); height:100%;"></div>
-                </div>
-                ${isActive ? `
-                    <button class="photo-upload-btn" onclick="openTaskUpload('${branchKey}_${i}')" style="width:100%; background:var(--accent); color:white;">
-                        <i class="fas fa-camera"></i> Отправить на проверку
-                    </button>
-                ` : ''}
-            `;
-            branchDiv.appendChild(taskDiv);
-        }
-        container.appendChild(branchDiv);
-    }
-}
 
         function renderTimeTasks() {
             const container = document.getElementById('timeTasksList');
@@ -2232,7 +2212,7 @@ const products = {
                     </div>
                     <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px;">${task.title}</div>
                     <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 12px;">${task.description}</p>
-                    <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')" style="width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold;">
+                    <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')" style="width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor:pointer;">
                         <i class="fas fa-camera"></i> Отправить фото
                     </button>
                 `;
@@ -2272,78 +2252,71 @@ const products = {
         }
 
         function submitTaskPhoto() {
-    if (tempTaskPhotos.length > 0 && activeTaskId) {
-        // Отправляем уведомление админу (в демо-режиме показываем сообщение)
-        tg.showAlert(`✅ Фото отправлено на проверку админу! Задание: ${activeTaskId}`);
-        
-        // В демо-режиме для тестирования добавляем кнопку одобрения для админа
-        if (user.isAdmin) {
-            tg.showConfirm('Вы админ. Одобрить задание?', (confirm) => {
-                if (confirm) {
-                    approveTaskByAdmin(activeTaskId);
-                }
-            });
-        }
-        
-        closeTaskUploadModal();
-    } else {
-        tg.showAlert('Ошибка: Фото не выбрано');
-    }
-}
-
-// Новая функция для одобрения админом
-function approveTaskByAdmin(taskId) {
-    if (taskId.includes('_')) {
-        const [branchKey, levelIdx] = taskId.split('_');
-        const idx = parseInt(levelIdx);
-        
-        // Инициализируем branchProgress если нужно
-        if (!user.branchProgress[branchKey]) {
-            user.branchProgress[branchKey] = [0, 0, 0, 0, 0];
-        }
-        if (!user.branchCompleted) {
-            user.branchCompleted = { alcohol_markers: false, pencils: false };
-        }
-        
-        const current = user.branchProgress[branchKey][idx] || 0;
-        const maxProgress = taskBranches[branchKey]?.levels[idx]?.maxProgress;
-        
-        if (current < maxProgress) {
-            user.branchProgress[branchKey][idx] = current + 1;
-            
-            // Проверяем завершение уровня
-            if (user.branchProgress[branchKey][idx] >= maxProgress) {
-                tg.showAlert(`✅ Уровень ${idx + 1} в ветке ${taskBranches[branchKey].name} выполнен!`);
+            if (tempTaskPhotos.length > 0 && activeTaskId) {
+                tg.showAlert(`✅ Фото отправлено на проверку админу! Задание: ${activeTaskId}`);
                 
-                // Проверяем завершение всей ветки
-                const allCompleted = user.branchProgress[branchKey].every((p, i) => p >= taskBranches[branchKey].levels[i].maxProgress);
-                if (allCompleted && !user.branchCompleted[branchKey]) {
-                    user.branchCompleted[branchKey] = true;
-                    const statusName = statusRewards[branchKey];
-                    if (statusName && !user.unlockedStatuses.includes(statusName)) {
-                        user.unlockedStatuses.push(statusName);
-                        tg.showAlert(`🎉 Получен новый статус: ${statusName}!`);
+                if (user.isAdmin) {
+                    tg.showConfirm('Вы админ. Одобрить задание?', (confirm) => {
+                        if (confirm) {
+                            approveTaskByAdmin(activeTaskId);
+                        }
+                    });
+                }
+                
+                closeTaskUploadModal();
+            } else {
+                tg.showAlert('Ошибка: Фото не выбрано');
+            }
+        }
+
+        function approveTaskByAdmin(taskId) {
+            if (taskId.includes('_')) {
+                const [branchKey, levelIdx] = taskId.split('_');
+                const idx = parseInt(levelIdx);
+                
+                if (!user.branchProgress[branchKey]) {
+                    user.branchProgress[branchKey] = [0, 0, 0, 0, 0];
+                }
+                if (!user.branchCompleted) {
+                    user.branchCompleted = { alcohol_markers: false, pencils: false };
+                }
+                
+                const current = user.branchProgress[branchKey][idx] || 0;
+                const maxProgress = taskBranches[branchKey]?.levels[idx]?.maxProgress;
+                
+                if (current < maxProgress) {
+                    user.branchProgress[branchKey][idx] = current + 1;
+                    
+                    if (user.branchProgress[branchKey][idx] >= maxProgress) {
+                        tg.showAlert(`✅ Уровень ${idx + 1} в ветке ${taskBranches[branchKey].name} выполнен!`);
+                        
+                        const allCompleted = user.branchProgress[branchKey].every((p, i) => p >= taskBranches[branchKey].levels[i].maxProgress);
+                        if (allCompleted && !user.branchCompleted[branchKey]) {
+                            user.branchCompleted[branchKey] = true;
+                            const statusName = statusRewards[branchKey];
+                            if (statusName && !user.unlockedStatuses.includes(statusName)) {
+                                user.unlockedStatuses.push(statusName);
+                                tg.showAlert(`🎉 Получен новый статус: ${statusName}!`);
+                            }
+                        }
                     }
+                    saveData();
+                    renderLevelTasks();
+                }
+            } else {
+                if (!user.timeTasksProgress[taskId] || user.timeTasksProgress[taskId] !== 'completed') {
+                    user.timeTasksProgress[taskId] = 'completed';
+                    const task = timeTasks.find(t => t.id === taskId);
+                    if (task) {
+                        user.balance += task.reward;
+                        tg.showAlert(`✅ Задание выполнено! +${task.reward} ашетиков`);
+                        saveData();
+                    }
+                    renderTimeTasks();
                 }
             }
-            saveData();
-            renderLevelTasks();
+            updateUI();
         }
-    } else {
-        // Временное задание
-        if (!user.timeTasksProgress[taskId] || user.timeTasksProgress[taskId] !== 'completed') {
-            user.timeTasksProgress[taskId] = 'completed';
-            const task = timeTasks.find(t => t.id === taskId);
-            if (task) {
-                user.balance += task.reward;
-                tg.showAlert(`✅ Задание выполнено! +${task.reward} ашетиков`);
-                saveData();
-            }
-            renderTimeTasks();
-        }
-    }
-    updateUI();
-}
 
         function showAchievementAlert(achId) {
             const ach = achievementsDB[achId];
@@ -2396,60 +2369,64 @@ function approveTaskByAdmin(taskId) {
         }
 
         function renderShowcase() {
-    for (let i = 0; i < 3; i++) {
-        const slot = document.getElementById(`slot-${i}`);
-        if (!slot) continue;
-        const achId = user.showcase[i];
-        slot.innerHTML = '';
-        // Убираем старый onclick и добавляем новый
-        slot.onclick = (function(index) {
-            return function() { openShowcaseSelector(index); };
-        })(i);
-        
-        if (achId && achievementsDB[achId]) {
-            const img = document.createElement('img');
-            img.src = achievementsDB[achId].img;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            slot.appendChild(img);
-            slot.classList.add('filled');
-        } else {
-            slot.innerHTML = '<i class="fas fa-plus"></i>';
-            slot.classList.remove('filled');
+            for (let i = 0; i < 3; i++) {
+                const slot = document.getElementById(`slot-${i}`);
+                if (!slot) continue;
+                const achId = user.showcase[i];
+                slot.innerHTML = '';
+                slot.style.cursor = 'pointer';
+                slot.onclick = (function(index) {
+                    return function() { openShowcaseSelector(index); };
+                })(i);
+                
+                if (achId && achievementsDB[achId]) {
+                    const img = document.createElement('img');
+                    img.src = achievementsDB[achId].img;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    slot.appendChild(img);
+                    slot.classList.add('filled');
+                } else {
+                    slot.innerHTML = '<i class="fas fa-plus"></i>';
+                    slot.classList.remove('filled');
+                }
+            }
         }
-    }
-}
 
-// Добавьте функцию выбора достижения для витрины
-function openShowcaseSelector(slotIndex) {
-    const list = document.getElementById('showcaseAchievementsList');
-    if (!list) return;
-    list.innerHTML = '';
-    
-    user.achievements.forEach(achId => {
-        const ach = achievementsDB[achId];
-        if (ach) {
-            const div = document.createElement('div');
-            div.className = 'achievement-item';
-            div.style.cssText = 'display:flex; align-items:center; gap:10px; padding:10px; cursor:pointer;';
-            div.onclick = () => {
-                user.showcase[slotIndex] = achId;
-                saveData();
-                renderShowcase();
-                document.getElementById('showcaseSelectorModal').style.display = 'none';
-            };
-            div.innerHTML = `<img src="${ach.img}" style="width:40px; height:40px;"><span>${ach.name}</span>`;
-            list.appendChild(div);
+        function openShowcaseSelector(slotIndex) {
+            const list = document.getElementById('showcaseAchievementsList');
+            if (!list) return;
+            list.innerHTML = '';
+            
+            const unlockedAchievements = user.achievements.filter(achId => achievementsDB[achId]);
+            
+            if (unlockedAchievements.length === 0) {
+                list.innerHTML = '<div class="no-results">Нет разблокированных достижений</div>';
+            } else {
+                unlockedAchievements.forEach(achId => {
+                    const ach = achievementsDB[achId];
+                    if (ach) {
+                        const div = document.createElement('div');
+                        div.style.cssText = 'display:flex; align-items:center; gap:10px; padding:10px; cursor:pointer; margin-bottom:8px; border-radius:12px; background:var(--card-bg);';
+                        div.onclick = () => {
+                            user.showcase[slotIndex] = achId;
+                            saveData();
+                            renderShowcase();
+                            document.getElementById('showcaseSelectorModal').style.display = 'none';
+                        };
+                        div.innerHTML = `<img src="${ach.img}" style="width:50px; height:50px; border-radius:12px; object-fit:cover;"><span style="flex:1;">${ach.name}</span>`;
+                        list.appendChild(div);
+                    }
+                });
+            }
+            
+            const modal = document.getElementById('showcaseSelectorModal');
+            if (modal) modal.style.display = 'flex';
         }
-    });
-    
-    if (user.achievements.length === 0) {
-        list.innerHTML = '<div class="no-results">Нет достижений</div>';
-    }
-    document.getElementById('showcaseSelectorModal').style.display = 'flex';
-}
+        ЧАСТЬ 4 (заключительная - оставшиеся функции, инициализация и HTML):
 
+```javascript
         // ==========================================
         // ПРОФИЛЬ
         // ==========================================
@@ -2504,33 +2481,32 @@ function openShowcaseSelector(slotIndex) {
         function closeNameModal() { document.getElementById('nameModal').style.display = 'none'; }
 
         function openStatusInfo() {
-    const list = document.getElementById('availableStatusesList');
-    if (!list) return;
-    list.innerHTML = '';
-    
-    // Показываем только статусы из веток + "Новичок"
-    const allStatuses = ['Новичок', ...Object.values(statusRewards)];
-    
-    allStatuses.forEach(status => {
-        const isUnlocked = user.unlockedStatuses.includes(status);
-        const isActive = user.status === status;
-        
-        const div = document.createElement('div');
-        div.style.cssText = `padding:12px; margin:8px 0; border-radius:12px; background:var(--card-bg); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);`;
-        
-        if (isUnlocked) {
-            div.innerHTML = `
-                <span>${status}</span>
-                ${!isActive ? `<button class="balance-btn" style="padding:6px 12px; width:auto;" onclick="selectStatus('${status}')">Выбрать</button>` : '<span style="color:var(--status-green);">✓ Активен</span>'}
-            `;
-        } else {
-            div.innerHTML = `<span style="opacity:0.6;">${status}</span><span style="color:var(--text-gray);">🔒 Выполните все уровни ветки</span>`;
+            const list = document.getElementById('availableStatusesList');
+            if (!list) return;
+            list.innerHTML = '';
+            
+            const allStatuses = ['Новичок', ...Object.values(statusRewards)];
+            
+            allStatuses.forEach(status => {
+                const isUnlocked = user.unlockedStatuses.includes(status);
+                const isActive = user.status === status;
+                
+                const div = document.createElement('div');
+                div.style.cssText = `padding:12px; margin:8px 0; border-radius:12px; background:var(--card-bg); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);`;
+                
+                if (isUnlocked) {
+                    div.innerHTML = `
+                        <span>${status}</span>
+                        ${!isActive ? `<button class="balance-btn" style="padding:6px 12px; width:auto;" onclick="selectStatus('${status}')">Выбрать</button>` : '<span style="color:var(--status-green);">✓ Активен</span>'}
+                    `;
+                } else {
+                    div.innerHTML = `<span style="opacity:0.6;">${status}</span><span style="color:var(--text-gray);">🔒 Выполните все уровни ветки</span>`;
+                }
+                list.appendChild(div);
+            });
+            
+            document.getElementById('statusSelectModal').style.display = 'flex';
         }
-        list.appendChild(div);
-    });
-    
-    document.getElementById('statusSelectModal').style.display = 'flex';
-}
 
         function selectStatus(statusName) { user.status = statusName; saveData(); document.getElementById('statusSelectModal').style.display = 'none'; }
 
@@ -2564,7 +2540,7 @@ function openShowcaseSelector(slotIndex) {
                         <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:var(--card-bg); padding:10px; border-radius:8px;">
                             <div style="width:30px; height:30px; border-radius:5px; background:#FF5733;"></div>
                             <div><div style="font-weight:bold;">GuangNa №101</div>
-                            <button class="photo-upload-btn" style="padding:5px 10px; font-size:11px;" onclick="addToCartFromAI('101')"><i class="fas fa-cart-plus"></i> Добавить в корзину</button></div>
+                            <button class="photo-upload-btn" style="padding:5px 10px; font-size:11px; cursor:pointer;" onclick="addToCartFromAI('101')"><i class="fas fa-cart-plus"></i> Добавить в корзину</button></div>
                         </div>
                     `;
                 }, 1500);
@@ -2649,8 +2625,8 @@ function openShowcaseSelector(slotIndex) {
                     <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                         <h4 style="margin:0;">${org.name} (${org.rows}×${org.cols})</h4>
                         <div>
-                            <button class="photo-upload-btn" style="padding: 6px 12px; margin-right: 8px;" onclick="addMarkersToOrganizer('${org.id}')"><i class="fas fa-plus"></i> Добавить</button>
-                            <button class="photo-upload-btn" onclick="deleteOrganizer('${org.id}')" style="background: var(--status-red); color: white; padding: 6px 12px;">🗑</button>
+                            <button class="photo-upload-btn" style="padding: 6px 12px; margin-right: 8px; cursor:pointer;" onclick="addMarkersToOrganizer('${org.id}')"><i class="fas fa-plus"></i> Добавить</button>
+                            <button class="photo-upload-btn" onclick="deleteOrganizer('${org.id}')" style="background: var(--status-red); color: white; padding: 6px 12px; cursor:pointer;">🗑</button>
                         </div>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(${org.cols}, 1fr); gap: 8px;">
@@ -2692,8 +2668,8 @@ function openShowcaseSelector(slotIndex) {
                 <div class="modal-content">
                     <h3>Ячейка ${String.fromCharCode(65+row)}${col+1}</h3>
                     <div id="cellMarkersList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
-                    <button class="modal-action-btn" onclick="showAddMarkerToCell()">+ Добавить маркер</button>
-                    <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
+                    <button class="modal-action-btn" onclick="showAddMarkerToCell()" style="cursor:pointer;">+ Добавить маркер</button>
+                    <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()" style="cursor:pointer;">Закрыть</button>
                 </div>
             `;
             document.body.appendChild(modal);
@@ -2710,7 +2686,7 @@ function openShowcaseSelector(slotIndex) {
                 div.style.cssText = 'background: var(--bg); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;';
                 div.innerHTML = `
                     <div><strong>${marker.brand}</strong> №${marker.number} ×${marker.count}</div>
-                    <button class="photo-upload-btn" onclick="removeMarkerFromCell(${idx})" style="background: var(--status-red); color: white; padding: 4px 8px;">🗑</button>
+                    <button class="photo-upload-btn" onclick="removeMarkerFromCell(${idx})" style="background: var(--status-red); color: white; padding: 4px 8px; cursor:pointer;">🗑</button>
                 `;
                 container.appendChild(div);
             });
@@ -2799,8 +2775,8 @@ function openShowcaseSelector(slotIndex) {
                         <span style="color: var(--accent); font-weight: bold;">${totalCount}/${brand.total}</span>
                     </div>
                     <div style="display: flex; gap: 8px;">
-                        <button class="photo-upload-btn" onclick="addBrandMarkers('${brand.name}')"><i class="fas fa-plus-circle"></i> Добавить все</button>
-                        <button class="photo-upload-btn" onclick="removeBrandMarkers('${brand.name}')" style="background: var(--status-red); color: white;"><i class="fas fa-trash-alt"></i> Удалить все</button>
+                        <button class="photo-upload-btn" onclick="addBrandMarkers('${brand.name}')" style="cursor:pointer;"><i class="fas fa-plus-circle"></i> Добавить все</button>
+                        <button class="photo-upload-btn" onclick="removeBrandMarkers('${brand.name}')" style="background: var(--status-red); color: white; cursor:pointer;"><i class="fas fa-trash-alt"></i> Удалить все</button>
                     </div>
                 `;
                 container.appendChild(div);
@@ -2978,7 +2954,7 @@ function openShowcaseSelector(slotIndex) {
         </div>
         <div class="profile-info">
             <div class="name-row" onclick="changeNickname()">
-                <h2 id="displayUsername">Тестер</h2>
+                <h2 id="displayUsername">Без имени</h2>
                 <i class="fas fa-pencil-alt" style="color: var(--text-gray); font-size: 14px;"></i>
             </div>
             <button id="currentStatus" class="status-badge" onclick="openStatusInfo()">Новичок</button>
@@ -3031,14 +3007,14 @@ function openShowcaseSelector(slotIndex) {
         </div>
     </div>
 
-    <div class="showcase-container" onclick="openAchievementsGallery()">
+    <div class="showcase-container">
         <h3>Витрина Топ-3</h3>
         <div class="showcase-grid">
             <div class="showcase-slot" id="slot-0"><i class="fas fa-plus"></i></div>
             <div class="showcase-slot" id="slot-1"><i class="fas fa-plus"></i></div>
             <div class="showcase-slot" id="slot-2"><i class="fas fa-plus"></i></div>
         </div>
-        <div class="showcase-info">Нажмите для просмотра всех достижений</div>
+        <div class="showcase-info" onclick="openAchievementsGallery()">Нажмите для просмотра всех достижений</div>
     </div>
 
     <div class="support-section" onclick="openSupport()">
@@ -3151,7 +3127,6 @@ function openShowcaseSelector(slotIndex) {
 <div id="taskUploadModal" class="modal-overlay"><div class="modal-content"><h3>Отправка на проверку</h3><div id="taskPhotoPreviewContainer" class="photo-preview-container"></div><div class="modal-buttons-row"><button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button><button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button></div></div></div>
 <div id="organizerModal" class="modal-overlay"><div class="modal-content"><h3>Создать органайзер</h3><input type="text" id="organizerName" placeholder="Название органайзера"><div class="form-group"><label>Количество столбцов:</label><input type="number" id="organizerCols" value="3" min="1" max="10"></div><div class="form-group"><label>Количество строк:</label><input type="number" id="organizerRows" value="3" min="1" max="10"></div><button class="modal-action-btn" onclick="createOrganizer()">Создать</button><button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button></div></div>
 <div id="addMarkerModal" class="modal-overlay"><div class="modal-content"><h3>Добавить маркер</h3><div class="form-group"><label>Бренд:</label><select id="addMarkerBrand"><option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option><option value="Grasp">Grasp</option><option value="InfiArt">InfiArt</option><option value="Tooli-Art">Tooli-Art</option></select></div><div class="form-group"><label>Номер маркера:</label><input type="text" id="addMarkerNumber" placeholder="101"></div><div class="form-group"><label>Количество:</label><input type="number" id="addMarkerCount" value="1" min="1"></div><button class="modal-action-btn" onclick="confirmAddMarker()">Добавить</button><button class="modal-close-btn" onclick="closeAddMarkerModal()">Отмена</button></div></div>
-<!-- Модалка выбора достижения для витрины -->
 <div id="showcaseSelectorModal" class="modal-overlay">
     <div class="modal-content">
         <h3>Выберите достижение</h3>

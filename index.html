@@ -2520,7 +2520,23 @@
             renderShowcase();
             updateCartBadge();
         }
-
+function updateCartBadge() {
+    let totalItems = 0;
+    if (cart) {
+        for (let key in cart) {
+            totalItems += cart[key];
+        }
+    }
+    const badge = document.getElementById('cartBadge');
+    if (badge) {
+        if (totalItems > 0) {
+            badge.innerText = totalItems;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+}
         function updateStatusProgress() {
             const progressBar = document.querySelector('.task-progress-fill');
             const progressText = document.querySelector('.task-progress-text');
@@ -2744,30 +2760,30 @@
         }
 
         function renderShowcase() {
-            for (let i = 0; i < 3; i++) {
-                const slot = document.getElementById(`slot-${i}`);
-                if (!slot) continue;
-                const achId = user.showcase[i];
-                slot.innerHTML = '';
-                slot.style.cursor = 'pointer';
-                slot.onclick = (function(index) {
-                    return function() { openShowcaseSelector(index); };
-                })(i);
-                
-                if (achId && achievementsDB[achId]) {
-                    const img = document.createElement('img');
-                    img.src = achievementsDB[achId].img;
-                    img.style.width = '100%';
-                    img.style.height = '100%';
-                    img.style.objectFit = 'cover';
-                    slot.appendChild(img);
-                    slot.classList.add('filled');
-                } else {
-                    slot.innerHTML = '<i class="fas fa-plus"></i>';
-                    slot.classList.remove('filled');
-                }
-            }
+    for (let i = 0; i < 3; i++) {
+        const slot = document.getElementById(`slot-${i}`);
+        if (!slot) continue;
+        const achId = user.showcase && user.showcase[i] ? user.showcase[i] : null;
+        slot.innerHTML = '';
+        slot.style.cursor = 'pointer';
+        slot.onclick = (function(index) {
+            return function() { openShowcaseSelector(index); };
+        })(i);
+        
+        if (achId && achievementsDB[achId]) {
+            const img = document.createElement('img');
+            img.src = achievementsDB[achId].img;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            slot.appendChild(img);
+            slot.classList.add('filled');
+        } else {
+            slot.innerHTML = '<i class="fas fa-plus"></i>';
+            slot.classList.remove('filled');
         }
+    }
+}
 
         function openShowcaseSelector(slotIndex) {
             const list = document.getElementById('showcaseAchievementsList');

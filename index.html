@@ -3904,40 +3904,6 @@ function closeOrganizerView() {
     try {
         console.log('=== APP START ===');
         
-        // Проверяем наличие всех страниц
-        const requiredPages = ['profile', 'markers', 'answers', 'aipalette', 'cart'];
-        requiredPages.forEach(pageId => {
-            const page = document.getElementById(pageId);
-            if (!page) {
-                console.error(`❌ Missing page: ${pageId}`);
-            } else {
-                console.log(`✅ Page found: ${pageId}`);
-            }
-        });
-        // Проверяем наличие всех страниц
-const requiredPages = ['profile', 'markers', 'answers', 'aipalette', 'cart'];
-requiredPages.forEach(pageId => {
-    const page = document.getElementById(pageId);
-    if (!page) {
-        console.error(`❌ Missing page: ${pageId}`);
-    } else {
-        console.log(`✅ Page found: ${pageId}`);
-        console.log(`   - Element exists, class: ${page.className}`);
-    }
-});
-
-// Проверяем кнопки навигации
-const navBtns = ['btn-profile', 'btn-markers', 'btn-answers', 'btn-aipalette', 'btn-cart'];
-navBtns.forEach(btnId => {
-    const btn = document.getElementById(btnId);
-    if (!btn) {
-        console.error(`❌ Missing nav button: ${btnId}`);
-    } else {
-        console.log(`✅ Nav button found: ${btnId}`);
-        console.log(`   - onclick: ${btn.onclick ? 'exists' : 'NOT SET'}`);
-    }
-});
-        
         // Загружаем сохраненную тему
         const savedTheme = localStorage.getItem('app_theme');
         if (savedTheme === 'custom') {

@@ -3684,13 +3684,17 @@ function toggleMarkerInBrand(brandName, number, isCollected) {
         // Обновляем содержимое в зависимости от страницы
         console.log('Updating content for page:', pageId);
         
-        switch(pageId) {
+                switch(pageId) {
             case 'markers':
                 console.log('  → Loading markers...');
                 if (typeof loadMarkers === 'function') {
-                    if (markersDB.length === 0 && !markersLoading) {
+                    // БЕЗОПАСНАЯ ПРОВЕРКА:
+                    const isDBEmpty = typeof markersDB === 'undefined' || !markersDB || markersDB.length === 0;
+                    const isLoading = typeof markersLoading !== 'undefined' && markersLoading === true;
+                    
+                    if (isDBEmpty && !isLoading) {
                         loadMarkers();
-                    } else {
+                    } else if (typeof renderMarkers === 'function') {
                         renderMarkers();
                     }
                 } else {
@@ -3717,6 +3721,8 @@ function toggleMarkerInBrand(brandName, number, isCollected) {
             case 'cart':
                 console.log('  → Loading cart...');
                 if (typeof renderCart === 'function') {
+                    // Убеждаемся, что объект корзины существует перед рендером
+                    if (typeof cart === 'undefined') cart = {};
                     renderCart();
                 } else {
                     console.error('  ❌ renderCart not defined');
@@ -3725,7 +3731,6 @@ function toggleMarkerInBrand(brandName, number, isCollected) {
                 
             case 'aipalette':
                 console.log('  → Loading AI palette...');
-                // ИИ палитра не требует обновления
                 break;
                 
             case 'profile':
@@ -3740,6 +3745,7 @@ function toggleMarkerInBrand(brandName, number, isCollected) {
             default:
                 console.log('  → No specific handler for:', pageId);
         }
+
         
         console.log('=== TAB SWITCH COMPLETE ===');
         

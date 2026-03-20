@@ -1815,25 +1815,24 @@ user.isAdmin = (userId === ADMIN_ID);
         let cart = JSON.parse(localStorage.getItem('coloring_cart')) || {};
 
         // ========== УПРАВЛЕНИЕ ТЕМАМИ ==========
+// ========== УПРАВЛЕНИЕ ТЕМАМИ (ИСПРАВЛЕНО) ==========
 function setTheme(themeName) {
+    // 1. Очистка старых кастомных стилей перед переключением
+    const oldStyle = document.getElementById('custom-theme-style');
+    if (oldStyle) oldStyle.remove();
+
     if (themeName === 'custom') {
-        // Если тема кастомная, подгружаем сохраненные цвета
         applyCustomTheme(true);
     } else {
-        // Удаляем кастомные стили, если переключаемся на стандартную тему
-        const oldStyle = document.getElementById('custom-theme-style');
-        if (oldStyle) oldStyle.remove();
-        
-        // Ставим стандартную тему
         document.documentElement.setAttribute('data-theme', themeName);
     }
 
-    // Сохраняем в объект пользователя и локальную память
+    // 2. Сохранение данных
     user.theme = themeName;
-    localStorage.setItem('app_theme', themeName); 
+    localStorage.setItem('app_theme', themeName);
     if (typeof saveDataLocal === 'function') saveDataLocal();
 
-    // Обновляем активный класс в UI (рамка вокруг выбранной темы)
+    // 3. Обновление визуального выбора в меню
     document.querySelectorAll('.theme-option').forEach(el => {
         el.classList.remove('active');
         if (el.dataset.theme === themeName) el.classList.add('active');
@@ -1846,7 +1845,6 @@ function applyCustomTheme(loadFromCache = false) {
     if (loadFromCache) {
         bgMode = localStorage.getItem('custom_theme_bg') || 'light';
         accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
-        // Восстанавливаем значения в инпутах, если они есть на экране
         if(document.getElementById('themeBgMode')) document.getElementById('themeBgMode').value = bgMode;
         if(document.getElementById('themeAccentColor')) document.getElementById('themeAccentColor').value = accentColor;
     } else {
@@ -1856,18 +1854,27 @@ function applyCustomTheme(loadFromCache = false) {
         localStorage.setItem('custom_theme_accent', accentColor);
     }
     
-    const style = document.createElement('style');
-    style.id = 'custom-theme-style';
+    // Удаляем старый стиль перед созданием нового, чтобы не плодить их
     const oldStyle = document.getElementById('custom-theme-style');
     if (oldStyle) oldStyle.remove();
+
+    const style = document.createElement('style');
+    style.id = 'custom-theme-style';
     
-    // Подставляем цвета (используем adjustColor, если функция существует)
-    const gradientEnd = typeof adjustColor === 'function' ? adjustColor(accentColor, -30) : accentColor;
-    
+    // ВАЖНО: Добавляем z-index и pointer-events, чтобы кнопки всегда работали
+    const commonStyles = `
+        button, .marker-controls, .theme-option, .photo-upload-btn { 
+            position: relative !important; 
+            z-index: 5 !important; 
+            pointer-events: auto !important; 
+        }
+        .modal-overlay { z-index: 1000 !important; }
+    `;
+
     if (bgMode === 'light') {
-        style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${gradientEnd} 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; }`;
+        style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
     } else {
-        style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${gradientEnd} 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; }`;
+        style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; } ${commonStyles}`;
     }
     
     document.head.appendChild(style);
@@ -1875,7 +1882,6 @@ function applyCustomTheme(loadFromCache = false) {
     
     user.theme = 'custom';
     localStorage.setItem('app_theme', 'custom');
-    if (typeof saveDataLocal === 'function') saveDataLocal();
 }
 
 

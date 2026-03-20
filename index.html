@@ -2513,12 +2513,16 @@ function renderLevelTasks() {
 }
 
 // Функция для открытия выбора файла
+// Убедитесь, что эти переменные объявлены (добавьте их перед функциями)
+let activeTaskId = null;
+let tempTaskPhotos = [];
+
+// Замените вашу функцию openTaskUpload на эту:
 function openTaskUpload(taskId) {
     console.log("Открываю загрузку для:", taskId);
+    activeTaskId = taskId; // КРИТИЧЕСКАЯ ПРАВКА: Запоминаем ID задания
     document.getElementById('taskFileInput').click();
 }
-
-
 
 // Функция переключения веток
 function switchBranch(key) {
@@ -2644,11 +2648,18 @@ setInterval(updateTimers, 60000);
                         }
                     }, 2000);
                 }
-                
-                closeTaskUploadModal();
-                renderTasks();
-            }
+        tg.showAlert(`✅ Фото успешно отправлено на проверку!`); // Новое уведомление
+        closeTaskUploadModal();
+        
+        if(typeof renderLevelTasks === 'function') {
+            renderLevelTasks();
+            renderTimeTasks();
         }
+    } else {
+        tg.showAlert('Ошибка: Фото не выбрано');
+    }
+}
+
 
         // ========== ДОСТИЖЕНИЯ ==========
         function openAchievementsGallery() {

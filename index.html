@@ -6,24 +6,7 @@
     <title>Coloring App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    // ЭТО ДОЛЖНО БЫТЬ ПЕРВОЙ СТРОКОЙ В <script>
-const tg = window.Telegram.WebApp;
-tg.expand();
-tg.ready(); // Сообщаем Telegram, что приложение готово
-
-// СРАЗУ определяем стили, чтобы функции ниже их видели
-const commonStyles = `
-    button, .nav-btn, .marker-controls, .theme-option, .photo-upload-btn, .upload-area, .showcase-slot, .reward-card { 
-        position: relative !important; 
-        z-index: 99 !important; 
-        pointer-events: auto !important; 
-        cursor: pointer !important;
-    }
-`;
-
-// Проверка на "живость" скрипта. Если при запуске в ТГ выскочит это окно - значит JS работает.
-// alert("JS запущен! ID пользователя: " + (tg.initDataUnsafe?.user?.id || "не найден"));
-
+    
     <style>
         /* ==========================================
            1. ПЕРЕМЕННЫЕ И ГЛОБАЛЬНЫЕ НАСТРОЙКИ

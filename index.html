@@ -1649,6 +1649,80 @@
     color: #ffffff;
     border-color: #3a3a3c;
 }
+/* Стили для инвентаря */
+.inventory-section {
+    background: var(--bg-header);
+    margin: 15px;
+    padding: 20px;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+}
+
+.inventory-tab-btn {
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--text-gray);
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 20px;
+    transition: all 0.2s;
+}
+
+.inventory-tab-btn.active {
+    color: var(--accent);
+    background: rgba(255,149,0,0.1);
+}
+
+#organizersList {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Стили для ячеек органайзера */
+#organizersList > div {
+    animation: fadeIn 0.2s ease;
+}
+
+#organizersList [style*="cursor: pointer"]:hover {
+    transform: scale(1.02);
+    background: rgba(255,149,0,0.05);
+}
+
+/* Стили для модальных окон органайзера */
+#organizerModal .modal-content,
+#addMarkerModal .modal-content {
+    background: var(--bg-header);
+    border-radius: 28px;
+}
+
+#organizerModal input,
+#organizerModal select,
+#addMarkerModal input,
+#addMarkerModal select {
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 14px;
+    width: 100%;
+    margin-bottom: 12px;
+    font-size: 15px;
+}
+
+#organizerModal .form-group {
+    margin-bottom: 18px;
+}
+
+#organizerModal label {
+    display: block;
+    color: var(--text-gray);
+    font-size: 13px;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
     </style>
 
     <script>
@@ -2639,24 +2713,44 @@
         // ==========================================
         // ИНВЕНТАРЬ
         // ==========================================
-        function loadInventory() {
-            const saved = localStorage.getItem('coloring_inventory');
-            if (saved) {
-                inventory = JSON.parse(saved);
-            } else {
-                inventory.organizers = [{
-                    id: 'default',
-                    name: 'Мой органайзер',
-                    cols: 3,
-                    rows: 3,
-                    cells: Array(3).fill().map(() => Array(3).fill().map(() => []))
-                }];
-                inventory.userMarkers = {};
+function loadInventory() {
+    const saved = localStorage.getItem('coloring_inventory');
+    if (saved) {
+        inventory = JSON.parse(saved);
+        // Проверяем и исправляем структуру старых органайзеров
+        inventory.organizers = inventory.organizers.map(org => {
+            if (!org.cells || org.cells.length !== org.rows) {
+                // Пересоздаем cells с правильными размерами
+                const newCells = Array(org.rows).fill().map(() => Array(org.cols).fill().map(() => []));
+                // Переносим существующие данные если есть
+                if (org.cells) {
+                    for (let r = 0; r < Math.min(org.rows, org.cells.length); r++) {
+                        for (let c = 0; c < Math.min(org.cols, org.cells[r]?.length || 0); c++) {
+                            if (org.cells[r] && org.cells[r][c]) {
+                                newCells[r][c] = org.cells[r][c];
+                            }
+                        }
+                    }
+                }
+                org.cells = newCells;
             }
-            renderOrganizers();
-            renderBrands();
-        }
-
+            return org;
+        });
+    } else {
+        // Создаем органайзер 5×5 по умолчанию
+        const defaultCells = Array(5).fill().map(() => Array(5).fill().map(() => []));
+        inventory.organizers = [{
+            id: 'default',
+            name: 'Мой органайзер',
+            cols: 5,
+            rows: 5,
+            cells: defaultCells
+        }];
+        inventory.userMarkers = {};
+    }
+    renderOrganizers();
+    renderBrands();
+}
         function saveInventory() {
             localStorage.setItem('coloring_inventory', JSON.stringify(inventory));
         }
@@ -2691,60 +2785,77 @@
     closeOrganizerModal();
     tg.showAlert('Органайзер создан!');
 }
-
-        function renderOrganizers() {
+function renderOrganizers() {
     const container = document.getElementById('organizersList');
     if (!container) return;
+    
     if (inventory.organizers.length === 0) {
         container.innerHTML = '<div class="no-results">Нет органайзеров. Создайте первый!</div>';
         return;
     }
+    
     container.innerHTML = '';
-    inventory.organizers.forEach(org => {
-        const orgDiv = document.createElement('div');
-        orgDiv.style.cssText = 'background: var(--card-bg); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color);';
+    
+    inventory.organizers.forEach((org, orgIndex) => {
+        // Создаем карточку органайзера
+        const orgCard = document.createElement('div');
+        orgCard.style.cssText = 'background: var(--card-bg); border-radius: 20px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--border-color);';
         
-        // Заголовок органайзера с кнопками
-        orgDiv.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                <h4 style="margin:0;">${org.name} (${org.rows}×${org.cols})</h4>
-                <div style="display: flex; gap: 8px;">
-                    <button class="photo-upload-btn" style="padding: 6px 12px; cursor:pointer;" onclick="addMarkersToOrganizer('${org.id}')"><i class="fas fa-plus"></i> Добавить</button>
-                    <button class="photo-upload-btn" onclick="deleteOrganizer('${org.id}')" style="background: var(--status-red); color: white; padding: 6px 12px; cursor:pointer;">🗑 Удалить</button>
-                </div>
+        // Заголовок с кнопками
+        const headerDiv = document.createElement('div');
+        headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;';
+        headerDiv.innerHTML = `
+            <h4 style="margin:0; font-size: 18px;">📦 ${org.name} (${org.rows}×${org.cols})</h4>
+            <div style="display: flex; gap: 8px;">
+                <button class="photo-upload-btn" style="padding: 8px 14px; font-size: 13px;" onclick="addMarkersToOrganizer('${org.id}')">
+                    <i class="fas fa-plus"></i> Добавить маркеры
+                </button>
+                <button class="photo-upload-btn" onclick="deleteOrganizer('${org.id}')" style="background: var(--status-red); color: white; padding: 8px 14px; font-size: 13px;">
+                    <i class="fas fa-trash"></i> Удалить
+                </button>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(${org.cols}, 1fr); gap: 10px;">
         `;
+        orgCard.appendChild(headerDiv);
         
-        // Создаем ячейки сеткой
+        // Создаем контейнер для сетки
+        const gridContainer = document.createElement('div');
+        gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, 1fr); gap: 12px;`;
+        
+        // Заполняем ячейки
         for (let row = 0; row < org.rows; row++) {
             for (let col = 0; col < org.cols; col++) {
-                const cellMarkers = (org.cells[row] && org.cells[row][col]) ? org.cells[row][col] : [];
-                const cellLabel = String.fromCharCode(65 + row) + (col + 1);
-                const markerCount = cellMarkers.length;
+                // Проверяем существование ячейки
+                if (!org.cells[row]) org.cells[row] = [];
+                if (!org.cells[row][col]) org.cells[row][col] = [];
                 
-                orgDiv.innerHTML += `
-                    <div onclick="openCellModal('${org.id}', ${row}, ${col})" style="
-                        background: var(--bg);
-                        border: 2px solid ${markerCount > 0 ? 'var(--accent)' : 'var(--border-color)'};
-                        border-radius: 12px;
-                        padding: 12px 8px;
-                        text-align: center;
-                        cursor: pointer;
-                        transition: all 0.2s;
-                    ">
-                        <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 5px;">${cellLabel}</div>
-                        <div style="font-size: 24px; font-weight: bold; color: var(--accent);">${markerCount}</div>
-                        <small style="font-size: 10px; color: var(--text-gray);">маркеров</small>
-                    </div>
+                const cellMarkers = org.cells[row][col];
+                const markerCount = cellMarkers.length;
+                const cellLabel = String.fromCharCode(65 + row) + (col + 1);
+                
+                const cellDiv = document.createElement('div');
+                cellDiv.style.cssText = `
+                    background: var(--bg);
+                    border: 2px solid ${markerCount > 0 ? 'var(--accent)' : 'var(--border-color)'};
+                    border-radius: 14px;
+                    padding: 14px 8px;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
                 `;
+                cellDiv.onclick = () => openCellModal(org.id, row, col);
+                cellDiv.innerHTML = `
+                    <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 6px; font-weight: 500;">${cellLabel}</div>
+                    <div style="font-size: 26px; font-weight: bold; color: var(--accent);">${markerCount}</div>
+                    <small style="font-size: 10px; color: var(--text-gray);">маркеров</small>
+                `;
+                gridContainer.appendChild(cellDiv);
             }
         }
-        orgDiv.innerHTML += `</div></div>`;
-        container.appendChild(orgDiv);
+        
+        orgCard.appendChild(gridContainer);
+        container.appendChild(orgCard);
     });
 }
-
         function openCellModal(orgId, row, col) {
     currentOrganizerId = orgId;
     currentCellRow = row;
@@ -3159,22 +3270,24 @@
     </div>
 
     <!-- ИНВЕНТАРЬ -->
-    <div class="inventory-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 style="margin: 0;"><i class="fas fa-boxes"></i> Мой инвентарь</h3>
-            <button class="balance-btn" style="padding: 8px 16px; width: auto;" onclick="openOrganizerCreator()"><i class="fas fa-plus"></i> Создать органайзер</button>
-        </div>
-        <div style="display: flex; gap: 10px; border-bottom: 1px solid var(--border-color);">
-            <button class="inventory-tab-btn active" data-tab="organizers" onclick="switchInventoryTab('organizers')"><i class="fas fa-layer-group"></i> Органайзеры</button>
-            <button class="inventory-tab-btn" data-tab="brands" onclick="switchInventoryTab('brands')"><i class="fas fa-tags"></i> Бренды</button>
-            <button class="inventory-tab-btn" data-tab="search" onclick="switchInventoryTab('search')"><i class="fas fa-search"></i> Поиск</button>
-        </div>
-        <div id="organizersTab" class="inventory-tab active"><div id="organizersList"></div></div>
-        <div id="brandsTab" class="inventory-tab" style="display: none;"><div id="brandsList"></div></div>
-        <div id="searchTab" class="inventory-tab" style="display: none;">
-            <div class="search-box" style="margin-bottom: 15px;"><i class="fas fa-search"></i><input type="text" id="inventorySearchInput" placeholder="Поиск по номеру или бренду..." oninput="searchInventory()"></div>
-            <div id="searchResults"></div>
-        </div>
+  <!-- ИНВЕНТАРЬ -->
+<div class="inventory-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+        <h3 style="margin: 0;"><i class="fas fa-boxes"></i> Мой инвентарь</h3>
+        <button class="balance-btn" style="padding: 10px 20px; width: auto; background: var(--accent); color: white;" onclick="openOrganizerCreator()">
+            <i class="fas fa-plus"></i> Создать органайзер
+        </button>
+    </div>
+    <div style="display: flex; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        <button class="inventory-tab-btn active" data-tab="organizers" onclick="switchInventoryTab('organizers')"><i class="fas fa-layer-group"></i> Органайзеры</button>
+        <button class="inventory-tab-btn" data-tab="brands" onclick="switchInventoryTab('brands')"><i class="fas fa-tags"></i> Бренды</button>
+        <button class="inventory-tab-btn" data-tab="search" onclick="switchInventoryTab('search')"><i class="fas fa-search"></i> Поиск</button>
+    </div>
+    <div id="organizersTab" class="inventory-tab active" style="margin-top: 15px;"><div id="organizersList"></div></div>
+    <div id="brandsTab" class="inventory-tab" style="display: none; margin-top: 15px;"><div id="brandsList"></div></div>
+    <div id="searchTab" class="inventory-tab" style="display: none; margin-top: 15px;">
+        <div class="search-box" style="margin-bottom: 15px;"><i class="fas fa-search"></i><input type="text" id="inventorySearchInput" placeholder="Поиск по номеру или бренду..." oninput="searchInventory()"></div>
+        <div id="searchResults"></div>
     </div>
 </div>
 

@@ -2746,25 +2746,33 @@
 }
 
         function openCellModal(orgId, row, col) {
-            currentOrganizerId = orgId;
-            currentCellRow = row;
-            currentCellCol = col;
-            const org = inventory.organizers.find(o => o.id === orgId);
-            const cellMarkers = org.cells[row][col];
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.style.display = 'flex';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <h3>Ячейка ${String.fromCharCode(65+row)}${col+1}</h3>
-                    <div id="cellMarkersList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
-                    <button class="modal-action-btn" onclick="showAddMarkerToCell()" style="cursor:pointer;">+ Добавить маркер</button>
-                    <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()" style="cursor:pointer;">Закрыть</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            renderCellMarkers(cellMarkers);
-        }
+    currentOrganizerId = orgId;
+    currentCellRow = row;
+    currentCellCol = col;
+    const org = inventory.organizers.find(o => o.id === orgId);
+    if (!org) return;
+    
+    // Проверяем существование ячейки
+    if (!org.cells[row]) org.cells[row] = [];
+    if (!org.cells[row][col]) org.cells[row][col] = [];
+    
+    const cellMarkers = org.cells[row][col];
+    const cellLabel = String.fromCharCode(65 + row) + (col + 1);
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h3>Ячейка ${cellLabel}</h3>
+            <div id="cellMarkersList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <button class="modal-action-btn" onclick="showAddMarkerToCell()" style="cursor:pointer;">+ Добавить маркер</button>
+            <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()" style="cursor:pointer;">Закрыть</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    renderCellMarkers(cellMarkers);
+}
 
         function renderCellMarkers(markers) {
             const container = document.getElementById('cellMarkersList');

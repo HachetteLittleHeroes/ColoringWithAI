@@ -2546,78 +2546,47 @@ function searchVolumes() {
         // ==========================================
         // МАРКЕРЫ
         // ==========================================
-        async function loadMarkers() {
-    const markersContainer = document.getElementById('markersList');
-    if (markersContainer) {
-        markersContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка маркеров...</div>';
+        function renderMarkers() {
+    const container = document.getElementById('markersList');
+    if (!container) return;
+    
+    if (markersLoading) {
+        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка маркеров...</div>';
+        return;
     }
     
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
-    
-    // Добавляем таймаут 10 секунд
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-        controller.abort();
-        console.error('Timeout: Загрузка маркеров превысила 10 секунд');
-    }, 10000);
-    
-    try {
-        const res = await fetch(csvUrl, { signal: controller.signal });
-        clearTimeout(timeoutId);
-        
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        
-        const text = await res.text();
-        const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, '').trim()));
-        let temp = [];
-        rows.forEach(row => {
-            for (let i = 0; i < row.length; i++) {
-                let num = row[i];
-                if (num && !isNaN(num) && parseInt(num) > 10) {
-                    let stock = parseInt(row[i+1] || row[i+2] || "0");
-                    const trainedColor = trainedColors ? trainedColors[num] : null;
-                    temp.push({ num: num, color: trainedColor || null, stock: stock, trained: !!trainedColor });
-                    i++;
-                }
-            }
-        });
-        
-        markersDB = temp.filter((v, i, a) => a.findIndex(t => (t.num === v.num)) === i);
-        
-        // Обновляем корзину
-        if (cart) {
-            for (let key in cart) {
-                if (key.startsWith('marker_')) {
-                    const num = key.replace('marker_', '');
-                    const marker = markersDB.find(m => m.num === num);
-                    if (marker && cart[key] > marker.stock) {
-                        cart[key] = marker.stock;
-                    }
-                }
-            }
-            saveData();
-        }
-        
-        renderMarkers();
-        console.log('✅ Маркеры загружены:', markersDB.length);
-        
-        if (markersContainer && markersDB.length === 0) {
-            markersContainer.innerHTML = '<div class="no-results">Нет данных о маркерах</div>';
-        }
-        
-        markersLoaded = true;
-        
-    } catch (error) {
-        clearTimeout(timeoutId);
-        console.error('Ошибка загрузки маркеров:', error);
-        
-        if (markersContainer) {
-            markersContainer.innerHTML = '<div class="no-results">⚠️ Ошибка загрузки данных. Проверьте подключение к интернету.</div>';
-        }
-        
-        // Не используем демо-данные, просто показываем ошибку
-        markersDB = [];
+    if (!markersDB || markersDB.length === 0) {
+        container.innerHTML = '<div class="no-results">📦 Нет данных о маркерах. Нажмите "Обновить"</div>';
+        return;
     }
+    
+    container.innerHTML = '';
+    markersDB.forEach(m => {
+        const cartKey = `marker_${m.num}`;
+        const cartCount = (cart && cart[cartKey]) ? cart[cartKey] : 0;
+        const canAdd = cartCount < m.stock;
+        const canRemove = cartCount > 0;
+        const stockClass = getStockColor(m.stock);
+        const div = document.createElement('div');
+        div.className = 'marker-item';
+        div.setAttribute('data-num', m.num);
+        div.innerHTML = `
+            <div class="color-circle" style="background-color: var(--bg);"></div>
+            <div class="marker-info">
+                <div class="marker-header">
+                    <span class="marker-number">№${m.num}</span>
+                    <span class="marker-price">${MARKER_PRICE} ₽</span>
+                </div>
+                <div class="marker-stock ${stockClass}">${getStockText(m.stock)}</div>
+            </div>
+            <div class="marker-controls">
+                <button class="minus" onclick="updateMarkerCart('${m.num}', -1)" ${!canRemove ? 'disabled' : ''}>−</button>
+                <span id="marker-count-${m.num}">${cartCount}</span>
+                <button onclick="updateMarkerCart('${m.num}', 1)" ${!canAdd ? 'disabled' : ''}>+</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
 }
         function getStockColor(stock) {
             if (stock === 0) return 'out-of-stock';
@@ -2636,8 +2605,13 @@ function searchVolumes() {
     const container = document.getElementById('markersList');
     if (!container) return;
     
+    if (markersLoading) {
+        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка маркеров...</div>';
+        return;
+    }
+    
     if (!markersDB || markersDB.length === 0) {
-        container.innerHTML = '<div class="no-results">⚠️ Нет данных о маркерах. Проверьте подключение.</div>';
+        container.innerHTML = '<div class="no-results">📦 Нет данных о маркерах. Нажмите "Обновить"</div>';
         return;
     }
     
@@ -2647,13 +2621,12 @@ function searchVolumes() {
         const cartCount = (cart && cart[cartKey]) ? cart[cartKey] : 0;
         const canAdd = cartCount < m.stock;
         const canRemove = cartCount > 0;
-        const circleStyle = m.trained && m.color ? `background-color: ${m.color};` : 'background-color: var(--bg);';
         const stockClass = getStockColor(m.stock);
         const div = document.createElement('div');
         div.className = 'marker-item';
         div.setAttribute('data-num', m.num);
         div.innerHTML = `
-            <div class="color-circle ${m.trained ? 'trained' : ''}" style="${circleStyle}"></div>
+            <div class="color-circle" style="background-color: var(--bg);"></div>
             <div class="marker-info">
                 <div class="marker-header">
                     <span class="marker-number">№${m.num}</span>
@@ -3889,14 +3862,18 @@ function toggleMarkerInBrand(brandName, number, isCollected) {
         
         // Обновляем содержимое при переключении
         if (pageId === 'markers') {
-            if (typeof markersDB !== 'undefined' && markersDB.length === 0) {
-                if (typeof loadMarkers === 'function') loadMarkers();
-            } else {
-                if (typeof renderMarkers === 'function') renderMarkers();
-            }
-            const searchInput = document.getElementById('markerSearch');
-            if (searchInput) searchInput.value = '';
-        }
+    if (markersLoading) {
+        renderMarkers(); // покажет "Загрузка..."
+    } else if (!markersLoaded && markersDB.length === 0) {
+        // Если данные не загружены, запускаем загрузку
+        loadMarkers();
+        renderMarkers(); // покажет "Загрузка..."
+    } else {
+        renderMarkers();
+    }
+    const searchInput = document.getElementById('markerSearch');
+    if (searchInput) searchInput.value = '';
+}
         
         if (pageId === 'answers') {
             const volumeSearch = document.getElementById('volumeSearch');
@@ -4453,7 +4430,12 @@ function buyItem(itemId) {
 
 <!-- ========== МАРКЕРЫ ========== -->
 <div id="markers" class="page">
-    <div class="header">Маркеры</div>
+    <div class="header">
+        Маркеры
+        <button onclick="loadMarkers()" style="float: right; background: var(--accent); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
+            <i class="fas fa-sync-alt"></i> Обновить
+        </button>
+    </div>
     <div class="search-container"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="searchMarkers()"></div></div>
     <div class="markers-section"><div id="markersList"></div></div>
 </div>

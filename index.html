@@ -2799,7 +2799,7 @@ function renderOrganizers() {
     inventory.organizers.forEach((org, orgIndex) => {
         // Создаем карточку органайзера
         const orgCard = document.createElement('div');
-        orgCard.style.cssText = 'background: var(--card-bg); border-radius: 20px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--border-color);';
+        orgCard.style.cssText = 'background: var(--card-bg); border-radius: 20px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--border-color); overflow-x: auto;';
         
         // Заголовок с кнопками
         const headerDiv = document.createElement('div');
@@ -2817,14 +2817,17 @@ function renderOrganizers() {
         `;
         orgCard.appendChild(headerDiv);
         
-        // Создаем контейнер для сетки
+        // Создаем контейнер для сетки с возможностью скролла
+        const gridWrapper = document.createElement('div');
+        gridWrapper.style.cssText = 'overflow-x: auto;';
+        
         const gridContainer = document.createElement('div');
-        gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, 1fr); gap: 12px;`;
+        const cellWidth = Math.min(70, Math.floor(100 / org.cols));
+        gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, minmax(60px, ${cellWidth}px)); gap: 8px; justify-content: start;`;
         
         // Заполняем ячейки
         for (let row = 0; row < org.rows; row++) {
             for (let col = 0; col < org.cols; col++) {
-                // Проверяем существование ячейки
                 if (!org.cells[row]) org.cells[row] = [];
                 if (!org.cells[row][col]) org.cells[row][col] = [];
                 
@@ -2836,23 +2839,24 @@ function renderOrganizers() {
                 cellDiv.style.cssText = `
                     background: var(--bg);
                     border: 2px solid ${markerCount > 0 ? 'var(--accent)' : 'var(--border-color)'};
-                    border-radius: 14px;
-                    padding: 14px 8px;
+                    border-radius: 12px;
+                    padding: 10px 4px;
                     text-align: center;
                     cursor: pointer;
                     transition: all 0.2s ease;
+                    min-width: 50px;
                 `;
                 cellDiv.onclick = () => openCellModal(org.id, row, col);
                 cellDiv.innerHTML = `
-                    <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 6px; font-weight: 500;">${cellLabel}</div>
-                    <div style="font-size: 26px; font-weight: bold; color: var(--accent);">${markerCount}</div>
-                    <small style="font-size: 10px; color: var(--text-gray);">маркеров</small>
+                    <div style="font-size: 11px; color: var(--text-gray); margin-bottom: 4px; font-weight: 500;">${cellLabel}</div>
+                    <div style="font-size: 18px; font-weight: bold; color: var(--accent);">${markerCount}</div>
                 `;
                 gridContainer.appendChild(cellDiv);
             }
         }
         
-        orgCard.appendChild(gridContainer);
+        gridWrapper.appendChild(gridContainer);
+        orgCard.appendChild(gridWrapper);
         container.appendChild(orgCard);
     });
 }
@@ -2902,12 +2906,23 @@ function renderOrganizers() {
         }
 
         function showAddMarkerToCell() {
-            document.getElementById('addMarkerModal').style.display = 'flex';
-        }
+    const modal = document.getElementById('addMarkerModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    } else {
+        console.error('addMarkerModal not found');
+    }
+}
 
-        function closeAddMarkerModal() {
-            document.getElementById('addMarkerModal').style.display = 'none';
-        }
+function closeAddMarkerModal() {
+    const modal = document.getElementById('addMarkerModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    // Очищаем поля
+    document.getElementById('addMarkerNumber').value = '';
+    document.getElementById('addMarkerCount').value = '1';
+}
 
         function confirmAddMarker() {
             const brand = document.getElementById('addMarkerBrand').value;
@@ -2968,29 +2983,154 @@ function renderOrganizers() {
         }
 
         function renderBrands() {
-            const container = document.getElementById('brandsList');
-            if (!container) return;
-            container.innerHTML = '';
-            brands.forEach(brand => {
-                let totalCount = 0;
-                for (let key in inventory.userMarkers) {
-                    if (key.startsWith(brand.name)) totalCount += inventory.userMarkers[key];
-                }
-                const div = document.createElement('div');
-                div.style.cssText = 'background: var(--card-bg); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border-color);';
-                div.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <h4 style="margin:0;">${brand.name}</h4>
-                        <span style="color: var(--accent); font-weight: bold;">${totalCount}/${brand.total}</span>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="photo-upload-btn" onclick="addBrandMarkers('${brand.name}')" style="cursor:pointer;"><i class="fas fa-plus-circle"></i> Добавить все</button>
-                        <button class="photo-upload-btn" onclick="removeBrandMarkers('${brand.name}')" style="background: var(--status-red); color: white; cursor:pointer;"><i class="fas fa-trash-alt"></i> Удалить все</button>
-                    </div>
-                `;
-                container.appendChild(div);
+    const container = document.getElementById('brandsList');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    brands.forEach(brand => {
+        // Собираем уникальные номера маркеров этого бренда из инвентаря
+        const uniqueNumbers = new Set();
+        let totalCount = 0;
+        
+        inventory.organizers.forEach(org => {
+            org.cells.forEach(row => {
+                row.forEach(cell => {
+                    cell.forEach(marker => {
+                        if (marker.brand === brand.name) {
+                            uniqueNumbers.add(marker.number);
+                            totalCount += marker.count;
+                        }
+                    });
+                });
             });
+        });
+        
+        const uniqueCount = uniqueNumbers.size;
+        const percent = Math.round((uniqueCount / brand.total) * 100);
+        
+        const div = document.createElement('div');
+        div.style.cssText = 'background: var(--card-bg); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border-color); cursor: pointer;';
+        div.onclick = () => openBrandDetail(brand.name, uniqueNumbers);
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h4 style="margin:0; font-size: 16px;">🎨 ${brand.name}</h4>
+                <span style="color: var(--accent); font-weight: bold;">${uniqueCount}/${brand.total}</span>
+            </div>
+            <div style="background: var(--border-color); height: 6px; border-radius: 3px; overflow: hidden;">
+                <div style="width: ${percent}%; background: var(--accent-gradient); height: 100%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                <small style="color: var(--text-gray);">📊 Уникальных цветов: ${uniqueCount}</small>
+                <small style="color: var(--text-gray);">📦 Всего маркеров: ${totalCount}</small>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+function openBrandDetail(brandName, collectedNumbers) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.style.display = 'flex';
+    
+    // Создаем список всех номеров от 1 до total
+    const brand = brands.find(b => b.name === brandName);
+    const total = brand ? brand.total : 100;
+    
+    let numbersHtml = '';
+    for (let i = 1; i <= Math.min(total, 200); i++) {
+        const num = i.toString();
+        const isCollected = collectedNumbers.has(num);
+        numbersHtml += `
+            <div style="
+                display: inline-block;
+                width: 55px;
+                margin: 5px;
+                padding: 8px 4px;
+                text-align: center;
+                background: ${isCollected ? 'var(--accent)' : 'var(--bg)'};
+                color: ${isCollected ? 'white' : 'var(--text)'};
+                border-radius: 10px;
+                border: 1px solid var(--border-color);
+                font-size: 12px;
+                font-weight: ${isCollected ? 'bold' : 'normal'};
+                cursor: pointer;
+                transition: all 0.2s;
+            " onclick="toggleMarkerInBrand('${brandName}', '${num}', ${isCollected})">
+                ${num}
+                ${isCollected ? '✓' : '+'}
+            </div>
+        `;
+    }
+    
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 500px;">
+            <h3>🎨 ${brandName}</h3>
+            <p style="margin-bottom: 15px; color: var(--text-gray);">
+                <i class="fas fa-check-circle" style="color: var(--status-green);"></i> Собрано: ${collectedNumbers.size}/${total}
+            </p>
+            <div style="max-height: 50vh; overflow-y: auto; display: flex; flex-wrap: wrap; justify-content: center;">
+                ${numbersHtml}
+            </div>
+            <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()" style="margin-top: 20px;">Закрыть</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function toggleMarkerInBrand(brandName, number, isCollected) {
+    if (isCollected) {
+        // Удаляем маркер из инвентаря
+        tg.showConfirm(`Удалить маркер ${brandName} №${number} из инвентаря?`, (confirm) => {
+            if (confirm) {
+                let removed = false;
+                inventory.organizers.forEach(org => {
+                    org.cells.forEach(row => {
+                        row.forEach(cell => {
+                            for (let i = cell.length - 1; i >= 0; i--) {
+                                if (cell[i].brand === brandName && cell[i].number === number) {
+                                    cell.splice(i, 1);
+                                    removed = true;
+                                }
+                            }
+                        });
+                    });
+                });
+                if (removed) {
+                    saveInventory();
+                    renderOrganizers();
+                    renderBrands();
+                    tg.showAlert(`Маркер ${brandName} №${number} удален`);
+                    // Закрываем модалку и открываем заново для обновления
+                    document.querySelector('.modal-overlay').remove();
+                    openBrandDetail(brandName, new Set());
+                }
+            }
+        });
+    } else {
+        // Добавляем маркер в инвентарь
+        if (inventory.organizers.length > 0) {
+            const org = inventory.organizers[0];
+            const cell = org.cells[0][0];
+            const existing = cell.find(m => m.brand === brandName && m.number === number);
+            if (existing) {
+                existing.count += 1;
+            } else {
+                cell.push({ brand: brandName, number: number, count: 1 });
+            }
+            const key = `${brandName}_${number}`;
+            inventory.userMarkers[key] = (inventory.userMarkers[key] || 0) + 1;
+            saveInventory();
+            renderOrganizers();
+            renderBrands();
+            tg.showAlert(`Маркер ${brandName} №${number} добавлен`);
+            // Закрываем модалку и открываем заново для обновления
+            document.querySelector('.modal-overlay').remove();
+            openBrandDetail(brandName, new Set());
+        } else {
+            tg.showAlert('Сначала создайте органайзер!');
         }
+    }
+}
 
         function addBrandMarkers(brandName) {
             const brand = brands.find(b => b.name === brandName);
@@ -3354,7 +3494,32 @@ function renderOrganizers() {
 <div id="achievementAlert" class="modal-overlay"><div class="modal-content"><h3>🏆 Новое достижение!</h3><img id="alertAchImg" style="width:80px; margin:10px auto; display:none;"><p id="alertAchText"></p><button class="modal-close-btn" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button></div></div>
 <div id="taskUploadModal" class="modal-overlay"><div class="modal-content"><h3>Отправка на проверку</h3><div id="taskPhotoPreviewContainer" class="photo-preview-container"></div><div class="modal-buttons-row"><button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button><button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button></div></div></div>
 <div id="organizerModal" class="modal-overlay"><div class="modal-content"><h3>Создать органайзер</h3><input type="text" id="organizerName" placeholder="Название органайзера"><div class="form-group"><label>Количество столбцов:</label><input type="number" id="organizerCols" value="3" min="1" max="10"></div><div class="form-group"><label>Количество строк:</label><input type="number" id="organizerRows" value="3" min="1" max="10"></div><button class="modal-action-btn" onclick="createOrganizer()">Создать</button><button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button></div></div>
-<div id="addMarkerModal" class="modal-overlay"><div class="modal-content"><h3>Добавить маркер</h3><div class="form-group"><label>Бренд:</label><select id="addMarkerBrand"><option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option><option value="Grasp">Grasp</option><option value="InfiArt">InfiArt</option><option value="Tooli-Art">Tooli-Art</option></select></div><div class="form-group"><label>Номер маркера:</label><input type="text" id="addMarkerNumber" placeholder="101"></div><div class="form-group"><label>Количество:</label><input type="number" id="addMarkerCount" value="1" min="1"></div><button class="modal-action-btn" onclick="confirmAddMarker()">Добавить</button><button class="modal-close-btn" onclick="closeAddMarkerModal()">Отмена</button></div></div>
+<div id="addMarkerModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>➕ Добавить маркер</h3>
+        <div class="form-group">
+            <label>Бренд:</label>
+            <select id="addMarkerBrand">
+                <option value="GuangNa">GuangNa</option>
+                <option value="Languo">Languo</option>
+                <option value="Zibeef">Zibeef</option>
+                <option value="Grasp">Grasp</option>
+                <option value="InfiArt">InfiArt</option>
+                <option value="Tooli-Art">Tooli-Art</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Номер маркера:</label>
+            <input type="text" id="addMarkerNumber" placeholder="Например: 101">
+        </div>
+        <div class="form-group">
+            <label>Количество:</label>
+            <input type="number" id="addMarkerCount" value="1" min="1" max="100">
+        </div>
+        <button class="modal-action-btn" onclick="confirmAddMarker()" style="cursor:pointer;">✅ Добавить</button>
+        <button class="modal-close-btn" onclick="closeAddMarkerModal()" style="cursor:pointer;">❌ Отмена</button>
+    </div>
+</div>
 <div id="showcaseSelectorModal" class="modal-overlay">
     <div class="modal-content">
         <h3>Выберите достижение</h3>

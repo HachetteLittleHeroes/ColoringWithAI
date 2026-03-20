@@ -34,29 +34,6 @@
             --card-bg: #ffffff;
             --input-bg: #ffffff;
         }
-        /* ==========================================
-   ГЛОБАЛЬНЫЙ ФИКС КЛИКОВ
-   ========================================== */
-button, 
-.marker-controls, 
-.theme-option, 
-.photo-upload-btn, 
-.nav-btn, 
-.upload-area,
-.showcase-slot,
-.reward-card,
-.avatar-wrapper { 
-    position: relative !important; 
-    z-index: 5 !important; 
-    pointer-events: auto !important; 
-    cursor: pointer !important;
-}
-
-.modal-overlay { 
-    z-index: 100000 !important; 
-}
-
-
         /* Темная тема */
         [data-theme="dark"] {
             --bg: #121212;
@@ -1837,22 +1814,42 @@ user.isAdmin = (userId === ADMIN_ID);
         let cart = JSON.parse(localStorage.getItem('coloring_cart')) || {};
 
         // ========== УПРАВЛЕНИЕ ТЕМАМИ ==========
-// ========== УПРАВЛЕНИЕ ТЕМАМИ (ИСПРАВЛЕНО) ==========
+// ========== УПРАВЛЕНИЕ ТЕМАМИ (ПОЛНОСТЬЮ ИСПРАВЛЕНО) ==========
+
+// Глобальная переменная со стилями, которые "чинят" нажатия кнопок
+const commonStyles = `
+    button, .nav-btn, .marker-controls, .theme-option, .photo-upload-btn, .upload-area, .showcase-slot, .reward-card { 
+        position: relative !important; 
+        z-index: 10 !important; 
+        pointer-events: auto !important; 
+        cursor: pointer !important;
+    }
+    .modal-overlay { z-index: 10000 !important; }
+    .page { position: relative; z-index: 1; }
+`;
+
 function setTheme(themeName) {
-    // 1. Очистка старых кастомных стилей перед переключением
+    // 1. Очистка старых кастомных стилей
     const oldStyle = document.getElementById('custom-theme-style');
     if (oldStyle) oldStyle.remove();
 
     if (themeName === 'custom') {
         applyCustomTheme(true);
     } else {
+        // Для стандартных тем создаем технический стиль с фиксом кликов
+        const style = document.createElement('style');
+        style.id = 'custom-theme-style';
+        style.textContent = commonStyles;
+        document.head.appendChild(style);
+        
         document.documentElement.setAttribute('data-theme', themeName);
     }
 
-    // 2. Сохранение данных
+    // 2. Сохранение данных (проверка наличия функций сохранения)
     user.theme = themeName;
     localStorage.setItem('app_theme', themeName);
-    if (typeof saveDataLocal === 'function') saveDataLocal();
+    if (typeof saveData === 'function') saveData(); 
+    else if (typeof saveDataLocal === 'function') saveDataLocal();
 
     // 3. Обновление визуального выбора в меню
     document.querySelectorAll('.theme-option').forEach(el => {
@@ -1864,29 +1861,47 @@ function setTheme(themeName) {
 function applyCustomTheme(loadFromCache = false) {
     let bgMode, accentColor;
 
+    // Загрузка настроек кастомной темы
     if (loadFromCache) {
         bgMode = localStorage.getItem('custom_theme_bg') || 'light';
         accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
-        if(document.getElementById('themeBgMode')) document.getElementById('themeBgMode').value = bgMode;
-        if(document.getElementById('themeAccentColor')) document.getElementById('themeAccentColor').value = accentColor;
+        
+        const bgEl = document.getElementById('themeBgMode');
+        const accEl = document.getElementById('themeAccentColor');
+        if(bgEl) bgEl.value = bgMode;
+        if(accEl) accEl.value = accentColor;
     } else {
-        bgMode = document.getElementById('themeBgMode').value;
-        accentColor = document.getElementById('themeAccentColor').value;
+        const bgEl = document.getElementById('themeBgMode');
+        const accEl = document.getElementById('themeAccentColor');
+        bgMode = bgEl ? bgEl.value : 'light';
+        accentColor = accEl ? accEl.value : '#ff9500';
+        
         localStorage.setItem('custom_theme_bg', bgMode);
         localStorage.setItem('custom_theme_accent', accentColor);
     }
     
-    // Удаляем старый стиль перед созданием нового, чтобы не плодить их
+    // Пересоздаем стиль
     const oldStyle = document.getElementById('custom-theme-style');
     if (oldStyle) oldStyle.remove();
 
     const style = document.createElement('style');
     style.id = 'custom-theme-style';
     
+    // Формируем CSS переменные + добавляем commonStyles в конец
     if (bgMode === 'light') {
-        style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
+        style.textContent = `:root { 
+            --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; 
+            --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; 
+            --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); 
+            --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; 
+        } ${commonStyles}`;
     } else {
-        style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; } ${commonStyles}`;
+        style.textContent = `:root { 
+            --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; 
+            --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; 
+            --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); 
+            --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; 
+        } ${commonStyles}`;
     }
     
     document.head.appendChild(style);
@@ -1895,6 +1910,7 @@ function applyCustomTheme(loadFromCache = false) {
     user.theme = 'custom';
     localStorage.setItem('app_theme', 'custom');
 }
+
 
 
         function adjustColor(hex, percent) {

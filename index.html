@@ -1723,6 +1723,137 @@
     margin-bottom: 6px;
     font-weight: 500;
 }
+/* Блок инвентаря в профиле */
+.inventory-main-block {
+    background: var(--bg-header);
+    margin: 15px;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.inventory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    cursor: pointer;
+    background: var(--bg-header);
+    transition: background 0.2s;
+}
+
+.inventory-header:active {
+    background: rgba(0,0,0,0.05);
+}
+
+.inventory-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.inventory-header-left i {
+    font-size: 22px;
+    color: var(--accent);
+}
+
+.inventory-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.beta-badge {
+    background: rgba(255,149,0,0.2);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.inventory-content {
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.inventory-subblock {
+    margin-top: 15px;
+    background: var(--bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.subblock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    cursor: pointer;
+    background: var(--bg);
+    transition: background 0.2s;
+}
+
+.subblock-header:active {
+    background: rgba(0,0,0,0.03);
+}
+
+.subblock-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.subblock-header-left i {
+    color: var(--accent);
+    font-size: 16px;
+}
+
+.subblock-content {
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.create-organizer-btn {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 14px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+.close-view-btn {
+    background: var(--text-gray);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* Альфа-тест бейдж для ИИ палитры */
+.ai-alpha-badge {
+    display: inline-block;
+    background: rgba(255,149,0,0.2);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 10px;
+    vertical-align: middle;
+}
     </style>
 
     <script>
@@ -2987,58 +3118,66 @@ function closeAddMarkerModal() {
     if (!container) return;
     container.innerHTML = '';
     
+    // Получаем данные о маркерах с сервера (из обученных ИИ)
+    const markersData = markersDB; // markersDB загружается с сервера
+    
     brands.forEach(brand => {
-        // Собираем уникальные номера маркеров этого бренда из инвентаря
-        const uniqueNumbers = new Set();
-        let totalCount = 0;
+        // Собираем уникальные номера маркеров этого бренда ИЗ ИНВЕНТАРЯ
+        const uniqueNumbersInInventory = new Set();
         
         inventory.organizers.forEach(org => {
-            org.cells.forEach(row => {
-                row.forEach(cell => {
-                    cell.forEach(marker => {
-                        if (marker.brand === brand.name) {
-                            uniqueNumbers.add(marker.number);
-                            totalCount += marker.count;
-                        }
+            if (org.cells) {
+                org.cells.forEach(row => {
+                    row.forEach(cell => {
+                        cell.forEach(marker => {
+                            if (marker.brand === brand.name) {
+                                uniqueNumbersInInventory.add(marker.number);
+                            }
+                        });
                     });
                 });
-            });
+            }
         });
         
-        const uniqueCount = uniqueNumbers.size;
+        // Получаем все существующие номера для этого бренда из базы маркеров
+        const existingNumbersForBrand = markersData
+            .filter(m => m.num && parseInt(m.num) <= brand.total)
+            .map(m => m.num);
+        
+        const uniqueCount = uniqueNumbersInInventory.size;
         const percent = Math.round((uniqueCount / brand.total) * 100);
         
         const div = document.createElement('div');
         div.style.cssText = 'background: var(--card-bg); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border-color); cursor: pointer;';
-        div.onclick = () => openBrandDetail(brand.name, uniqueNumbers);
+        div.onclick = () => openBrandDetail(brand.name, uniqueNumbersInInventory, existingNumbersForBrand);
         div.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h4 style="margin:0; font-size: 16px;">🎨 ${brand.name}</h4>
+                <h4 style="margin:0; font-size: 16px;">${brand.name}</h4>
                 <span style="color: var(--accent); font-weight: bold;">${uniqueCount}/${brand.total}</span>
             </div>
             <div style="background: var(--border-color); height: 6px; border-radius: 3px; overflow: hidden;">
                 <div style="width: ${percent}%; background: var(--accent-gradient); height: 100%;"></div>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 8px;">
-                <small style="color: var(--text-gray);">📊 Уникальных цветов: ${uniqueCount}</small>
-                <small style="color: var(--text-gray);">📦 Всего маркеров: ${totalCount}</small>
+            <div style="margin-top: 8px;">
+                <small style="color: var(--text-gray);">Собрано маркеров: ${uniqueCount}</small>
             </div>
         `;
         container.appendChild(div);
     });
 }
-function openBrandDetail(brandName, collectedNumbers) {
+function openBrandDetail(brandName, collectedNumbers, existingNumbers) {
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
     modal.style.display = 'flex';
     
-    // Создаем список всех номеров от 1 до total
     const brand = brands.find(b => b.name === brandName);
     const total = brand ? brand.total : 100;
     
+    // Показываем только существующие номера (из базы маркеров)
+    const numbersToShow = existingNumbers.filter(num => parseInt(num) <= total);
+    
     let numbersHtml = '';
-    for (let i = 1; i <= Math.min(total, 200); i++) {
-        const num = i.toString();
+    numbersToShow.forEach(num => {
         const isCollected = collectedNumbers.has(num);
         numbersHtml += `
             <div style="
@@ -3060,13 +3199,13 @@ function openBrandDetail(brandName, collectedNumbers) {
                 ${isCollected ? '✓' : '+'}
             </div>
         `;
-    }
+    });
     
     modal.innerHTML = `
         <div class="modal-content" style="max-width: 500px;">
             <h3>🎨 ${brandName}</h3>
             <p style="margin-bottom: 15px; color: var(--text-gray);">
-                <i class="fas fa-check-circle" style="color: var(--status-green);"></i> Собрано: ${collectedNumbers.size}/${total}
+                <i class="fas fa-check-circle" style="color: var(--status-green);"></i> Собрано уникальных: ${collectedNumbers.size}/${numbersToShow.length}
             </p>
             <div style="max-height: 50vh; overflow-y: auto; display: flex; flex-wrap: wrap; justify-content: center;">
                 ${numbersHtml}
@@ -3076,7 +3215,6 @@ function openBrandDetail(brandName, collectedNumbers) {
     `;
     document.body.appendChild(modal);
 }
-
 function toggleMarkerInBrand(brandName, number, isCollected) {
     if (isCollected) {
         // Удаляем маркер из инвентаря
@@ -3084,16 +3222,18 @@ function toggleMarkerInBrand(brandName, number, isCollected) {
             if (confirm) {
                 let removed = false;
                 inventory.organizers.forEach(org => {
-                    org.cells.forEach(row => {
-                        row.forEach(cell => {
-                            for (let i = cell.length - 1; i >= 0; i--) {
-                                if (cell[i].brand === brandName && cell[i].number === number) {
-                                    cell.splice(i, 1);
-                                    removed = true;
+                    if (org.cells) {
+                        org.cells.forEach(row => {
+                            row.forEach(cell => {
+                                for (let i = cell.length - 1; i >= 0; i--) {
+                                    if (cell[i].brand === brandName && cell[i].number === number) {
+                                        cell.splice(i, 1);
+                                        removed = true;
+                                    }
                                 }
-                            }
+                            });
                         });
-                    });
+                    }
                 });
                 if (removed) {
                     saveInventory();
@@ -3101,8 +3241,28 @@ function toggleMarkerInBrand(brandName, number, isCollected) {
                     renderBrands();
                     tg.showAlert(`Маркер ${brandName} №${number} удален`);
                     // Закрываем модалку и открываем заново для обновления
-                    document.querySelector('.modal-overlay').remove();
-                    openBrandDetail(brandName, new Set());
+                    const modal = document.querySelector('.modal-overlay');
+                    if (modal) modal.remove();
+                    // Переоткрываем с обновленными данными
+                    const updatedNumbers = new Set();
+                    inventory.organizers.forEach(org => {
+                        if (org.cells) {
+                            org.cells.forEach(row => {
+                                row.forEach(cell => {
+                                    cell.forEach(marker => {
+                                        if (marker.brand === brandName) {
+                                            updatedNumbers.add(marker.number);
+                                        }
+                                    });
+                                });
+                            });
+                        }
+                    });
+                    const markersData = markersDB;
+                    const existingNumbers = markersData
+                        .filter(m => m.num && parseInt(m.num) <= (brands.find(b => b.name === brandName)?.total || 100))
+                        .map(m => m.num);
+                    openBrandDetail(brandName, updatedNumbers, existingNumbers);
                 }
             }
         });
@@ -3110,22 +3270,75 @@ function toggleMarkerInBrand(brandName, number, isCollected) {
         // Добавляем маркер в инвентарь
         if (inventory.organizers.length > 0) {
             const org = inventory.organizers[0];
-            const cell = org.cells[0][0];
-            const existing = cell.find(m => m.brand === brandName && m.number === number);
+            // Находим первую пустую ячейку или ячейку с этим брендом
+            let targetCell = null;
+            let targetRow = 0, targetCol = 0;
+            
+            for (let row = 0; row < org.rows; row++) {
+                for (let col = 0; col < org.cols; col++) {
+                    if (!org.cells[row]) org.cells[row] = [];
+                    if (!org.cells[row][col]) org.cells[row][col] = [];
+                    const cell = org.cells[row][col];
+                    const existing = cell.find(m => m.brand === brandName && m.number === number);
+                    if (existing) {
+                        targetCell = cell;
+                        targetRow = row;
+                        targetCol = col;
+                        break;
+                    }
+                    if (!targetCell && cell.length === 0) {
+                        targetCell = cell;
+                        targetRow = row;
+                        targetCol = col;
+                    }
+                }
+                if (targetCell) break;
+            }
+            
+            if (!targetCell) {
+                targetCell = org.cells[0][0];
+                targetRow = 0;
+                targetCol = 0;
+            }
+            
+            const existing = targetCell.find(m => m.brand === brandName && m.number === number);
             if (existing) {
                 existing.count += 1;
             } else {
-                cell.push({ brand: brandName, number: number, count: 1 });
+                targetCell.push({ brand: brandName, number: number, count: 1 });
             }
+            
             const key = `${brandName}_${number}`;
             inventory.userMarkers[key] = (inventory.userMarkers[key] || 0) + 1;
             saveInventory();
             renderOrganizers();
             renderBrands();
-            tg.showAlert(`Маркер ${brandName} №${number} добавлен`);
+            tg.showAlert(`Маркер ${brandName} №${number} добавлен в ячейку ${String.fromCharCode(65 + targetRow)}${targetCol + 1}`);
+            
             // Закрываем модалку и открываем заново для обновления
-            document.querySelector('.modal-overlay').remove();
-            openBrandDetail(brandName, new Set());
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) modal.remove();
+            
+            // Обновляем данные и переоткрываем
+            const updatedNumbers = new Set();
+            inventory.organizers.forEach(org => {
+                if (org.cells) {
+                    org.cells.forEach(row => {
+                        row.forEach(cell => {
+                            cell.forEach(marker => {
+                                if (marker.brand === brandName) {
+                                    updatedNumbers.add(marker.number);
+                                }
+                            });
+                        });
+                    });
+                }
+            });
+            const markersData = markersDB;
+            const existingNumbers = markersData
+                .filter(m => m.num && parseInt(m.num) <= (brands.find(b => b.name === brandName)?.total || 100))
+                .map(m => m.num);
+            openBrandDetail(brandName, updatedNumbers, existingNumbers);
         } else {
             tg.showAlert('Сначала создайте органайзер!');
         }
@@ -3437,6 +3650,52 @@ function closeOrganizerView() {
         console.error('=== APP ERROR ===', error);
     }
 };
+// Раскрытие основного блока инвентаря
+function toggleInventoryBlock() {
+    const content = document.getElementById('inventoryContent');
+    const arrow = document.getElementById('inventoryArrow');
+    if (!content) return;
+    
+    if (content.style.display === 'none' || content.style.display === '') {
+        content.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+    } else {
+        content.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Раскрытие блока органайзеров
+function toggleOrganizersBlock() {
+    const content = document.getElementById('organizersBlockContent');
+    const arrow = document.getElementById('organizersArrow');
+    if (!content) return;
+    
+    if (content.style.display === 'none' || content.style.display === '') {
+        content.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+        renderOrganizers(); // Обновляем при открытии
+    } else {
+        content.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Раскрытие блока маркеров
+function toggleMarkersBlock() {
+    const content = document.getElementById('markersBlockContent');
+    const arrow = document.getElementById('markersArrow');
+    if (!content) return;
+    
+    if (content.style.display === 'none' || content.style.display === '') {
+        content.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+        renderBrands(); // Обновляем при открытии
+    } else {
+        content.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+}
     </script>
 </head>
 <body>
@@ -3512,45 +3771,58 @@ function closeOrganizerView() {
         </div>
         <div class="showcase-info" onclick="openAchievementsGallery()">Нажмите для просмотра всех достижений</div>
     </div>
-<!-- ========== ИНВЕНТАРЬ (НОВАЯ ВЕРСИЯ) ========== -->
-<div class="inventory-section">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-        <h3 style="margin: 0;"><i class="fas fa-boxes"></i> Мой инвентарь</h3>
-        <button class="balance-btn" style="padding: 10px 20px; width: auto; background: var(--accent); color: white;" onclick="openOrganizerCreator()">
-            <i class="fas fa-plus"></i> Создать органайзер
-        </button>
-    </div>
-    
-    <!-- Список органайзеров -->
-    <div id="organizersList"></div>
-    
-    <!-- Выбранный органайзер для просмотра -->
-    <div id="selectedOrganizerView" style="display: none; margin-top: 15px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
-            <h4 id="selectedOrganizerName" style="margin:0;"></h4>
-            <button class="photo-upload-btn" onclick="closeOrganizerView()" style="padding: 6px 12px;">
-                <i class="fas fa-times"></i> Закрыть
-            </button>
+<!-- ========== МОЙ ИНВЕНТАРЬ (раскрывающийся блок) ========== -->
+<div class="inventory-main-block">
+    <div class="inventory-header" onclick="toggleInventoryBlock()">
+        <div class="inventory-header-left">
+            <i class="fas fa-boxes"></i>
+            <span>Мой инвентарь</span>
         </div>
-        <div id="selectedOrganizerGrid"></div>
-    </div>
-    
-    <!-- Вкладки Бренды и Поиск -->
-    <div style="display: flex; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-top: 20px;">
-        <button class="inventory-tab-btn active" data-tab="brands" onclick="switchInventoryTab('brands')"><i class="fas fa-tags"></i> Бренды</button>
-        <button class="inventory-tab-btn" data-tab="search" onclick="switchInventoryTab('search')"><i class="fas fa-search"></i> Поиск</button>
-    </div>
-    
-    <div id="brandsTab" class="inventory-tab active" style="margin-top: 15px;">
-        <div id="brandsList"></div>
-    </div>
-    
-    <div id="searchTab" class="inventory-tab" style="display: none; margin-top: 15px;">
-        <div class="search-box" style="margin-bottom: 15px;">
-            <i class="fas fa-search"></i>
-            <input type="text" id="inventorySearchInput" placeholder="Поиск по номеру или бренду..." oninput="searchInventory()">
+        <div class="inventory-header-right">
+            <span class="beta-badge">Бета-Тест</span>
+            <i class="fas fa-chevron-down" id="inventoryArrow"></i>
         </div>
-        <div id="searchResults"></div>
+    </div>
+    
+    <div id="inventoryContent" class="inventory-content" style="display: none;">
+        <!-- Органайзеры блок -->
+        <div class="inventory-subblock">
+            <div class="subblock-header" onclick="toggleOrganizersBlock()">
+                <div class="subblock-header-left">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Органайзеры</span>
+                </div>
+                <i class="fas fa-chevron-down" id="organizersArrow"></i>
+            </div>
+            <div id="organizersBlockContent" class="subblock-content" style="display: none;">
+                <button class="create-organizer-btn" onclick="openOrganizerCreator()">
+                    <i class="fas fa-plus"></i> Создать органайзер
+                </button>
+                <div id="organizersList"></div>
+                <!-- Выбранный органайзер для просмотра -->
+                <div id="selectedOrganizerView" style="display: none; margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 id="selectedOrganizerName" style="margin:0; font-size: 16px;"></h4>
+                        <button class="close-view-btn" onclick="closeOrganizerView()">✖ Закрыть</button>
+                    </div>
+                    <div id="selectedOrganizerGrid"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Маркеры блок (бывшие Бренды) -->
+        <div class="inventory-subblock">
+            <div class="subblock-header" onclick="toggleMarkersBlock()">
+                <div class="subblock-header-left">
+                    <i class="fas fa-palette"></i>
+                    <span>Маркеры</span>
+                </div>
+                <i class="fas fa-chevron-down" id="markersArrow"></i>
+            </div>
+            <div id="markersBlockContent" class="subblock-content" style="display: none;">
+                <div id="brandsList"></div>
+            </div>
+        </div>
     </div>
 </div>
     <div class="support-section" onclick="openSupport()">
@@ -3600,7 +3872,11 @@ function closeOrganizerView() {
 
 <!-- ========== ИИ ПАЛИТРА ========== -->
 <div id="aipalette" class="page">
-    <div class="header">ИИ Палитра ✨</div>
+    <div class="header">
+        ИИ Палитра ✨
+        <span class="ai-alpha-badge">Альфа-тест</span>
+    </div>
+</div>
     <div class="ai-section">
         <div class="upload-area" onclick="document.getElementById('aiInput').click()"><i class="fas fa-camera"></i><p>Загрузить фото для определения цвета</p></div>
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">

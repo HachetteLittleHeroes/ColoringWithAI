@@ -1666,36 +1666,54 @@
 
         // ТОЛЬКО 1 ВРЕМЕННОЕ ЗАДАНИЕ
         const timeTasks = [
-            { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 }
-        ];
+    { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 }
+];
 
-        const taskBranches = {
-            alcohol_markers: {
-                name: "Спиртовые маркеры",
-                levels: [
-                    { title: "Новичок спирта", maxProgress: 1, desc: "Раскрась 1 работу" },
-                    { title: "Любитель градиентов", maxProgress: 3, desc: "Раскрась 3 работы" },
-                    { title: "Мастер блендинга", maxProgress: 5, desc: "Раскрась 5 работ" },
-                    { title: "Профи заливки", maxProgress: 10, desc: "Раскрась 10 работ" },
-                    { title: "Амбассадор Спирта", maxProgress: 20, desc: "Раскрась 20 работ" }
-                ]
-            },
-            pencils: {
-                name: "Цветные карандаши",
-                levels: [
-                    { title: "Штриховальщик", maxProgress: 1, desc: "1 работа карандашами" },
-                    { title: "Штриховальщик 2", maxProgress: 3, desc: "Раскрась 3 работы" },
-                    { title: "Штриховальщик 3", maxProgress: 5, desc: "Раскрась 5 работ" },
-                    { title: "Штриховальщик 4", maxProgress: 10, desc: "Раскрась 10 работ" },
-                    { title: "Штриховальщик 5", maxProgress: 20, desc: "Раскрась 20 работ" }
-                ]
-            }
-        };
+        // Статусы, которые можно получить за прохождение всей ветки заданий
+const statusRewards = {
+    alcohol_markers: "Мастер спиртовых маркеров",
+    pencils: "Мастер карандашей"
+};
 
-        const products = {
-            'tome1': { id: 'tome1', name: 'Том 1', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', type: 'book' },
-            'tome2': { id: 'tome2', name: 'Том 2', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', type: 'book' }
-        };
+const taskBranches = {
+    alcohol_markers: {
+        name: "Спиртовые маркеры",
+        levels: [
+            { title: "Новичок спирта", maxProgress: 1, desc: "Раскрась 1 работу", reward: 10 },
+            { title: "Любитель градиентов", maxProgress: 3, desc: "Раскрась 3 работы", reward: 20 },
+            { title: "Мастер блендинга", maxProgress: 5, desc: "Раскрась 5 работ", reward: 30 },
+            { title: "Профи заливки", maxProgress: 10, desc: "Раскрась 10 работ", reward: 50 },
+            { title: "Амбассадор Спирта", maxProgress: 20, desc: "Раскрась 20 работ", reward: 100 }
+        ]
+    },
+    pencils: {
+        name: "Цветные карандаши",
+        levels: [
+            { title: "Штриховальщик", maxProgress: 1, desc: "1 работа карандашами", reward: 10 },
+            { title: "Штриховальщик 2", maxProgress: 3, desc: "Раскрась 3 работы", reward: 20 },
+            { title: "Штриховальщик 3", maxProgress: 5, desc: "Раскрась 5 работ", reward: 30 },
+            { title: "Штриховальщик 4", maxProgress: 10, desc: "Раскрась 10 работ", reward: 50 },
+            { title: "Штриховальщик 5", maxProgress: 20, desc: "Раскрась 20 работ", reward: 100 }
+        ]
+    }
+};
+
+const products = {
+    'tome1': { 
+        id: 'tome1', 
+        name: 'Том 1', 
+        price: 1500, 
+        img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', 
+        type: 'book' 
+    },
+    'tome2': { 
+        id: 'tome2', 
+        name: 'Том 2', 
+        price: 1500, 
+        img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', 
+        type: 'book' 
+    }
+};
 
         // Бренды для инвентаря
         const brands = [
@@ -1734,7 +1752,10 @@
             timeTasksProgress: {},
             timeTasksReset: Date.now(),
             aiUsageCount: 0,
-            theme: localStorage.getItem('app_theme') || 'light'
+            theme: localStorage.getItem('app_theme') || 'light',
+    customThemeBg: localStorage.getItem('custom_theme_bg') || 'light',
+    customThemeAccent: localStorage.getItem('custom_theme_accent') || '#ff9500'
+};
         };
 
         let savedLocalUser = JSON.parse(localStorage.getItem('coloring_user')) || {};
@@ -1761,30 +1782,29 @@
         `;
 
         function setTheme(themeName) {
-            const oldStyle = document.getElementById('custom-theme-style');
-            if (oldStyle) oldStyle.remove();
+    const oldStyle = document.getElementById('custom-theme-style');
+    if (oldStyle) oldStyle.remove();
 
-            if (themeName === 'custom') {
-                applyCustomTheme(true);
-            } else {
-                document.documentElement.setAttribute('data-theme', themeName);
-                const style = document.createElement('style');
-                style.id = 'custom-theme-style';
-                style.textContent = commonStyles;
-                document.head.appendChild(style);
-            }
+    if (themeName === 'custom') {
+        applyCustomTheme(true);
+    } else {
+        document.documentElement.setAttribute('data-theme', themeName);
+    }
 
-            user.theme = themeName;
-            localStorage.setItem('app_theme', themeName);
-            
-            const themeOptions = document.querySelectorAll('.theme-option');
-            if (themeOptions.length > 0) {
-                themeOptions.forEach(el => {
-                    el.classList.remove('active');
-                    if (el.dataset.theme === themeName) el.classList.add('active');
-                });
-            }
-        }
+    user.theme = themeName;
+    localStorage.setItem('app_theme', themeName);
+    
+    // Сохраняем кастомные настройки
+    if (themeName === 'custom') {
+        localStorage.setItem('custom_theme_bg', user.customThemeBg || 'light');
+        localStorage.setItem('custom_theme_accent', user.customThemeAccent || '#ff9500');
+    }
+    
+    document.querySelectorAll('.theme-option').forEach(el => {
+        el.classList.remove('active');
+        if (el.dataset.theme === themeName) el.classList.add('active');
+    });
+}
 
         function applyCustomTheme(loadFromCache = false) {
             let bgMode, accentColor;
@@ -1901,10 +1921,10 @@
         }
 
         function getStockText(stock) {
-            if (stock === 0) return 'Нет в наличии';
-            if (stock === 1) return '1 шт. (последняя)';
-            return `${stock} шт.`;
-        }
+    if (stock === 0) return 'Нет в наличии';
+    if (stock === 1) return '1 шт.';
+    return `${stock} шт.`;
+}
 
         function renderMarkers() {
             const container = document.getElementById('markersList');
@@ -1940,22 +1960,42 @@
             });
         }
 
-        function updateMarkerCart(num, delta) {
-            const cartKey = `marker_${num}`;
-            const currentCount = cart[cartKey] || 0;
-            const newCount = currentCount + delta;
-            const marker = markersDB.find(m => m.num === num);
-            if (!marker) return;
-            if (newCount > marker.stock) { tg.showAlert(`Максимум доступно: ${marker.stock} шт.`); return; }
-            if (newCount < 0) return;
-            if (newCount === 0) delete cart[cartKey];
-            else cart[cartKey] = newCount;
-            const countSpan = document.getElementById(`marker-count-${num}`);
-            if (countSpan) countSpan.innerText = newCount;
-            saveData();
-            renderCart();
-            updateCartBadge();
-        }
+       function updateMarkerCart(num, delta) {
+    const cartKey = `marker_${num}`;
+    const currentCount = cart[cartKey] || 0;
+    const newCount = currentCount + delta;
+    const marker = markersDB.find(m => m.num === num);
+    if (!marker) return;
+    
+    if (newCount > marker.stock) { 
+        tg.showAlert(`Максимум доступно: ${marker.stock} шт.`); 
+        return; 
+    }
+    if (newCount < 0) return;
+    
+    if (newCount === 0) {
+        delete cart[cartKey];
+    } else {
+        cart[cartKey] = newCount;
+    }
+    
+    // Обновляем отображение количества
+    const countSpan = document.getElementById(`marker-count-${num}`);
+    if (countSpan) countSpan.innerText = newCount;
+    
+    // Обновляем состояние кнопок (+ и -)
+    const markerItem = document.querySelector(`.marker-item[data-num="${num}"]`);
+    if (markerItem) {
+        const minusBtn = markerItem.querySelector('.minus');
+        const plusBtn = markerItem.querySelector('button:last-child');
+        if (minusBtn) minusBtn.disabled = (newCount === 0);
+        if (plusBtn) plusBtn.disabled = (newCount >= marker.stock);
+    }
+    
+    saveData();
+    renderCart();
+    updateCartBadge();
+}
 
         function searchMarkers() {
             const query = document.getElementById('markerSearch').value.toLowerCase();
@@ -2107,43 +2147,65 @@
         }
 
         function renderLevelTasks() {
-            const container = document.getElementById('levelTasksList');
-            if (!container) return;
-            container.innerHTML = '';
-            for (let branchKey in taskBranches) {
-                const branch = taskBranches[branchKey];
-                const progressArr = user.branchProgress[branchKey] || [0, 0, 0, 0, 0];
-                const branchDiv = document.createElement('div');
-                branchDiv.style = "background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px;";
-                branchDiv.innerHTML = `<div style="font-size: 16px; font-weight: bold; color: var(--accent); margin-bottom: 12px;">${branch.name}</div>`;
-                let levelsHtml = '';
-                let firstLocked = false;
-                branch.levels.forEach((lvl, idx) => {
-                    if (firstLocked) return;
-                    const current = progressArr[idx] || 0;
-                    const isDone = current >= lvl.maxProgress;
-                    const percent = Math.min((current / lvl.maxProgress) * 100, 100);
-                    levelsHtml += `
-                        <div style="margin-bottom: 12px; padding: 10px; border-radius: 10px; background: var(--card-bg); border: 1px solid var(--border-color);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                <span style="font-weight: bold; font-size: 14px;">Уровень ${idx + 1}: ${lvl.title}</span>
-                                ${isDone ? '<span style="color: var(--status-green);">✓</span>' : ''}
-                            </div>
-                            <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 8px;">${lvl.desc}</p>
-                            <div style="background: var(--border-color); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 10px;">
-                                <div style="width: ${percent}%; background: var(--accent-gradient); height: 100%; transition: width 0.3s;"></div>
-                            </div>
-                            <button class="photo-upload-btn" onclick="openTaskUpload('${branchKey}_${idx}')" style="width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold;">
-                                Отправить фото
-                            </button>
-                        </div>
-                    `;
-                    if (!isDone) firstLocked = true;
-                });
-                branchDiv.innerHTML += levelsHtml;
-                container.appendChild(branchDiv);
+    const container = document.getElementById('levelTasksList');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    for (let branchKey in taskBranches) {
+        const branch = taskBranches[branchKey];
+        const progress = user.branchProgress[branchKey];
+        const isBranchCompleted = user.branchCompleted[branchKey];
+        
+        const branchDiv = document.createElement('div');
+        branchDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px;';
+        branchDiv.innerHTML = `<div style="font-size:16px; font-weight:bold; color:var(--accent); margin-bottom:12px;">${branch.name}</div>`;
+        
+        let activeShown = false;
+        let lastCompletedIndex = -1;
+        
+        // Находим последний выполненный уровень
+        for (let i = 0; i < branch.levels.length; i++) {
+            if ((progress[i] || 0) >= branch.levels[i].maxProgress) {
+                lastCompletedIndex = i;
+            } else {
+                break;
             }
         }
+        
+        // Показываем только последний выполненный и следующий активный
+        for (let i = 0; i < branch.levels.length; i++) {
+            const currentProgress = progress[i] || 0;
+            const isCompleted = currentProgress >= branch.levels[i].maxProgress;
+            const isActive = !isCompleted && (i === 0 || (progress[i-1] || 0) >= branch.levels[i-1].maxProgress);
+            const isLastCompleted = i === lastCompletedIndex && isCompleted;
+            
+            // Показываем только активный или последний выполненный
+            if (!isActive && !isLastCompleted && i !== lastCompletedIndex + 1) continue;
+            
+            const percent = Math.min(100, (currentProgress / branch.levels[i].maxProgress) * 100);
+            
+            const taskDiv = document.createElement('div');
+            taskDiv.className = `level-task lvl-${i + 1} ${isCompleted ? 'completed' : ''}`;
+            taskDiv.innerHTML = `
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="font-weight:bold;">Уровень ${i + 1}: ${branch.levels[i].title}</span>
+                    ${isCompleted ? '<span style="color:var(--status-green);">✓ Выполнено</span>' : ''}
+                </div>
+                <p style="font-size:12px; color:var(--text-gray); margin-bottom:8px;">${branch.levels[i].desc}</p>
+                <div style="background:var(--border-color); height:8px; border-radius:4px; overflow:hidden; margin-bottom:10px;">
+                    <div style="width:${percent}%; background:var(--accent-gradient); height:100%;"></div>
+                </div>
+                ${isActive ? `
+                    <button class="photo-upload-btn" onclick="openTaskUpload('${branchKey}_${i}')" style="width:100%; background:var(--accent); color:white;">
+                        <i class="fas fa-camera"></i> Отправить на проверку
+                    </button>
+                ` : ''}
+            `;
+            branchDiv.appendChild(taskDiv);
+        }
+        container.appendChild(branchDiv);
+    }
+}
 
         function renderTimeTasks() {
             const container = document.getElementById('timeTasksList');
@@ -2204,58 +2266,69 @@
         }
 
         function submitTaskPhoto() {
-            if (tempTaskPhotos.length > 0 && activeTaskId) {
-                if (activeTaskId.includes('_')) {
-                    const parts = activeTaskId.split('_');
-                    if (parts.length === 2) {
-                        const branchKey = parts[0];
-                        const levelIndex = parseInt(parts[1]);
-                        if (taskBranches[branchKey] && !isNaN(levelIndex)) {
-                            if (!user.branchProgress[branchKey]) user.branchProgress[branchKey] = [0, 0, 0, 0, 0];
-                            const current = user.branchProgress[branchKey][levelIndex] || 0;
-                            const maxProgress = taskBranches[branchKey].levels[levelIndex].maxProgress;
-                            if (current < maxProgress) {
-                                user.branchProgress[branchKey][levelIndex] = current + 1;
-                                const reward = 10;
-                                user.balance += reward;
-                                tg.showAlert(`✅ Прогресс обновлен! (${user.branchProgress[branchKey][levelIndex]}/${maxProgress}) +${reward} ашетиков`);
-                                if (levelIndex === 0 && !user.achievements.includes('first_task')) {
-                                    user.achievements.push('first_task');
-                                    showAchievementAlert('first_task');
-                                }
-                                saveData();
-                                renderLevelTasks();
-                            } else {
-                                tg.showAlert('Это задание уже выполнено!');
-                            }
-                        }
-                    }
-                } else {
-                    if (!user.timeTasksProgress[activeTaskId]) {
-                        user.timeTasksProgress[activeTaskId] = 'pending';
-                        saveData();
-                        setTimeout(() => {
-                            if (user.timeTasksProgress[activeTaskId] === 'pending') {
-                                user.timeTasksProgress[activeTaskId] = 'completed';
-                                const task = timeTasks.find(t => t.id === activeTaskId);
-                                if (task) {
-                                    user.balance += task.reward;
-                                    saveData();
-                                    tg.showAlert(`✅ Задание выполнено! +${task.reward} ашетиков`);
-                                }
-                                renderTimeTasks();
-                            }
-                        }, 2000);
-                        tg.showAlert(`✅ Фото отправлено на проверку!`);
-                    } else {
-                        tg.showAlert('Это задание уже выполнено!');
+    if (tempTaskPhotos.length > 0 && activeTaskId) {
+        // Отправляем уведомление админу (в демо-режиме показываем сообщение)
+        tg.showAlert(`✅ Фото отправлено на проверку админу! Задание: ${activeTaskId}`);
+        
+        // В демо-режиме для тестирования добавляем кнопку одобрения для админа
+        if (user.isAdmin) {
+            tg.showConfirm('Вы админ. Одобрить задание?', (confirm) => {
+                if (confirm) {
+                    approveTaskByAdmin(activeTaskId);
+                }
+            });
+        }
+        
+        closeTaskUploadModal();
+    } else {
+        tg.showAlert('Ошибка: Фото не выбрано');
+    }
+}
+
+// Новая функция для одобрения админом
+function approveTaskByAdmin(taskId) {
+    if (taskId.includes('_')) {
+        const [branchKey, levelIdx] = taskId.split('_');
+        const idx = parseInt(levelIdx);
+        const current = user.branchProgress[branchKey]?.[idx] || 0;
+        const maxProgress = taskBranches[branchKey]?.levels[idx]?.maxProgress;
+        
+        if (current < maxProgress) {
+            user.branchProgress[branchKey][idx] = current + 1;
+            
+            // Проверяем завершение уровня
+            if (user.branchProgress[branchKey][idx] >= maxProgress) {
+                tg.showAlert(`✅ Уровень ${idx + 1} в ветке ${taskBranches[branchKey].name} выполнен!`);
+                
+                // Проверяем завершение всей ветки
+                const allCompleted = user.branchProgress[branchKey].every((p, i) => p >= taskBranches[branchKey].levels[i].maxProgress);
+                if (allCompleted && !user.branchCompleted[branchKey]) {
+                    user.branchCompleted[branchKey] = true;
+                    const statusName = statusRewards[branchKey];
+                    if (statusName && !user.unlockedStatuses.includes(statusName)) {
+                        user.unlockedStatuses.push(statusName);
+                        tg.showAlert(`🎉 Получен новый статус: ${statusName}!`);
                     }
                 }
-                closeTaskUploadModal();
-            } else {
-                tg.showAlert('Ошибка: Фото не выбрано');
             }
+            saveData();
+            renderLevelTasks();
         }
+    } else {
+        // Временное задание
+        if (!user.timeTasksProgress[taskId] || user.timeTasksProgress[taskId] !== 'completed') {
+            user.timeTasksProgress[taskId] = 'completed';
+            const task = timeTasks.find(t => t.id === taskId);
+            if (task) {
+                user.balance += task.reward;
+                tg.showAlert(`✅ Задание выполнено! +${task.reward} ашетиков`);
+                saveData();
+            }
+            renderTimeTasks();
+        }
+    }
+    updateUI();
+}
 
         function showAchievementAlert(achId) {
             const ach = achievementsDB[achId];
@@ -2308,22 +2381,50 @@
         }
 
         function renderShowcase() {
-            for (let i = 0; i < 3; i++) {
-                const slot = document.getElementById(`slot-${i}`);
-                if (!slot) continue;
-                const achId = user.showcase[i];
-                slot.innerHTML = '';
-                if (achId && achievementsDB[achId]) {
-                    const img = document.createElement('img');
-                    img.src = achievementsDB[achId].img;
-                    slot.appendChild(img);
-                    slot.classList.add('filled');
-                } else {
-                    slot.innerHTML = '<i class="fas fa-plus"></i>';
-                    slot.classList.remove('filled');
-                }
-            }
+    for (let i = 0; i < 3; i++) {
+        const slot = document.getElementById(`slot-${i}`);
+        const achId = user.showcase[i];
+        slot.innerHTML = '';
+        if (achId && achievementsDB[achId]) {
+            const img = document.createElement('img');
+            img.src = achievementsDB[achId].img;
+            slot.appendChild(img);
+            slot.classList.add('filled');
+        } else {
+            slot.innerHTML = '<i class="fas fa-plus"></i>';
+            slot.classList.remove('filled');
         }
+    }
+}
+
+// Добавьте функцию выбора достижения для витрины
+function openShowcaseSelector(slotIndex) {
+    const list = document.getElementById('showcaseAchievementsList');
+    if (!list) return;
+    list.innerHTML = '';
+    
+    user.achievements.forEach(achId => {
+        const ach = achievementsDB[achId];
+        if (ach) {
+            const div = document.createElement('div');
+            div.className = 'achievement-item';
+            div.style.cssText = 'display:flex; align-items:center; gap:10px; padding:10px; cursor:pointer;';
+            div.onclick = () => {
+                user.showcase[slotIndex] = achId;
+                saveData();
+                renderShowcase();
+                document.getElementById('showcaseSelectorModal').style.display = 'none';
+            };
+            div.innerHTML = `<img src="${ach.img}" style="width:40px; height:40px;"><span>${ach.name}</span>`;
+            list.appendChild(div);
+        }
+    });
+    
+    if (user.achievements.length === 0) {
+        list.innerHTML = '<div class="no-results">Нет достижений</div>';
+    }
+    document.getElementById('showcaseSelectorModal').style.display = 'flex';
+}
 
         // ==========================================
         // ПРОФИЛЬ
@@ -2379,23 +2480,33 @@
         function closeNameModal() { document.getElementById('nameModal').style.display = 'none'; }
 
         function openStatusInfo() {
-            const list = document.getElementById('availableStatusesList');
-            if (!list) return;
-            list.innerHTML = '';
-            levelConfig.forEach(lvl => {
-                const isUnlocked = user.level >= lvl.level;
-                const isActive = user.status === lvl.name;
-                const div = document.createElement('div');
-                div.style.cssText = `padding: 12px; margin: 8px 0; border-radius: 12px; background: var(--card-bg); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);`;
-                let actionHtml = '';
-                if (isActive) actionHtml = '<span style="color: var(--status-green);"><i class="fas fa-check"></i> Выбран</span>';
-                else if (isUnlocked) actionHtml = `<button class="balance-btn" style="padding: 8px 16px; width: auto;" onclick="selectStatus('${lvl.name}')">Выбрать</button>`;
-                else actionHtml = `<span style="color: var(--text-gray);">С ${lvl.xpReq} XP</span>`;
-                div.innerHTML = `<div><span style="font-weight: 600;">${lvl.name}</span></div><div>${actionHtml}</div>`;
-                list.appendChild(div);
-            });
-            document.getElementById('statusSelectModal').style.display = 'flex';
+    const list = document.getElementById('availableStatusesList');
+    if (!list) return;
+    list.innerHTML = '';
+    
+    // Показываем только статусы из веток + "Новичок"
+    const allStatuses = ['Новичок', ...Object.values(statusRewards)];
+    
+    allStatuses.forEach(status => {
+        const isUnlocked = user.unlockedStatuses.includes(status);
+        const isActive = user.status === status;
+        
+        const div = document.createElement('div');
+        div.style.cssText = `padding:12px; margin:8px 0; border-radius:12px; background:var(--card-bg); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);`;
+        
+        if (isUnlocked) {
+            div.innerHTML = `
+                <span>${status}</span>
+                ${!isActive ? `<button class="balance-btn" style="padding:6px 12px; width:auto;" onclick="selectStatus('${status}')">Выбрать</button>` : '<span style="color:var(--status-green);">✓ Активен</span>'}
+            `;
+        } else {
+            div.innerHTML = `<span style="opacity:0.6;">${status}</span><span style="color:var(--text-gray);">🔒 Выполните все уровни ветки</span>`;
         }
+        list.appendChild(div);
+    });
+    
+    document.getElementById('statusSelectModal').style.display = 'flex';
+}
 
         function selectStatus(statusName) { user.status = statusName; saveData(); document.getElementById('statusSelectModal').style.display = 'none'; }
 
@@ -3016,6 +3127,20 @@
 <div id="taskUploadModal" class="modal-overlay"><div class="modal-content"><h3>Отправка на проверку</h3><div id="taskPhotoPreviewContainer" class="photo-preview-container"></div><div class="modal-buttons-row"><button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button><button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button></div></div></div>
 <div id="organizerModal" class="modal-overlay"><div class="modal-content"><h3>Создать органайзер</h3><input type="text" id="organizerName" placeholder="Название органайзера"><div class="form-group"><label>Количество столбцов:</label><input type="number" id="organizerCols" value="3" min="1" max="10"></div><div class="form-group"><label>Количество строк:</label><input type="number" id="organizerRows" value="3" min="1" max="10"></div><button class="modal-action-btn" onclick="createOrganizer()">Создать</button><button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button></div></div>
 <div id="addMarkerModal" class="modal-overlay"><div class="modal-content"><h3>Добавить маркер</h3><div class="form-group"><label>Бренд:</label><select id="addMarkerBrand"><option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option><option value="Grasp">Grasp</option><option value="InfiArt">InfiArt</option><option value="Tooli-Art">Tooli-Art</option></select></div><div class="form-group"><label>Номер маркера:</label><input type="text" id="addMarkerNumber" placeholder="101"></div><div class="form-group"><label>Количество:</label><input type="number" id="addMarkerCount" value="1" min="1"></div><button class="modal-action-btn" onclick="confirmAddMarker()">Добавить</button><button class="modal-close-btn" onclick="closeAddMarkerModal()">Отмена</button></div></div>
-
+<div id="showcaseSelectorModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Выберите достижение</h3>
+        <div id="showcaseAchievementsList" class="achievements-grid"></div>
+        <button class="modal-close-btn" onclick="document.getElementById('showcaseSelectorModal').style.display='none'">Отмена</button>
+    </div>
+</div>
+<!-- Модалка выбора достижения для витрины -->
+<div id="showcaseSelectorModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Выберите достижение</h3>
+        <div id="showcaseAchievementsList" class="achievements-grid"></div>
+        <button class="modal-close-btn" onclick="document.getElementById('showcaseSelectorModal').style.display='none'">Отмена</button>
+    </div>
+</div>
 </body>
 </html>

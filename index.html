@@ -2101,6 +2101,37 @@
     </style>
 
     <script>
+    // ==========================================
+// 🚨 БЛОК ИНИЦИАЛИЗАЦИИ И ЗАГЛУШЕК
+// ==========================================
+
+// 1. Безопасная обертка для Telegram (чтобы клики работали в обычном браузере на ПК)
+const tg = window.Telegram?.WebApp || {
+    showAlert: function(msg) { alert(msg); },
+    showConfirm: function(msg, callback) { callback(confirm(msg)); }
+};
+
+// 2. Объявление важнейших глобальных переменных
+let inventory = { organizers: [], userMarkers: {} };
+let cart = {};
+let activeTaskId = null;
+if (!window.user) {
+    window.user = { balance: 0, theme: 'light', branchProgress: {}, branchCompleted: {} };
+}
+
+// 3. Заглушки баз данных (чтобы функции рендера не ломались)
+window.markersDB = window.markersDB || [];
+window.brands = window.brands || [
+    { name: 'GuangNa', total: 100 },
+    { name: 'Languo', total: 100 },
+    { name: 'Zibeef', total: 100 }
+];
+window.taskBranches = window.taskBranches || {};
+
+// Заглушки для недостающих функций обновления UI
+window.updateUI = window.updateUI || function() { console.log("UI updated"); };
+window.saveData = window.saveData || function() { localStorage.setItem('user', JSON.stringify(user)); };
+
     let activeTaskId = null;
         // ==========================================
         // ТЕСТИРОВАНИЕ В БРАУЗЕРЕ
@@ -4138,10 +4169,11 @@ function renderLevelTasks() {
         user.branchProgress = {};
     }
 
-    if (!taskBranches) {
-        console.error('taskBranches not defined');
-        return;
-    }
+    if (typeof taskBranches === 'undefined' || !taskBranches) {
+    console.error('taskBranches not defined');
+    return;
+}
+
 
     console.log('taskBranches:', taskBranches);
     console.log('user:', user);

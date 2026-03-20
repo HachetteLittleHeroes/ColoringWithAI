@@ -12,7 +12,6 @@
            1. ПЕРЕМЕННЫЕ И ГЛОБАЛЬНЫЕ НАСТРОЙКИ
            ========================================== */
         :root {
-            /* Светлая тема (по умолчанию) */
             --bg: #f5f5f7;
             --bg-secondary: #ffffff;
             --bg-header: #ffffff;
@@ -34,8 +33,7 @@
             --card-bg: #ffffff;
             --input-bg: #ffffff;
         }
-
-        /* Темная тема */
+        
         [data-theme="dark"] {
             --bg: #121212;
             --bg-secondary: #1e1e1e;
@@ -47,7 +45,6 @@
             --input-bg: #2c2c2e;
         }
 
-        /* Голубая тема */
         [data-theme="blue"] {
             --bg: #f0f9ff;
             --bg-secondary: #ffffff;
@@ -58,7 +55,6 @@
             --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         }
 
-        /* Зеленая тема */
         [data-theme="green"] {
             --bg: #f0fdf4;
             --bg-secondary: #ffffff;
@@ -69,7 +65,6 @@
             --accent-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
         }
 
-        /* Фиолетовая тема */
         [data-theme="purple"] {
             --bg: #faf5ff;
             --bg-secondary: #ffffff;
@@ -80,7 +75,6 @@
             --accent-gradient: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
         }
 
-        /* Розовая тема */
         [data-theme="pink"] {
             --bg: #fdf2f8;
             --bg-secondary: #ffffff;
@@ -105,13 +99,9 @@
             color: var(--text);
             padding-bottom: 90px;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* ==========================================
-           2. ТИПОГРАФИКА И ОБЩИЕ КОМПОНЕНТЫ
-           ========================================== */
         .header { 
             font-size: 26px; 
             font-weight: 800; 
@@ -478,36 +468,6 @@
             margin-bottom: 12px;
         }
 
-        /* Прогресс статуса */
-        .status-progress {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-        }
-
-        .status-progress h5 {
-            color: var(--text-gray);
-            font-size: 13px;
-            margin-bottom: 12px;
-        }
-
-        .level-indicators {
-            display: flex;
-            gap: 8px;
-        }
-
-        .level-dot {
-            flex: 1;
-            height: 8px;
-            border-radius: 4px;
-            background: rgba(0,0,0,0.1);
-        }
-
-        .level-dot.completed {
-            background: var(--accent);
-        }
-
         /* Многоуровневые задания */
         .level-task {
             background: var(--card-bg);
@@ -523,35 +483,6 @@
         .level-task.lvl-3 { border-left-color: var(--lvl-3); }
         .level-task.lvl-4 { border-left-color: var(--lvl-4); }
         .level-task.lvl-5 { border-left-color: var(--lvl-5); }
-
-        .level-task .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .level-badge {
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-weight: 600;
-            background: var(--accent);
-            color: white;
-        }
-
-        .task-title {
-            font-weight: 700;
-            font-size: 15px;
-            margin-bottom: 4px;
-            color: var(--text);
-        }
-
-        .task-description {
-            color: var(--text-gray);
-            font-size: 12px;
-            margin-bottom: 12px;
-        }
 
         /* Временные задания */
         .time-task {
@@ -607,14 +538,6 @@
         .photo-upload-btn i {
             font-size: 14px;
         }
-
-        .task-status {
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .task-status.completed { color: var(--status-green); }
-        .task-status.pending { color: var(--status-yellow); }
 
         /* ==========================================
            8. ВИТРИНА ДОСТИЖЕНИЙ
@@ -714,10 +637,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        .support-button i {
-            font-size: 20px;
-        }
-
         /* ==========================================
            10. ТЕМЫ ОФОРМЛЕНИЯ
            ========================================== */
@@ -806,7 +725,6 @@
         .theme-row input[type="color"] {
             width: 50px;
             height: 50px;
-            border: 2px solid var(--border-color);
             border-radius: 12px;
             cursor: pointer;
             background: var(--input-bg);
@@ -1001,21 +919,10 @@
             font-weight: 600;
         }
 
-        .marker-stock.out-of-stock {
-            color: var(--status-red);
-        }
-
-        .marker-stock.low-stock {
-            color: var(--status-dark-orange);
-        }
-
-        .marker-stock.medium-stock {
-            color: var(--status-green);
-        }
-
-        .marker-stock.high-stock {
-            color: var(--status-green);
-        }
+        .marker-stock.out-of-stock { color: var(--status-red); }
+        .marker-stock.low-stock { color: var(--status-dark-orange); }
+        .marker-stock.medium-stock { color: var(--status-green); }
+        .marker-stock.high-stock { color: var(--status-green); }
 
         .marker-controls {
             display: flex;
@@ -1169,7 +1076,7 @@
         }
 
         /* ==========================================
-           15. КОРЗИНА - С ФИКСИРОВАННЫМ НИЖНИМ БЛОКОМ
+           15. КОРЗИНА
            ========================================== */
         .cart-wrapper {
             position: relative;
@@ -1312,12 +1219,6 @@
             cursor: pointer;
         }
 
-        .checkout-btn:disabled {
-            background: #444;
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
         /* ==========================================
            16. ИИ ПАЛИТРА
            ========================================== */
@@ -1345,13 +1246,13 @@
             font-weight: 600;
             margin: 0;
         }
-.tasks-header {
-    border-bottom: none !important;
-}
-.tasks-content {
-    border-top: none !important;
-}
 
+        .tasks-header {
+            border-bottom: none !important;
+        }
+        .tasks-content {
+            border-top: none !important;
+        }
 
         .admin-panel {
             margin-top: 20px;
@@ -1556,20 +1457,6 @@
             margin: 0;
         }
 
-        .btn-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
         .photo-preview-container {
             display: flex;
             gap: 10px;
@@ -1610,80 +1497,119 @@
             object-fit: cover;
             display: block;
         }
-        /* Золотая книжка-ашетик */
-.gold-book {
-    color: #FFD700;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-}
 
-/* Обводка для еженедельных заданий */
-.time-task {
-    border: 2px solid var(--accent);
-    /* остальной твой стиль для .time-task сохраняется */
-}
+        .task-progress-bg {
+            background: var(--border-color);
+            border-radius: 10px;
+            height: 12px;
+            width: 100%;
+            margin: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
 
-/* Шкала прогресса для заданий */
-.task-progress-bg {
-    background: var(--border-color);
-    border-radius: 10px;
-    height: 12px;
-    width: 100%;
-    margin: 10px 0;
-    overflow: hidden;
-    position: relative;
-}
+        .task-progress-fill {
+            background: var(--accent-gradient);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
 
-.task-progress-fill {
-    background: var(--accent-gradient);
-    height: 100%;
-    border-radius: 10px;
-    transition: width 0.3s ease;
-}
+        .task-progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: #fff;
+            line-height: 12px;
+            font-weight: bold;
+            text-shadow: 0px 0px 2px rgba(0,0,0,0.8);
+        }
 
-.task-progress-text {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    font-size: 10px;
-    color: #fff;
-    line-height: 12px;
-    font-weight: bold;
-    text-shadow: 0px 0px 2px rgba(0,0,0,0.8);
-}
+        /* ИНВЕНТАРЬ */
+        .inventory-section {
+            background: var(--bg-header);
+            margin: 15px;
+            padding: 20px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+        }
 
-/* Стилизация админ-панели под общий дизайн */
-.admin-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
+        .inventory-tab-btn {
+            padding: 8px 16px;
+            background: transparent;
+            color: var(--text-gray);
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-.admin-card h4 {
-    margin-top: 0;
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+        .inventory-tab-btn.active {
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .inventory-tab {
+            margin-top: 15px;
+        }
+
+        /* ГЛОБАЛЬНЫЙ ФИКС КЛИКОВ */
+        button, 
+        .nav-btn, 
+        .marker-controls, 
+        .theme-option, 
+        .photo-upload-btn, 
+        .upload-area, 
+        .showcase-slot, 
+        .reward-card,
+        .avatar-wrapper,
+        .status-badge,
+        input, 
+        select {
+            position: relative !important;
+            z-index: 99 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+
+        .modal-overlay {
+            z-index: 10000 !important;
+        }
+
+        .nav {
+            z-index: 1000 !important;
+        }
     </style>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
+        // ==========================================
+        // ТЕСТИРОВАНИЕ В БРАУЗЕРЕ
+        // ==========================================
+        const isTelegram = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe);
+        const tg = isTelegram ? window.Telegram.WebApp : {
+            expand: () => {},
+            ready: () => {},
+            showAlert: (msg) => alert(msg),
+            showConfirm: (msg, callback) => callback(confirm(msg)),
+            sendData: (data) => console.log('Send data:', data),
+            initDataUnsafe: { user: { id: 496779756, first_name: 'Тестер' } }
+        };
 
-        // ID администратора
+        if (isTelegram) {
+            tg.expand();
+            tg.ready();
+        }
+
+        const tgUserId = tg.initDataUnsafe?.user?.id;
+        const userId = tgUserId || 496779756;
         const ADMIN_ID = 496779756;
-        
-        // URL сервера
         const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io';
-        
-        // Цена маркера
         const MARKER_PRICE = 75;
 
-        // Данные
+        // ==========================================
+        // ДАННЫЕ
+        // ==========================================
         const levelConfig = [
             { level: 1, name: "Новичок", xpReq: 0, color: "lvl-1" },
             { level: 2, name: "Любитель", xpReq: 100, color: "lvl-2" },
@@ -1731,330 +1657,231 @@
         };
 
         const levelTasks = [
-    { level: 1, title: 'Начинающий художник', description: 'Нужно подтвердить 1 раскрашенную страницу', maxProgress: 1 },
-    { level: 2, title: 'Любитель цвета', description: 'Нужно подтвердить 3 раскрашенные страницы', maxProgress: 3 },
-    { level: 3, title: 'Опытный колорист', description: 'Нужно подтвердить 5 раскрашенных страниц', maxProgress: 5 },
-    { level: 4, title: 'Мастер оттенков', description: 'Нужно подтвердить 10 раскрашенных страниц', maxProgress: 10 },
-    { level: 5, title: 'Легенда раскрасок', description: 'Нужно подтвердить 20 раскрашенных страниц', maxProgress: 20 }
-];
+            { level: 1, title: 'Начинающий художник', description: 'Нужно подтвердить 1 раскрашенную страницу', maxProgress: 1, xp: 50 },
+            { level: 2, title: 'Любитель цвета', description: 'Нужно подтвердить 3 раскрашенные страницы', maxProgress: 3, xp: 100 },
+            { level: 3, title: 'Опытный колорист', description: 'Нужно подтвердить 5 раскрашенных страниц', maxProgress: 5, xp: 150 },
+            { level: 4, title: 'Мастер оттенков', description: 'Нужно подтвердить 10 раскрашенных страниц', maxProgress: 10, xp: 200 },
+            { level: 5, title: 'Легенда раскрасок', description: 'Нужно подтвердить 20 раскрашенных страниц', maxProgress: 20, xp: 300 }
+        ];
 
-const timeTasks = [
-    { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 }
-];
+        // ТОЛЬКО 1 ВРЕМЕННОЕ ЗАДАНИЕ
+        const timeTasks = [
+            { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 }
+        ];
 
-
-        // База данных обученных цветов
-        let trainedColors = JSON.parse(localStorage.getItem('trained_colors')) || {};
-
-        // База данных маркеров
-        let markersDB = [];
-
-        const products = {
-            'tome1': { 
-                id: 'tome1',
-                name: 'Том 1', 
-                price: 1500, 
-                img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png',
-                type: 'book'
+        const taskBranches = {
+            alcohol_markers: {
+                name: "Спиртовые маркеры",
+                levels: [
+                    { title: "Новичок спирта", maxProgress: 1, desc: "Раскрась 1 работу" },
+                    { title: "Любитель градиентов", maxProgress: 3, desc: "Раскрась 3 работы" },
+                    { title: "Мастер блендинга", maxProgress: 5, desc: "Раскрась 5 работ" },
+                    { title: "Профи заливки", maxProgress: 10, desc: "Раскрась 10 работ" },
+                    { title: "Амбассадор Спирта", maxProgress: 20, desc: "Раскрась 20 работ" }
+                ]
             },
-            'tome2': { 
-                id: 'tome2',
-                name: 'Том 2', 
-                price: 1500, 
-                img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png',
-                type: 'book'
+            pencils: {
+                name: "Цветные карандаши",
+                levels: [
+                    { title: "Штриховальщик", maxProgress: 1, desc: "1 работа карандашами" },
+                    { title: "Штриховальщик 2", maxProgress: 3, desc: "Раскрась 3 работы" },
+                    { title: "Штриховальщик 3", maxProgress: 5, desc: "Раскрась 5 работ" },
+                    { title: "Штриховальщик 4", maxProgress: 10, desc: "Раскрась 10 работ" },
+                    { title: "Штриховальщик 5", maxProgress: 20, desc: "Раскрась 20 работ" }
+                ]
             }
         };
 
-        // Получаем ID пользователя
-        
-        // 1. ПОЛУЧАЕМ ID (с безопасным фолбэком для тестов в браузере)
-const tgUserId = tg.initDataUnsafe?.user?.id;
-const userId = tgUserId || 496779756; // Если зашли из браузера, подставляем твой ID
-console.log('Текущий User ID:', userId);
+        const products = {
+            'tome1': { id: 'tome1', name: 'Том 1', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', type: 'book' },
+            'tome2': { id: 'tome2', name: 'Том 2', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', type: 'book' }
+        };
 
-// 2. ДЕФОЛТНЫЕ ДАННЫЕ (эталон)
-const defaultUser = {
-    name: tg.initDataUnsafe?.user?.first_name || 'Серджио',
-    balance: 0,
-    xp: 0,
-    level: 1,
-    avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
-    status: 'Без статуса',
-    achievements: [],
-    showcase: [null, null, null],
-    levelTasksProgress: [0, 0, 0, 0, 0],
-    // Твои новые ветки
-    branchProgress: {
-        alcohol_markers: [0, 0, 0, 0, 0],
-        pencils: [0, 0, 0, 0, 0]
-    },
-    unlockedStatuses: [],
-    timeTasksProgress: {},
-    timeTasksReset: Date.now(),
-    aiUsageCount: 0,
-    theme: localStorage.getItem('app_theme') || 'light'
-}; // Только одна закрывающая скобка здесь!
+        // Бренды для инвентаря
+        const brands = [
+            { name: 'GuangNa', total: 408, trained: 0 },
+            { name: 'Languo', total: 288, trained: 0 },
+            { name: 'Zibeef', total: 240, trained: 0 },
+            { name: 'Grasp', total: 168, trained: 0 },
+            { name: 'InfiArt', total: 288, trained: 0 },
+            { name: 'Tooli-Art', total: 508, trained: 0 }
+        ];
 
+        let trainedColors = JSON.parse(localStorage.getItem('trained_colors')) || {};
+        let markersDB = [];
+        let activeTaskId = null;
+        let tempTaskPhotos = [];
 
-// 3. БЕЗОПАСНОЕ СЛИЯНИЕ
-// Берем старые данные из кэша, но если там чего-то нет (например, новых заданий) - берем из defaultUser
-let savedLocalUser = JSON.parse(localStorage.getItem('coloring_user')) || {};
-let user = { ...defaultUser, ...savedLocalUser };
+        // Инвентарь
+        let inventory = {
+            organizers: [],
+            userMarkers: {}
+        };
 
-// Защита от старых крашей корзины и заданий (если в кэше лежал битый тип данных)
-if (!Array.isArray(user.levelTasksProgress)) user.levelTasksProgress = [...defaultUser.levelTasksProgress];
-if (!user.timeTasksProgress) user.timeTasksProgress = {};
-if (!Array.isArray(user.unlockedStatuses)) user.unlockedStatuses = ['Новичок'];
+        // Пользователь
+        const defaultUser = {
+            name: tg.initDataUnsafe?.user?.first_name || 'Тестер',
+            balance: 0,
+            xp: 0,
+            level: 1,
+            avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
+            status: 'Без статуса',
+            achievements: [],
+            showcase: [null, null, null],
+            levelTasksProgress: [0, 0, 0, 0, 0],
+            branchProgress: { alcohol_markers: [0, 0, 0, 0, 0], pencils: [0, 0, 0, 0, 0] },
+            unlockedStatuses: [],
+            timeTasksProgress: {},
+            timeTasksReset: Date.now(),
+            aiUsageCount: 0,
+            theme: localStorage.getItem('app_theme') || 'light'
+        };
 
-// ЖЕСТКО задаем админку каждый раз (чтобы кэш не перебивал)
-user.isAdmin = (userId === ADMIN_ID);
+        let savedLocalUser = JSON.parse(localStorage.getItem('coloring_user')) || {};
+        let user = { ...defaultUser, ...savedLocalUser };
+        if (!Array.isArray(user.levelTasksProgress)) user.levelTasksProgress = [...defaultUser.levelTasksProgress];
+        if (!user.timeTasksProgress) user.timeTasksProgress = {};
+        if (!user.branchProgress) user.branchProgress = { alcohol_markers: [0, 0, 0, 0, 0], pencils: [0, 0, 0, 0, 0] };
+        user.isAdmin = (userId === ADMIN_ID);
 
-
-        // Корзина
         let cart = JSON.parse(localStorage.getItem('coloring_cart')) || {};
 
-        // ========== УПРАВЛЕНИЕ ТЕМАМИ (FIXED FOR REBOOT) ==========
+        // ==========================================
+        // ТЕМЫ
+        // ==========================================
+        const commonStyles = `
+            button, .nav-btn, .marker-controls, .theme-option, .photo-upload-btn, .upload-area, .showcase-slot, .reward-card { 
+                position: relative !important; 
+                z-index: 10 !important; 
+                pointer-events: auto !important; 
+                cursor: pointer !important;
+            }
+            .modal-overlay { z-index: 10000 !important; }
+            .page { position: relative; z-index: 1; }
+        `;
 
-function setTheme(themeName) {
-    const oldStyle = document.getElementById('custom-theme-style');
-    if (oldStyle) oldStyle.remove();
+        function setTheme(themeName) {
+            const oldStyle = document.getElementById('custom-theme-style');
+            if (oldStyle) oldStyle.remove();
 
-    if (themeName === 'custom') {
-        applyCustomTheme(true);
-    } else {
-        document.documentElement.setAttribute('data-theme', themeName);
-    }
+            if (themeName === 'custom') {
+                applyCustomTheme(true);
+            } else {
+                document.documentElement.setAttribute('data-theme', themeName);
+                const style = document.createElement('style');
+                style.id = 'custom-theme-style';
+                style.textContent = commonStyles;
+                document.head.appendChild(style);
+            }
 
-    // Сохраняем выбор
-    user.theme = themeName;
-    localStorage.setItem('app_theme', themeName);
-    
-    // БЕЗОПАСНОЕ обновление UI (только если элементы уже созданы)
-    const themeOptions = document.querySelectorAll('.theme-option');
-    if (themeOptions.length > 0) {
-        themeOptions.forEach(el => {
-            el.classList.remove('active');
-            if (el.dataset.theme === themeName) el.classList.add('active');
-        });
-    }
-}
-
-function applyCustomTheme(loadFromCache = false) {
-    let bgMode, accentColor;
-
-    if (loadFromCache) {
-        bgMode = localStorage.getItem('custom_theme_bg') || 'light';
-        accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
-        
-        // Проверяем наличие инпутов перед тем как менять их значения
-        const bgEl = document.getElementById('themeBgMode');
-        const accEl = document.getElementById('themeAccentColor');
-        if (bgEl) bgEl.value = bgMode;
-        if (accEl) accEl.value = accentColor;
-    } else {
-        const bgEl = document.getElementById('themeBgMode');
-        const accEl = document.getElementById('themeAccentColor');
-        bgMode = bgEl ? bgEl.value : 'light';
-        accentColor = accEl ? accEl.value : '#ff9500';
-        
-        localStorage.setItem('custom_theme_bg', bgMode);
-        localStorage.setItem('custom_theme_accent', accentColor);
-    }
-    
-    const oldStyle = document.getElementById('custom-theme-style');
-    if (oldStyle) oldStyle.remove();
-
-    const style = document.createElement('style');
-    style.id = 'custom-theme-style';
-    
-    const isLight = (bgMode === 'light');
-    const gradientColor = (typeof adjustColor === 'function') ? adjustColor(accentColor, -30) : accentColor;
-
-    style.textContent = `
-        :root {
-            --bg: ${isLight ? '#f5f5f7' : '#121212'};
-            --bg-secondary: ${isLight ? '#ffffff' : '#1e1e1e'};
-            --text: ${isLight ? '#1c1c1e' : '#ffffff'};
-            --accent: ${accentColor};
-            --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${gradientColor} 100%);
-            --card-bg: ${isLight ? '#ffffff' : '#1c1c1e'};
-            --border-color: ${isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)'};
-        }
-    `;
-    
-    document.head.appendChild(style);
-    document.documentElement.removeAttribute('data-theme');
-    user.theme = 'custom';
-}
-
-
-
-        function adjustColor(hex, percent) {
-            // Простая функция для затемнения/осветления цвета
-            let R = parseInt(hex.substring(1,3), 16);
-            let G = parseInt(hex.substring(3,5), 16);
-            let B = parseInt(hex.substring(5,7), 16);
+            user.theme = themeName;
+            localStorage.setItem('app_theme', themeName);
             
-            R = Math.min(255, Math.max(0, R + percent));
-            G = Math.min(255, Math.max(0, G + percent));
-            B = Math.min(255, Math.max(0, B + percent));
+            const themeOptions = document.querySelectorAll('.theme-option');
+            if (themeOptions.length > 0) {
+                themeOptions.forEach(el => {
+                    el.classList.remove('active');
+                    if (el.dataset.theme === themeName) el.classList.add('active');
+                });
+            }
+        }
+
+        function applyCustomTheme(loadFromCache = false) {
+            let bgMode, accentColor;
+            if (loadFromCache) {
+                bgMode = localStorage.getItem('custom_theme_bg') || 'light';
+                accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
+                const bgEl = document.getElementById('themeBgMode');
+                const accEl = document.getElementById('themeAccentColor');
+                if(bgEl) bgEl.value = bgMode;
+                if(accEl) accEl.value = accentColor;
+            } else {
+                const bgEl = document.getElementById('themeBgMode');
+                const accEl = document.getElementById('themeAccentColor');
+                bgMode = bgEl ? bgEl.value : 'light';
+                accentColor = accEl ? accEl.value : '#ff9500';
+                localStorage.setItem('custom_theme_bg', bgMode);
+                localStorage.setItem('custom_theme_accent', accentColor);
+            }
             
-            return '#' + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
+            const oldStyle = document.getElementById('custom-theme-style');
+            if (oldStyle) oldStyle.remove();
+            const style = document.createElement('style');
+            style.id = 'custom-theme-style';
+            
+            if (bgMode === 'light') {
+                style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
+            } else {
+                style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; } ${commonStyles}`;
+            }
+            document.head.appendChild(style);
+            document.documentElement.removeAttribute('data-theme');
+            user.theme = 'custom';
+            localStorage.setItem('app_theme', 'custom');
         }
 
-        // ========== ПОДДЕРЖАТЬ НАС ==========
-        function openSupport() {
-            window.open('https://boosty.to/coloringapp', '_blank');
+        // ==========================================
+        // СОХРАНЕНИЕ
+        // ==========================================
+        function saveDataLocal() {
+            localStorage.setItem('coloring_user', JSON.stringify(user));
+            localStorage.setItem('coloring_cart', JSON.stringify(cart));
+            updateUI();
         }
-        //Отправка запроса на бекенд
-async function adminChangeBalance() {
-    const targetId = document.getElementById('adminTargetUserId').value;
-    const amount = parseInt(document.getElementById('adminBalanceAmount').value);
 
-    if (!targetId || isNaN(amount)) {
-        tg.showAlert('Заполните ID и сумму');
-        return;
-    }
-
-    try {
-        const response = await fetch(`${SERVER_URL}/api/admin/balance`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                adminId: userId, 
-                targetId: targetId, 
-                amount: amount 
-            })
-        });
-
-        if (response.ok) {
-            tg.showAlert(`Успешно начислено ${amount} ашетиков пользователю ${targetId}`);
-            document.getElementById('adminTargetUserId').value = '';
-            document.getElementById('adminBalanceAmount').value = '';
-        } else {
-            tg.showAlert('Ошибка сервера или нет прав');
+        function saveData() {
+            saveDataLocal();
         }
-    } catch (error) {
-        tg.showAlert('Ошибка сети');
-    }
-}
 
-        // ========== СИНХРОНИЗАЦИЯ С СЕРВЕРОМ ==========
-
-// Загружаем данные пользователя при входе
-async function fetchUserFromServer() {
-    try {
-        const response = await fetch(`${SERVER_URL}/api/user/${userId}`);
-        if (response.ok) {
-            const serverData = await response.json();
-            // Обновляем локальные данные серверными (сервер главнее)
-            user = { ...user, ...serverData };
-            user.isAdmin = (userId === ADMIN_ID); // Снова защищаем админку
-            saveDataLocal(); // Сохраняем в кэш и обновляем интерфейс
+        function updateUI() {
+            const nameEl = document.getElementById('displayUsername');
+            const avatarEl = document.getElementById('user-avatar');
+            const balanceEl = document.getElementById('userBalance');
+            const statusBadge = document.getElementById('currentStatus');
+            if (nameEl) nameEl.innerText = user.name;
+            if (avatarEl) avatarEl.src = user.avatar;
+            if (balanceEl) balanceEl.innerText = user.balance;
+            if (statusBadge) statusBadge.innerText = user.status || 'Без статуса';
+            updateStatusProgress();
+            renderShowcase();
+            updateCartBadge();
         }
-    } catch (error) {
-        console.error('Ошибка загрузки с сервера, используем локальные данные', error);
-    }
-}
 
-// Отправляем данные на сервер при любом изменении
-async function syncUserWithServer() {
-    try {
-        await fetch(`${SERVER_URL}/api/user/sync`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: userId, userData: user })
-        });
-    } catch (error) {
-        console.error('Ошибка сохранения на сервер', error);
-    }
-}
+        function updateStatusProgress() {
+            const progressBar = document.querySelector('.task-progress-fill');
+            const progressText = document.querySelector('.task-progress-text');
+            if (progressBar) progressBar.style.width = '0%';
+            if (progressText) progressText.innerText = '0 / 5';
+        }
 
-// Изменяем старую функцию saveData
-function saveData() {
-    saveDataLocal();
-    syncUserWithServer(); // Отправляем на бэкенд в фоновом режиме
-}
-
-// Локальное сохранение (чтобы интерфейс обновлялся мгновенно)
-function saveDataLocal() {
-    localStorage.setItem('coloring_user', JSON.stringify(user));
-    localStorage.setItem('coloring_cart', JSON.stringify(cart));
-    updateUI();
-}
-
-const taskBranches = {
-    alcohol_markers: {
-        name: "Спиртовые маркеры",
-        levels: [
-            { title: "Новичок спирта", maxProgress: 1, desc: "Раскрась 1 работу" },
-            { title: "Любитель градиентов", maxProgress: 3, desc: "Раскрась 3 работы" },
-            { title: "Мастер блендинга", maxProgress: 5, desc: "Раскрась 5 работ" },
-            { title: "Профи заливки", maxProgress: 10, desc: "Раскрась 10 работ" },
-            { title: "Амбассадор Спирта", maxProgress: 20, desc: "Раскрась 20 работ" }
-        ]
-    },
-    pencils: {
-        name: "Цветные карандаши",
-        levels: [
-            { title: "Штриховальщик", maxProgress: 1, desc: "1 работа карандашами" },
-            { title: "Штриховальщик 2", maxProgress: 3, desc: "Раскрась 3 работы" },
-            { title: "Штриховальщик 3", maxProgress: 5, desc: "Раскрась 5 работ" },
-            { title: "Штриховальщик 4", maxProgress: 10, desc: "Раскрась 10 работ" },
-            { title: "Штриховальщик 5", maxProgress: 20, desc: "Раскрась 20 работ" }
-        ]
-    }
-    // Сюда можно добавлять сколько угодно новых веток
-};
-
-        // ========== ЗАГРУЗКА МАРКЕРОВ ИЗ GOOGLE SHEETS ==========
+        // ==========================================
+        // МАРКЕРЫ
+        // ==========================================
         async function loadMarkers() {
-            console.log('Загрузка маркеров из Google Sheets...');
             const markersContainer = document.getElementById('markersList');
             if (markersContainer) {
                 markersContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка маркеров...</div>';
             }
-
             const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
-            
             try {
                 const res = await fetch(csvUrl);
                 const text = await res.text();
                 const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, '').trim()));
-                
                 let temp = [];
                 rows.forEach(row => {
                     for (let i = 0; i < row.length; i++) {
                         let num = row[i];
                         if (num && !isNaN(num) && parseInt(num) > 10) {
                             let stock = parseInt(row[i+1] || row[i+2] || "0");
-                            
-                            // Проверяем, есть ли обученный цвет для этого маркера
                             const trainedColor = trainedColors[num];
-                            
-                            temp.push({ 
-                                num: num, 
-                                color: trainedColor ? trainedColor : null,
-                                stock: stock,
-                                trained: !!trainedColor
-                            });
+                            temp.push({ num: num, color: trainedColor || null, stock: stock, trained: !!trainedColor });
                             i++;
                         }
                     }
                 });
-                
                 markersDB = temp;
-                console.log('Загружено маркеров:', markersDB.length);
                 renderMarkers();
-                
             } catch (error) {
-                console.error('Ошибка загрузки маркеров:', error);
-                if (markersContainer) {
-                    markersContainer.innerHTML = '<div class="no-results">Ошибка загрузки маркеров</div>';
-                }
-                
-                // Демо-данные на случай ошибки
                 markersDB = [
                     { num: '101', color: '#FF0000', stock: 5, trained: true },
                     { num: '102', color: '#00FF00', stock: 3, trained: true },
@@ -2066,7 +1893,6 @@ const taskBranches = {
             }
         }
 
-        // ========== ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ ЦВЕТА СТОКА ==========
         function getStockColor(stock) {
             if (stock === 0) return 'out-of-stock';
             if (stock === 1) return 'low-stock';
@@ -2080,38 +1906,21 @@ const taskBranches = {
             return `${stock} шт.`;
         }
 
-        // ========== РЕНДЕРИНГ МАРКЕРОВ ==========
         function renderMarkers() {
             const container = document.getElementById('markersList');
             if (!container) return;
-            
-            if (markersDB.length === 0) {
-                container.innerHTML = '<div class="no-results">Нет данных о маркерах</div>';
-                return;
-            }
-            
+            if (markersDB.length === 0) { container.innerHTML = '<div class="no-results">Нет данных о маркерах</div>'; return; }
             container.innerHTML = '';
-            
             markersDB.forEach(m => {
+                const cartKey = `marker_${m.num}`;
+                const cartCount = cart[cartKey] || 0;
+                const canAdd = cartCount < m.stock;
+                const canRemove = cartCount > 0;
+                const circleStyle = m.trained && m.color ? `background-color: ${m.color};` : 'background-color: var(--bg);';
+                const stockClass = getStockColor(m.stock);
                 const div = document.createElement('div');
                 div.className = 'marker-item';
                 div.setAttribute('data-num', m.num);
-                
-                // Определяем количество в корзине
-                const cartKey = `marker_${m.num}`;
-                const cartCount = cart[cartKey] || 0;
-                
-                // Проверяем, можно ли добавить еще
-                const canAdd = cartCount < m.stock;
-                const canRemove = cartCount > 0;
-                
-                // Цвет кружка: обученный цвет или бесцветный
-                const circleStyle = m.trained && m.color 
-                    ? `background-color: ${m.color};` 
-                    : 'background-color: var(--bg);';
-                
-                const stockClass = getStockColor(m.stock);
-                
                 div.innerHTML = `
                     <div class="color-circle ${m.trained ? 'trained' : ''}" style="${circleStyle}"></div>
                     <div class="marker-info">
@@ -2131,795 +1940,72 @@ const taskBranches = {
             });
         }
 
-        // ========== ОБНОВЛЕНИЕ КОРЗИНЫ С МАРКЕРАМИ ==========
         function updateMarkerCart(num, delta) {
             const cartKey = `marker_${num}`;
             const currentCount = cart[cartKey] || 0;
             const newCount = currentCount + delta;
-            
-            // Находим маркер в базе
             const marker = markersDB.find(m => m.num === num);
             if (!marker) return;
-            
-            // Проверяем наличие на складе
-            if (newCount > marker.stock) {
-                tg.showAlert(`Максимум доступно: ${marker.stock} шт.`);
-                return;
-            }
-            
+            if (newCount > marker.stock) { tg.showAlert(`Максимум доступно: ${marker.stock} шт.`); return; }
             if (newCount < 0) return;
-            
-            if (newCount === 0) {
-                delete cart[cartKey];
-            } else {
-                cart[cartKey] = newCount;
-            }
-            
-            // Обновляем отображение
+            if (newCount === 0) delete cart[cartKey];
+            else cart[cartKey] = newCount;
             const countSpan = document.getElementById(`marker-count-${num}`);
-            if (countSpan) {
-                countSpan.innerText = newCount;
-            }
-            
-            // Обновляем состояние кнопок
-            const markerItem = document.querySelector(`.marker-item[data-num="${num}"]`);
-            if (markerItem) {
-                const minusBtn = markerItem.querySelector('.minus');
-                const plusBtn = markerItem.querySelector('button:last-child');
-                const canAdd = newCount < marker.stock;
-                const canRemove = newCount > 0;
-                
-                if (minusBtn) minusBtn.disabled = !canRemove;
-                if (plusBtn) plusBtn.disabled = !canAdd;
-            }
-            
+            if (countSpan) countSpan.innerText = newCount;
             saveData();
             renderCart();
             updateCartBadge();
         }
 
-        // ========== ПОИСК ПО МАРКЕРАМ ==========
         function searchMarkers() {
             const query = document.getElementById('markerSearch').value.toLowerCase();
             const items = document.querySelectorAll('.marker-item');
-            let visibleCount = 0;
-            
             items.forEach(item => {
                 const num = item.getAttribute('data-num');
-                if (num.includes(query)) {
-                    item.classList.remove('hidden');
-                    visibleCount++;
-                } else {
-                    item.classList.add('hidden');
-                }
+                if (num.includes(query)) item.classList.remove('hidden');
+                else item.classList.add('hidden');
             });
-
-            const noResults = document.getElementById('markerNoResults');
-            if (visibleCount === 0) {
-                if (!noResults) {
-                    const container = document.getElementById('markersList');
-                    const msg = document.createElement('div');
-                    msg.id = 'markerNoResults';
-                    msg.className = 'no-results';
-                    msg.innerText = 'Маркеры не найдены';
-                    container.appendChild(msg);
-                }
-            } else {
-                if (noResults) noResults.remove();
-            }
         }
 
-        // ========== АДМИН-ПАНЕЛЬ ДЛЯ ОБУЧЕНИЯ ИИ ==========
-        async function trainAI() {
-            const fileInput = document.getElementById('aiTrainFile');
-            const brand = document.getElementById('aiTrainBrand').value;
-            const number = document.getElementById('aiTrainNumber').value;
-            
-            if (!fileInput.files[0]) {
-                tg.showAlert('Выберите изображение');
-                return;
-            }
-            
-            if (!brand || !number) {
-                tg.showAlert('Заполните бренд и номер маркера');
-                return;
-            }
-            
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = async function(e) {
-                const imageData = e.target.result;
-                
-                const statusDiv = document.getElementById('aiTrainStatus');
-                statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка на сервер...';
-                
-                try {
-                    // Отправляем на сервер
-                    const formData = new FormData();
-                    formData.append('image', file);
-                    formData.append('brand', brand);
-                    formData.append('number', number);
-                    formData.append('userId', userId);
-                    
-                    const response = await fetch(`${SERVER_URL}/train`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    if (response.ok) {
-                        const result = await response.json();
-                        
-                        // Сохраняем обученный цвет
-                        trainedColors[number] = result.color || '#FF0000';
-                        localStorage.setItem('trained_colors', JSON.stringify(trainedColors));
-                        
-                        statusDiv.innerHTML = `✅ Обучение завершено! Цвет маркера ${brand} №${number} сохранен на сервере.`;
-                        
-                        // Обновляем отображение маркеров
-                        loadMarkers();
-                        
-                        // Очищаем форму
-                        fileInput.value = '';
-                        document.getElementById('aiTrainBrand').value = '';
-                        document.getElementById('aiTrainNumber').value = '';
-                        
-                        tg.showAlert(`Маркер ${brand} №${number} добавлен в базу ИИ`);
-                    } else {
-                        throw new Error('Ошибка сервера');
-                    }
-                } catch (error) {
-                    console.error('Ошибка обучения:', error);
-                    statusDiv.innerHTML = '❌ Ошибка при обучении. Попробуйте позже.';
-                }
-            };
-            
-            reader.readAsDataURL(file);
-        }
-
-        // ========== ЗАГРУЗКА ФОТО ДЛЯ РАСПОЗНАВАНИЯ ==========
-        async function processAI(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const resultDiv = document.getElementById('aiResult');
-                resultDiv.style.display = 'block';
-                resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Анализ изображения...</div>';
-                
-                try {
-                    const formData = new FormData();
-                    formData.append('image', file);
-                    formData.append('userId', userId);
-                    
-                    const response = await fetch(`${SERVER_URL}/recognize`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    if (response.ok) {
-                        const result = await response.json();
-                        
-                        let html = '<h4 style="margin-bottom:15px;">Распознанные маркеры:</h4>';
-                        result.markers.forEach(m => {
-                            html += `
-                                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:var(--card-bg); padding:10px; border-radius:8px;">
-                                    <div style="width:30px; height:30px; border-radius:5px; background:${m.color};"></div>
-                                    <div>
-                                        <div style="font-weight:bold;">${m.brand} №${m.number}</div>
-                                        <button class="photo-upload-btn" style="padding:5px 10px; font-size:11px;" onclick="addToCartFromAI('${m.number}')">
-                                            <i class="fas fa-cart-plus"></i> Добавить в корзину
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        resultDiv.innerHTML = html;
-                        
-                        user.aiUsageCount = (user.aiUsageCount || 0) + 1;
-                        if (user.aiUsageCount >= 5) awardAchievement('ai_master');
-                        saveData();
-                    } else {
-                        throw new Error('Ошибка распознавания');
-                    }
-                } catch (error) {
-                    console.error('Ошибка:', error);
-                    resultDiv.innerHTML = '<div class="no-results">Ошибка при анализе. Попробуйте позже.</div>';
-                }
-            }
-        }
-
-        // ========== ДОБАВЛЕНИЕ В КОРЗИНУ ИЗ РЕЗУЛЬТАТОВ ИИ ==========
-        function addToCartFromAI(num) {
-            updateMarkerCart(num, 1);
-            tg.showAlert(`Маркер №${num} добавлен в корзину`);
-        }
-
-        // ========== ОБНОВЛЕНИЕ КОРЗИНЫ С ТОМАМИ ==========
+        // ==========================================
+        // КНИГИ И КОРЗИНА
+        // ==========================================
         function updateBookCart(bookId, delta) {
             const currentCount = cart[bookId] || 0;
             const newCount = currentCount + delta;
-            
             if (newCount < 0) return;
-            
-            if (newCount === 0) {
-                delete cart[bookId];
-            } else {
-                cart[bookId] = newCount;
-            }
-            
-            // Обновляем отображение
+            if (newCount === 0) delete cart[bookId];
+            else cart[bookId] = newCount;
             const countSpan = document.getElementById(`book-count-${bookId}`);
-            if (countSpan) {
-                countSpan.innerText = newCount;
-            }
-            
-            // Показываем/скрываем контролы
+            if (countSpan) countSpan.innerText = newCount;
             const controlsDiv = document.getElementById(`book-controls-${bookId}`);
             const addBtn = document.getElementById(`book-add-${bookId}`);
-            
             if (controlsDiv && addBtn) {
-                if (newCount > 0) {
-                    controlsDiv.style.display = 'flex';
-                    addBtn.style.display = 'none';
-                } else {
-                    controlsDiv.style.display = 'none';
-                    addBtn.style.display = 'block';
-                }
+                if (newCount > 0) { controlsDiv.style.display = 'flex'; addBtn.style.display = 'none'; }
+                else { controlsDiv.style.display = 'none'; addBtn.style.display = 'block'; }
             }
-            
             saveData();
             renderCart();
             updateCartBadge();
         }
 
-        function saveData() {
-            localStorage.setItem('coloring_user', JSON.stringify(user));
-            localStorage.setItem('coloring_cart', JSON.stringify(cart));
-            updateUI();
-        }
-
-        function updateUI() {
-            document.getElementById('displayUsername').innerText = user.name;
-            document.getElementById('user-avatar').src = user.avatar;
-            document.getElementById('userBalance').innerText = user.balance;
-
-            const statusBadge = document.getElementById('currentStatus');
-            if (user.status) {
-                statusBadge.innerText = user.status;
-            } else {
-                statusBadge.innerText = 'Без статуса';
-            }
-
-            updateStatusProgress();
-            renderShowcase();
-            updateCartBadge();
-        }
-function updateStatusProgress() {
-    // Безопасно ищем индекс активного задания
-    const activeLevelIndex = user.levelTasksProgress.findIndex((prog, idx) => {
-        const max = levelTasks[idx]?.maxProgress || 5;
-        return prog < max;
-    }) === -1 ? levelTasks.length - 1 : user.levelTasksProgress.findIndex((prog, idx) => {
-        const max = levelTasks[idx]?.maxProgress || 5;
-        return prog < max;
-    });
-
-    const currentTask = levelTasks[activeLevelIndex];
-    const currentProgress = user.levelTasksProgress[activeLevelIndex] || 0;
-    const maxProgress = currentTask?.maxProgress || 5;
-    const progressPercent = Math.min(100, (currentProgress / maxProgress) * 100);
-
-    // ВАЖНО: Добавляем проверку на существование элементов (?.), чтобы скрипт не падал
-    const progressBar = document.querySelector('.task-progress-fill');
-    const progressText = document.querySelector('.task-progress-text');
-    const levelLabel = document.querySelector('.current-level-label');
-
-    if (progressBar) progressBar.style.width = `${progressPercent}%`;
-    if (progressText) progressText.innerText = `${currentProgress} / ${maxProgress}`;
-    if (levelLabel) levelLabel.innerText = `Уровень ${activeLevelIndex + 1}`;
-
-    // Проверка статуса (тоже безопасно)
-    if (activeLevelIndex > 0 && !user.unlockedStatuses.includes('Спиртесса')) {
-        user.status = 'Спиртесса';
-        user.unlockedStatuses.push('Спиртесса');
-        saveDataLocal();
-    }
-}
-
-        // ========== НАВИГАЦИЯ ==========
-        function tab(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            document.getElementById('btn-' + pageId).classList.add('active');
-            window.scrollTo(0, 0);
-            
-            if (pageId === 'markers') {
-                if (markersDB.length === 0) {
-                    loadMarkers();
-                } else {
-                    renderMarkers();
-                }
-                document.getElementById('markerSearch').value = '';
-            }
-            if (pageId === 'answers') {
-                document.getElementById('bookSearch').value = '';
-            }
-            if (pageId === 'cart') renderCart();
-        }
-
-        // ========== СЕКЦИИ ==========
-        function toggleSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            if (section.style.display === 'none' || section.style.display === '') {
-                document.querySelectorAll('.rewards-section').forEach(el => el.style.display = 'none');
-                section.style.display = 'block';
-            } else {
-                section.style.display = 'none';
-            }
-        }
-
-        // ========== ЗАДАНИЯ ==========
-      // ВСТАВЬ ЭТО ВНУТРЬ <script>
-
-function toggleTasks() {
-    const content = document.getElementById('tasksContent');
-    const arrow = document.getElementById('tasksArrow');
-    if (!content) return;
-
-    if (content.style.display === 'block') {
-        content.style.display = 'none';
-        if (arrow) arrow.style.transform = 'rotate(0deg)';
-    } else {
-        content.style.display = 'block';
-        if (arrow) arrow.style.transform = 'rotate(180deg)';
-        renderLevelTasks();
-        renderTimeTasks();
-    }
-}
-
-function renderLevelTasks() {
-    const container = document.getElementById('levelTasksList');
-    if (!container) return;
-    container.innerHTML = '';
-
-    // Отрисовываем каждую ветку из твоего объекта taskBranches
-    for (let branchKey in taskBranches) {
-        const branch = taskBranches[branchKey];
-        const progressArr = user.branchProgress[branchKey] || [0,0,0,0,0];
-        
-        const branchDiv = document.createElement('div');
-        branchDiv.style = "background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px;";
-        
-        branchDiv.innerHTML = `<div style="font-size: 16px; font-weight: bold; color: var(--accent); margin-bottom: 12px;">${branch.name}</div>`;
-
-        let levelsHtml = '';
-        let firstLocked = false;
-
-        branch.levels.forEach((lvl, idx) => {
-            if (firstLocked) return;
-
-            const current = progressArr[idx] || 0;
-            const isDone = current >= lvl.maxProgress;
-            const percent = Math.min((current / lvl.maxProgress) * 100, 100);
-
-            levelsHtml += `
-                <div style="margin-bottom: 12px; padding: 10px; border-radius: 10px; background: var(--card-bg); border: 1px solid var(--border-color);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                        <span style="font-weight: bold; font-size: 14px;">Уровень ${idx + 1}: ${lvl.title}</span>
-                        ${isDone ? '<span style="color: var(--status-green);">✓</span>' : ''}
-                    </div>
-                    <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 8px;">${lvl.desc}</p>
-                    <div style="background: var(--border-color); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 10px;">
-                        <div style="width: ${percent}%; background: var(--accent-gradient); height: 100%; transition: width 0.3s;"></div>
-                    </div>
-                    <button class="upload-btn" onclick="openTaskUpload('${branchKey}_${idx}')" style="width: 100%; padding: 10px; border-radius: 8px; background: var(--accent); color: white; border: none; font-weight: bold; cursor: pointer; pointer-events: auto;">
-                        Отправить фото
-                    </button>
-                </div>
-            `;
-            if (!isDone) firstLocked = true;
-        });
-
-        branchDiv.innerHTML += levelsHtml;
-        container.appendChild(branchDiv);
-    }
-}
-
-// Функция для открытия выбора файла
-// Убедитесь, что эти переменные объявлены (добавьте их перед функциями)
-let activeTaskId = null;
-let tempTaskPhotos = [];
-
-// Замените вашу функцию openTaskUpload на эту:
-function openTaskUpload(taskId) {
-    console.log("Открываю загрузку для:", taskId);
-    activeTaskId = taskId; // КРИТИЧЕСКАЯ ПРАВКА: Запоминаем ID задания
-    document.getElementById('taskFileInput').click();
-}
-
-// Функция переключения веток
-function switchBranch(key) {
-    selectedBranch = key;
-    renderLevelTasks();
-}
-
-
-function renderTimeTasks() {
-    const container = document.getElementById('timeTasksList');
-    if (!container) return;
-    container.innerHTML = '';
-
-    timeTasks.forEach(task => {
-        const div = document.createElement('div');
-        div.className = 'time-task-item';
-        div.style = "border: 2px solid var(--accent); padding: 15px; border-radius: 12px; margin-bottom: 12px; background: var(--card-bg); position: relative; overflow: hidden;";
-        
-        function renderMarkers() {
-            const container = document.getElementById('markersList');
-            if (!container) return;
-            
-            if (markersDB.length === 0) {
-                container.innerHTML = '<div class="no-results">Нет данных о маркерах</div>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            
-            markersDB.forEach(m => {
-                const div = document.createElement('div');
-                div.className = 'marker-item';
-                div.setAttribute('data-num', m.num);
-                
-                // Определяем количество в корзине
-                const cartKey = `marker_${m.num}`;
-                const cartCount = cart[cartKey] || 0;
-                
-                // Проверяем, можно ли добавить еще
-                const canAdd = cartCount < m.stock;
-                const canRemove = cartCount > 0;
-                
-                // Цвет кружка: обученный цвет или бесцветный
-                const circleStyle = m.trained && m.color 
-                    ? `background-color: ${m.color};` 
-                    : 'background-color: var(--bg);';
-                
-                const stockClass = getStockColor(m.stock);
-div.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <span class="time-badge" style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">
-            <i class="far fa-clock"></i> ДО 29.03.2026
-        </span>
-        <span style="color: #FFD700; font-weight: bold; font-size: 14px;">
-            +${task.reward} <i class="fas fa-book-open gold-book"></i>
-        </span>
-    </div>
-    <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px;">${task.title}</div>
-    <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 12px;">${task.description}</p>
-    
-    <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')" style="width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold;">
-        <i class="fas fa-camera"></i> Отправить фото
-    </button>
-`;
-        container.appendChild(div);
-    });
-}
-        function handleTaskFile(event) {
-            const files = event.target.files;
-            tempTaskPhotos = [];
-            const container = document.getElementById('taskPhotoPreviewContainer');
-            container.innerHTML = '';
-            
-            if (files.length > 0) {
-                Array.from(files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        tempTaskPhotos.push(e.target.result);
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        container.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                });
-                document.getElementById('taskUploadModal').style.display = 'flex';
-            }
-        }
-
-        function closeTaskUploadModal() {
-            document.getElementById('taskUploadModal').style.display = 'none';
-            tempTaskPhotos = []; 
-            activeTaskId = null;
-        }
-
-        function submitTaskPhoto() {
-            if (tempTaskPhotos.length > 0 && activeTaskId) {
-                if (activeTaskId.startsWith('level_')) {
-                    const levelIndex = parseInt(activeTaskId.split('_')[1]);
-                    if (!user.levelTasksProgress[levelIndex]) {
-                        user.levelTasksProgress[levelIndex] = true;
-                        user.xp += levelTasks[levelIndex].xp;
-                        saveData();
-                        updateStatusProgress();
-                        tg.showAlert(`✅ Уровень ${levelIndex + 1} выполнен! +${levelTasks[levelIndex].xp} XP`);
-                        
-                        if (levelIndex === 0) awardAchievement('first_task');
-                    }
-                } else {
-                    user.timeTasksProgress[activeTaskId] = 'pending';
-                    saveData();
-                    
-                    setTimeout(() => {
-                        if (user.timeTasksProgress[activeTaskId] === 'pending') {
-                            user.timeTasksProgress[activeTaskId] = 'completed';
-                            const task = timeTasks.find(t => t.id === activeTaskId);
-                            if (task) {
-                                user.balance += task.reward;
-                                saveData();
-                                tg.showAlert(`✅ Задание выполнено! +${task.reward} ашетиков`);
-                            }
-                            renderTasks();
-                        }
-                    }, 2000);
-                }
-        tg.showAlert(`✅ Фото успешно отправлено на проверку!`); // Новое уведомление
-        closeTaskUploadModal();
-        
-        if(typeof renderLevelTasks === 'function') {
-            renderLevelTasks();
-            renderTimeTasks();
-        }
-    } else {
-        tg.showAlert('Ошибка: Фото не выбрано');
-    }
-}
-
-
-        // ========== ДОСТИЖЕНИЯ ==========
-        function openAchievementsGallery() {
-            const list = document.getElementById('allAchievementsList');
-            list.innerHTML = '';
-
-            Object.values(achievementsDB).forEach(ach => {
-                const isUnlocked = user.achievements.includes(ach.id);
-                
-                const div = document.createElement('div');
-                div.className = `achievement-item ${!isUnlocked ? 'locked' : ''}`;
-                div.onclick = () => showAchievementInfo(ach);
-                
-                div.innerHTML = `
-                    <img src="${ach.img}" alt="${ach.name}">
-                    <div class="achievement-info">
-                        <h4>${ach.name}</h4>
-                        <p>${ach.desc}</p>
-                        <div class="achievement-condition">${ach.condition}</div>
-                        ${!isUnlocked ? '<div class="achievement-lock"><i class="fas fa-lock"></i> Заблокировано</div>' : ''}
-                    </div>
-                `;
-                
-                list.appendChild(div);
-            });
-
-            document.getElementById('achievementsGalleryModal').style.display = 'flex';
-        }
-
-        function showAchievementInfo(ach) {
-            document.getElementById('achInfoTitle').innerText = ach.name;
-            document.getElementById('achInfoImg').src = ach.img;
-            document.getElementById('achInfoDesc').innerText = ach.desc;
-            document.getElementById('achInfoCondition').innerText = ach.condition;
-            document.getElementById('achievementsGalleryModal').style.display = 'none';
-            document.getElementById('achInfoModal').style.display = 'flex';
-        }
-
-        function closeAchievementInfo() {
-            document.getElementById('achInfoModal').style.display = 'none';
-        }
-
-        function awardAchievement(achId) {
-            if (!user.achievements.includes(achId) && achievementsDB[achId]) {
-                user.achievements.push(achId);
-                saveData();
-                const ach = achievementsDB[achId];
-                document.getElementById('alertAchImg').src = ach.img;
-                document.getElementById('alertAchImg').style.display = 'block';
-                document.getElementById('alertAchText').innerText = ach.name;
-                document.getElementById('achievementAlert').style.display = 'flex';
-            }
-        }
-
-        // ========== ВИТРИНА ==========
-        function renderShowcase() {
-            for (let i = 0; i < 3; i++) {
-                const slot = document.getElementById(`slot-${i}`);
-                const achId = user.showcase[i];
-                slot.innerHTML = ''; 
-                
-                if (achId && achievementsDB[achId]) {
-                    const img = document.createElement('img');
-                    img.src = achievementsDB[achId].img;
-                    slot.appendChild(img);
-                    slot.classList.add('filled');
-                } else {
-                    slot.innerHTML = '<i class="fas fa-plus"></i>';
-                    slot.classList.remove('filled');
-                }
-            }
-        }
-
-        // ========== АВАТАР ==========
-        function toggleAvatarEditor() {
-            const editor = document.getElementById('avatarEditor');
-            if (editor.style.display === 'none' || editor.style.display === '') {
-                renderAvatarPresets();
-                editor.style.display = 'block';
-            } else {
-                editor.style.display = 'none';
-            }
-        }
-
-        function renderAvatarPresets() {
-            const container = document.getElementById('avatarPresets');
-            container.innerHTML = '';
-            for (let i = 1; i <= 8; i++) {
-                const url = `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av${i}.png`;
-                const div = document.createElement('div');
-                div.className = 'preset-avatar-item';
-                div.onclick = () => {
-                    user.avatar = url;
-                    saveData();
-                    document.getElementById('avatarEditor').style.display = 'none';
-                    tg.showAlert('Аватар изменен!');
-                };
-                const img = document.createElement('img');
-                img.src = url;
-                img.alt = `Avatar ${i}`;
-                div.appendChild(img);
-                container.appendChild(div);
-            }
-        }
-
-        function handleCustomAvatar(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    user.avatar = e.target.result;
-                    saveData();
-                    document.getElementById('avatarEditor').style.display = 'none';
-                    tg.showAlert('Аватар изменен!');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // ========== НИКНЕЙМ ==========
-        function changeNickname() {
-            document.getElementById('newNameInput').value = user.name;
-            document.getElementById('nameModal').style.display = 'flex';
-        }
-
-        function saveNewNickname() {
-            const newName = document.getElementById('newNameInput').value.trim();
-            if (newName.length > 0 && newName.length <= 20) {
-                user.name = newName;
-                saveData();
-                document.getElementById('nameModal').style.display = 'none';
-                tg.showAlert('Имя изменено!');
-            } else {
-                tg.showAlert("Имя должно быть от 1 до 20 символов");
-            }
-        }
-
-        function closeNameModal() {
-            document.getElementById('nameModal').style.display = 'none';
-        }
-
-        // ========== СТАТУС ==========
-        function openStatusInfo() {
-            const list = document.getElementById('availableStatusesList');
-            list.innerHTML = '';
-            
-            levelConfig.forEach(lvl => {
-                const isUnlocked = user.level >= lvl.level;
-                const isActive = user.status === lvl.name;
-                
-                const div = document.createElement('div');
-                div.style.cssText = `
-                    padding: 15px;
-                    margin: 8px 0;
-                    border-radius: 12px;
-                    background: ${isActive ? 'rgba(255,149,0,0.2)' : 'var(--card-bg)'};
-                    border: ${isActive ? '1px solid var(--accent)' : '1px solid var(--border-color)'};
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                `;
-                
-                let actionHtml = '';
-                if (isActive) {
-                    actionHtml = '<span style="color: var(--status-green);"><i class="fas fa-check"></i> Выбран</span>';
-                } else if (isUnlocked) {
-                    actionHtml = `<button class="balance-btn" style="padding: 8px 16px; font-size: 13px; width: auto; color: var(--text);" onclick="selectStatus('${lvl.name}')">Выбрать</button>`;
-                } else {
-                    actionHtml = `<span style="color: var(--text-gray);">С ${lvl.xpReq} XP</span>`;
-                }
-                
-                div.innerHTML = `
-                    <div>
-                        <span style="font-weight: 600; color: ${isUnlocked ? 'var(--text)' : 'gray'}">${lvl.name}</span>
-                    </div>
-                    <div>${actionHtml}</div>
-                `;
-                
-                list.appendChild(div);
-            });
-            
-            document.getElementById('statusSelectModal').style.display = 'flex';
-        }
-
-        function selectStatus(statusName) { 
-            user.status = statusName; 
-            saveData(); 
-            document.getElementById('statusSelectModal').style.display = 'none'; 
-        }
-
-        // ========== ПОИСК ПО ТОМАМ ==========
-        function searchBooks() {
-            const query = document.getElementById('bookSearch').value.toLowerCase();
-            const items = document.querySelectorAll('.book-card');
-            let visibleCount = 0;
-            
-            items.forEach(item => {
-                const title = item.querySelector('h4').innerText.toLowerCase();
-                if (title.includes(query)) {
-                    item.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-
-            const noResults = document.getElementById('bookNoResults');
-            if (visibleCount === 0) {
-                const container = document.querySelector('.books-grid');
-                if (!document.getElementById('bookNoResults')) {
-                    const msg = document.createElement('div');
-                    msg.id = 'bookNoResults';
-                    msg.className = 'no-results';
-                    msg.style.gridColumn = 'span 2';
-                    msg.innerText = 'Тома не найдены';
-                    container.appendChild(msg);
-                }
-            } else {
-                if (noResults) noResults.remove();
-            }
-        }
-
-        // ========== КОРЗИНА ==========
         function renderCart() {
             const list = document.getElementById('cartItemsList');
             if (!list) return;
-            list.innerHTML = ''; 
+            list.innerHTML = '';
             let totalSum = 0;
-            let totalMarkers = 0;
-            
             if (Object.keys(cart).length === 0) {
                 list.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding: 40px 0;">Корзина пуста</p>';
-                document.getElementById('cartTotalSum').innerText = '0'; 
+                document.getElementById('cartTotalSum').innerText = '0';
                 return;
             }
-            
             for (let key in cart) {
                 const count = cart[key];
-                
                 if (key.startsWith('marker_')) {
-                    // Это маркер
                     const num = key.replace('marker_', '');
                     const marker = markersDB.find(m => m.num === num);
                     if (!marker) continue;
-                    
-                    totalMarkers += count;
                     totalSum += count * MARKER_PRICE;
-                    
                     const div = document.createElement('div');
                     div.className = 'cart-item';
                     div.innerHTML = `
@@ -2938,14 +2024,10 @@ div.innerHTML = `
                         </div>
                     `;
                     list.appendChild(div);
-                    
                 } else {
-                    // Это книга
                     const item = products[key];
                     if (!item) continue;
-                    
                     totalSum += item.price * count;
-                    
                     const div = document.createElement('div');
                     div.className = 'cart-item';
                     div.innerHTML = `
@@ -2966,7 +2048,6 @@ div.innerHTML = `
                     list.appendChild(div);
                 }
             }
-            
             document.getElementById('cartTotalSum').innerText = totalSum;
         }
 
@@ -2974,130 +2055,780 @@ div.innerHTML = `
             let totalItems = 0;
             for (let key in cart) totalItems += cart[key];
             const badge = document.getElementById('cartBadge');
-            if (totalItems > 0) { 
-                badge.innerText = totalItems; 
-                badge.style.display = 'block'; 
-            } else { 
-                badge.style.display = 'none'; 
+            if (badge) {
+                if (totalItems > 0) { badge.innerText = totalItems; badge.style.display = 'block'; }
+                else { badge.style.display = 'none'; }
             }
         }
 
         function checkout() {
-            if (Object.keys(cart).length === 0) { 
-                tg.showAlert("Ваша корзина пуста!"); 
-                return; 
-            }
-            
-            // Проверяем условие для маркеров (минимум 3 штуки)
+            if (Object.keys(cart).length === 0) { tg.showAlert("Ваша корзина пуста!"); return; }
             let totalMarkers = 0;
+            for (let key in cart) if (key.startsWith('marker_')) totalMarkers += cart[key];
+            if (totalMarkers > 0 && totalMarkers < 3) { tg.showAlert("Маркеры заказываются от 3 штук! Добавьте еще маркеров в корзину."); return; }
+            let total = 0;
             for (let key in cart) {
-                if (key.startsWith('marker_')) {
-                    totalMarkers += cart[key];
-                }
+                if (key.startsWith('marker_')) total += cart[key] * MARKER_PRICE;
+                else total += products[key]?.price * cart[key] || 0;
             }
-            
-            if (totalMarkers > 0 && totalMarkers < 3) {
-                tg.showAlert("Маркеры заказываются от 3 штук! Добавьте еще маркеров в корзину.");
-                return;
-            }
-            
-            // Подсчет итогов
-            let booksTotal = 0;
-            let markersTotal = 0;
-            let markersCount = 0;
-            
-            for (let key in cart) {
-                if (key.startsWith('marker_')) {
-                    markersCount += cart[key];
-                    markersTotal += cart[key] * MARKER_PRICE;
-                } else {
-                    booksTotal += products[key]?.price * cart[key] || 0;
-                }
-            }
-            
-            const total = booksTotal + markersTotal;
-            
-            const message = `В корзине:\n- Книги: ${booksTotal} ₽\n- Маркеры: ${markersCount} шт (${markersTotal} ₽)\n- Итого: ${total} ₽\n\nОформить заказ?`;
-            
-            tg.showConfirm(message, function(confirm) {
+            tg.showConfirm(`В корзине товаров на сумму ${total} ₽\n\nОформить заказ?`, (confirm) => {
                 if (confirm) {
-                    tg.sendData(JSON.stringify({
-                        action: 'checkout', 
-                        cart: cart,
-                        userId: userId,
-                        total: total,
-                        booksTotal: booksTotal,
-                        markersCount: markersCount,
-                        markersTotal: markersTotal
-                    }));
-                    cart = {}; 
-                    saveData(); 
-                    renderCart(); 
+                    tg.sendData(JSON.stringify({ action: 'checkout', cart: cart, userId: userId, total: total }));
+                    cart = {};
+                    saveData();
+                    renderCart();
                     updateCartBadge();
-                    awardAchievement('shopaholic'); 
+                    if (!user.achievements.includes('shopaholic')) {
+                        user.achievements.push('shopaholic');
+                        saveData();
+                        showAchievementAlert('shopaholic');
+                    }
                     tg.showAlert("Заказ успешно оформлен!");
                 }
             });
         }
 
-        // ========== СБРОС ==========
+        // ==========================================
+        // ЗАДАНИЯ
+        // ==========================================
+        function toggleTasks() {
+            const content = document.getElementById('tasksContent');
+            const arrow = document.getElementById('tasksArrow');
+            if (!content) return;
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.display = 'block';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+                renderLevelTasks();
+                renderTimeTasks();
+            }
+        }
+
+        function renderLevelTasks() {
+            const container = document.getElementById('levelTasksList');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let branchKey in taskBranches) {
+                const branch = taskBranches[branchKey];
+                const progressArr = user.branchProgress[branchKey] || [0, 0, 0, 0, 0];
+                const branchDiv = document.createElement('div');
+                branchDiv.style = "background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px;";
+                branchDiv.innerHTML = `<div style="font-size: 16px; font-weight: bold; color: var(--accent); margin-bottom: 12px;">${branch.name}</div>`;
+                let levelsHtml = '';
+                let firstLocked = false;
+                branch.levels.forEach((lvl, idx) => {
+                    if (firstLocked) return;
+                    const current = progressArr[idx] || 0;
+                    const isDone = current >= lvl.maxProgress;
+                    const percent = Math.min((current / lvl.maxProgress) * 100, 100);
+                    levelsHtml += `
+                        <div style="margin-bottom: 12px; padding: 10px; border-radius: 10px; background: var(--card-bg); border: 1px solid var(--border-color);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span style="font-weight: bold; font-size: 14px;">Уровень ${idx + 1}: ${lvl.title}</span>
+                                ${isDone ? '<span style="color: var(--status-green);">✓</span>' : ''}
+                            </div>
+                            <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 8px;">${lvl.desc}</p>
+                            <div style="background: var(--border-color); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 10px;">
+                                <div style="width: ${percent}%; background: var(--accent-gradient); height: 100%; transition: width 0.3s;"></div>
+                            </div>
+                            <button class="photo-upload-btn" onclick="openTaskUpload('${branchKey}_${idx}')" style="width: 100%; background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold;">
+                                Отправить фото
+                            </button>
+                        </div>
+                    `;
+                    if (!isDone) firstLocked = true;
+                });
+                branchDiv.innerHTML += levelsHtml;
+                container.appendChild(branchDiv);
+            }
+        }
+
+        function renderTimeTasks() {
+            const container = document.getElementById('timeTasksList');
+            if (!container) return;
+            container.innerHTML = '';
+            timeTasks.forEach(task => {
+                const div = document.createElement('div');
+                div.className = 'time-task';
+                div.style = "border: 2px solid var(--accent); padding: 15px; border-radius: 12px; margin-bottom: 12px; background: var(--card-bg);";
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span class="time-badge" style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">
+                            <i class="far fa-clock"></i> ДО 29.03.2026
+                        </span>
+                        <span style="color: #FFD700; font-weight: bold; font-size: 14px;">
+                            +${task.reward} <i class="fas fa-book-open gold-book"></i>
+                        </span>
+                    </div>
+                    <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px;">${task.title}</div>
+                    <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 12px;">${task.description}</p>
+                    <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')" style="width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold;">
+                        <i class="fas fa-camera"></i> Отправить фото
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function openTaskUpload(taskId) {
+            activeTaskId = taskId;
+            document.getElementById('taskFileInput').click();
+        }
+
+        function handleTaskFile(event) {
+            const files = event.target.files;
+            tempTaskPhotos = [];
+            const container = document.getElementById('taskPhotoPreviewContainer');
+            if (container) container.innerHTML = '';
+            if (files.length > 0) {
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        tempTaskPhotos.push(e.target.result);
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        if (container) container.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+                document.getElementById('taskUploadModal').style.display = 'flex';
+            }
+        }
+
+        function closeTaskUploadModal() {
+            document.getElementById('taskUploadModal').style.display = 'none';
+            tempTaskPhotos = [];
+            activeTaskId = null;
+        }
+
+        function submitTaskPhoto() {
+            if (tempTaskPhotos.length > 0 && activeTaskId) {
+                if (activeTaskId.includes('_')) {
+                    const parts = activeTaskId.split('_');
+                    if (parts.length === 2) {
+                        const branchKey = parts[0];
+                        const levelIndex = parseInt(parts[1]);
+                        if (taskBranches[branchKey] && !isNaN(levelIndex)) {
+                            if (!user.branchProgress[branchKey]) user.branchProgress[branchKey] = [0, 0, 0, 0, 0];
+                            const current = user.branchProgress[branchKey][levelIndex] || 0;
+                            const maxProgress = taskBranches[branchKey].levels[levelIndex].maxProgress;
+                            if (current < maxProgress) {
+                                user.branchProgress[branchKey][levelIndex] = current + 1;
+                                const reward = 10;
+                                user.balance += reward;
+                                tg.showAlert(`✅ Прогресс обновлен! (${user.branchProgress[branchKey][levelIndex]}/${maxProgress}) +${reward} ашетиков`);
+                                if (levelIndex === 0 && !user.achievements.includes('first_task')) {
+                                    user.achievements.push('first_task');
+                                    showAchievementAlert('first_task');
+                                }
+                                saveData();
+                                renderLevelTasks();
+                            } else {
+                                tg.showAlert('Это задание уже выполнено!');
+                            }
+                        }
+                    }
+                } else {
+                    if (!user.timeTasksProgress[activeTaskId]) {
+                        user.timeTasksProgress[activeTaskId] = 'pending';
+                        saveData();
+                        setTimeout(() => {
+                            if (user.timeTasksProgress[activeTaskId] === 'pending') {
+                                user.timeTasksProgress[activeTaskId] = 'completed';
+                                const task = timeTasks.find(t => t.id === activeTaskId);
+                                if (task) {
+                                    user.balance += task.reward;
+                                    saveData();
+                                    tg.showAlert(`✅ Задание выполнено! +${task.reward} ашетиков`);
+                                }
+                                renderTimeTasks();
+                            }
+                        }, 2000);
+                        tg.showAlert(`✅ Фото отправлено на проверку!`);
+                    } else {
+                        tg.showAlert('Это задание уже выполнено!');
+                    }
+                }
+                closeTaskUploadModal();
+            } else {
+                tg.showAlert('Ошибка: Фото не выбрано');
+            }
+        }
+
+        function showAchievementAlert(achId) {
+            const ach = achievementsDB[achId];
+            if (ach) {
+                const alertImg = document.getElementById('alertAchImg');
+                const alertText = document.getElementById('alertAchText');
+                if (alertImg) alertImg.src = ach.img;
+                if (alertText) alertText.innerText = ach.name;
+                document.getElementById('achievementAlert').style.display = 'flex';
+            }
+        }
+
+        // ==========================================
+        // ДОСТИЖЕНИЯ И ВИТРИНА
+        // ==========================================
+        function openAchievementsGallery() {
+            const list = document.getElementById('allAchievementsList');
+            if (!list) return;
+            list.innerHTML = '';
+            Object.values(achievementsDB).forEach(ach => {
+                const isUnlocked = user.achievements.includes(ach.id);
+                const div = document.createElement('div');
+                div.className = `achievement-item ${!isUnlocked ? 'locked' : ''}`;
+                div.onclick = () => showAchievementInfo(ach);
+                div.innerHTML = `
+                    <img src="${ach.img}" alt="${ach.name}">
+                    <div class="achievement-info">
+                        <h4>${ach.name}</h4>
+                        <p>${ach.desc}</p>
+                        <div class="achievement-condition">${ach.condition}</div>
+                        ${!isUnlocked ? '<div class="achievement-lock"><i class="fas fa-lock"></i> Заблокировано</div>' : ''}
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+            document.getElementById('achievementsGalleryModal').style.display = 'flex';
+        }
+
+        function showAchievementInfo(ach) {
+            document.getElementById('achInfoTitle').innerText = ach.name;
+            document.getElementById('achInfoImg').src = ach.img;
+            document.getElementById('achInfoDesc').innerText = ach.desc;
+            document.getElementById('achInfoCondition').innerText = ach.condition;
+            document.getElementById('achievementsGalleryModal').style.display = 'none';
+            document.getElementById('achInfoModal').style.display = 'flex';
+        }
+
+        function closeAchievementInfo() {
+            document.getElementById('achInfoModal').style.display = 'none';
+        }
+
+        function renderShowcase() {
+            for (let i = 0; i < 3; i++) {
+                const slot = document.getElementById(`slot-${i}`);
+                if (!slot) continue;
+                const achId = user.showcase[i];
+                slot.innerHTML = '';
+                if (achId && achievementsDB[achId]) {
+                    const img = document.createElement('img');
+                    img.src = achievementsDB[achId].img;
+                    slot.appendChild(img);
+                    slot.classList.add('filled');
+                } else {
+                    slot.innerHTML = '<i class="fas fa-plus"></i>';
+                    slot.classList.remove('filled');
+                }
+            }
+        }
+
+        // ==========================================
+        // ПРОФИЛЬ
+        // ==========================================
+        function toggleAvatarEditor() {
+            const editor = document.getElementById('avatarEditor');
+            if (editor) {
+                if (editor.style.display === 'none' || editor.style.display === '') {
+                    renderAvatarPresets();
+                    editor.style.display = 'block';
+                } else editor.style.display = 'none';
+            }
+        }
+
+        function renderAvatarPresets() {
+            const container = document.getElementById('avatarPresets');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 1; i <= 8; i++) {
+                const url = `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av${i}.png`;
+                const div = document.createElement('div');
+                div.className = 'preset-avatar-item';
+                div.onclick = () => { user.avatar = url; saveData(); document.getElementById('avatarEditor').style.display = 'none'; tg.showAlert('Аватар изменен!'); };
+                div.innerHTML = `<img src="${url}">`;
+                container.appendChild(div);
+            }
+        }
+
+        function handleCustomAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) { user.avatar = e.target.result; saveData(); document.getElementById('avatarEditor').style.display = 'none'; tg.showAlert('Аватар изменен!'); };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function changeNickname() {
+            document.getElementById('newNameInput').value = user.name;
+            document.getElementById('nameModal').style.display = 'flex';
+        }
+
+        function saveNewNickname() {
+            const newName = document.getElementById('newNameInput').value.trim();
+            if (newName.length > 0 && newName.length <= 20) {
+                user.name = newName;
+                saveData();
+                document.getElementById('nameModal').style.display = 'none';
+                tg.showAlert('Имя изменено!');
+            } else tg.showAlert("Имя должно быть от 1 до 20 символов");
+        }
+
+        function closeNameModal() { document.getElementById('nameModal').style.display = 'none'; }
+
+        function openStatusInfo() {
+            const list = document.getElementById('availableStatusesList');
+            if (!list) return;
+            list.innerHTML = '';
+            levelConfig.forEach(lvl => {
+                const isUnlocked = user.level >= lvl.level;
+                const isActive = user.status === lvl.name;
+                const div = document.createElement('div');
+                div.style.cssText = `padding: 12px; margin: 8px 0; border-radius: 12px; background: var(--card-bg); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);`;
+                let actionHtml = '';
+                if (isActive) actionHtml = '<span style="color: var(--status-green);"><i class="fas fa-check"></i> Выбран</span>';
+                else if (isUnlocked) actionHtml = `<button class="balance-btn" style="padding: 8px 16px; width: auto;" onclick="selectStatus('${lvl.name}')">Выбрать</button>`;
+                else actionHtml = `<span style="color: var(--text-gray);">С ${lvl.xpReq} XP</span>`;
+                div.innerHTML = `<div><span style="font-weight: 600;">${lvl.name}</span></div><div>${actionHtml}</div>`;
+                list.appendChild(div);
+            });
+            document.getElementById('statusSelectModal').style.display = 'flex';
+        }
+
+        function selectStatus(statusName) { user.status = statusName; saveData(); document.getElementById('statusSelectModal').style.display = 'none'; }
+
+        function openSupport() { window.open('https://boosty.to/coloringapp', '_blank'); }
+
         function resetAllData() {
-            tg.showConfirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?", function(confirm) {
+            tg.showConfirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?", (confirm) => {
                 if (confirm) {
                     localStorage.removeItem('coloring_user');
                     localStorage.removeItem('coloring_cart');
                     localStorage.removeItem('trained_colors');
+                    localStorage.removeItem('coloring_inventory');
                     localStorage.removeItem('app_theme');
                     window.location.reload();
                 }
             });
         }
 
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
-        window.onload = () => {
-            console.log('Страница загружена');
-            
-            // Устанавливаем тему
-            setTheme(user.theme);
-            fetchUserFromServer();
+        // ==========================================
+        // ИИ ПАЛИТРА
+        // ==========================================
+        async function processAI(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const resultDiv = document.getElementById('aiResult');
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Анализ изображения...</div>';
+                setTimeout(() => {
+                    resultDiv.innerHTML = `
+                        <h4 style="margin-bottom:15px;">Распознанные маркеры:</h4>
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:var(--card-bg); padding:10px; border-radius:8px;">
+                            <div style="width:30px; height:30px; border-radius:5px; background:#FF5733;"></div>
+                            <div><div style="font-weight:bold;">GuangNa №101</div>
+                            <button class="photo-upload-btn" style="padding:5px 10px; font-size:11px;" onclick="addToCartFromAI('101')"><i class="fas fa-cart-plus"></i> Добавить в корзину</button></div>
+                        </div>
+                    `;
+                }, 1500);
+            }
+        }
 
-            // Проверяем админа
-            console.log('User ID:', userId, 'Is Admin:', user.isAdmin);
-            if (user.isAdmin) {
-                document.getElementById('adminAiBlock').style.display = 'block';
+        function addToCartFromAI(num) {
+            updateMarkerCart(num, 1);
+            tg.showAlert(`Маркер №${num} добавлен в корзину`);
+        }
+
+        async function trainAI() {
+            tg.showAlert('Демо: Обучение ИИ (требуется бэкенд)');
+        }
+
+        async function adminChangeBalance() {
+            tg.showAlert('Демо: Изменение баланса (требуется бэкенд)');
+        }
+
+        // ==========================================
+        // ИНВЕНТАРЬ
+        // ==========================================
+        function loadInventory() {
+            const saved = localStorage.getItem('coloring_inventory');
+            if (saved) {
+                inventory = JSON.parse(saved);
+            } else {
+                inventory.organizers = [{
+                    id: 'default',
+                    name: 'Мой органайзер',
+                    cols: 3,
+                    rows: 3,
+                    cells: Array(3).fill().map(() => Array(3).fill().map(() => []))
+                }];
+                inventory.userMarkers = {};
             }
-            
-            // Обновляем баланс для админа
-            if (user.isAdmin) {
-                user.balance = 1000;
+            renderOrganizers();
+            renderBrands();
+        }
+
+        function saveInventory() {
+            localStorage.setItem('coloring_inventory', JSON.stringify(inventory));
+        }
+
+        function openOrganizerCreator() {
+            document.getElementById('organizerModal').style.display = 'flex';
+        }
+
+        function closeOrganizerModal() {
+            document.getElementById('organizerModal').style.display = 'none';
+        }
+
+        function createOrganizer() {
+            const name = document.getElementById('organizerName').value.trim();
+            const cols = parseInt(document.getElementById('organizerCols').value);
+            const rows = parseInt(document.getElementById('organizerRows').value);
+            if (!name) { tg.showAlert('Введите название'); return; }
+            const cells = Array(rows).fill().map(() => Array(cols).fill().map(() => []));
+            inventory.organizers.push({ id: Date.now().toString(), name: name, cols: cols, rows: rows, cells: cells });
+            saveInventory();
+            renderOrganizers();
+            closeOrganizerModal();
+            tg.showAlert('Органайзер создан!');
+        }
+
+        let currentOrganizerId = null;
+        let currentCellRow = null;
+        let currentCellCol = null;
+
+        function renderOrganizers() {
+            const container = document.getElementById('organizersList');
+            if (!container) return;
+            if (inventory.organizers.length === 0) {
+                container.innerHTML = '<div class="no-results">Нет органайзеров. Создайте первый!</div>';
+                return;
             }
-            
+            container.innerHTML = '';
+            inventory.organizers.forEach(org => {
+                const orgDiv = document.createElement('div');
+                orgDiv.style.cssText = 'background: var(--card-bg); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color);';
+                orgDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <h4 style="margin:0;">${org.name} (${org.rows}×${org.cols})</h4>
+                        <div>
+                            <button class="photo-upload-btn" style="padding: 6px 12px; margin-right: 8px;" onclick="addMarkersToOrganizer('${org.id}')"><i class="fas fa-plus"></i> Добавить</button>
+                            <button class="photo-upload-btn" onclick="deleteOrganizer('${org.id}')" style="background: var(--status-red); color: white; padding: 6px 12px;">🗑</button>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(${org.cols}, 1fr); gap: 8px;">
+                `;
+                for (let row = 0; row < org.rows; row++) {
+                    for (let col = 0; col < org.cols; col++) {
+                        const cellMarkers = org.cells[row]?.[col] || [];
+                        orgDiv.innerHTML += `
+                            <div onclick="openCellModal('${org.id}', ${row}, ${col})" style="
+                                background: var(--bg);
+                                border: 2px solid ${cellMarkers.length > 0 ? 'var(--accent)' : 'var(--border-color)'};
+                                border-radius: 12px;
+                                padding: 12px;
+                                text-align: center;
+                                cursor: pointer;
+                            ">
+                                <div style="font-size: 11px; color: var(--text-gray);">${String.fromCharCode(65+row)}${col+1}</div>
+                                <div style="font-size: 20px; font-weight: bold; color: var(--accent);">${cellMarkers.length}</div>
+                                <small style="font-size: 10px;">маркеров</small>
+                            </div>
+                        `;
+                    }
+                }
+                orgDiv.innerHTML += `</div></div>`;
+                container.appendChild(orgDiv);
+            });
+        }
+
+        function openCellModal(orgId, row, col) {
+            currentOrganizerId = orgId;
+            currentCellRow = row;
+            currentCellCol = col;
+            const org = inventory.organizers.find(o => o.id === orgId);
+            const cellMarkers = org.cells[row][col];
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>Ячейка ${String.fromCharCode(65+row)}${col+1}</h3>
+                    <div id="cellMarkersList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
+                    <button class="modal-action-btn" onclick="showAddMarkerToCell()">+ Добавить маркер</button>
+                    <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            renderCellMarkers(cellMarkers);
+        }
+
+        function renderCellMarkers(markers) {
+            const container = document.getElementById('cellMarkersList');
+            if (!container) return;
+            if (markers.length === 0) { container.innerHTML = '<div class="no-results">Нет маркеров</div>'; return; }
+            container.innerHTML = '';
+            markers.forEach((marker, idx) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'background: var(--bg); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;';
+                div.innerHTML = `
+                    <div><strong>${marker.brand}</strong> №${marker.number} ×${marker.count}</div>
+                    <button class="photo-upload-btn" onclick="removeMarkerFromCell(${idx})" style="background: var(--status-red); color: white; padding: 4px 8px;">🗑</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function showAddMarkerToCell() {
+            document.getElementById('addMarkerModal').style.display = 'flex';
+        }
+
+        function closeAddMarkerModal() {
+            document.getElementById('addMarkerModal').style.display = 'none';
+        }
+
+        function confirmAddMarker() {
+            const brand = document.getElementById('addMarkerBrand').value;
+            const number = document.getElementById('addMarkerNumber').value;
+            const count = parseInt(document.getElementById('addMarkerCount').value);
+            if (!number) { tg.showAlert('Введите номер'); return; }
+            const org = inventory.organizers.find(o => o.id === currentOrganizerId);
+            if (org) {
+                const cellMarkers = org.cells[currentCellRow][currentCellCol];
+                const existing = cellMarkers.find(m => m.brand === brand && m.number === number);
+                if (existing) existing.count += count;
+                else cellMarkers.push({ brand, number, count });
+                const key = `${brand}_${number}`;
+                inventory.userMarkers[key] = (inventory.userMarkers[key] || 0) + count;
+                saveInventory();
+                renderCellMarkers(cellMarkers);
+                renderOrganizers();
+                renderBrands();
+                tg.showAlert(`Маркер ${brand} №${number} добавлен!`);
+            }
+            closeAddMarkerModal();
+            document.getElementById('addMarkerNumber').value = '';
+            document.getElementById('addMarkerCount').value = '1';
+        }
+
+        function removeMarkerFromCell(idx) {
+            const org = inventory.organizers.find(o => o.id === currentOrganizerId);
+            if (org) {
+                const cellMarkers = org.cells[currentCellRow][currentCellCol];
+                const marker = cellMarkers[idx];
+                const key = `${marker.brand}_${marker.number}`;
+                inventory.userMarkers[key] = Math.max(0, (inventory.userMarkers[key] || 0) - marker.count);
+                if (inventory.userMarkers[key] === 0) delete inventory.userMarkers[key];
+                cellMarkers.splice(idx, 1);
+                saveInventory();
+                renderCellMarkers(cellMarkers);
+                renderOrganizers();
+                renderBrands();
+                tg.showAlert('Маркер удален');
+            }
+        }
+
+        function deleteOrganizer(orgId) {
+            tg.showConfirm('Удалить органайзер? Все маркеры будут потеряны!', (confirm) => {
+                if (confirm) {
+                    inventory.organizers = inventory.organizers.filter(o => o.id !== orgId);
+                    saveInventory();
+                    renderOrganizers();
+                }
+            });
+        }
+
+        function addMarkersToOrganizer(orgId) {
+            currentOrganizerId = orgId;
+            currentCellRow = 0;
+            currentCellCol = 0;
+            showAddMarkerToCell();
+        }
+
+        function renderBrands() {
+            const container = document.getElementById('brandsList');
+            if (!container) return;
+            container.innerHTML = '';
+            brands.forEach(brand => {
+                let totalCount = 0;
+                for (let key in inventory.userMarkers) {
+                    if (key.startsWith(brand.name)) totalCount += inventory.userMarkers[key];
+                }
+                const div = document.createElement('div');
+                div.style.cssText = 'background: var(--card-bg); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border-color);';
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin:0;">${brand.name}</h4>
+                        <span style="color: var(--accent); font-weight: bold;">${totalCount}/${brand.total}</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="photo-upload-btn" onclick="addBrandMarkers('${brand.name}')"><i class="fas fa-plus-circle"></i> Добавить все</button>
+                        <button class="photo-upload-btn" onclick="removeBrandMarkers('${brand.name}')" style="background: var(--status-red); color: white;"><i class="fas fa-trash-alt"></i> Удалить все</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addBrandMarkers(brandName) {
+            const brand = brands.find(b => b.name === brandName);
+            if (!brand) return;
+            tg.showConfirm(`Добавить все маркеры ${brandName} (${brand.total} шт.)?`, (confirm) => {
+                if (confirm && inventory.organizers.length > 0) {
+                    const org = inventory.organizers[0];
+                    const cell = org.cells[0][0];
+                    for (let i = 1; i <= Math.min(brand.total, 50); i++) {
+                        const number = i.toString();
+                        const existing = cell.find(m => m.brand === brandName && m.number === number);
+                        if (existing) existing.count += 1;
+                        else cell.push({ brand: brandName, number: number, count: 1 });
+                        const key = `${brandName}_${number}`;
+                        inventory.userMarkers[key] = (inventory.userMarkers[key] || 0) + 1;
+                    }
+                    saveInventory();
+                    renderOrganizers();
+                    renderBrands();
+                    tg.showAlert(`Добавлено 50 маркеров ${brandName} в первый органайзер`);
+                }
+            });
+        }
+
+        function removeBrandMarkers(brandName) {
+            tg.showConfirm(`Удалить все маркеры ${brandName}?`, (confirm) => {
+                if (confirm) {
+                    inventory.organizers.forEach(org => {
+                        org.cells.forEach(row => {
+                            row.forEach(cell => {
+                                for (let i = cell.length - 1; i >= 0; i--) {
+                                    if (cell[i].brand === brandName) cell.splice(i, 1);
+                                }
+                            });
+                        });
+                    });
+                    for (let key in inventory.userMarkers) {
+                        if (key.startsWith(brandName)) delete inventory.userMarkers[key];
+                    }
+                    saveInventory();
+                    renderOrganizers();
+                    renderBrands();
+                    tg.showAlert(`Маркеры ${brandName} удалены`);
+                }
+            });
+        }
+
+        function switchInventoryTab(tab) {
+            document.querySelectorAll('.inventory-tab').forEach(t => t.style.display = 'none');
+            const targetTab = document.getElementById(`${tab}Tab`);
+            if (targetTab) targetTab.style.display = 'block';
+            document.querySelectorAll('.inventory-tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector(`.inventory-tab-btn[data-tab="${tab}"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        function searchInventory() {
+            const query = document.getElementById('inventorySearchInput').value.toLowerCase();
+            const results = document.getElementById('searchResults');
+            if (!query) { results.innerHTML = '<div class="no-results">Введите номер или бренд для поиска</div>'; return; }
+            const found = [];
+            inventory.organizers.forEach(org => {
+                org.cells.forEach((row, rowIdx) => {
+                    row.forEach((cell, colIdx) => {
+                        cell.forEach(marker => {
+                            if (marker.number.includes(query) || marker.brand.toLowerCase().includes(query)) {
+                                found.push({ brand: marker.brand, number: marker.number, count: marker.count, organizer: org.name, cell: `${String.fromCharCode(65+rowIdx)}${colIdx+1}` });
+                            }
+                        });
+                    });
+                });
+            });
+            if (found.length === 0) { results.innerHTML = '<div class="no-results">Маркеры не найдены</div>'; return; }
+            results.innerHTML = found.map(m => `
+                <div style="background: var(--card-bg); padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border-color);">
+                    <div><strong>${m.brand} №${m.number}</strong> ×${m.count}</div>
+                    <div style="font-size: 12px; color: var(--text-gray);"><i class="fas fa-box"></i> ${m.organizer} • Ячейка ${m.cell}</div>
+                </div>
+            `).join('');
+        }
+
+        // ==========================================
+        // НАВИГАЦИЯ
+        // ==========================================
+        function tab(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            const page = document.getElementById(pageId);
+            if (page) page.classList.add('active');
+            const btn = document.getElementById('btn-' + pageId);
+            if (btn) btn.classList.add('active');
+            window.scrollTo(0, 0);
+            if (pageId === 'markers') {
+                if (markersDB.length === 0) loadMarkers();
+                else renderMarkers();
+                const searchInput = document.getElementById('markerSearch');
+                if (searchInput) searchInput.value = '';
+            }
+            if (pageId === 'answers') {
+                const bookSearch = document.getElementById('bookSearch');
+                if (bookSearch) bookSearch.value = '';
+            }
+            if (pageId === 'cart') renderCart();
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                if (section.style.display === 'none' || section.style.display === '') {
+                    document.querySelectorAll('.rewards-section').forEach(el => { if (el) el.style.display = 'none'; });
+                    section.style.display = 'block';
+                } else section.style.display = 'none';
+            }
+        }
+
+        function searchBooks() {
+            const query = document.getElementById('bookSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.book-card');
+            items.forEach(item => {
+                const title = item.querySelector('h4')?.innerText.toLowerCase();
+                if (title?.includes(query)) item.style.display = 'block';
+                else item.style.display = 'none';
+            });
+        }
+
+        // ==========================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ==========================================
+        window.onload = () => {
+            setTheme(user.theme);
             updateUI();
             loadMarkers();
             renderCart();
+            loadInventory();
             
-            // Обновляем счетчики книг при загрузке
             for (let key in cart) {
                 if (!key.startsWith('marker_')) {
                     const countSpan = document.getElementById(`book-count-${key}`);
                     const controlsDiv = document.getElementById(`book-controls-${key}`);
                     const addBtn = document.getElementById(`book-add-${key}`);
-                    
                     if (countSpan) countSpan.innerText = cart[key];
-                    if (controlsDiv && addBtn) {
-                        if (cart[key] > 0) {
-                            controlsDiv.style.display = 'flex';
-                            addBtn.style.display = 'none';
-                        }
+                    if (controlsDiv && addBtn && cart[key] > 0) {
+                        controlsDiv.style.display = 'flex';
+                        addBtn.style.display = 'none';
                     }
                 }
+            }
+            
+            if (user.isAdmin) {
+                const adminBlock = document.getElementById('adminAiBlock');
+                if (adminBlock) adminBlock.style.display = 'block';
             }
             
             window.onclick = function(event) {
                 document.querySelectorAll('.modal-overlay').forEach(modal => {
                     if (event.target === modal) modal.style.display = "none";
                 });
-            }
+            };
         };
     </script>
 </head>
@@ -3105,247 +2836,137 @@ div.innerHTML = `
 
 <!-- ========== ПРОФИЛЬ ========== -->
 <div id="profile" class="page active">
-    
-    <!-- Шапка профиля -->
     <div class="profile-header-block">
         <div class="avatar-wrapper" onclick="toggleAvatarEditor()">
-            <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png" alt="Avatar">
+            <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png">
             <div class="avatar-edit-icon"><i class="fas fa-pencil-alt"></i></div>
         </div>
         <div class="profile-info">
             <div class="name-row" onclick="changeNickname()">
-                <h2 id="displayUsername">Серджио</h2>
+                <h2 id="displayUsername">Тестер</h2>
                 <i class="fas fa-pencil-alt" style="color: var(--text-gray); font-size: 14px;"></i>
             </div>
             <button id="currentStatus" class="status-badge" onclick="openStatusInfo()">Новичок</button>
         </div>
     </div>
 
-    <!-- Редактор аватара -->
     <div id="avatarEditor" class="avatar-editor">
         <p>Выберите аватарку:</p>
         <div id="avatarPresets" class="preset-avatars-grid"></div>
         <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
-        <button class="upload-photo-btn" onclick="document.getElementById('customAvatarInput').click()">
-            <i class="fas fa-camera"></i> Загрузить фото
-        </button>
+        <button class="upload-photo-btn" onclick="document.getElementById('customAvatarInput').click()"><i class="fas fa-camera"></i> Загрузить фото</button>
     </div>
 
-    <!-- Баланс -->
     <div class="balance-card">
         <p class="balance-label">ВАШ БАЛАНС</p>
-        <div class="balance-main">
-            <span id="userBalance">0</span> 
-            <i class="fas fa-book-open gold-book"></i>
-        </div>
+        <div class="balance-main"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
         <div class="balance-controls">
             <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🏆</button>
             <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
         </div>
     </div>
 
-    <!-- Товары за ашетики -->
     <div id="rewards-section" class="rewards-section">
         <h3>Товары за ашетики</h3>
         <div class="rewards-grid">
-            <div class="reward-card">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b1.png" class="reward-img" alt="Закладка">
-                <h4>Закладка</h4>
-                <div class="reward-price">750 <i class="fas fa-book-open gold-book"></i></div>
-            </div>
-            <div class="reward-card">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img" alt="Спиртовая раскраска">
-                <h4>Спиртовая раскраска</h4>
-                <div class="reward-price">1250 <i class="fas fa-book-open gold-book"></i></div>
-            </div>
-            <div class="reward-card">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b3.png" class="reward-img" alt="Petites Poepees">
-                <h4>Раскраска Petites Poepees</h4>
-                <div class="reward-price">1250 <i class="fas fa-book-open gold-book"></i></div>
-            </div>
-            <div class="reward-card">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img" alt="Том Hachette">
-                <h4>Любой том Hachette A4</h4>
-                <div class="reward-price">1500 <i class="fas fa-book-open gold-book"></i></div>
-            </div>
+            <div class="reward-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b1.png" class="reward-img"><h4>Закладка</h4><div class="reward-price">750 <i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="reward-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img"><h4>Спиртовая раскраска</h4><div class="reward-price">1250 <i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="reward-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b3.png" class="reward-img"><h4>Petites Poepees</h4><div class="reward-price">1250 <i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="reward-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img"><h4>Любой том Hachette</h4><div class="reward-price">1500 <i class="fas fa-book-open gold-book"></i></div></div>
         </div>
     </div>
 
-    <!-- Как заработать ашетики -->
     <div id="earn-section" class="rewards-section" style="display:none;">
         <h3>Как получить ашетики</h3>
         <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div style="display: flex; justify-content: space-between; background: var(--card-bg); padding: 15px; border-radius: 12px;">
-                <span>За отзыв</span>
-                <span style="color: var(--status-green); font-weight: bold;">+25 📖</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; background: var(--card-bg); padding: 15px; border-radius: 12px;">
-                <span>За покупку от 3 000 ₽</span>
-                <span style="color: var(--status-green); font-weight: bold;">+10 📖</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; background: var(--card-bg); padding: 15px; border-radius: 12px;">
-                <span>За покупку от 5 000 ₽</span>
-                <span style="color: var(--status-green); font-weight: bold;">+20 📖</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; background: var(--card-bg); padding: 15px; border-radius: 12px;">
-                <span>За покупку от 7 500 ₽</span>
-                <span style="color: var(--status-green); font-weight: bold;">+30 📖</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; background: var(--card-bg); padding: 15px; border-radius: 12px;">
-                <span>За покупку от 10 000 ₽</span>
-                <span style="color: var(--status-green); font-weight: bold;">+40 📖</span>
-            </div>
+            <div style="display: flex; justify-content: space-between; background: var(--card-bg); padding: 15px; border-radius: 12px;"><span>За отзыв</span><span style="color: var(--status-green);">+25 📖</span></div>
+            <div style="display: flex; justify-content: space-between; background: var(--card-bg); padding: 15px; border-radius: 12px;"><span>За покупку от 3 000 ₽</span><span style="color: var(--status-green);">+10 📖</span></div>
+            <div style="display: flex; justify-content: space-between; background: var(--card-bg); padding: 15px; border-radius: 12px;"><span>За покупку от 5 000 ₽</span><span style="color: var(--status-green);">+20 📖</span></div>
+            <div style="display: flex; justify-content: space-between; background: var(--card-bg); padding: 15px; border-radius: 12px;"><span>За покупку от 7 500 ₽</span><span style="color: var(--status-green);">+30 📖</span></div>
+            <div style="display: flex; justify-content: space-between; background: var(--card-bg); padding: 15px; border-radius: 12px;"><span>За покупку от 10 000 ₽</span><span style="color: var(--status-green);">+40 📖</span></div>
         </div>
     </div>
 
     <div class="tasks-section">
-        <button class="tasks-header" onclick="toggleTasks()">
-            <span>Задания</span>
-            <i class="fas fa-chevron-down" id="tasksArrow"></i>
-        </button>
-        
+        <button class="tasks-header" onclick="toggleTasks()"><span>Задания</span><i class="fas fa-chevron-down" id="tasksArrow"></i></button>
         <div id="tasksContent" class="tasks-content">
-            
-            <div class="tasks-category">
-                <h4>Задания на статус</h4>
-                <div id="levelTasksList"></div>
-            </div>
-            
-            <div class="tasks-category">
-                <h4>Временные задания (неделя)</h4>
-                <div id="timeTasksList"></div>
-            </div>
-
+            <div class="tasks-category"><h4>Задания на статус</h4><div id="levelTasksList"></div></div>
+            <div class="tasks-category"><h4>Временные задания (неделя)</h4><div id="timeTasksList"></div></div>
             <input type="file" id="taskFileInput" accept="image/*" multiple style="display:none;" onchange="handleTaskFile(event)">
-            
-        </div> </div>
+        </div>
+    </div>
 
-    <!-- Витрина достижений -->
     <div class="showcase-container" onclick="openAchievementsGallery()">
         <h3>Витрина Топ-3</h3>
-        <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 15px;">Нажми на слот, чтобы увидеть достижения</p>
         <div class="showcase-grid">
-            <div class="showcase-slot" id="slot-0" onclick="event.stopPropagation(); openAchievementsGallery()"><i class="fas fa-plus"></i></div>
-            <div class="showcase-slot" id="slot-1" onclick="event.stopPropagation(); openAchievementsGallery()"><i class="fas fa-plus"></i></div>
-            <div class="showcase-slot" id="slot-2" onclick="event.stopPropagation(); openAchievementsGallery()"><i class="fas fa-plus"></i></div>
+            <div class="showcase-slot" id="slot-0"><i class="fas fa-plus"></i></div>
+            <div class="showcase-slot" id="slot-1"><i class="fas fa-plus"></i></div>
+            <div class="showcase-slot" id="slot-2"><i class="fas fa-plus"></i></div>
         </div>
         <div class="showcase-info">Нажмите для просмотра всех достижений</div>
     </div>
 
-    <!-- ПОДДЕРЖАТЬ НАС -->
     <div class="support-section" onclick="openSupport()">
         <h3>Поддержать нас</h3>
         <p>Помогите проекту развиваться</p>
-        <div class="support-button">
-            <i class="fas fa-heart"></i>
-            <span>Boosty</span>
-        </div>
+        <div class="support-button"><i class="fas fa-heart"></i><span>Boosty</span></div>
     </div>
 
-    <!-- ТЕМЫ ОФОРМЛЕНИЯ -->
     <div class="themes-section">
         <h3>Темы оформления</h3>
         <div class="themes-grid">
-            <div class="theme-option active" data-theme="light" onclick="setTheme('light')">
-                <div class="color-preview" style="background: #ffffff; border: 2px solid #000;"></div>
-                <span>Светлая</span>
-            </div>
-            <div class="theme-option" data-theme="dark" onclick="setTheme('dark')">
-                <div class="color-preview" style="background: #1c1c1e; border: 2px solid #fff;"></div>
-                <span>Темная</span>
-            </div>
-            <div class="theme-option" data-theme="blue" onclick="setTheme('blue')">
-                <div class="color-preview" style="background: #3b82f6;"></div>
-                <span>Голубая</span>
-            </div>
-            <div class="theme-option" data-theme="green" onclick="setTheme('green')">
-                <div class="color-preview" style="background: #22c55e;"></div>
-                <span>Зеленая</span>
-            </div>
-            <div class="theme-option" data-theme="purple" onclick="setTheme('purple')">
-                <div class="color-preview" style="background: #a855f7;"></div>
-                <span>Фиолетовая</span>
-            </div>
-            <div class="theme-option" data-theme="pink" onclick="setTheme('pink')">
-                <div class="color-preview" style="background: #ec4899;"></div>
-                <span>Розовая</span>
-            </div>
+            <div class="theme-option active" data-theme="light" onclick="setTheme('light')"><div class="color-preview" style="background: #ffffff; border: 2px solid #000;"></div><span>Светлая</span></div>
+            <div class="theme-option" data-theme="dark" onclick="setTheme('dark')"><div class="color-preview" style="background: #1c1c1e; border: 2px solid #fff;"></div><span>Темная</span></div>
+            <div class="theme-option" data-theme="blue" onclick="setTheme('blue')"><div class="color-preview" style="background: #3b82f6;"></div><span>Голубая</span></div>
+            <div class="theme-option" data-theme="green" onclick="setTheme('green')"><div class="color-preview" style="background: #22c55e;"></div><span>Зеленая</span></div>
+            <div class="theme-option" data-theme="purple" onclick="setTheme('purple')"><div class="color-preview" style="background: #a855f7;"></div><span>Фиолетовая</span></div>
+            <div class="theme-option" data-theme="pink" onclick="setTheme('pink')"><div class="color-preview" style="background: #ec4899;"></div><span>Розовая</span></div>
         </div>
-
-        <!-- Кастомная тема -->
         <div class="custom-theme">
             <h4>Своя тема</h4>
             <div class="theme-controls">
-                <div class="theme-row">
-                    <label>Фон:</label>
-                    <select id="themeBgMode">
-                        <option value="light">Светлый</option>
-                        <option value="dark">Темный</option>
-                    </select>
-                </div>
-                <div class="theme-row">
-                    <label>Цвет акцента:</label>
-                    <input type="color" id="themeAccentColor" value="#ff9500">
-                </div>
+                <div class="theme-row"><label>Фон:</label><select id="themeBgMode"><option value="light">Светлый</option><option value="dark">Темный</option></select></div>
+                <div class="theme-row"><label>Цвет акцента:</label><input type="color" id="themeAccentColor" value="#ff9500"></div>
                 <button class="apply-theme-btn" onclick="applyCustomTheme()">Применить</button>
             </div>
         </div>
     </div>
+
+    <!-- ИНВЕНТАРЬ -->
+    <div class="inventory-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0;"><i class="fas fa-boxes"></i> Мой инвентарь</h3>
+            <button class="balance-btn" style="padding: 8px 16px; width: auto;" onclick="openOrganizerCreator()"><i class="fas fa-plus"></i> Создать органайзер</button>
+        </div>
+        <div style="display: flex; gap: 10px; border-bottom: 1px solid var(--border-color);">
+            <button class="inventory-tab-btn active" data-tab="organizers" onclick="switchInventoryTab('organizers')"><i class="fas fa-layer-group"></i> Органайзеры</button>
+            <button class="inventory-tab-btn" data-tab="brands" onclick="switchInventoryTab('brands')"><i class="fas fa-tags"></i> Бренды</button>
+            <button class="inventory-tab-btn" data-tab="search" onclick="switchInventoryTab('search')"><i class="fas fa-search"></i> Поиск</button>
+        </div>
+        <div id="organizersTab" class="inventory-tab active"><div id="organizersList"></div></div>
+        <div id="brandsTab" class="inventory-tab" style="display: none;"><div id="brandsList"></div></div>
+        <div id="searchTab" class="inventory-tab" style="display: none;">
+            <div class="search-box" style="margin-bottom: 15px;"><i class="fas fa-search"></i><input type="text" id="inventorySearchInput" placeholder="Поиск по номеру или бренду..." oninput="searchInventory()"></div>
+            <div id="searchResults"></div>
+        </div>
+    </div>
 </div>
 
-<!-- ========== МАРКЕРЫ С ПОИСКОМ ========== -->
+<!-- ========== МАРКЕРЫ ========== -->
 <div id="markers" class="page">
     <div class="header">Маркеры</div>
-    
-    <!-- Поиск по маркерам -->
-    <div class="search-container">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="searchMarkers()">
-        </div>
-    </div>
-    
-    <div class="markers-section">
-        <div id="markersList"></div>
-    </div>
+    <div class="search-container"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="searchMarkers()"></div></div>
+    <div class="markers-section"><div id="markersList"></div></div>
 </div>
 
-<!-- ========== ОТВЕТЫ И ТОМА С ПОИСКОМ ========== -->
+<!-- ========== ОТВЕТЫ И ТОМА ========== -->
 <div id="answers" class="page">
     <div class="header">Ответы и Тома</div>
-    
-    <!-- Поиск по томам -->
-    <div class="search-container">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="bookSearch" placeholder="Поиск по названию тома..." oninput="searchBooks()">
-        </div>
-    </div>
-    
+    <div class="search-container"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="bookSearch" placeholder="Поиск по названию тома..." oninput="searchBooks()"></div></div>
     <div class="books-section">
         <div class="books-grid">
-            <div class="book-card">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" alt="Том 1">
-                <h4>Том 1</h4>
-                <div class="book-price">1500 ₽</div>
-                <div id="book-controls-tome1" class="cart-controls" style="display: none;">
-                    <button class="minus" onclick="updateBookCart('tome1', -1)">−</button>
-                    <span id="book-count-tome1">0</span>
-                    <button onclick="updateBookCart('tome1', 1)">+</button>
-                </div>
-                <button id="book-add-tome1" class="add-to-cart-btn" onclick="updateBookCart('tome1', 1)">В корзину</button>
-            </div>
-            <div class="book-card">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" alt="Том 2">
-                <h4>Том 2</h4>
-                <div class="book-price">1500 ₽</div>
-                <div id="book-controls-tome2" class="cart-controls" style="display: none;">
-                    <button class="minus" onclick="updateBookCart('tome2', -1)">−</button>
-                    <span id="book-count-tome2">0</span>
-                    <button onclick="updateBookCart('tome2', 1)">+</button>
-                </div>
-                <button id="book-add-tome2" class="add-to-cart-btn" onclick="updateBookCart('tome2', 1)">В корзину</button>
-            </div>
+            <div class="book-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png"><h4>Том 1</h4><div class="book-price">1500 ₽</div><div id="book-controls-tome1" class="cart-controls" style="display: none;"><button class="minus" onclick="updateBookCart('tome1', -1)">−</button><span id="book-count-tome1">0</span><button onclick="updateBookCart('tome1', 1)">+</button></div><button id="book-add-tome1" class="add-to-cart-btn" onclick="updateBookCart('tome1', 1)">В корзину</button></div>
+            <div class="book-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png"><h4>Том 2</h4><div class="book-price">1500 ₽</div><div id="book-controls-tome2" class="cart-controls" style="display: none;"><button class="minus" onclick="updateBookCart('tome2', -1)">−</button><span id="book-count-tome2">0</span><button onclick="updateBookCart('tome2', 1)">+</button></div><button id="book-add-tome2" class="add-to-cart-btn" onclick="updateBookCart('tome2', 1)">В корзину</button></div>
         </div>
     </div>
 </div>
@@ -3354,50 +2975,16 @@ div.innerHTML = `
 <div id="aipalette" class="page">
     <div class="header">ИИ Палитра ✨</div>
     <div class="ai-section">
-        <div class="upload-area" onclick="document.getElementById('aiInput').click()">
-            <i class="fas fa-camera"></i>
-            <p>Загрузить фото для определения цвета</p>
-        </div>
+        <div class="upload-area" onclick="document.getElementById('aiInput').click()"><i class="fas fa-camera"></i><p>Загрузить фото для определения цвета</p></div>
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
-        
-        <!-- Админ-панель для обучения ИИ -->
-        <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
-<h4><i class="fas fa-coins"></i> Управление балансом</h4>
-<div class="form-group">
-    <label>ID пользователя</label>
-    <input type="number" id="adminTargetUserId" placeholder="Например: 123456789">
-</div>
-<div class="form-group">
-    <label>Сумма ашетиков (+ или -)</label>
-    <input type="number" id="adminBalanceAmount" placeholder="Например: 500">
-</div>
-<button onclick="adminChangeBalance()">
-    <i class="fas fa-gift"></i> Начислить
-</button>
-
         <div id="adminAiBlock" class="admin-panel" style="display:none;">
             <h4><i class="fas fa-robot"></i> Обучение ИИ (Админ)</h4>
-            <div class="form-group">
-                <label>Изображение маркера</label>
-                <input type="file" id="aiTrainFile" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label>Бренд</label>
-                <input type="text" id="aiTrainBrand" placeholder="Например: Guangna">
-            </div>
-            <div class="form-group">
-                <label>Номер маркера</label>
-                <input type="text" id="aiTrainNumber" placeholder="Например: 101">
-            </div>
-            <button onclick="trainAI()">
-                <i class="fas fa-brain"></i> Обучить ИИ
-            </button>
+            <div class="form-group"><label>Изображение маркера</label><input type="file" id="aiTrainFile" accept="image/*"></div>
+            <div class="form-group"><label>Бренд</label><input type="text" id="aiTrainBrand" placeholder="Guangna"></div>
+            <div class="form-group"><label>Номер маркера</label><input type="text" id="aiTrainNumber" placeholder="101"></div>
+            <button onclick="trainAI()"><i class="fas fa-brain"></i> Обучить ИИ</button>
             <div id="aiTrainStatus" class="info-text"></div>
-            <div class="info-text">
-                Будет создано 25 вариаций изображения с разной освещенностью
-            </div>
         </div>
-        
         <div id="aiResult" class="ai-result"></div>
     </div>
 </div>
@@ -3407,102 +2994,28 @@ div.innerHTML = `
     <div class="header">Корзина</div>
     <div class="cart-wrapper">
         <div id="cartItemsList" class="cart-items"></div>
-        <div class="cart-footer">
-            <div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div>
-            <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
-        </div>
+        <div class="cart-footer"><div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div><button class="checkout-btn" onclick="checkout()">Оформить заказ</button></div>
     </div>
 </div>
 
 <!-- ========== НАВИГАЦИЯ ========== -->
 <nav class="nav">
-    <button id="btn-profile" class="nav-btn active" onclick="tab('profile')">
-        <i class="fas fa-user"></i>
-        <span>Профиль</span>
-    </button>
-    <button id="btn-markers" class="nav-btn" onclick="tab('markers')">
-        <i class="fas fa-pen"></i>
-        <span>Маркеры</span>
-    </button>
-    <button id="btn-answers" class="nav-btn" onclick="tab('answers')">
-        <i class="fas fa-book"></i>
-        <span>Ответы</span>
-    </button>
-    <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')">
-        <i class="fas fa-magic"></i>
-        <span>ИИ Палитра</span>
-    </button>
-    <button id="btn-cart" class="nav-btn" onclick="tab('cart')">
-        <i class="fas fa-shopping-cart"></i>
-        <span>Корзина</span>
-        <span id="cartBadge" class="badge" style="display:none;">0</span>
-    </button>
+    <button id="btn-profile" class="nav-btn active" onclick="tab('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
+    <button id="btn-markers" class="nav-btn" onclick="tab('markers')"><i class="fas fa-pen"></i><span>Маркеры</span></button>
+    <button id="btn-answers" class="nav-btn" onclick="tab('answers')"><i class="fas fa-book"></i><span>Ответы</span></button>
+    <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><i class="fas fa-magic"></i><span>ИИ Палитра</span></button>
+    <button id="btn-cart" class="nav-btn" onclick="tab('cart')"><i class="fas fa-shopping-cart"></i><span>Корзина</span><span id="cartBadge" class="badge" style="display:none;">0</span></button>
 </nav>
 
 <!-- ========== МОДАЛЬНЫЕ ОКНА ========== -->
-
-<!-- Модалка настроек профиля -->
-<div id="nameModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Настройки профиля</h3>
-        <input type="text" id="newNameInput" placeholder="Введите ник...">
-        <button class="modal-action-btn" onclick="saveNewNickname()">Сохранить ник</button>
-        <hr>
-        <button class="modal-close-btn" style="background: var(--status-red);" onclick="resetAllData()">Сбросить весь прогресс</button>
-        <button class="modal-close-btn" onclick="closeNameModal()">Отмена</button>
-    </div>
-</div>
-
-<!-- Модалка выбора статуса -->
-<div id="statusSelectModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Выберите статус</h3>
-        <div id="availableStatusesList"></div>
-        <button class="modal-close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">Отмена</button>
-    </div>
-</div>
-
-<!-- Модалка галереи достижений -->
-<div id="achievementsGalleryModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Все достижения</h3>
-        <div id="allAchievementsList" class="achievements-grid"></div>
-        <button class="modal-close-btn" onclick="document.getElementById('achievementsGalleryModal').style.display='none'">Закрыть</button>
-    </div>
-</div>
-
-<!-- Модалка информации о достижении -->
-<div id="achInfoModal" class="modal-overlay">
-    <div class="modal-content" style="text-align:center;">
-        <h3 id="achInfoTitle">Название</h3>
-        <img id="achInfoImg" src="" style="width: 100px; height: 100px; object-fit: contain; margin: 15px auto; display: block;">
-        <p id="achInfoDesc" style="color: var(--text-gray); margin: 10px 0;">Описание</p>
-        <p id="achInfoCondition" style="color: var(--accent); font-weight: 600; margin-bottom: 20px;">Условие</p>
-        <button class="modal-close-btn" onclick="closeAchievementInfo()">Закрыть</button>
-    </div>
-</div>
-
-<!-- Модалка нового достижения -->
-<div id="achievementAlert" class="modal-overlay" style="align-items: flex-start; padding-top: 50px;">
-    <div class="modal-content" style="background: var(--accent-gradient); text-align:center;">
-        <h3 style="color: white; margin: 0 0 10px 0;">🏆 Новое достижение!</h3>
-        <img id="alertAchImg" src="" style="width: 80px; height: 80px; object-fit: contain; margin: 10px auto; display: none;">
-        <p id="alertAchText" style="color: white; font-weight: bold; font-size: 18px;"></p>
-        <button class="modal-close-btn" style="background: rgba(0,0,0,0.3); margin-top: 15px;" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
-    </div>
-</div>
-
-<!-- Модалка загрузки фото -->
-<div id="taskUploadModal" class="modal-overlay">
-    <div class="modal-content" style="text-align:center;">
-        <h3>Отправка на проверку</h3>
-        <div id="taskPhotoPreviewContainer" class="photo-preview-container"></div>
-        <div class="modal-buttons-row">
-            <button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button>
-            <button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button>
-        </div>
-    </div>
-</div>
+<div id="nameModal" class="modal-overlay"><div class="modal-content"><h3>Настройки профиля</h3><input type="text" id="newNameInput" placeholder="Введите ник..."><button class="modal-action-btn" onclick="saveNewNickname()">Сохранить ник</button><hr><button class="modal-close-btn" style="background: var(--status-red);" onclick="resetAllData()">Сбросить весь прогресс</button><button class="modal-close-btn" onclick="closeNameModal()">Отмена</button></div></div>
+<div id="statusSelectModal" class="modal-overlay"><div class="modal-content"><h3>Выберите статус</h3><div id="availableStatusesList"></div><button class="modal-close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">Отмена</button></div></div>
+<div id="achievementsGalleryModal" class="modal-overlay"><div class="modal-content"><h3>Все достижения</h3><div id="allAchievementsList" class="achievements-grid"></div><button class="modal-close-btn" onclick="document.getElementById('achievementsGalleryModal').style.display='none'">Закрыть</button></div></div>
+<div id="achInfoModal" class="modal-overlay"><div class="modal-content"><h3 id="achInfoTitle"></h3><img id="achInfoImg" style="width:100px; margin:10px auto; display:block;"><p id="achInfoDesc"></p><p id="achInfoCondition" style="color:var(--accent);"></p><button class="modal-close-btn" onclick="closeAchievementInfo()">Закрыть</button></div></div>
+<div id="achievementAlert" class="modal-overlay"><div class="modal-content"><h3>🏆 Новое достижение!</h3><img id="alertAchImg" style="width:80px; margin:10px auto; display:none;"><p id="alertAchText"></p><button class="modal-close-btn" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button></div></div>
+<div id="taskUploadModal" class="modal-overlay"><div class="modal-content"><h3>Отправка на проверку</h3><div id="taskPhotoPreviewContainer" class="photo-preview-container"></div><div class="modal-buttons-row"><button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button><button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button></div></div></div>
+<div id="organizerModal" class="modal-overlay"><div class="modal-content"><h3>Создать органайзер</h3><input type="text" id="organizerName" placeholder="Название органайзера"><div class="form-group"><label>Количество столбцов:</label><input type="number" id="organizerCols" value="3" min="1" max="10"></div><div class="form-group"><label>Количество строк:</label><input type="number" id="organizerRows" value="3" min="1" max="10"></div><button class="modal-action-btn" onclick="createOrganizer()">Создать</button><button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button></div></div>
+<div id="addMarkerModal" class="modal-overlay"><div class="modal-content"><h3>Добавить маркер</h3><div class="form-group"><label>Бренд:</label><select id="addMarkerBrand"><option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option><option value="Grasp">Grasp</option><option value="InfiArt">InfiArt</option><option value="Tooli-Art">Tooli-Art</option></select></div><div class="form-group"><label>Номер маркера:</label><input type="text" id="addMarkerNumber" placeholder="101"></div><div class="form-group"><label>Количество:</label><input type="number" id="addMarkerCount" value="1" min="1"></div><button class="modal-action-btn" onclick="confirmAddMarker()">Добавить</button><button class="modal-close-btn" onclick="closeAddMarkerModal()">Отмена</button></div></div>
 
 </body>
 </html>

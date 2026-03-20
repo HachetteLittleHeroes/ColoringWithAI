@@ -1666,6 +1666,35 @@
     align-items: center;
     gap: 10px;
 }
+/* ГЛОБАЛЬНЫЙ ФИКС КЛИКОВ */
+button, 
+.nav-btn, 
+.marker-controls, 
+.theme-option, 
+.photo-upload-btn, 
+.upload-area, 
+.showcase-slot, 
+.reward-card,
+.avatar-wrapper,
+.status-badge,
+input, 
+select {
+    position: relative !important;
+    z-index: 99 !important; /* Поднимаем над всеми слоями */
+    pointer-events: auto !important; /* Разрешаем касания */
+    cursor: pointer !important;
+}
+
+/* Модальные окна должны быть еще выше */
+.modal-overlay {
+    z-index: 10000 !important;
+}
+
+/* Фикс для того, чтобы контент страницы не перекрывал навигацию */
+.nav {
+    z-index: 1000 !important;
+}
+
     </style>
 
     <script>

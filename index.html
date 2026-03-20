@@ -3308,50 +3308,6 @@ function loadInventory() {
     closeOrganizerModal();
     tg.showAlert('Органайзер создан!');
 }
-function renderOrganizerGrid(org) {
-    const container = document.getElementById('selectedOrganizerGrid');
-    if (!container) return;
-    
-    const gridWrapper = document.createElement('div');
-    gridWrapper.style.cssText = 'overflow-x: auto;';
-    
-    const gridContainer = document.createElement('div');
-    // Уменьшаем размер ячеек
-    gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, minmax(45px, 50px)); gap: 6px; justify-content: start;`;
-    
-    for (let row = 0; row < org.rows; row++) {
-        for (let col = 0; col < org.cols; col++) {
-            if (!org.cells[row]) org.cells[row] = [];
-            if (!org.cells[row][col]) org.cells[row][col] = [];
-            
-            const cellMarkers = org.cells[row][col];
-            const markerCount = cellMarkers.length;
-            const cellLabel = String.fromCharCode(65 + row) + (col + 1);
-            
-            const cellDiv = document.createElement('div');
-            cellDiv.style.cssText = `
-                background: var(--bg);
-                border: 1px solid ${markerCount > 0 ? 'var(--accent)' : 'var(--border-color)'};
-                border-radius: 8px;
-                padding: 6px 2px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                min-width: 40px;
-            `;
-            cellDiv.onclick = () => openCellModal(org.id, row, col);
-            cellDiv.innerHTML = `
-                <div style="font-size: 9px; color: var(--text-gray); margin-bottom: 2px;">${cellLabel}</div>
-                <div style="font-size: 13px; font-weight: bold; color: var(--accent);">${markerCount}</div>
-            `;
-            gridContainer.appendChild(cellDiv);
-        }
-    }
-    
-    gridWrapper.appendChild(gridContainer);
-    container.innerHTML = '';
-    container.appendChild(gridWrapper);
-}
         function openCellModal(orgId, row, col) {
     currentOrganizerId = orgId;
     currentCellRow = row;
@@ -4179,16 +4135,41 @@ function buyItem(itemId) {
         </div>
     </div>
 
-    <div id="rewards-section" class="rewards-section">
-        <h3>Товары за ашетики</h3>
-        <div class="rewards-grid">
-            <div class="reward-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b1.png" class="reward-img"><h4>Книжная закладка Hachette (любая)</h4><div class="reward-price">750 <i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="reward-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img"><h4>Petites Poupees</h4><div class="reward-price">950 <i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="reward-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b3.png" class="reward-img"><h4>Трекер от Hachette</h4><div class="reward-price">1250 <i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="reward-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img"><h4>Любой том Спиртовая раскраска (любая)</h4><div class="reward-price">1250 <i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="reward-card"><img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b5.png" class="reward-img"><h4>Hachette Coloriages (А4 том любой)</h4><div class="reward-price">1500 <i class="fas fa-book-open gold-book"></i></div></div>
+  <div id="rewards-section" class="rewards-section">
+    <h3>Товары за ашетики</h3>
+    <div class="rewards-grid">
+        <div class="reward-card" onclick="buyItem('bookmark')">
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b1.png" class="reward-img">
+            <h4>Книжная закладка Hachette</h4>
+            <div class="reward-price"><span class="price-amount">750</span> <i class="fas fa-book-open gold-book"></i></div>
+            <button class="reward-buy-btn">Приобрести</button>
+        </div>
+        <div class="reward-card" onclick="buyItem('petites')">
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b3.png" class="reward-img">
+            <h4>Petites Poupees</h4>
+            <div class="reward-price"><span class="price-amount">950</span> <i class="fas fa-book-open gold-book"></i></div>
+            <button class="reward-buy-btn">Приобрести</button>
+        </div>
+        <div class="reward-card" onclick="buyItem('tracker')">
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img">
+            <h4>Трекер от Hachette</h4>
+            <div class="reward-price"><span class="price-amount">950</span> <i class="fas fa-book-open gold-book"></i></div>
+            <button class="reward-buy-btn">Приобрести</button>
+        </div>
+        <div class="reward-card" onclick="buyItem('alcohol')">
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img">
+            <h4>Спиртовая раскраска</h4>
+            <div class="reward-price"><span class="price-amount">1250</span> <i class="fas fa-book-open gold-book"></i></div>
+            <button class="reward-buy-btn">Приобрести</button>
+        </div>
+        <div class="reward-card" onclick="buyItem('coloriages')">
+            <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img">
+            <h4>Hachette Coloriages (А4 том)</h4>
+            <div class="reward-price"><span class="price-amount">1500</span> <i class="fas fa-book-open gold-book"></i></div>
+            <button class="reward-buy-btn">Приобрести</button>
         </div>
     </div>
+</div>
 
    <div id="earn-section" class="rewards-section" style="display:none;">
     <h3>Как получить ашетики</h3>

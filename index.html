@@ -3804,25 +3804,91 @@ function toggleMarkerInBrand(brandName, number, isCollected) {
         // НАВИГАЦИЯ
         // ==========================================
         function tab(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            const page = document.getElementById(pageId);
-            if (page) page.classList.add('active');
-            const btn = document.getElementById('btn-' + pageId);
-            if (btn) btn.classList.add('active');
-            window.scrollTo(0, 0);
-            if (pageId === 'markers') {
-                if (markersDB.length === 0) loadMarkers();
-                else renderMarkers();
-                const searchInput = document.getElementById('markerSearch');
-                if (searchInput) searchInput.value = '';
-            }
-            if (pageId === 'answers') {
-                const bookSearch = document.getElementById('bookSearch');
-                if (bookSearch) bookSearch.value = '';
-            }
-            if (pageId === 'cart') renderCart();
+    console.log('=== TAB SWITCH ===', pageId);
+    
+    try {
+        // Скрываем все страницы
+        const pages = document.querySelectorAll('.page');
+        console.log('Found pages:', pages.length);
+        pages.forEach(p => {
+            p.classList.remove('active');
+        });
+        
+        // Снимаем активный класс со всех кнопок навигации
+        const navBtns = document.querySelectorAll('.nav-btn');
+        navBtns.forEach(b => {
+            b.classList.remove('active');
+        });
+        
+        // Показываем выбранную страницу
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.classList.add('active');
+            console.log('✅ Page activated:', pageId);
+        } else {
+            console.error('❌ Page not found:', pageId);
+            // Если страница не найдена, показываем профиль
+            const profilePage = document.getElementById('profile');
+            if (profilePage) profilePage.classList.add('active');
+            return;
         }
+        
+        // Активируем соответствующую кнопку навигации
+        const btn = document.getElementById('btn-' + pageId);
+        if (btn) {
+            btn.classList.add('active');
+        } else {
+            console.warn('Button not found: btn-' + pageId);
+        }
+        
+        window.scrollTo(0, 0);
+        
+        // Обновляем содержимое при переключении
+        if (pageId === 'markers') {
+            if (typeof markersDB !== 'undefined' && markersDB.length === 0) {
+                if (typeof loadMarkers === 'function') loadMarkers();
+            } else {
+                if (typeof renderMarkers === 'function') renderMarkers();
+            }
+            const searchInput = document.getElementById('markerSearch');
+            if (searchInput) searchInput.value = '';
+        }
+        
+        if (pageId === 'answers') {
+            const volumeSearch = document.getElementById('volumeSearch');
+            if (volumeSearch) volumeSearch.value = '';
+            // Убеждаемся, что тома отрендерены
+            if (typeof renderVolumes === 'function' && document.getElementById('volumesContainer')?.children.length === 0) {
+                renderVolumes();
+            }
+        }
+        
+        if (pageId === 'cart') {
+            if (typeof renderCart === 'function') renderCart();
+        }
+        
+        if (pageId === 'aipalette') {
+            // ИИ палитра
+        }
+        
+        if (pageId === 'profile') {
+            // Обновляем UI
+            if (typeof updateUI === 'function') updateUI();
+        }
+        
+        console.log('=== TAB SWITCH COMPLETE ===');
+    } catch (error) {
+        console.error('❌ TAB SWITCH ERROR:', error);
+        // Пытаемся показать профиль как запасной вариант
+        const profilePage = document.getElementById('profile');
+        if (profilePage) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            profilePage.classList.add('active');
+            const profileBtn = document.getElementById('btn-profile');
+            if (profileBtn) profileBtn.classList.add('active');
+        }
+    }
+}
 
         function toggleSection(sectionId) {
             const section = document.getElementById(sectionId);
@@ -3965,41 +4031,54 @@ function closeOrganizerView() {
     try {
         console.log('=== APP START ===');
         
+        // Проверяем наличие всех страниц
+        const requiredPages = ['profile', 'markers', 'answers', 'aipalette', 'cart'];
+        requiredPages.forEach(pageId => {
+            const page = document.getElementById(pageId);
+            if (!page) {
+                console.error(`❌ Missing page: ${pageId}`);
+            } else {
+                console.log(`✅ Page found: ${pageId}`);
+            }
+        });
+        
         // Загружаем сохраненную тему
         const savedTheme = localStorage.getItem('app_theme');
         if (savedTheme === 'custom') {
-            applyCustomTheme(true);
+            if (typeof applyCustomTheme === 'function') applyCustomTheme(true);
         } else if (savedTheme && savedTheme !== 'light') {
-            setTheme(savedTheme);
+            if (typeof setTheme === 'function') setTheme(savedTheme);
         } else {
-            setTheme(user.theme || 'light');
+            if (typeof setTheme === 'function') setTheme(user.theme || 'light');
         }
         
-        updateUI();
-        loadMarkers();
-        renderCart();
-        loadInventory();
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof loadMarkers === 'function') loadMarkers();
+        if (typeof renderCart === 'function') renderCart();
+        if (typeof loadInventory === 'function') loadInventory();
         
         // Рендерим тома с ответами
-        renderVolumes();
+        if (typeof renderVolumes === 'function') renderVolumes();
         
         // Рендерим задания
-        renderLevelTasks();
-        renderTimeTasks();
+        if (typeof renderLevelTasks === 'function') renderLevelTasks();
+        if (typeof renderTimeTasks === 'function') renderTimeTasks();
         
         // Рендерим бренды
-        renderBrands();
+        if (typeof renderBrands === 'function') renderBrands();
         
         // Восстанавливаем состояние корзины для книг
-        for (let key in cart) {
-            if (!key.startsWith('marker_')) {
-                const countSpan = document.getElementById(`book-count-${key}`);
-                const controlsDiv = document.getElementById(`book-controls-${key}`);
-                const addBtn = document.getElementById(`book-add-${key}`);
-                if (countSpan) countSpan.innerText = cart[key];
-                if (controlsDiv && addBtn && cart[key] > 0) {
-                    controlsDiv.style.display = 'flex';
-                    addBtn.style.display = 'none';
+        if (typeof cart !== 'undefined') {
+            for (let key in cart) {
+                if (!key.startsWith('marker_')) {
+                    const countSpan = document.getElementById(`book-count-${key}`);
+                    const controlsDiv = document.getElementById(`book-controls-${key}`);
+                    const addBtn = document.getElementById(`book-add-${key}`);
+                    if (countSpan) countSpan.innerText = cart[key];
+                    if (controlsDiv && addBtn && cart[key] > 0) {
+                        controlsDiv.style.display = 'flex';
+                        addBtn.style.display = 'none';
+                    }
                 }
             }
         }
@@ -4018,6 +4097,9 @@ function closeOrganizerView() {
         console.log('=== APP READY ===');
     } catch (error) {
         console.error('=== APP ERROR ===', error);
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('Ошибка загрузки: ' + error.message);
+        }
     }
 };
 // Раскрытие основного блока инвентаря

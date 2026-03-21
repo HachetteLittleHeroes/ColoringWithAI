@@ -4442,7 +4442,7 @@ function selectStatus(statusName) {
         }
     }
     
-    // ==========================================
+// ==========================================
     // ИНИЦИАЛИЗАЦИЯ
     // ==========================================
     
@@ -4459,10 +4459,31 @@ function selectStatus(statusName) {
             cart = JSON.parse(savedCart);
         }
         
+        // ЗАГРУЗКА ДАННЫХ С СЕРВЕРА
         await loadUserBalance();
         await loadUserProgress();
-        await loadUnlockedStatuses();
+        await loadUnlockedStatuses();  // ← ЭТО ДОЛЖНО БЫТЬ!
         await loadUserAchievements();
+        
+        // Дополнительная загрузка статусов через API
+        try {
+            const statusesResponse = await fetch(`${SERVER_URL}/api/unlocked_statuses?user_id=${userId}`);
+            const statusesData = await statusesResponse.json();
+            if (statusesData && Array.isArray(statusesData)) {
+                user.unlockedStatuses = statusesData;
+                if (!user.unlockedStatuses.includes('Новичок')) {
+                    user.unlockedStatuses.unshift('Новичок');
+                }
+                console.log('Statuses loaded from API:', user.unlockedStatuses);
+            }
+        } catch (e) {
+            console.error('Failed to load statuses from API:', e);
+        }
+        
+        // Проверяем, что статус пользователя существует в разблокированных
+        if (user.status && !user.unlockedStatuses.includes(user.status)) {
+            user.status = 'Новичок';
+        }
         
         const savedTheme = localStorage.getItem('app_theme');
         if (savedTheme === 'custom') {
@@ -4494,7 +4515,40 @@ function selectStatus(statusName) {
         };
         
         console.log('=== APP READY ===');
+        console.log('Final user status:', user.status);
+        console.log('Final unlocked statuses:', user.unlockedStatuses);
     };
+    // ==========================================
+    // ОТЛАДКА ДЛЯ ПРОВЕРКИ СТАТУСОВ
+    // ==========================================
+    setTimeout(() => {
+        console.log('=== DEBUG AFTER LOAD ===');
+        console.log('user.status:', user.status);
+        console.log('user.unlockedStatuses:', user.unlockedStatuses);
+        console.log('BRANCH_REWARDS:', BRANCH_REWARDS);
+        
+        const statusBadge = document.getElementById('currentStatus');
+        if (statusBadge) {
+            console.log('Status badge text:', statusBadge.innerText);
+            statusBadge.onclick = function() {
+                console.log('Status badge clicked!');
+                openStatusInfo();
+            };
+        }
+        
+        // Проверяем кнопки заданий
+        const taskButtons = document.querySelectorAll('.task-submit-btn');
+        console.log('Task buttons found:', taskButtons.length);
+        if (taskButtons.length === 0) {
+            console.warn('No task buttons found! Check renderBranchTasks');
+        }
+        
+        // Принудительно вызываем renderBranchTasks если кнопок нет
+        if (taskButtons.length === 0 && typeof renderBranchTasks === 'function') {
+            console.log('Calling renderBranchTasks again...');
+            renderBranchTasks();
+        }
+    }, 3000);
 </script>
 </body>
 </html>

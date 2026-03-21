@@ -2633,62 +2633,35 @@ async function showAnswerPageAsync() {
         };
         
         // ==========================================
-        // ДАННЫЕ ТОМОВ (47 ТОМОВ)
-        // ==========================================
-        
-        // ==========================================
-// ДАННЫЕ ТОМОВ (47 ТОМОВ)
+// ДАННЫЕ ТОМОВ (47 ТОМОВ) - УПРОЩЕННАЯ ВЕРСИЯ
 // ==========================================
 
-const VOLUMES_DATA = [
-    { id: "t1", name: "Les Grands Classiques tome 11", price: 2890, pages: 26, img: "assets/img/t1.png" },
-    { id: "t2", name: "Les Grands Classiques tome 3", price: 2890, pages: 26, img: "assets/img/t2.png" },
-    { id: "t3", name: "Vitraux tome 2", price: 2890, pages: 26, img: "assets/img/t3.png" },
-    { id: "t4", name: "Trompe L'oeil Babies", price: 2890, pages: 26, img: "assets/img/t4.png" },
-    { id: "t5", name: "Trompe L'oeil Grand Bloc", price: 2890, pages: 26, img: "assets/img/t5.png" },
-    { id: "t6", name: "Stitch Au numero", price: 2890, pages: 26, img: "assets/img/t6.png" },
-    { id: "t7", name: "Sous L'Ocean", price: 2890, pages: 26, img: "assets/img/t7.png" },
-    { id: "t8", name: "Saisons", price: 2890, pages: 26, img: "assets/img/t8.png" },
-    { id: "t9", name: "Romantasy", price: 2890, pages: 26, img: "assets/img/t9.png" },
-    { id: "t10", name: "Princesses tome 1", price: 2890, pages: 26, img: "assets/img/t10.png" },
-    { id: "t11", name: "Princesses tome 2", price: 2890, pages: 26, img: "assets/img/t11.png" },
-    { id: "t12", name: "Princes&Heros", price: 2890, pages: 26, img: "assets/img/t12.png" },
-    { id: "t13", name: "Portraits De Famille", price: 2890, pages: 26, img: "assets/img/t13.png" },
-    { id: "t14", name: "Pokemon", price: 2890, pages: 26, img: "assets/img/t14.png" },
-    { id: "t15", name: "Pixar", price: 2890, pages: 26, img: "assets/img/t15.png" },
-    { id: "t16", name: "Petites Princesses", price: 2890, pages: 26, img: "assets/img/t16.png" },
-    { id: "t17", name: "Petites Betes", price: 2890, pages: 26, img: "assets/img/t17.png" },
-    { id: "t18", name: "Mondes Fantastiques", price: 2890, pages: 26, img: "assets/img/t18.png" },
-    { id: "t19", name: "Mickey, Donald&Co", price: 2890, pages: 26, img: "assets/img/t19.png" },
-    { id: "t20", name: "Mechants", price: 2890, pages: 26, img: "assets/img/t20.png" },
-    { id: "t21", name: "Marsupilami", price: 2890, pages: 26, img: "assets/img/t21.png" },
-    { id: "t22", name: "Love Stories", price: 2890, pages: 26, img: "assets/img/t22.png" },
-    { id: "t23", name: "Looney Tunes tome 3", price: 2890, pages: 26, img: "assets/img/t23.png" },
-    { id: "t24", name: "Lilo Et Stitch", price: 2890, pages: 26, img: "assets/img/t24.png" },
-    { id: "t25", name: "Les Grands Classiques Special Debutants tome 1", price: 2890, pages: 26, img: "assets/img/t25.png" },
-    { id: "t26", name: "Les Grands Classiques Special Debutants tome 2", price: 2890, pages: 26, img: "assets/img/t26.png" },
-    { id: "t27", name: "Les Grands Classiques Au numero", price: 2890, pages: 26, img: "assets/img/t27.png" },
-    { id: "t28", name: "La Petite Sirene", price: 2890, pages: 26, img: "assets/img/t28.png" },
-    { id: "t29", name: "Les Schtroumpfs tome 1", price: 2890, pages: 26, img: "assets/img/t29.png" },
-    { id: "t30", name: "Les Schtroumpfs tome 2", price: 2890, pages: 26, img: "assets/img/t30.png" },
-    { id: "t31", name: "L'age Glace", price: 2890, pages: 26, img: "assets/img/t31.png" },
-    { id: "t32", name: "Hiver", price: 2890, pages: 26, img: "assets/img/t32.png" },
-    { id: "t33", name: "Heros&Mechants La Battle", price: 2890, pages: 26, img: "assets/img/t33.png" },
-    { id: "t34", name: "Grands Classiques Grand Bloc", price: 2890, pages: 26, img: "assets/img/t34.png" },
-    { id: "t35", name: "Les Grands Classiques Coliector", price: 2890, pages: 26, img: "assets/img/t35.png" },
-    { id: "t36", name: "Girl Power", price: 2890, pages: 26, img: "assets/img/t36.png" },
-    { id: "t37", name: "Fees, Sorciers Et Magiciens", price: 2890, pages: 26, img: "assets/img/t37.png" },
-    { id: "t38", name: "Famille", price: 2890, pages: 26, img: "assets/img/t38.png" },
-    { id: "t39", name: "Escapades Merveilleuses Douce France", price: 2890, pages: 26, img: "assets/img/t39.png" },
-    { id: "t40", name: "Chiots&Chiens", price: 2890, pages: 26, img: "assets/img/t40.png" },
-    { id: "t41", name: "Chevaux", price: 2890, pages: 26, img: "assets/img/t41.png" },
-    { id: "t42", name: "Bisounours tome 1", price: 2890, pages: 26, img: "assets/img/t42.png" },
-    { id: "t43", name: "Best Of Pixar", price: 2890, pages: 26, img: "assets/img/t43.png" },
-    { id: "t44", name: "Best Of Les Grands Classiques", price: 2890, pages: 26, img: "assets/img/t44.png" },
-    { id: "t45", name: "La Belle Et La Bete", price: 2890, pages: 26, img: "assets/img/t45.png" },
-    { id: "t46", name: "Bestiaire", price: 2890, pages: 26, img: "assets/img/t46.png" },
-    { id: "t47", name: "Best Of Heroines", price: 2890, pages: 26, img: "assets/img/t47.png" }
+const VOLUMES_DATA = [];
+const VOLUME_NAMES = [
+    "Les Grands Classiques tome 11", "Les Grands Classiques tome 3", "Vitraux tome 2",
+    "Trompe L'oeil Babies", "Trompe L'oeil Grand Bloc", "Stitch Au numero",
+    "Sous L'Ocean", "Saisons", "Romantasy", "Princesses tome 1", "Princesses tome 2",
+    "Princes&Heros", "Portraits De Famille", "Pokemon", "Pixar", "Petites Princesses",
+    "Petites Betes", "Mondes Fantastiques", "Mickey, Donald&Co", "Mechants",
+    "Marsupilami", "Love Stories", "Looney Tunes tome 3", "Lilo Et Stitch",
+    "Les Grands Classiques Special Debutants tome 1", "Les Grands Classiques Special Debutants tome 2",
+    "Les Grands Classiques Au numero", "La Petite Sirene", "Les Schtroumpfs tome 1",
+    "Les Schtroumpfs tome 2", "L'age Glace", "Hiver", "Heros&Mechants La Battle",
+    "Grands Classiques Grand Bloc", "Les Grands Classiques Coliector", "Girl Power",
+    "Fees, Sorciers Et Magiciens", "Famille", "Escapades Merveilleuses Douce France",
+    "Chiots&Chiens", "Chevaux", "Bisounours tome 1", "Best Of Pixar",
+    "Best Of Les Grands Classiques", "La Belle Et La Bete", "Bestiaire", "Best Of Heroines"
 ];
+
+for (let i = 0; i < 47; i++) {
+    VOLUMES_DATA.push({
+        id: `t${i + 1}`,
+        name: VOLUME_NAMES[i],
+        price: 2890,
+        pages: 26,
+        img: `assets/img/t${i + 1}.png`
+    });
+}
         
         // ==========================================
         // ДАННЫЕ БРЕНДОВ
@@ -3796,33 +3769,45 @@ async function submitTaskPhoto(event) {
         let touchEndX = 0;
         
       function renderVolumes() {
+    console.log('🎨 renderVolumes called');
     const container = document.getElementById('volumesContainer');
-    if (!container) return;
+    if (!container) {
+        console.error('❌ volumesContainer not found');
+        return;
+    }
     
     container.innerHTML = '';
     
     VOLUMES_DATA.forEach(volume => {
         const cartKey = `volume_${volume.id}`;
-        const cartCount = cart[cartKey] || 0;
+        const cartCount = (cart && cart[cartKey]) ? cart[cartKey] : 0;
+        
+        console.log(`📚 Rendering volume: ${volume.id}, name: ${volume.name}, count: ${cartCount}`);
         
         const card = document.createElement('div');
         card.className = 'book-card';
         card.onclick = () => openVolumeAnswers(volume.id, volume.pages);
+        
+        // Создаем HTML с проверкой на ошибку загрузки картинки
+        const imgHtml = `<img src="${volume.img}" alt="${volume.name}" style="width: 100%; height: 140px; object-fit: contain; border-radius: 16px; background: #f0f0f0;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%25%22 height=%22100%25%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23ff9500%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22 font-size=%2240%22%3E📘%3C/text%3E%3C/svg%3E'">`;
+        
         card.innerHTML = `
-            <img src="${volume.img}" alt="${volume.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22 viewBox=%220 0 150 150%22%3E%3Crect width=%22150%22 height=%22150%22 fill=%22%23f0f0f0%22/%3E%3Ctext x=%2275%22 y=%2275%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22%3E📘%3C/text%3E%3C/svg%3E'">
-            <h4>${volume.name}</h4>
-            <div class="book-price">${volume.price} ₽ <span style="font-size: 12px; color: #888;">(под заказ)</span></div>
-            <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}">
-                <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)">−</button>
-                <span id="book-count-${volume.id}">${cartCount}</span>
-                <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)">+</button>
+            ${imgHtml}
+            <h4 style="font-size: 14px; margin: 10px 0 5px; min-height: 40px;">${volume.name}</h4>
+            <div class="book-price" style="color: var(--accent); font-weight: bold; margin-bottom: 10px;">${volume.price} ₽ <span style="font-size: 11px;">(под заказ)</span></div>
+            <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}; align-items: center; justify-content: center; gap: 15px; margin-top: 10px;">
+                <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)" style="width: 36px; height: 36px; border-radius: 50%; background: #ff4444; color: white; border: none; font-size: 20px; cursor: pointer;">−</button>
+                <span id="book-count-${volume.id}" style="font-size: 18px; font-weight: bold;">${cartCount}</span>
+                <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: white; border: none; font-size: 20px; cursor: pointer;">+</button>
             </div>
-            <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}">
+            <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}; width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 30px; font-weight: bold; margin-top: 10px; cursor: pointer;">
                 <i class="fas fa-cart-plus"></i> В корзину <span style="font-size: 11px;">(под заказ)</span>
             </button>
         `;
         container.appendChild(card);
     });
+    
+    console.log('✅ renderVolumes completed, items:', container.children.length);
 }
         function updateVolumeCart(volumeId, delta) {
     const cartKey = `volume_${volumeId}`;

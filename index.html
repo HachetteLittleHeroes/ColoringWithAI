@@ -2776,124 +2776,63 @@
         }
         
         async function submitTaskPhoto() {
-            console.log('=== НАЧАЛО ОТПРАВКИ ЗАДАНИЯ ===');
-            
-            if (isUploading) {
-                if (tg) tg.showAlert('⏳ Отправка уже выполняется...');
-                return;
-            }
-            
-            if (!currentUploadBranch || currentUploadLevel === null) {
-                if (tg) tg.showAlert('❌ Ошибка: задание не выбрано');
-                return;
-            }
-            
-            if (!tempPhotos || tempPhotos.length === 0) {
-                if (tg) tg.showAlert('❌ Выберите хотя бы одно фото для отправки');
-                return;
-            }
-            
-            const branch = TASK_BRANCHES[currentUploadBranch];
-            if (!branch) {
-                console.error('Ветка не найдена:', currentUploadBranch);
-                if (tg) tg.showAlert('Ошибка: ветка задания не найдена');
-                return;
-            }
-            
-            const level = branch.levels[currentUploadLevel];
-            if (!level) {
-                console.error('Уровень не найден:', currentUploadLevel);
-                if (tg) tg.showAlert('Ошибка: уровень задания не найден');
-                return;
-            }
-            
-            const rewardStatus = BRANCH_REWARDS[currentUploadBranch] || '';
-            const title = `${branch.name} - Уровень ${currentUploadLevel + 1}: ${level.title}`;
-            
-            console.log('📤 Отправка задания:', {
-                userId: userId,
-                branchKey: currentUploadBranch,
-                levelIndex: currentUploadLevel,
-                title: title,
-                maxProgress: level.maxProgress,
-                photosCount: tempPhotos.length
-            });
-            
-            isUploading = true;
-            
-            if (tg) tg.showAlert('📤 Отправка фото на проверку...');
-            
-            try {
-                const formData = new FormData();
-                formData.append('user', userId.toString());
-                formData.append('title', title);
-                formData.append('id', `${currentUploadBranch}_${currentUploadLevel}`);
-                formData.append('level', (currentUploadLevel + 1).toString());
-                formData.append('branchKey', currentUploadBranch);
-                formData.append('levelIndex', currentUploadLevel.toString());
-                formData.append('rewardStatus', rewardStatus);
-                formData.append('maxProgress', level.maxProgress.toString());
-                
-                for (let i = 0; i < tempPhotos.length; i++) {
-                    const photo = tempPhotos[i];
-                    console.log(`📎 Добавляем фото ${i + 1}:`, photo.name, (photo.size / 1024).toFixed(2), 'KB');
-                    formData.append('photos', photo, `photo_${Date.now()}_${i}_${photo.name}`);
-                }
-                
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000);
-                
-                console.log('🌐 Отправка запроса на:', `${SERVER_URL}/api/check_achievement`);
-                
-                const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
-                    method: 'POST',
-                    body: formData,
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                console.log('📡 Статус ответа:', response.status);
-                
-                let result;
-                try {
-                    const text = await response.text();
-                    console.log('📄 Текст ответа:', text);
-                    result = JSON.parse(text);
-                } catch (parseError) {
-                    console.error('Ошибка парсинга ответа:', parseError);
-                    throw new Error('Сервер вернул некорректный ответ');
-                }
-                
-                if (result && result.status === 'ok') {
-                    const successMsg = '✅ Фото отправлено на проверку администратору!';
-                    if (tg) {
-                        tg.showAlert(successMsg);
-                        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                    }
-                    closeTaskUploadModal();
-                    await refreshUserProgress();
-                } else {
-                    throw new Error(result?.message || 'Неизвестная ошибка');
-                }
-                
-            } catch (error) {
-                console.error('❌ Ошибка при отправке:', error);
-                let errorMsg = '❌ Ошибка отправки: ';
-                if (error.name === 'AbortError') {
-                    errorMsg += 'Превышено время ожидания. Проверьте интернет.';
-                } else if (error.message.includes('Failed to fetch')) {
-                    errorMsg += 'Нет связи с сервером. Проверьте интернет.';
-                } else {
-                    errorMsg += error.message || 'Проверьте интернет-соединение';
-                }
-                if (tg) {
-                    tg.showAlert(errorMsg);
-                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-                }
-            } finally {
-                isUploading = false;
-            }
+    if (isUploading) return;
+    if (!tempPhotos || tempPhotos.length === 0) {
+        tg.showAlert('❌ Вы не выбрали фото!');
+        return;
+    }
+
+    isUploading = true;
+    tg.showConfirm("Отправить фото на проверку?", async (confirm) => {
+        if (!confirm) {
+            isUploading = false;
+            return;
         }
+
+        tg.MainButton.setText("⏳ ОТПРАВКА...").show();
+
+        try {
+            const formData = new FormData();
+            formData.append('user', userId);
+            formData.append('branchKey', currentUploadBranch);
+            formData.append('levelIndex', currentUploadLevel);
+
+            for (let i = 0; i < tempPhotos.length; i++) {
+                formData.append('photos', tempPhotos[i]);
+            }
+
+            // ВНИМАНИЕ: Проверьте, что SERVER_URL начинается с https://
+            const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
+                method: 'POST',
+                body: formData
+            });
+
+            // Если сервер ответил, но статус не 200-299
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Сервер ответил ошибкой ${response.status}: ${errorText}`);
+            }
+
+            const result = await response.json();
+
+            if (result.status === 'ok') {
+                tg.showAlert('✅ Успешно отправлено!');
+                closeTaskUploadModal();
+                await refreshUserProgress();
+            } else {
+                tg.showAlert(`❌ Сервер отклонил: ${result.message}`);
+            }
+
+        } catch (error) {
+            // Вот здесь мы поймаем отсутствие интернета или HTTPS
+            tg.showAlert(`❌ КРИТИЧЕСКАЯ ОШИБКА: ${error.message}`);
+        } finally {
+            isUploading = false;
+            tg.MainButton.hide();
+        }
+    });
+}
+
         
         function closeTaskUploadModal() {
             console.log('🔒 Закрытие модального окна');

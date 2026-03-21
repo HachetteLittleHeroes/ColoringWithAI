@@ -159,7 +159,7 @@
         }
 
         /* ==========================================
-           3. ПРОФИЛЬ И АВАТАР
+           2. ПРОФИЛЬ И АВАТАР
            ========================================== */
         .profile-header-block {
             background: var(--bg-header);
@@ -247,7 +247,7 @@
         }
 
         /* ==========================================
-           4. РЕДАКТОР АВАТАРА
+           3. РЕДАКТОР АВАТАРА
            ========================================== */
         .avatar-editor {
             background: var(--bg-header);
@@ -310,7 +310,7 @@
         }
 
         /* ==========================================
-           5. БАЛАНС
+           4. БАЛАНС
            ========================================== */
         .balance-card {
             background: var(--accent-gradient);
@@ -379,7 +379,7 @@
         }
 
         /* ==========================================
-           6. ТОВАРЫ ЗА АШЕТИКИ
+           5. ТОВАРЫ ЗА АШЕТИКИ
            ========================================== */
         .rewards-section {
             background: var(--bg-header);
@@ -438,7 +438,7 @@
         }
 
         /* ==========================================
-           7. ЗАДАНИЯ
+           6. ЗАДАНИЯ (ВЕТКИ)
            ========================================== */
         .tasks-section {
             background: var(--bg-header);
@@ -471,17 +471,6 @@
             display: none;
             background: var(--bg-header);
             border-top: 1px solid var(--border-color);
-        }
-
-        .tasks-category {
-            margin-bottom: 25px;
-        }
-
-        .tasks-category h4 {
-            color: var(--text-gray);
-            font-size: 13px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
         }
 
         /* Карточка задания */
@@ -618,12 +607,8 @@
             cursor: pointer;
         }
 
-        .photo-upload-btn i {
-            font-size: 14px;
-        }
-
         /* ==========================================
-           8. ВИТРИНА ДОСТИЖЕНИЙ
+           7. ВИТРИНА ДОСТИЖЕНИЙ
            ========================================== */
         .showcase-container {
             background: var(--bg-header);
@@ -672,7 +657,7 @@
         }
 
         /* ==========================================
-           9. ПОДДЕРЖАТЬ НАС
+           8. ПОДДЕРЖАТЬ НАС
            ========================================== */
         .support-section {
             background: var(--bg-header);
@@ -715,7 +700,7 @@
         }
 
         /* ==========================================
-           10. ТЕМЫ ОФОРМЛЕНИЯ
+           9. ТЕМЫ ОФОРМЛЕНИЯ
            ========================================== */
         .themes-section {
             background: var(--bg-header);
@@ -828,7 +813,7 @@
         }
 
         /* ==========================================
-           11. ПОИСК
+           10. ПОИСК
            ========================================== */
         .search-container {
             padding: 0 15px 15px;
@@ -869,7 +854,7 @@
         }
 
         /* ==========================================
-           12. ГАЛЕРЕЯ ДОСТИЖЕНИЙ
+           11. ГАЛЕРЕЯ ДОСТИЖЕНИЙ
            ========================================== */
         .achievements-grid {
             display: grid;
@@ -931,7 +916,7 @@
         }
 
         /* ==========================================
-           13. МАРКЕРЫ
+           12. МАРКЕРЫ
            ========================================== */
         .markers-section {
             padding: 0 15px;
@@ -1047,112 +1032,7 @@
             color: var(--text);
         }
         /* ==========================================
-           14. ОТВЕТЫ И ТОМА
-           ========================================== */
-        .books-section {
-            padding: 0 15px;
-        }
-
-        .books-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .book-card {
-            background: var(--bg-header);
-            padding: 15px 15px 20px;
-            border-radius: 24px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .book-card img {
-            width: 100%;
-            height: 140px;
-            object-fit: contain;
-            margin-bottom: 12px;
-            cursor: pointer;
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 10px;
-        }
-
-        .book-card h4 {
-            font-size: 16px;
-            margin: 0 0 8px 0;
-            cursor: pointer;
-            color: var(--text);
-        }
-
-        .book-price {
-            color: var(--accent);
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .book-card .cart-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            background: var(--card-bg);
-            padding: 10px;
-            border-radius: 30px;
-            margin-top: 10px;
-        }
-
-        .book-card .cart-controls button {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .book-card .cart-controls button.minus {
-            background: #444;
-        }
-
-        .book-card .cart-controls button.minus:not(:disabled) {
-            background: var(--status-red);
-        }
-
-        .book-card .cart-controls span {
-            font-size: 16px;
-            font-weight: 700;
-            min-width: 30px;
-            text-align: center;
-            color: var(--text);
-        }
-
-        .add-to-cart-btn {
-            width: 100%;
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: all 0.2s;
-        }
-
-        .add-to-cart-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* ==========================================
-           15. КОРЗИНА
+           13. КОРЗИНА
            ========================================== */
         .cart-wrapper {
             position: relative;
@@ -1296,7 +1176,7 @@
         }
 
         /* ==========================================
-           16. ИИ ПАЛИТРА
+           14. ИИ ПАЛИТРА
            ========================================== */
         .ai-section {
             padding: 0 15px;
@@ -1404,7 +1284,7 @@
         }
 
         /* ==========================================
-           17. НАВИГАЦИЯ
+           15. НАВИГАЦИЯ
            ========================================== */
         .nav {
             position: fixed;
@@ -1456,7 +1336,7 @@
         }
 
         /* ==========================================
-           18. МОДАЛЬНЫЕ ОКНА
+           16. МОДАЛЬНЫЕ ОКНА
            ========================================== */
         .modal-overlay {
             position: fixed;
@@ -1547,7 +1427,7 @@
             border-top: 1px solid var(--border-color);
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="number"] {
             width: 100%;
             padding: 14px;
             border-radius: 14px;
@@ -1567,66 +1447,9 @@
             display: block;
         }
 
-        /* ИНВЕНТАРЬ */
-        .inventory-section {
-            background: var(--bg-header);
-            margin: 15px;
-            padding: 20px;
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-        }
-
-        .inventory-tab-btn {
-            padding: 8px 16px;
-            background: transparent;
-            color: var(--text-gray);
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .inventory-tab-btn.active {
-            color: var(--accent);
-            border-bottom: 2px solid var(--accent);
-        }
-
-        .inventory-tab {
-            margin-top: 15px;
-        }
-
-        /* ГЛОБАЛЬНЫЙ ФИКС КЛИКОВ */
-        button, 
-        .nav-btn, 
-        .marker-controls button,
-        .theme-option, 
-        .photo-upload-btn, 
-        .upload-area, 
-        .showcase-slot, 
-        .reward-card,
-        .avatar-wrapper,
-        .status-badge,
-        .balance-btn,
-        .modal-action-btn,
-        .modal-close-btn,
-        .checkout-btn,
-        .add-to-cart-btn,
-        .inventory-tab-btn,
-        .apply-theme-btn,
-        .task-submit-btn {
-            pointer-events: auto !important;
-            cursor: pointer !important;
-        }
-
-        .modal-overlay {
-            z-index: 10000 !important;
-        }
-
-        .nav {
-            z-index: 1000 !important;
-        }
-
-        /* Блок инвентаря в профиле */
+        /* ==========================================
+           17. ИНВЕНТАРЬ И ОРГАНАЙЗЕРЫ
+           ========================================== */
         .inventory-main-block {
             background: var(--bg-header);
             margin: 15px;
@@ -1745,20 +1568,39 @@
             cursor: pointer;
         }
 
-        /* Альфа-тест бейдж для ИИ палитры */
-        .ai-alpha-badge {
-            display: inline-block;
-            background: rgba(255,149,0,0.2);
-            color: var(--accent);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 10px;
-            vertical-align: middle;
+        #organizersList {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 5px;
         }
 
-        /* Стили для брендов с номерами */
+        #organizersList > div {
+            animation: fadeIn 0.2s ease;
+        }
+
+        #organizersList [style*="cursor: pointer"]:hover {
+            transform: scale(1.02);
+            background: rgba(255,149,0,0.05);
+        }
+
+        #selectedOrganizerGrid {
+            display: flex;
+            justify-content: center;
+        }
+
+        #selectedOrganizerGrid > div {
+            overflow-x: auto;
+        }
+
+        #selectedOrganizerGrid > div > div {
+            transition: transform 0.1s;
+        }
+
+        #selectedOrganizerGrid > div > div:active {
+            transform: scale(0.95);
+        }
+
+        /* Стили для брендов */
         .brand-content {
             scrollbar-width: thin;
         }
@@ -1777,85 +1619,9 @@
             border-radius: 4px;
         }
 
-        /* Компактные ячейки органайзера */
-        #selectedOrganizerGrid > div > div {
-            transition: transform 0.1s;
-        }
-
-        #selectedOrganizerGrid > div > div:active {
-            transform: scale(0.95);
-        }
-
-        /* Стили для товаров за ашетики */
-        .rewards-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .reward-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 20px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .reward-card:active {
-            transform: scale(0.98);
-        }
-
-        .reward-img {
-            width: 100%;
-            height: 130px;
-            object-fit: contain;
-            margin-bottom: 12px;
-            border-radius: 12px;
-        }
-
-        .reward-card h4 {
-            font-size: 14px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-            color: var(--text);
-            min-height: 40px;
-        }
-
-        .reward-price {
-            font-weight: 800;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-
-        .price-amount {
-            color: var(--accent);
-            font-size: 20px;
-        }
-
-        .reward-buy-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 14px;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .reward-buy-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Стили для заработка ашетиков */
+        /* ==========================================
+           18. ТОВАРЫ ЗА АШЕТИКИ (дополнительно)
+           ========================================== */
         .earn-list {
             display: flex;
             flex-direction: column;
@@ -1902,118 +1668,239 @@
             font-size: 16px;
         }
 
-        .gold-book {
-            color: #FFD700;
-            font-size: 14px;
-        }
-
-        /* Стили для томов и ответов */
-        .volumes-section {
+        /* ==========================================
+           19. ТОМА И ОТВЕТЫ (КАРТОЧКИ ТОВАРОВ + СВАЙПЫ)
+           ========================================== */
+        .books-section {
             padding: 0 15px;
         }
 
-        .volumes-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .volume-card {
-            background: var(--bg-header);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
-
-        .volume-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            cursor: pointer;
-            background: var(--bg-header);
-            transition: background 0.2s;
-        }
-
-        .volume-header:active {
-            background: rgba(0,0,0,0.05);
-        }
-
-        .volume-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 600;
-            font-size: 16px;
-            color: var(--text);
-        }
-
-        .volume-title i {
-            color: var(--accent);
-            font-size: 18px;
-        }
-
-        .volume-arrow {
-            color: var(--text-gray);
-            transition: transform 0.3s;
-        }
-
-        .volume-pages {
-            padding: 16px 20px;
-            border-top: 1px solid var(--border-color);
-            background: var(--bg);
-        }
-
-        .pages-grid {
+        .books-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 80px));
-            gap: 12px;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
         }
 
-        .page-item {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 10px 5px;
+        .book-card {
+            background: var(--bg-header);
+            padding: 15px 15px 20px;
+            border-radius: 24px;
             text-align: center;
-            cursor: pointer;
             border: 1px solid var(--border-color);
+            cursor: pointer;
             transition: all 0.2s;
         }
 
-        .page-item:active {
-            transform: scale(0.95);
-            background: var(--accent);
+        .book-card:active {
+            transform: scale(0.98);
         }
 
-        .page-item:active .page-number {
-            color: white;
+        .book-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            border-radius: 16px;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
         }
 
-        .page-number {
-            font-weight: 700;
-            font-size: 14px;
+        .book-card h4 {
+            font-size: 16px;
+            margin: 0 0 8px 0;
+            color: var(--text);
+        }
+
+        .book-price {
             color: var(--accent);
-            margin-bottom: 6px;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
         }
 
-        .page-preview i {
-            font-size: 20px;
-            color: var(--text-gray);
+        .book-card .cart-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 30px;
+            margin-top: 10px;
         }
 
-        /* Модальное окно с ответом */
-        .answer-modal {
-            max-width: 400px;
+        .book-card .cart-controls button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .book-card .cart-controls button.minus {
+            background: #444;
+        }
+
+        .book-card .cart-controls button.minus:not(:disabled) {
+            background: var(--status-red);
+        }
+
+        .book-card .cart-controls span {
+            font-size: 16px;
+            font-weight: 700;
+            min-width: 30px;
             text-align: center;
+            color: var(--text);
         }
 
-        .answer-image {
+        .add-to-cart-btn {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .add-to-cart-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Модальное окно просмотра ответов (свайпы) */
+        .answers-viewer-modal {
+            max-width: 90vw;
+            width: 90%;
+            text-align: center;
+            background: var(--bg-header);
+        }
+
+        .answers-viewer-content {
+            position: relative;
+        }
+
+        .answers-viewer-image {
             width: 100%;
             max-height: 70vh;
             object-fit: contain;
             border-radius: 16px;
-            margin: 15px 0;
             background: var(--bg);
+            margin: 15px 0;
+        }
+
+        .answers-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .answers-nav button {
+            background: var(--accent);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .answers-nav button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .answers-page-info {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .answers-close-btn {
+            background: var(--text-gray);
+            color: white;
+            padding: 12px;
+            border-radius: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* Глобальный фикс кликов */
+        button, 
+        .nav-btn, 
+        .marker-controls button,
+        .theme-option, 
+        .photo-upload-btn, 
+        .upload-area, 
+        .showcase-slot, 
+        .reward-card,
+        .avatar-wrapper,
+        .status-badge,
+        .balance-btn,
+        .modal-action-btn,
+        .modal-close-btn,
+        .checkout-btn,
+        .add-to-cart-btn,
+        .inventory-tab-btn,
+        .apply-theme-btn,
+        .task-submit-btn,
+        .book-card {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+
+        .modal-overlay {
+            z-index: 10000 !important;
+        }
+
+        .nav {
+            z-index: 1000 !important;
+        }
+
+        /* Альфа-тест бейдж */
+        .ai-alpha-badge {
+            display: inline-block;
+            background: rgba(255,149,0,0.2);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        /* Исправление для темной темы */
+        [data-theme="dark"] .theme-option span,
+        [data-theme="dark"] .custom-theme h4,
+        [data-theme="dark"] .theme-row label {
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .theme-row select,
+        [data-theme="dark"] .theme-row input {
+            background: #2c2c2e;
+            color: #ffffff;
+            border-color: #3a3a3c;
+        }
+
+        [data-theme="dark"] .book-card .cart-controls button.minus {
+            background: #444;
         }
     </style>
     <script>
@@ -2176,6 +2063,78 @@
     };
     
     // ==========================================
+    // ДАННЫЕ ДОСТИЖЕНИЙ
+    // ==========================================
+    
+    const ACHIEVEMENTS_DB = {
+        'first_task': { 
+            id: 'first_task', 
+            name: 'Первый шаг', 
+            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach1.png', 
+            desc: 'Выполнено первое задание',
+            condition: 'Выполните любое задание'
+        },
+        'rich_boy': { 
+            id: 'rich_boy', 
+            name: 'Копилка', 
+            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach2.png', 
+            desc: 'Накоплено 1000 ашетиков',
+            condition: 'Накопите 1000 ашетиков'
+        },
+        'shopaholic': { 
+            id: 'shopaholic', 
+            name: 'Шопоголик', 
+            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach4.png', 
+            desc: 'Сделан первый заказ в корзине',
+            condition: 'Сделайте первый заказ'
+        },
+        'collector': { 
+            id: 'collector', 
+            name: 'Коллекционер', 
+            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach5.png', 
+            desc: 'Разблокировано 3 статуса',
+            condition: 'Получите 3 разных статуса'
+        },
+        'speed_draw': {
+            id: 'speed_draw',
+            name: 'Скоростная раскраска',
+            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach2.png',
+            desc: 'Выполнено 3 временных задания за неделю',
+            condition: 'Выполните 3 временных задания за 7 дней'
+        }
+    };
+    
+    // ==========================================
+    // ДАННЫЕ ТОМОВ (КАРТОЧКИ ТОВАРОВ)
+    // ==========================================
+    
+    const VOLUMES_DATA = [
+        { id: 't1', name: 'Том 1', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book1.png', pages: 26 },
+        { id: 't2', name: 'Том 2', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book2.png', pages: 26 },
+        { id: 't3', name: 'Том 3', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book3.png', pages: 26 },
+        { id: 't4', name: 'Том 4', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book4.png', pages: 26 },
+        { id: 't5', name: 'Том 5', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book5.png', pages: 26 },
+        { id: 't6', name: 'Том 6', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book6.png', pages: 26 },
+        { id: 't7', name: 'Том 7', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book7.png', pages: 26 },
+        { id: 't8', name: 'Том 8', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book8.png', pages: 26 },
+        { id: 't9', name: 'Том 9', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book9.png', pages: 26 },
+        { id: 't10', name: 'Том 10', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book10.png', pages: 26 }
+    ];
+    
+    // ==========================================
+    // ДАННЫЕ БРЕНДОВ
+    // ==========================================
+    
+    const BRANDS_DATA = [
+        { name: 'GuangNa', total: 408 },
+        { name: 'Languo', total: 288 },
+        { name: 'Zibeef', total: 240 },
+        { name: 'Grasp', total: 168 },
+        { name: 'InfiArt', total: 288 },
+        { name: 'Tooli-Art', total: 508 }
+    ];
+    
+    // ==========================================
     // API ВЫЗОВЫ
     // ==========================================
     
@@ -2249,6 +2208,7 @@
         }
         return user.achievements;
     }
+    
     // ==========================================
     // ОТОБРАЖЕНИЕ ЗАДАНИЙ (ТОЛЬКО АКТИВНЫЙ УРОВЕНЬ)
     // ==========================================
@@ -2257,7 +2217,6 @@
         const progress = window.userProgress || {};
         const branchProgress = progress[branchKey] || {};
         
-        // Ищем первый незавершенный уровень
         const levels = TASK_BRANCHES[branchKey].levels;
         for (let i = 0; i < levels.length; i++) {
             const levelProgress = branchProgress[`level_${i}`] || 0;
@@ -2266,7 +2225,6 @@
                 return i;
             }
         }
-        // Все уровни завершены
         return levels.length;
     }
     
@@ -2293,11 +2251,9 @@
             const currentLevelIndex = getCurrentLevelIndex(branchKey);
             const levels = branch.levels;
             
-            // Создаем карточку ветки
             const branchCard = document.createElement('div');
             branchCard.className = `branch-task-card ${isCompleted ? 'completed' : ''}`;
             
-            // Заголовок ветки
             branchCard.innerHTML = `
                 <div class="branch-header">
                     <h3>${branch.name}</h3>
@@ -2306,7 +2262,6 @@
             `;
             
             if (isCompleted) {
-                // Ветка полностью завершена
                 const completedDiv = document.createElement('div');
                 completedDiv.className = 'level-card';
                 completedDiv.innerHTML = `
@@ -2319,7 +2274,6 @@
                 `;
                 branchCard.appendChild(completedDiv);
             } else if (currentLevelIndex < levels.length) {
-                // Показываем только текущий активный уровень
                 const level = levels[currentLevelIndex];
                 const currentProgress = getLevelProgress(branchKey, currentLevelIndex);
                 const percent = (currentProgress / level.maxProgress) * 100;
@@ -2358,7 +2312,6 @@
         currentUploadBranch = branchKey;
         currentUploadLevel = levelIndex;
         
-        // Создаем input для выбора файлов
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
@@ -2373,7 +2326,6 @@
         
         tempPhotos = files;
         
-        // Показываем превью
         const previewContainer = document.getElementById('taskPhotoPreviewContainer');
         if (previewContainer) {
             previewContainer.innerHTML = '';
@@ -2392,7 +2344,6 @@
             });
         }
         
-        // Показываем модальное окно
         const modal = document.getElementById('taskUploadModal');
         if (modal) modal.style.display = 'flex';
     }
@@ -2435,11 +2386,9 @@
     function closeTaskUploadModal() {
         const modal = document.getElementById('taskUploadModal');
         const previewContainer = document.getElementById('taskPhotoPreviewContainer');
-        const fileInput = document.getElementById('taskFileInput');
         
         if (modal) modal.style.display = 'none';
         if (previewContainer) previewContainer.innerHTML = '';
-        if (fileInput) fileInput.value = '';
         
         currentUploadBranch = null;
         currentUploadLevel = null;
@@ -2447,7 +2396,149 @@
     }
     
     // ==========================================
-    // ОБНОВЛЕНИЕ ПРОГРЕССА С СЕРВЕРА
+    // ТОМА И ОТВЕТЫ (КАРТОЧКИ ТОВАРОВ + СВАЙПЫ)
+    // ==========================================
+    
+    let currentVolumeId = null;
+    let currentPageIndex = 0;
+    let currentVolumePages = 0;
+    
+    function renderVolumes() {
+        const container = document.getElementById('volumesContainer');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        VOLUMES_DATA.forEach(volume => {
+            const cartKey = `volume_${volume.id}`;
+            const cartCount = cart[cartKey] || 0;
+            
+            const card = document.createElement('div');
+            card.className = 'book-card';
+            card.onclick = () => openVolumeAnswers(volume.id, volume.pages);
+            card.innerHTML = `
+                <img src="${volume.img}" alt="${volume.name}" onerror="this.src='https://via.placeholder.com/150?text=Том'">
+                <h4>${volume.name}</h4>
+                <div class="book-price">${volume.price} ₽</div>
+                <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}">
+                    <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)">−</button>
+                    <span id="book-count-${volume.id}">${cartCount}</span>
+                    <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)">+</button>
+                </div>
+                <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}">
+                    <i class="fas fa-cart-plus"></i> В корзину
+                </button>
+            `;
+            container.appendChild(card);
+        });
+    }
+    
+    function updateVolumeCart(volumeId, delta) {
+        const cartKey = `volume_${volumeId}`;
+        const currentCount = cart[cartKey] || 0;
+        const newCount = currentCount + delta;
+        
+        if (newCount < 0) return;
+        if (newCount === 0) {
+            delete cart[cartKey];
+        } else {
+            cart[cartKey] = newCount;
+        }
+        
+        const countSpan = document.getElementById(`book-count-${volumeId}`);
+        const controlsDiv = document.getElementById(`book-controls-${volumeId}`);
+        const addBtn = document.getElementById(`book-add-${volumeId}`);
+        
+        if (countSpan) countSpan.innerText = newCount;
+        if (controlsDiv && addBtn) {
+            if (newCount > 0) {
+                controlsDiv.style.display = 'flex';
+                addBtn.style.display = 'none';
+            } else {
+                controlsDiv.style.display = 'none';
+                addBtn.style.display = 'block';
+            }
+        }
+        
+        saveUserData();
+        renderCart();
+        updateCartBadge();
+    }
+    
+    function openVolumeAnswers(volumeId, pagesCount) {
+        currentVolumeId = volumeId;
+        currentVolumePages = pagesCount;
+        currentPageIndex = 1;
+        
+        showAnswerPage();
+        
+        const modal = document.getElementById('answersViewerModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function showAnswerPage() {
+        const imageUrl = `assets/otveti/${currentVolumeId}/${currentPageIndex}.png`;
+        const imgElement = document.getElementById('answersViewerImage');
+        const pageInfo = document.getElementById('answersPageInfo');
+        const prevBtn = document.getElementById('answersPrevBtn');
+        const nextBtn = document.getElementById('answersNextBtn');
+        
+        if (imgElement) {
+            imgElement.src = imageUrl;
+            imgElement.onerror = () => {
+                imgElement.src = 'https://via.placeholder.com/300x400?text=Изображение+не+найдено';
+            };
+        }
+        if (pageInfo) {
+            pageInfo.innerText = `${currentPageIndex} / ${currentVolumePages}`;
+        }
+        if (prevBtn) {
+            prevBtn.disabled = currentPageIndex <= 1;
+        }
+        if (nextBtn) {
+            nextBtn.disabled = currentPageIndex >= currentVolumePages;
+        }
+    }
+    
+    function prevAnswerPage() {
+        if (currentPageIndex > 1) {
+            currentPageIndex--;
+            showAnswerPage();
+        }
+    }
+    
+    function nextAnswerPage() {
+        if (currentPageIndex < currentVolumePages) {
+            currentPageIndex++;
+            showAnswerPage();
+        }
+    }
+    
+    function closeAnswersViewer() {
+        const modal = document.getElementById('answersViewerModal');
+        if (modal) modal.style.display = 'none';
+        currentVolumeId = null;
+    }
+    
+    function searchVolumes() {
+        const query = document.getElementById('volumeSearch');
+        if (!query) return;
+        const searchQuery = query.value.toLowerCase();
+        const volumeCards = document.querySelectorAll('.book-card');
+        
+        volumeCards.forEach(card => {
+            const titleEl = card.querySelector('h4');
+            const title = titleEl ? titleEl.innerText.toLowerCase() : '';
+            if (title.includes(searchQuery)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    
+    // ==========================================
+    // ОБНОВЛЕНИЕ ПРОГРЕССА
     // ==========================================
     
     async function refreshUserProgress() {
@@ -2457,10 +2548,6 @@
         renderBranchTasks();
         updateUI();
     }
-    
-    // ==========================================
-    // ПЕРИОДИЧЕСКОЕ ОБНОВЛЕНИЕ (КАЖДЫЕ 30 СЕКУНД)
-    // ==========================================
     
     let refreshInterval = null;
     
@@ -2472,7 +2559,7 @@
     }
     
     // ==========================================
-    // ОСТАЛЬНЫЕ ФУНКЦИИ (ПРОФИЛЬ, МАРКЕРЫ, КОРЗИНА)
+    // ПРОФИЛЬ
     // ==========================================
     
     function updateUI() {
@@ -2487,6 +2574,7 @@
         if (statusBadge) statusBadge.innerText = user.status || 'Новичок';
         
         updateCartBadge();
+        renderShowcase();
     }
     
     function updateCartBadge() {
@@ -2507,9 +2595,110 @@
         }
     }
     
-    // ==========================================
-    // ПРОФИЛЬ
-    // ==========================================
+    function renderShowcase() {
+        for (let i = 0; i < 3; i++) {
+            const slot = document.getElementById(`slot-${i}`);
+            if (!slot) continue;
+            const achId = user.showcase && user.showcase[i] ? user.showcase[i] : null;
+            slot.innerHTML = '';
+            slot.style.cursor = 'pointer';
+            slot.onclick = (function(index) {
+                return function() { openShowcaseSelector(index); };
+            })(i);
+            
+            if (achId && ACHIEVEMENTS_DB[achId]) {
+                const img = document.createElement('img');
+                img.src = ACHIEVEMENTS_DB[achId].img;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                slot.appendChild(img);
+                slot.classList.add('filled');
+            } else {
+                slot.innerHTML = '<i class="fas fa-plus"></i>';
+                slot.classList.remove('filled');
+            }
+        }
+    }
+    
+    function openShowcaseSelector(slotIndex) {
+        const list = document.getElementById('showcaseAchievementsList');
+        if (!list) return;
+        list.innerHTML = '';
+        
+        const unlockedAchievements = user.achievements.filter(achId => ACHIEVEMENTS_DB[achId]);
+        
+        if (unlockedAchievements.length === 0) {
+            list.innerHTML = '<div class="no-results">Нет разблокированных достижений</div>';
+        } else {
+            unlockedAchievements.forEach(achId => {
+                const ach = ACHIEVEMENTS_DB[achId];
+                if (ach) {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'display:flex; align-items:center; gap:10px; padding:10px; cursor:pointer; margin-bottom:8px; border-radius:12px; background:var(--card-bg);';
+                    div.onclick = () => {
+                        user.showcase[slotIndex] = achId;
+                        saveUserData();
+                        renderShowcase();
+                        const modal = document.getElementById('showcaseSelectorModal');
+                        if (modal) modal.style.display = 'none';
+                    };
+                    div.innerHTML = `<img src="${ach.img}" style="width:50px; height:50px; border-radius:12px; object-fit:cover;"><span style="flex:1;">${ach.name}</span>`;
+                    list.appendChild(div);
+                }
+            });
+        }
+        
+        const modal = document.getElementById('showcaseSelectorModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function openAchievementsGallery() {
+        const list = document.getElementById('allAchievementsList');
+        if (!list) return;
+        list.innerHTML = '';
+        Object.values(ACHIEVEMENTS_DB).forEach(ach => {
+            const isUnlocked = user.achievements.includes(ach.id);
+            const div = document.createElement('div');
+            div.className = `achievement-item ${!isUnlocked ? 'locked' : ''}`;
+            div.onclick = () => showAchievementInfo(ach);
+            div.innerHTML = `
+                <img src="${ach.img}" alt="${ach.name}">
+                <div class="achievement-info">
+                    <h4>${ach.name}</h4>
+                    <p>${ach.desc}</p>
+                    <div class="achievement-condition">${ach.condition}</div>
+                    ${!isUnlocked ? '<div class="achievement-lock"><i class="fas fa-lock"></i> Заблокировано</div>' : ''}
+                </div>
+            `;
+            list.appendChild(div);
+        });
+        const modal = document.getElementById('achievementsGalleryModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function showAchievementInfo(ach) {
+        const titleEl = document.getElementById('achInfoTitle');
+        const imgEl = document.getElementById('achInfoImg');
+        const descEl = document.getElementById('achInfoDesc');
+        const conditionEl = document.getElementById('achInfoCondition');
+        
+        if (titleEl) titleEl.innerText = ach.name;
+        if (imgEl) imgEl.src = ach.img;
+        if (descEl) descEl.innerText = ach.desc;
+        if (conditionEl) conditionEl.innerText = ach.condition;
+        
+        const galleryModal = document.getElementById('achievementsGalleryModal');
+        if (galleryModal) galleryModal.style.display = 'none';
+        
+        const infoModal = document.getElementById('achInfoModal');
+        if (infoModal) infoModal.style.display = 'flex';
+    }
+    
+    function closeAchievementInfo() {
+        const modal = document.getElementById('achInfoModal');
+        if (modal) modal.style.display = 'none';
+    }
     
     function toggleAvatarEditor() {
         const editor = document.getElementById('avatarEditor');
@@ -2836,6 +3025,30 @@
                         </div>
                     `;
                 }
+            } else if (key.startsWith('volume_')) {
+                const volumeId = key.replace('volume_', '');
+                const volume = VOLUMES_DATA.find(v => v.id === volumeId);
+                if (volume) {
+                    const itemTotal = volume.price * count;
+                    totalSum += itemTotal;
+                    itemsHtml += `
+                        <div class="cart-item">
+                            <img src="${volume.img}" onerror="this.src='https://via.placeholder.com/60?text=Том'">
+                            <div class="cart-item-info">
+                                <h4>${volume.name}</h4>
+                                <div class="cart-item-price">${volume.price} ₽ / шт</div>
+                                <div class="cart-item-details">
+                                    <div class="cart-item-controls">
+                                        <button class="minus" onclick="updateVolumeCart('${volumeId}', -1)">−</button>
+                                        <span>${count}</span>
+                                        <button onclick="updateVolumeCart('${volumeId}', 1)">+</button>
+                                    </div>
+                                    <div class="cart-item-total">${itemTotal} ₽</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             }
         }
         
@@ -2852,7 +3065,7 @@
         
         tg.showConfirm('Оформить заказ?', async (confirm) => {
             if (confirm) {
-                let orderText = '🛍 Заказ:\n';
+                let orderText = '🛍 ЗАКАЗ:\n\n';
                 let total = 0;
                 
                 for (let key in cart) {
@@ -2864,11 +3077,17 @@
                             orderText += `Маркер №${num} x${count} = ${MARKER_PRICE * count} ₽\n`;
                             total += MARKER_PRICE * count;
                         }
+                    } else if (key.startsWith('volume_')) {
+                        const volumeId = key.replace('volume_', '');
+                        const volume = VOLUMES_DATA.find(v => v.id === volumeId);
+                        if (volume) {
+                            orderText += `${volume.name} x${count} = ${volume.price * count} ₽\n`;
+                            total += volume.price * count;
+                        }
                     }
                 }
-                orderText += `\n💰 Итого: ${total} ₽`;
+                orderText += `\n💰 ИТОГО: ${total} ₽`;
                 
-                // Отправляем заказ на сервер
                 const result = await fetchAPI('/api/new_order', {
                     user_id: userId,
                     text_details: orderText
@@ -2880,6 +3099,7 @@
                     saveUserData();
                     renderCart();
                     updateCartBadge();
+                    renderVolumes();
                 } else {
                     tg.showAlert('❌ Ошибка отправки заказа. Попробуйте позже.');
                 }
@@ -2904,7 +3124,6 @@
         
         window.scrollTo(0, 0);
         
-        // Обновляем содержимое страницы
         switch(pageId) {
             case 'markers':
                 if (!markersDB || markersDB.length === 0) loadMarkers();
@@ -2912,6 +3131,9 @@
                 break;
             case 'cart':
                 renderCart();
+                break;
+            case 'answers':
+                renderVolumes();
                 break;
             case 'profile':
                 updateUI();
@@ -2947,6 +3169,531 @@
             content.style.display = 'block';
             if (arrow) arrow.style.transform = 'rotate(180deg)';
             renderBranchTasks();
+        }
+    }
+    
+    function toggleInventoryBlock() {
+        const content = document.getElementById('inventoryContent');
+        const arrow = document.getElementById('inventoryArrow');
+        if (!content) return;
+        
+        if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+            if (arrow) arrow.style.transform = 'rotate(180deg)';
+        } else {
+            content.style.display = 'none';
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+    
+    // ==========================================
+    // ИНВЕНТАРЬ И ОРГАНАЙЗЕРЫ
+    // ==========================================
+    
+    function loadInventory() {
+        const saved = localStorage.getItem('coloring_inventory');
+        if (saved) {
+            inventory = JSON.parse(saved);
+        } else {
+            const defaultCells = Array(5).fill().map(() => Array(5).fill().map(() => []));
+            inventory = {
+                organizers: [{
+                    id: 'default',
+                    name: 'Мой органайзер',
+                    cols: 5,
+                    rows: 5,
+                    cells: defaultCells
+                }],
+                userMarkers: {}
+            };
+        }
+        renderOrganizers();
+        renderBrands();
+    }
+    
+    function saveInventory() {
+        localStorage.setItem('coloring_inventory', JSON.stringify(inventory));
+    }
+    
+    let currentOrganizerId = null;
+    let currentCellRow = null;
+    let currentCellCol = null;
+    
+    function renderOrganizers() {
+        const container = document.getElementById('organizersList');
+        if (!container) return;
+        
+        if (!inventory.organizers || inventory.organizers.length === 0) {
+            container.innerHTML = '<div class="no-results" style="padding: 20px; text-align: center;">📦 Нет органайзеров. Нажмите "Создать органайзер"</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        
+        inventory.organizers.forEach((org) => {
+            const orgCard = document.createElement('div');
+            orgCard.style.cssText = 'background: var(--bg); border-radius: 16px; padding: 12px 16px; margin-bottom: 10px; border: 1px solid var(--border-color); cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;';
+            orgCard.onclick = () => openOrganizerView(org.id);
+            orgCard.innerHTML = `
+                <div>
+                    <strong style="font-size: 16px;">📦 ${org.name}</strong>
+                    <div style="font-size: 12px; color: var(--text-gray); margin-top: 4px;">${org.rows}×${org.cols} | Маркеров: ${countMarkersInOrganizer(org)}</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="photo-upload-btn" style="padding: 6px 12px; font-size: 12px;" onclick="event.stopPropagation(); addMarkersToOrganizer('${org.id}')">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="photo-upload-btn" style="padding: 6px 12px; font-size: 12px; background: var(--status-red); color: white;" onclick="event.stopPropagation(); deleteOrganizer('${org.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(orgCard);
+        });
+    }
+    
+    function countMarkersInOrganizer(org) {
+        let total = 0;
+        if (org.cells) {
+            for (let row = 0; row < org.rows; row++) {
+                if (org.cells[row]) {
+                    for (let col = 0; col < org.cols; col++) {
+                        if (org.cells[row][col]) {
+                            org.cells[row][col].forEach(marker => {
+                                total += marker.count;
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        return total;
+    }
+    
+    function openOrganizerView(orgId) {
+        const org = inventory.organizers.find(o => o.id === orgId);
+        if (!org) return;
+        
+        const nameEl = document.getElementById('selectedOrganizerName');
+        const viewEl = document.getElementById('selectedOrganizerView');
+        const listEl = document.getElementById('organizersList');
+        
+        if (nameEl) nameEl.innerHTML = `📦 ${org.name} (${org.rows}×${org.cols})`;
+        if (viewEl) viewEl.style.display = 'block';
+        if (listEl) listEl.style.display = 'none';
+        
+        renderOrganizerGrid(org);
+    }
+    
+    function renderOrganizerGrid(org) {
+        const container = document.getElementById('selectedOrganizerGrid');
+        if (!container) return;
+        
+        const gridWrapper = document.createElement('div');
+        gridWrapper.style.cssText = 'overflow-x: auto;';
+        
+        const gridContainer = document.createElement('div');
+        gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, minmax(55px, 70px)); gap: 8px; justify-content: start;`;
+        
+        for (let row = 0; row < org.rows; row++) {
+            for (let col = 0; col < org.cols; col++) {
+                if (!org.cells[row]) org.cells[row] = [];
+                if (!org.cells[row][col]) org.cells[row][col] = [];
+                
+                const cellMarkers = org.cells[row][col];
+                const markerCount = cellMarkers.length;
+                const cellLabel = String.fromCharCode(65 + row) + (col + 1);
+                
+                const cellDiv = document.createElement('div');
+                cellDiv.style.cssText = `
+                    background: var(--bg);
+                    border: 2px solid ${markerCount > 0 ? 'var(--accent)' : 'var(--border-color)'};
+                    border-radius: 12px;
+                    padding: 10px 4px;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                `;
+                cellDiv.onclick = (function(r, c) {
+                    return function() { openCellModal(org.id, r, c); };
+                })(row, col);
+                cellDiv.innerHTML = `
+                    <div style="font-size: 11px; color: var(--text-gray); margin-bottom: 4px;">${cellLabel}</div>
+                    <div style="font-size: 16px; font-weight: bold; color: var(--accent);">${markerCount}</div>
+                `;
+                gridContainer.appendChild(cellDiv);
+            }
+        }
+        
+        gridWrapper.appendChild(gridContainer);
+        container.innerHTML = '';
+        container.appendChild(gridWrapper);
+    }
+    
+    function closeOrganizerView() {
+        const viewEl = document.getElementById('selectedOrganizerView');
+        const listEl = document.getElementById('organizersList');
+        
+        if (viewEl) viewEl.style.display = 'none';
+        if (listEl) listEl.style.display = 'block';
+        renderOrganizers();
+    }
+    
+    function openOrganizerCreator() {
+        const modal = document.getElementById('organizerModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function closeOrganizerModal() {
+        const modal = document.getElementById('organizerModal');
+        if (modal) modal.style.display = 'none';
+    }
+    
+    function createOrganizer() {
+        const nameInput = document.getElementById('organizerName');
+        const colsInput = document.getElementById('organizerCols');
+        const rowsInput = document.getElementById('organizerRows');
+        
+        const name = nameInput ? nameInput.value.trim() : '';
+        const cols = colsInput ? parseInt(colsInput.value) : 3;
+        const rows = rowsInput ? parseInt(rowsInput.value) : 3;
+        
+        if (!name) { tg.showAlert('Введите название'); return; }
+        if (cols < 1 || rows < 1) { tg.showAlert('Количество столбцов и строк должно быть не менее 1'); return; }
+        
+        const cells = Array(rows).fill().map(() => Array(cols).fill().map(() => []));
+        
+        inventory.organizers.push({ 
+            id: Date.now().toString(), 
+            name: name, 
+            cols: cols, 
+            rows: rows, 
+            cells: cells 
+        });
+        saveInventory();
+        renderOrganizers();
+        closeOrganizerModal();
+        tg.showAlert('Органайзер создан!');
+    }
+    
+    function openCellModal(orgId, row, col) {
+        currentOrganizerId = orgId;
+        currentCellRow = row;
+        currentCellCol = col;
+        const org = inventory.organizers.find(o => o.id === orgId);
+        if (!org) return;
+        
+        if (!org.cells[row]) org.cells[row] = [];
+        if (!org.cells[row][col]) org.cells[row][col] = [];
+        
+        const cellMarkers = org.cells[row][col];
+        const cellLabel = String.fromCharCode(65 + row) + (col + 1);
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3>Ячейка ${cellLabel}</h3>
+                <div id="cellMarkersList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
+                <button class="modal-action-btn" onclick="showAddMarkerToCell()" style="cursor:pointer;">+ Добавить маркер</button>
+                <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()" style="cursor:pointer;">Закрыть</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        renderCellMarkers(cellMarkers);
+    }
+    
+    function renderCellMarkers(markers) {
+        const container = document.getElementById('cellMarkersList');
+        if (!container) return;
+        if (!markers || markers.length === 0) { 
+            container.innerHTML = '<div class="no-results">Нет маркеров</div>'; 
+            return; 
+        }
+        container.innerHTML = '';
+        markers.forEach((marker, idx) => {
+            const div = document.createElement('div');
+            div.style.cssText = 'background: var(--bg); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;';
+            div.innerHTML = `
+                <div><strong>${marker.brand}</strong> №${marker.number} ×${marker.count}</div>
+                <button class="photo-upload-btn" onclick="removeMarkerFromCell(${idx})" style="background: var(--status-red); color: white; padding: 4px 8px; cursor:pointer;">🗑</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+    
+    function showAddMarkerToCell() {
+        const modal = document.getElementById('addMarkerModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function closeAddMarkerModal() {
+        const modal = document.getElementById('addMarkerModal');
+        if (modal) modal.style.display = 'none';
+        const numInput = document.getElementById('addMarkerNumber');
+        const countInput = document.getElementById('addMarkerCount');
+        if (numInput) numInput.value = '';
+        if (countInput) countInput.value = '1';
+    }
+    
+    function confirmAddMarker() {
+        const brandSelect = document.getElementById('addMarkerBrand');
+        const numberInput = document.getElementById('addMarkerNumber');
+        const countInput = document.getElementById('addMarkerCount');
+        
+        const brand = brandSelect ? brandSelect.value : 'GuangNa';
+        const number = numberInput ? numberInput.value : '';
+        const count = countInput ? parseInt(countInput.value) : 1;
+        
+        if (!number) { tg.showAlert('Введите номер'); return; }
+        const org = inventory.organizers.find(o => o.id === currentOrganizerId);
+        if (org && currentCellRow !== null && currentCellCol !== null) {
+            if (!org.cells[currentCellRow]) org.cells[currentCellRow] = [];
+            if (!org.cells[currentCellRow][currentCellCol]) org.cells[currentCellRow][currentCellCol] = [];
+            
+            const cellMarkers = org.cells[currentCellRow][currentCellCol];
+            const existing = cellMarkers.find(m => m.brand === brand && m.number === number);
+            if (existing) {
+                existing.count += count;
+            } else {
+                cellMarkers.push({ brand, number, count });
+            }
+            const key = `${brand}_${number}`;
+            if (!inventory.userMarkers) inventory.userMarkers = {};
+            inventory.userMarkers[key] = (inventory.userMarkers[key] || 0) + count;
+            saveInventory();
+            renderCellMarkers(cellMarkers);
+            renderOrganizers();
+            renderBrands();
+            tg.showAlert(`Маркер ${brand} №${number} добавлен!`);
+        }
+        closeAddMarkerModal();
+    }
+    
+    function removeMarkerFromCell(idx) {
+        const org = inventory.organizers.find(o => o.id === currentOrganizerId);
+        if (org && currentCellRow !== null && currentCellCol !== null) {
+            if (!org.cells[currentCellRow]) org.cells[currentCellRow] = [];
+            if (!org.cells[currentCellRow][currentCellCol]) org.cells[currentCellRow][currentCellCol] = [];
+            
+            const cellMarkers = org.cells[currentCellRow][currentCellCol];
+            const marker = cellMarkers[idx];
+            if (marker) {
+                const key = `${marker.brand}_${marker.number}`;
+                if (inventory.userMarkers) {
+                    inventory.userMarkers[key] = Math.max(0, (inventory.userMarkers[key] || 0) - marker.count);
+                    if (inventory.userMarkers[key] === 0) delete inventory.userMarkers[key];
+                }
+                cellMarkers.splice(idx, 1);
+                saveInventory();
+                renderCellMarkers(cellMarkers);
+                renderOrganizers();
+                renderBrands();
+                tg.showAlert('Маркер удален');
+            }
+        }
+    }
+    
+    function deleteOrganizer(orgId) {
+        tg.showConfirm('Удалить органайзер? Все маркеры будут потеряны!', (confirm) => {
+            if (confirm) {
+                inventory.organizers = inventory.organizers.filter(o => o.id !== orgId);
+                saveInventory();
+                renderOrganizers();
+            }
+        });
+    }
+    
+    function addMarkersToOrganizer(orgId) {
+        currentOrganizerId = orgId;
+        currentCellRow = 0;
+        currentCellCol = 0;
+        showAddMarkerToCell();
+    }
+    
+    function toggleOrganizersBlock() {
+        const content = document.getElementById('organizersBlockContent');
+        const arrow = document.getElementById('organizersArrow');
+        if (!content) return;
+        
+        if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+            if (arrow) arrow.style.transform = 'rotate(180deg)';
+            renderOrganizers();
+        } else {
+            content.style.display = 'none';
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+    
+    function toggleMarkersBlock() {
+        const content = document.getElementById('markersBlockContent');
+        const arrow = document.getElementById('markersArrow');
+        if (!content) return;
+        
+        if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+            if (arrow) arrow.style.transform = 'rotate(180deg)';
+            renderBrands();
+        } else {
+            content.style.display = 'none';
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+    
+    // ==========================================
+    // БРЕНДЫ
+    // ==========================================
+    
+    function renderBrands() {
+        const container = document.getElementById('brandsList');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        BRANDS_DATA.forEach(brand => {
+            const uniqueNumbersInInventory = new Set();
+            
+            if (inventory.organizers) {
+                inventory.organizers.forEach(org => {
+                    if (org.cells) {
+                        org.cells.forEach(row => {
+                            if (row) {
+                                row.forEach(cell => {
+                                    if (cell) {
+                                        cell.forEach(marker => {
+                                            if (marker.brand === brand.name) {
+                                                uniqueNumbersInInventory.add(marker.number);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            
+            const existingNumbers = markersDB
+                .filter(m => m.num && parseInt(m.num) <= brand.total)
+                .map(m => m.num)
+                .slice(0, 50);
+            
+            const uniqueCount = uniqueNumbersInInventory.size;
+            
+            const div = document.createElement('div');
+            div.style.cssText = 'background: var(--card-bg); border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border-color); overflow: hidden;';
+            
+            const headerDiv = document.createElement('div');
+            headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; cursor: pointer; background: var(--bg);';
+            headerDiv.onclick = () => {
+                const content = div.querySelector('.brand-content');
+                const arrow = headerDiv.querySelector('.brand-arrow');
+                if (content && content.style.display === 'none') {
+                    content.style.display = 'block';
+                    if (arrow) arrow.style.transform = 'rotate(180deg)';
+                } else if (content) {
+                    content.style.display = 'none';
+                    if (arrow) arrow.style.transform = 'rotate(0deg)';
+                }
+            };
+            headerDiv.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-palette" style="color: var(--accent);"></i>
+                    <strong style="font-size: 16px;">${brand.name}</strong>
+                    <span style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px;">${uniqueCount}/${existingNumbers.length}</span>
+                </div>
+                <i class="fas fa-chevron-down brand-arrow" style="color: var(--text-gray); transition: transform 0.2s;"></i>
+            `;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'brand-content';
+            contentDiv.style.cssText = 'display: none; padding: 12px 15px; border-top: 1px solid var(--border-color); max-height: 200px; overflow-y: auto;';
+            
+            let numbersHtml = '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
+            existingNumbers.forEach(num => {
+                const isCollected = uniqueNumbersInInventory.has(num);
+                numbersHtml += `
+                    <div onclick="toggleMarkerInBrand('${brand.name}', '${num}', ${isCollected})" style="
+                        width: 45px;
+                        padding: 6px 0;
+                        text-align: center;
+                        background: ${isCollected ? 'var(--accent)' : 'var(--bg)'};
+                        color: ${isCollected ? 'white' : 'var(--text)'};
+                        border-radius: 8px;
+                        border: 1px solid var(--border-color);
+                        font-size: 12px;
+                        font-weight: ${isCollected ? 'bold' : 'normal'};
+                        cursor: pointer;
+                        transition: all 0.2s;
+                    ">
+                        ${num}
+                    </div>
+                `;
+            });
+            numbersHtml += '</div>';
+            contentDiv.innerHTML = numbersHtml;
+            
+            div.appendChild(headerDiv);
+            div.appendChild(contentDiv);
+            container.appendChild(div);
+        });
+    }
+    
+    function toggleMarkerInBrand(brandName, number, isCollected) {
+        if (isCollected) {
+            tg.showConfirm(`Удалить маркер ${brandName} №${number} из инвентаря?`, (confirm) => {
+                if (confirm && inventory.organizers) {
+                    let removed = false;
+                    inventory.organizers.forEach(org => {
+                        if (org.cells) {
+                            org.cells.forEach(row => {
+                                if (row) {
+                                    row.forEach(cell => {
+                                        if (cell) {
+                                            for (let i = cell.length - 1; i >= 0; i--) {
+                                                if (cell[i].brand === brandName && cell[i].number === number) {
+                                                    cell.splice(i, 1);
+                                                    removed = true;
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    if (removed) {
+                        saveInventory();
+                        renderOrganizers();
+                        renderBrands();
+                        tg.showAlert(`Маркер ${brandName} №${number} удален`);
+                    }
+                }
+            });
+        } else {
+            if (inventory.organizers && inventory.organizers.length > 0) {
+                const org = inventory.organizers[0];
+                let targetCell = org.cells[0][0];
+                let targetRow = 0, targetCol = 0;
+                
+                const existing = targetCell.find(m => m.brand === brandName && m.number === number);
+                if (existing) {
+                    existing.count += 1;
+                } else {
+                    targetCell.push({ brand: brandName, number: number, count: 1 });
+                }
+                
+                const key = `${brandName}_${number}`;
+                if (!inventory.userMarkers) inventory.userMarkers = {};
+                inventory.userMarkers[key] = (inventory.userMarkers[key] || 0) + 1;
+                saveInventory();
+                renderOrganizers();
+                renderBrands();
+                tg.showAlert(`Маркер ${brandName} №${number} добавлен в ячейку ${String.fromCharCode(65 + targetRow)}${targetCol + 1}`);
+            } else {
+                tg.showAlert('Сначала создайте органайзер!');
+            }
         }
     }
     
@@ -3011,6 +3758,40 @@
         localStorage.setItem('app_theme', 'custom');
     }
     
+    // ==========================================
+    // ИИ ПАЛИТРА
+    // ==========================================
+    
+    async function processAI(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const resultDiv = document.getElementById('aiResult');
+            if (resultDiv) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Анализ изображения...</div>';
+                setTimeout(() => {
+                    resultDiv.innerHTML = `
+                        <h4 style="margin-bottom:15px;">Распознанные маркеры:</h4>
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:var(--card-bg); padding:10px; border-radius:8px;">
+                            <div style="width:30px; height:30px; border-radius:5px; background:#FF5733;"></div>
+                            <div><div style="font-weight:bold;">GuangNa №101</div>
+                            <button class="photo-upload-btn" style="padding:5px 10px; font-size:11px; cursor:pointer;" onclick="addToCartFromAI('101')"><i class="fas fa-cart-plus"></i> Добавить в корзину</button></div>
+                        </div>
+                    `;
+                }, 1500);
+            }
+        }
+    }
+    
+    function addToCartFromAI(num) {
+        updateMarkerCart(num, 1);
+        tg.showAlert(`Маркер №${num} добавлен в корзину`);
+    }
+    
+    async function trainAI() {
+        tg.showAlert('Демо: Обучение ИИ (требуется бэкенд)');
+    }
+    
     function buyItem(itemId) {
         const prices = {
             bookmark: 750, petites: 950, tracker: 950, alcohol: 1250, coloriages: 1500
@@ -3047,7 +3828,6 @@
     window.onload = async () => {
         console.log('=== APP START ===');
         
-        // Загружаем сохраненные данные
         const savedUser = localStorage.getItem('coloring_user');
         if (savedUser) {
             Object.assign(user, JSON.parse(savedUser));
@@ -3058,12 +3838,10 @@
             cart = JSON.parse(savedCart);
         }
         
-        // Загружаем прогресс с сервера
         await loadUserProgress();
         await loadUnlockedStatuses();
         await loadUserAchievements();
         
-        // Применяем тему
         const savedTheme = localStorage.getItem('app_theme');
         if (savedTheme === 'custom') {
             applyCustomTheme(true);
@@ -3073,22 +3851,14 @@
             setTheme(user.theme || 'light');
         }
         
-        // Рендерим задания
         renderBranchTasks();
-        
-        // Загружаем маркеры
         loadMarkers();
-        
-        // Рендерим корзину
         renderCart();
-        
-        // Обновляем UI
+        renderVolumes();
+        loadInventory();
         updateUI();
-        
-        // Запускаем периодическое обновление прогресса
         startProgressRefresh();
         
-        // Закрытие модалок по клику вне
         window.onclick = function(event) {
             document.querySelectorAll('.modal-overlay').forEach(modal => {
                 if (event.target === modal) {
@@ -3174,26 +3944,11 @@
     <div id="earn-section" class="rewards-section" style="display:none;">
         <h3>Как получить ашетики</h3>
         <div class="earn-list">
-            <div class="earn-item">
-                <div class="earn-left"><i class="fas fa-star"></i><span>За отзыв</span></div>
-                <div class="earn-right"><span class="earn-amount">+25</span><i class="fas fa-book-open gold-book"></i></div>
-            </div>
-            <div class="earn-item">
-                <div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 3 000 ₽</span></div>
-                <div class="earn-right"><span class="earn-amount">+10</span><i class="fas fa-book-open gold-book"></i></div>
-            </div>
-            <div class="earn-item">
-                <div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 5 000 ₽</span></div>
-                <div class="earn-right"><span class="earn-amount">+20</span><i class="fas fa-book-open gold-book"></i></div>
-            </div>
-            <div class="earn-item">
-                <div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 7 500 ₽</span></div>
-                <div class="earn-right"><span class="earn-amount">+30</span><i class="fas fa-book-open gold-book"></i></div>
-            </div>
-            <div class="earn-item">
-                <div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 10 000 ₽</span></div>
-                <div class="earn-right"><span class="earn-amount">+40</span><i class="fas fa-book-open gold-book"></i></div>
-            </div>
+            <div class="earn-item"><div class="earn-left"><i class="fas fa-star"></i><span>За отзыв</span></div><div class="earn-right"><span class="earn-amount">+25</span><i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 3 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+10</span><i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 5 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+20</span><i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 7 500 ₽</span></div><div class="earn-right"><span class="earn-amount">+30</span><i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 10 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+40</span><i class="fas fa-book-open gold-book"></i></div></div>
         </div>
     </div>
 
@@ -3308,8 +4063,8 @@
             <input type="text" id="volumeSearch" placeholder="Поиск по названию тома..." oninput="searchVolumes()">
         </div>
     </div>
-    <div class="volumes-section">
-        <div id="volumesContainer" class="volumes-container"></div>
+    <div class="books-section">
+        <div id="volumesContainer" class="books-grid"></div>
     </div>
 </div>
 
@@ -3475,6 +4230,22 @@
         <img id="alertAchImg" style="width:80px; margin:10px auto; display:none;">
         <p id="alertAchText"></p>
         <button class="modal-close-btn" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
+    </div>
+</div>
+
+<!-- Модалка просмотра ответов (свайпы) -->
+<div id="answersViewerModal" class="modal-overlay">
+    <div class="modal-content answers-viewer-modal">
+        <h3 id="answersViewerTitle">Просмотр ответов</h3>
+        <div class="answers-viewer-content">
+            <img id="answersViewerImage" class="answers-viewer-image" src="" alt="Ответ">
+            <div class="answers-nav">
+                <button id="answersPrevBtn" onclick="prevAnswerPage()" disabled>‹</button>
+                <span id="answersPageInfo" class="answers-page-info">1 / 1</span>
+                <button id="answersNextBtn" onclick="nextAnswerPage()" disabled>›</button>
+            </div>
+            <button class="answers-close-btn" onclick="closeAnswersViewer()">Закрыть</button>
+        </div>
     </div>
 </div>
 

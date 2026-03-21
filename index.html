@@ -2729,74 +2729,98 @@
         }
     }
     
-    // ==========================================
-    // ОТПРАВКА ФОТО НА ПРОВЕРКУ
-    // ==========================================
+   // ==========================================
+// ОТПРАВКА ФОТО НА ПРОВЕРКУ
+// ==========================================
+
+let currentUploadBranch = null;
+let currentUploadLevel = null;
+let tempPhotos = [];
+
+function openTaskUpload(branchKey, levelIndex) {
+    currentUploadBranch = branchKey;
+    currentUploadLevel = levelIndex;
     
-    let currentUploadBranch = null;
-    let currentUploadLevel = null;
-    let tempPhotos = [];
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = true;
+    fileInput.onchange = handleTaskFilesSelected;
+    fileInput.click();
+}
+
+function handleTaskFilesSelected(event) {
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
     
-    function openTaskUpload(branchKey, levelIndex) {
-        currentUploadBranch = branchKey;
-        currentUploadLevel = levelIndex;
-        
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'image/*';
-        fileInput.multiple = true;
-        fileInput.onchange = handleTaskFilesSelected;
-        fileInput.click();
+    tempPhotos = files;
+    
+    const previewContainer = document.getElementById('taskPhotoPreviewContainer');
+    if (previewContainer) {
+        previewContainer.innerHTML = '';
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = '70px';
+                img.style.height = '70px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '12px';
+                previewContainer.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
     }
     
-    function handleTaskFilesSelected(event) {
-        const files = Array.from(event.target.files);
-        if (files.length === 0) return;
-        
-        tempPhotos = files;
-        
-        const previewContainer = document.getElementById('taskPhotoPreviewContainer');
-        if (previewContainer) {
-            previewContainer.innerHTML = '';
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.width = '70px';
-                    img.style.height = '70px';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '12px';
-                    previewContainer.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-        
-        const modal = document.getElementById('taskUploadModal');
-        if (modal) modal.style.display = 'flex';
-    }
-    
-    async function submitTaskPhoto() {
+    const modal = document.getElementById('taskUploadModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+async function submitTaskPhoto() {
     if (!currentUploadBranch || currentUploadLevel === null) {
-        tg.showAlert('Ошибка: задание не выбрано');
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('Ошибка: задание не выбрано');
+        } else {
+            alert('Ошибка: задание не выбрано');
+        }
         return;
     }
     
     if (tempPhotos.length === 0) {
-        tg.showAlert('Выберите фото для отправки');
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('Выберите фото для отправки');
+        } else {
+            alert('Выберите фото для отправки');
+        }
         return;
     }
     
     const branch = TASK_BRANCHES[currentUploadBranch];
-    const level = branch.levels[currentUploadLevel];
-    const rewardStatus = BRANCH_REWARDS[currentUploadBranch];
+    if (!branch) {
+        console.error('Branch not found:', currentUploadBranch);
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('Ошибка: ветка задания не найдена');
+        }
+        return;
+    }
     
-    // Показываем индикатор загрузки
-    tg.showAlert('📤 Отправка фото... Пожалуйста, подождите');
+    const level = branch.levels[currentUploadLevel];
+    if (!level) {
+        console.error('Level not found:', currentUploadLevel);
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('Ошибка: уровень задания не найден');
+        }
+        return;
+    }
+    
+    const rewardStatus = BRANCH_REWARDS[currentUploadBranch] || '';
+    
+    if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.showAlert('📤 Отправка фото... Пожалуйста, подождите');
+    }
     
     try {
-        // Создаем FormData для отправки
         const formData = new FormData();
         formData.append('user', userId);
         formData.append('title', `${branch.name} - Уровень ${currentUploadLevel + 1}: ${level.title}`);
@@ -2807,42 +2831,58 @@
         formData.append('rewardStatus', rewardStatus);
         formData.append('maxProgress', level.maxProgress);
         
-        // Добавляем фото
         for (let i = 0; i < tempPhotos.length; i++) {
             formData.append('photos', tempPhotos[i]);
         }
         
-        // Отправляем на сервер
         const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
             method: 'POST',
             body: formData
         });
         
-        const result = await response.json();
+        let result;
+        try {
+            result = await response.json();
+        } catch (e) {
+            result = { status: 'error', message: 'Invalid response from server' };
+        }
         
         if (result && result.status === 'ok') {
-            tg.showAlert('✅ Фото отправлено на проверку администратору!');
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.showAlert('✅ Фото отправлено на проверку администратору!');
+            } else {
+                alert('✅ Фото отправлено на проверку администратору!');
+            }
             closeTaskUploadModal();
         } else {
-            tg.showAlert('❌ Ошибка отправки. Попробуйте позже.');
+            console.error('Server error:', result);
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.showAlert('❌ Ошибка отправки. Попробуйте позже.');
+            } else {
+                alert('❌ Ошибка отправки. Попробуйте позже.');
+            }
         }
     } catch (error) {
         console.error('Upload error:', error);
-        tg.showAlert('❌ Ошибка соединения. Проверьте интернет и попробуйте снова.');
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('❌ Ошибка соединения. Проверьте интернет и попробуйте снова.');
+        } else {
+            alert('❌ Ошибка соединения. Проверьте интернет и попробуйте снова.');
+        }
     }
 }
+
+function closeTaskUploadModal() {
+    const modal = document.getElementById('taskUploadModal');
+    const previewContainer = document.getElementById('taskPhotoPreviewContainer');
     
-    function closeTaskUploadModal() {
-        const modal = document.getElementById('taskUploadModal');
-        const previewContainer = document.getElementById('taskPhotoPreviewContainer');
-        
-        if (modal) modal.style.display = 'none';
-        if (previewContainer) previewContainer.innerHTML = '';
-        
-        currentUploadBranch = null;
-        currentUploadLevel = null;
-        tempPhotos = [];
-    }
+    if (modal) modal.style.display = 'none';
+    if (previewContainer) previewContainer.innerHTML = '';
+    
+    currentUploadBranch = null;
+    currentUploadLevel = null;
+    tempPhotos = [];
+}
     
     // ==========================================
     // ТОМА И ОТВЕТЫ (СВАЙПЫ)

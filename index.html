@@ -1903,7 +1903,7 @@
             background: #444;
         }
     </style>
-    <script>
+<script>
     // ==========================================
     // КОНФИГУРАЦИЯ И ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
     // ==========================================
@@ -1943,6 +1943,7 @@
     let inventory = { organizers: [], userMarkers: {} };
     let markersDB = [];
     let markersLoading = false;
+    let window.userProgress = {};
     
     // ==========================================
     // ДАННЫЕ ЗАДАНИЙ (ВЕТКИ)
@@ -2105,21 +2106,19 @@
     };
     
     // ==========================================
-    // ДАННЫЕ ТОМОВ (КАРТОЧКИ ТОВАРОВ)
+    // ДАННЫЕ ТОМОВ (47 ТОМОВ)
     // ==========================================
     
-    const VOLUMES_DATA = [
-        { id: 't1', name: 'Том 1', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book1.png', pages: 26 },
-        { id: 't2', name: 'Том 2', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book2.png', pages: 26 },
-        { id: 't3', name: 'Том 3', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book3.png', pages: 26 },
-        { id: 't4', name: 'Том 4', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book4.png', pages: 26 },
-        { id: 't5', name: 'Том 5', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book5.png', pages: 26 },
-        { id: 't6', name: 'Том 6', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book6.png', pages: 26 },
-        { id: 't7', name: 'Том 7', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book7.png', pages: 26 },
-        { id: 't8', name: 'Том 8', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book8.png', pages: 26 },
-        { id: 't9', name: 'Том 9', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book9.png', pages: 26 },
-        { id: 't10', name: 'Том 10', price: 1500, img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book10.png', pages: 26 }
-    ];
+    const VOLUMES_DATA = [];
+    for (let i = 1; i <= 47; i++) {
+        VOLUMES_DATA.push({
+            id: `t${i}`,
+            name: `Том ${i}`,
+            price: 1500,
+            img: `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book${((i-1) % 10) + 1}.png`,
+            pages: 26
+        });
+    }
     
     // ==========================================
     // ДАННЫЕ БРЕНДОВ
@@ -2156,6 +2155,20 @@
         }
     }
     
+    async function loadUserBalance() {
+        try {
+            const response = await fetch(`${SERVER_URL}/api/balance?user_id=${userId}`);
+            const data = await response.json();
+            if (data && typeof data.balance !== 'undefined') {
+                user.balance = data.balance;
+            }
+            return user.balance;
+        } catch (error) {
+            console.error('Ошибка загрузки баланса:', error);
+            return 0;
+        }
+    }
+    
     async function uploadTaskPhoto(branchKey, levelIndex, title, maxProgress, rewardStatus, photos) {
         const formData = new FormData();
         formData.append('user', userId);
@@ -2176,9 +2189,17 @@
                 method: 'POST',
                 body: formData
             });
-            return await response.json();
+            const result = await response.json();
+            
+            if (result && result.status === 'ok') {
+                tg.showAlert('✅ Фото отправлено на проверку администратору!');
+            } else {
+                tg.showAlert('❌ Ошибка отправки. Попробуйте позже.');
+            }
+            return result;
         } catch (error) {
             console.error('Upload error:', error);
+            tg.showAlert('❌ Ошибка соединения. Проверьте интернет.');
             return null;
         }
     }
@@ -2365,7 +2386,7 @@
         
         tg.showAlert('Отправка фото на проверку...');
         
-        const result = await uploadTaskPhoto(
+        await uploadTaskPhoto(
             currentUploadBranch,
             currentUploadLevel,
             `${branch.name} - Уровень ${currentUploadLevel + 1}: ${level.title}`,
@@ -2373,12 +2394,6 @@
             rewardStatus,
             tempPhotos
         );
-        
-        if (result && result.status === 'ok') {
-            tg.showAlert('✅ Фото отправлено на проверку администратору!');
-        } else {
-            tg.showAlert('❌ Ошибка отправки. Попробуйте позже.');
-        }
         
         closeTaskUploadModal();
     }
@@ -2396,12 +2411,14 @@
     }
     
     // ==========================================
-    // ТОМА И ОТВЕТЫ (КАРТОЧКИ ТОВАРОВ + СВАЙПЫ)
+    // ТОМА И ОТВЕТЫ (СВАЙПЫ)
     // ==========================================
     
     let currentVolumeId = null;
     let currentPageIndex = 0;
     let currentVolumePages = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
     
     function renderVolumes() {
         const container = document.getElementById('volumesContainer');
@@ -2470,10 +2487,12 @@
         currentVolumePages = pagesCount;
         currentPageIndex = 1;
         
-        showAnswerPage();
-        
         const modal = document.getElementById('answersViewerModal');
-        if (modal) modal.style.display = 'flex';
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            showAnswerPage();
+        }
     }
     
     function showAnswerPage() {
@@ -2482,11 +2501,13 @@
         const pageInfo = document.getElementById('answersPageInfo');
         const prevBtn = document.getElementById('answersPrevBtn');
         const nextBtn = document.getElementById('answersNextBtn');
+        const titleEl = document.getElementById('answersViewerTitle');
         
+        if (titleEl) titleEl.innerText = `${currentVolumeId.toUpperCase()} - Ответы`;
         if (imgElement) {
             imgElement.src = imageUrl;
             imgElement.onerror = () => {
-                imgElement.src = 'https://via.placeholder.com/300x400?text=Изображение+не+найдено';
+                imgElement.src = 'https://via.placeholder.com/600x800?text=Изображение+не+найдено';
             };
         }
         if (pageInfo) {
@@ -2516,8 +2537,34 @@
     
     function closeAnswersViewer() {
         const modal = document.getElementById('answersViewerModal');
-        if (modal) modal.style.display = 'none';
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
         currentVolumeId = null;
+    }
+    
+    function initSwipeListeners() {
+        const viewerImage = document.getElementById('answersViewerImage');
+        if (!viewerImage) return;
+        
+        viewerImage.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        viewerImage.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const swipeThreshold = 50;
+            const diff = touchEndX - touchStartX;
+            
+            if (Math.abs(diff) < swipeThreshold) return;
+            
+            if (diff > 0) {
+                prevAnswerPage();
+            } else {
+                nextAnswerPage();
+            }
+        });
     }
     
     function searchVolumes() {
@@ -2542,6 +2589,7 @@
     // ==========================================
     
     async function refreshUserProgress() {
+        await loadUserBalance();
         await loadUserProgress();
         await loadUnlockedStatuses();
         await loadUserAchievements();
@@ -3138,6 +3186,12 @@
             case 'profile':
                 updateUI();
                 refreshUserProgress();
+                break;
+            case 'aipalette':
+                if (userId === ADMIN_ID) {
+                    const adminBlock = document.getElementById('adminAiBlock');
+                    if (adminBlock) adminBlock.style.display = 'block';
+                }
                 break;
         }
     }
@@ -3789,6 +3843,23 @@
     }
     
     async function trainAI() {
+        const fileInput = document.getElementById('aiTrainFile');
+        const brandInput = document.getElementById('aiTrainBrand');
+        const numberInput = document.getElementById('aiTrainNumber');
+        
+        if (!fileInput || !fileInput.files[0]) {
+            tg.showAlert('Выберите изображение маркера');
+            return;
+        }
+        if (!brandInput || !brandInput.value) {
+            tg.showAlert('Введите бренд');
+            return;
+        }
+        if (!numberInput || !numberInput.value) {
+            tg.showAlert('Введите номер маркера');
+            return;
+        }
+        
         tg.showAlert('Демо: Обучение ИИ (требуется бэкенд)');
     }
     
@@ -3838,6 +3909,7 @@
             cart = JSON.parse(savedCart);
         }
         
+        await loadUserBalance();
         await loadUserProgress();
         await loadUnlockedStatuses();
         await loadUserAchievements();
@@ -3858,11 +3930,15 @@
         loadInventory();
         updateUI();
         startProgressRefresh();
+        initSwipeListeners();
         
         window.onclick = function(event) {
             document.querySelectorAll('.modal-overlay').forEach(modal => {
                 if (event.target === modal) {
                     modal.style.display = "none";
+                    if (modal.id === 'answersViewerModal') {
+                        document.body.style.overflow = '';
+                    }
                 }
             });
         };
@@ -3870,7 +3946,6 @@
         console.log('=== APP READY ===');
     };
     </script>
-</head>
 <body>
 
 <!-- ========== ПРОФИЛЬ ========== -->

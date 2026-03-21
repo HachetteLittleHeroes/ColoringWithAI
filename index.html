@@ -2716,7 +2716,6 @@ for (let i = 1; i <= 47; i++) {
     const levels = TASK_BRANCHES[branchKey].levels;
     for (let i = 0; i < levels.length; i++) {
         const currentProgress = getLevelProgress(branchKey, i);
-        console.log(`Level ${i}: progress=${currentProgress}, max=${levels[i].maxProgress}`);
         if (currentProgress < levels[i].maxProgress) {
             return false;
         }
@@ -2726,8 +2725,9 @@ for (let i = 1; i <= 47; i++) {
 
 function getLevelProgress(branchKey, levelIndex) {
     const progress = userProgress || {};
-    const branchProgress = progress[branchKey] || {};
-    return branchProgress[`level_${levelIndex}`] || 0;
+    // Правильный ключ - такой же, как на сервере
+    const progressKey = `branch_${branchKey}_level_${levelIndex}`;
+    return progress[progressKey] || 0;
 }
         
         function getCurrentLevelIndex(branchKey) {
@@ -2738,7 +2738,7 @@ function getLevelProgress(branchKey, levelIndex) {
             return i;
         }
     }
-    return levels.length; // Все уровни пройдены
+    return levels.length;
 }
         
         // ==========================================

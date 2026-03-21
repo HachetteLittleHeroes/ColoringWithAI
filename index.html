@@ -1682,151 +1682,113 @@
         /* ==========================================
            20. ТОМА И ОТВЕТЫ (КАРТОЧКИ + СВАЙПЫ)
            ========================================== */
-        /* ==========================================
-   УЛУЧШЕННЫЕ СТИЛИ ДЛЯ ТОМОВ
-   ========================================== */
-.book-card {
-    background: var(--bg-header);
-    padding: 15px;
-    border-radius: 24px;
-    text-align: center;
-    border: 1px solid var(--border-color);
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 320px;
-}
+        .books-section {
+            padding: 0 15px;
+        }
 
-.book-card img {
-    width: 100%;
-    height: 140px;
-    object-fit: contain;
-    margin-bottom: 12px;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.05);
-}
+        .books-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
 
-.book-card h4 {
-    font-size: 14px;
-    font-weight: 600;
-    margin: 0 0 8px 0;
-    color: var(--text);
-    line-height: 1.3;
-    min-height: 40px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
+        .book-card {
+            background: var(--bg-header);
+            padding: 15px 15px 20px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
 
-.book-price {
-    color: var(--accent);
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
+        .book-card:active {
+            transform: scale(0.98);
+        }
 
-.book-card .cart-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    background: var(--card-bg);
-    padding: 8px 12px;
-    border-radius: 30px;
-    margin-top: auto;
-    width: 100%;
-}
+        .book-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            border-radius: 16px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+        }
 
-.book-card .cart-controls button {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    flex-shrink: 0;
-}
+        .book-card h4 {
+            font-size: 16px;
+            margin: 0 0 8px 0;
+            color: var(--text);
+        }
 
-.book-card .cart-controls button.minus {
-    background: #444;
-}
+        .book-price {
+            color: var(--accent);
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
 
-.book-card .cart-controls button.minus:not(:disabled) {
-    background: var(--status-red);
-}
+        .book-card .cart-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 30px;
+            margin-top: 10px;
+        }
 
-.book-card .cart-controls span {
-    font-size: 16px;
-    font-weight: 700;
-    min-width: 30px;
-    text-align: center;
-    color: var(--text);
-}
+        .book-card .cart-controls button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-.add-to-cart-btn {
-    width: 100%;
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 30px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    margin-top: auto;
-    transition: all 0.2s;
-}
+        .book-card .cart-controls button.minus {
+            background: #444;
+        }
 
-.add-to-cart-btn:active {
-    transform: scale(0.98);
-}
+        .book-card .cart-controls button.minus:not(:disabled) {
+            background: var(--status-red);
+        }
 
-.books-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-}
+        .book-card .cart-controls span {
+            font-size: 16px;
+            font-weight: 700;
+            min-width: 30px;
+            text-align: center;
+            color: var(--text);
+        }
 
-/* Адаптация для мобильных */
-@media (max-width: 480px) {
-    .books-grid {
-        gap: 12px;
-    }
-    
-    .book-card {
-        padding: 12px;
-        min-height: 300px;
-    }
-    
-    .book-card h4 {
-        font-size: 12px;
-        min-height: 36px;
-    }
-    
-    .book-price {
-        font-size: 14px;
-    }
-    
-    .book-card .cart-controls button {
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
-    }
-    
-    .add-to-cart-btn {
-        padding: 10px;
-        font-size: 12px;
-    }
-}
+        .add-to-cart-btn {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .add-to-cart-btn:active {
+            transform: scale(0.95);
+        }
 
         /* Модальное окно просмотра ответов (на всю страницу) */
         .answers-viewer-modal {
@@ -2633,33 +2595,16 @@ async function showAnswerPageAsync() {
         };
         
         // ==========================================
-// ДАННЫЕ ТОМОВ (47 ТОМОВ) - УПРОЩЕННАЯ ВЕРСИЯ
-// ==========================================
-
-const VOLUMES_DATA = [];
-const VOLUME_NAMES = [
-    "Les Grands Classiques tome 11", "Les Grands Classiques tome 3", "Vitraux tome 2",
-    "Trompe L'oeil Babies", "Trompe L'oeil Grand Bloc", "Stitch Au numero",
-    "Sous L'Ocean", "Saisons", "Romantasy", "Princesses tome 1", "Princesses tome 2",
-    "Princes&Heros", "Portraits De Famille", "Pokemon", "Pixar", "Petites Princesses",
-    "Petites Betes", "Mondes Fantastiques", "Mickey, Donald&Co", "Mechants",
-    "Marsupilami", "Love Stories", "Looney Tunes tome 3", "Lilo Et Stitch",
-    "Les Grands Classiques Special Debutants tome 1", "Les Grands Classiques Special Debutants tome 2",
-    "Les Grands Classiques Au numero", "La Petite Sirene", "Les Schtroumpfs tome 1",
-    "Les Schtroumpfs tome 2", "L'age Glace", "Hiver", "Heros&Mechants La Battle",
-    "Grands Classiques Grand Bloc", "Les Grands Classiques Coliector", "Girl Power",
-    "Fees, Sorciers Et Magiciens", "Famille", "Escapades Merveilleuses Douce France",
-    "Chiots&Chiens", "Chevaux", "Bisounours tome 1", "Best Of Pixar",
-    "Best Of Les Grands Classiques", "La Belle Et La Bete", "Bestiaire", "Best Of Heroines"
-];
-
-for (let i = 0; i < 47; i++) {
+        // ДАННЫЕ ТОМОВ (47 ТОМОВ)
+        // ==========================================
+        
+        const VOLUMES_DATA = [];
+for (let i = 1; i <= 47; i++) {
     VOLUMES_DATA.push({
-        id: `t${i + 1}`,
-        name: VOLUME_NAMES[i],
-        price: 2890,
-        pages: 26,
-        img: `assets/img/t${i + 1}.png`
+        id: `t${i}`,
+        name: `Том ${i}`,
+        price: 1500,
+        pages: 26
     });
 }
         
@@ -3668,31 +3613,34 @@ async function submitTaskPhoto(event) {
                     </div>
                 `;
             }
-    } else if (key.startsWith('volume_')) {
-    const volumeId = key.replace('volume_', '');
-    const volume = VOLUMES_DATA.find(v => v.id === volumeId);
-    if (volume) {
-        const itemTotal = volume.price * count;
-        totalSum += itemTotal;
-        itemsHtml += `
-            <div class="cart-item">
-                <img src="${volume.img}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23f0f0f0%22/%3E%3Ctext x=%2230%22 y=%2230%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22%3E📘%3C/text%3E%3C/svg%3E'" style="width: 60px; height: 60px; object-fit: contain; border-radius: 12px;">
-                <div class="cart-item-info">
-                    <h4>${volume.name}</h4>
-                    <div class="cart-item-price">${volume.price} ₽ / шт <span style="font-size: 11px;">(под заказ)</span></div>
-                    <div class="cart-item-details">
-                        <div class="cart-item-controls">
-                            <button class="minus" onclick="updateVolumeCart('${volumeId}', -1)">−</button>
-                            <span>${count}</span>
-                            <button onclick="updateVolumeCart('${volumeId}', 1)">+</button>
+        } else if (key.startsWith('volume_')) {
+            const volumeId = key.replace('volume_', '');
+            const volume = VOLUMES_DATA.find(v => v.id === volumeId);
+            if (volume) {
+                const itemTotal = volume.price * count;
+                totalSum += itemTotal;
+                itemsHtml += `
+                    <div class="cart-item">
+                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), #ff9500); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 28px;">📘</span>
                         </div>
-                        <div class="cart-item-total">${itemTotal} ₽</div>
+                        <div class="cart-item-info">
+                            <h4>${volume.name}</h4>
+                            <div class="cart-item-price">${volume.price} ₽ / шт</div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-controls">
+                                    <button class="minus" onclick="updateVolumeCart('${volumeId}', -1)">−</button>
+                                    <span>${count}</span>
+                                    <button onclick="updateVolumeCart('${volumeId}', 1)">+</button>
+                                </div>
+                                <div class="cart-item-total">${itemTotal} ₽</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        `;
+                `;
+            }
+        }
     }
-}
     
     container.innerHTML = itemsHtml;
     if (totalSpan) totalSpan.innerText = totalSum;
@@ -3769,45 +3717,35 @@ async function submitTaskPhoto(event) {
         let touchEndX = 0;
         
       function renderVolumes() {
-    console.log('🎨 renderVolumes called');
     const container = document.getElementById('volumesContainer');
-    if (!container) {
-        console.error('❌ volumesContainer not found');
-        return;
-    }
+    if (!container) return;
     
     container.innerHTML = '';
     
     VOLUMES_DATA.forEach(volume => {
         const cartKey = `volume_${volume.id}`;
-        const cartCount = (cart && cart[cartKey]) ? cart[cartKey] : 0;
-        
-        console.log(`📚 Rendering volume: ${volume.id}, name: ${volume.name}, count: ${cartCount}`);
+        const cartCount = cart[cartKey] || 0;
         
         const card = document.createElement('div');
         card.className = 'book-card';
         card.onclick = () => openVolumeAnswers(volume.id, volume.pages);
-        
-        // Создаем HTML с проверкой на ошибку загрузки картинки
-        const imgHtml = `<img src="${volume.img}" alt="${volume.name}" style="width: 100%; height: 140px; object-fit: contain; border-radius: 16px; background: #f0f0f0;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%25%22 height=%22100%25%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23ff9500%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22 font-size=%2240%22%3E📘%3C/text%3E%3C/svg%3E'">`;
-        
         card.innerHTML = `
-            ${imgHtml}
-            <h4 style="font-size: 14px; margin: 10px 0 5px; min-height: 40px;">${volume.name}</h4>
-            <div class="book-price" style="color: var(--accent); font-weight: bold; margin-bottom: 10px;">${volume.price} ₽ <span style="font-size: 11px;">(под заказ)</span></div>
-            <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}; align-items: center; justify-content: center; gap: 15px; margin-top: 10px;">
-                <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)" style="width: 36px; height: 36px; border-radius: 50%; background: #ff4444; color: white; border: none; font-size: 20px; cursor: pointer;">−</button>
-                <span id="book-count-${volume.id}" style="font-size: 18px; font-weight: bold;">${cartCount}</span>
-                <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: white; border: none; font-size: 20px; cursor: pointer;">+</button>
+            <div style="background: linear-gradient(135deg, var(--accent), #ff9500); width: 100%; height: 140px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <span style="font-size: 48px;">📘</span>
             </div>
-            <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}; width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 30px; font-weight: bold; margin-top: 10px; cursor: pointer;">
-                <i class="fas fa-cart-plus"></i> В корзину <span style="font-size: 11px;">(под заказ)</span>
+            <h4>${volume.name}</h4>
+            <div class="book-price">${volume.price} ₽</div>
+            <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}">
+                <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)">−</button>
+                <span id="book-count-${volume.id}">${cartCount}</span>
+                <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)">+</button>
+            </div>
+            <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}">
+                <i class="fas fa-cart-plus"></i> В корзину
             </button>
         `;
         container.appendChild(card);
     });
-    
-    console.log('✅ renderVolumes completed, items:', container.children.length);
 }
         function updateVolumeCart(volumeId, delta) {
     const cartKey = `volume_${volumeId}`;

@@ -2747,8 +2747,8 @@ async function loadUnlockedStatuses() {
         }
     }
     
-   // ==========================================
-// ОТПРАВКА ФОТО НА ПРОВЕРКУ (ИСПРАВЛЕННАЯ)
+  // ==========================================
+// ОТПРАВКА ФОТО НА ПРОВЕРКУ (ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ)
 // ==========================================
 
 let currentUploadBranch = null;
@@ -2801,7 +2801,7 @@ function handleTaskFilesSelected(event) {
 }
 
 async function submitTaskPhoto() {
-    console.log('submitTaskPhoto called');
+    console.log('=== SUBMIT TASK PHOTO START ===');
     console.log('currentUploadBranch:', currentUploadBranch);
     console.log('currentUploadLevel:', currentUploadLevel);
     console.log('tempPhotos length:', tempPhotos.length);
@@ -2868,7 +2868,16 @@ async function submitTaskPhoto() {
         
         console.log('Response status:', response.status);
         
-        const result = await response.json();
+        let result;
+        try {
+            const text = await response.text();
+            console.log('Response text:', text);
+            result = JSON.parse(text);
+        } catch (e) {
+            console.error('Failed to parse response:', e);
+            result = { status: 'error', message: 'Invalid server response' };
+        }
+        
         console.log('Response result:', result);
         
         if (result && result.status === 'ok') {
@@ -4366,52 +4375,159 @@ function selectStatus(statusName) {
     // ИИ ПАЛИТРА
     // ==========================================
     
-    async function processAI(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const resultDiv = document.getElementById('aiResult');
-            if (resultDiv) {
-                resultDiv.style.display = 'block';
-                resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Анализ изображения...</div>';
-                setTimeout(() => {
-                    resultDiv.innerHTML = `
-                        <h4 style="margin-bottom:15px;">Распознанные маркеры:</h4>
+    // ==========================================
+// ИИ ПАЛИТРА (РАБОЧАЯ ВЕРСИЯ)
+// ==========================================
+
+async function processAI(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const resultDiv = document.getElementById('aiResult');
+    if (!resultDiv) return;
+    
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Анализ изображения...</div>';
+    
+    try {
+        const formData = new FormData();
+        formData.append('photo', file);
+        
+        const response = await fetch(`${SERVER_URL}/api/ai_analyze`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        console.log('AI analyze result:', result);
+        
+        if (result && result.status === 'ok') {
+            let html = '<h4 style="margin-bottom:15px;">🎨 Распознанные цвета:</h4>';
+            
+            if (result.colors && result.colors.length > 0) {
+                result.colors.forEach(color => {
+                    html += `
                         <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:var(--card-bg); padding:10px; border-radius:8px;">
-                            <div style="width:30px; height:30px; border-radius:5px; background:#FF5733;"></div>
-                            <div><div style="font-weight:bold;">GuangNa №101</div>
-                            <button class="photo-upload-btn" style="padding:5px 10px; font-size:11px; cursor:pointer;" onclick="addToCartFromAI('101')"><i class="fas fa-cart-plus"></i> Добавить в корзину</button></div>
+                            <div style="width:40px; height:40px; border-radius:8px; background:${color.code}; border:1px solid var(--border-color);"></div>
+                            <div style="flex:1;">
+                                <div style="font-weight:bold;">${color.name}</div>
+                                <div style="font-size:12px; color:var(--text-gray);">Код: ${color.code}</div>
+                                <div style="font-size:11px; color:var(--accent);">Точность: ${Math.round(color.confidence * 100)}%</div>
+                            </div>
                         </div>
                     `;
-                }, 1500);
+                });
+            } else {
+                html += '<div class="no-results">Цвета не распознаны</div>';
             }
+            
+            if (result.markers && result.markers.length > 0) {
+                html += '<h4 style="margin-top:15px;">🖍️ Похожие маркеры:</h4>';
+                result.markers.forEach(marker => {
+                    html += `
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:var(--card-bg); padding:10px; border-radius:8px;">
+                            <div style="width:40px; height:40px; border-radius:8px; background:${marker.color}; border:1px solid var(--border-color);"></div>
+                            <div style="flex:1;">
+                                <div style="font-weight:bold;">${marker.brand} №${marker.number}</div>
+                                <button class="photo-upload-btn" style="padding:5px 10px; font-size:11px; margin-top:5px;" onclick="addToCartFromAI('${marker.number}')">
+                                    <i class="fas fa-cart-plus"></i> Добавить в корзину
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            resultDiv.innerHTML = html;
+        } else {
+            resultDiv.innerHTML = '<div class="no-results">⚠️ Не удалось распознать цвета. Попробуйте другое фото с лучшим освещением.</div>';
         }
+    } catch (error) {
+        console.error('AI analyze error:', error);
+        resultDiv.innerHTML = '<div class="no-results">❌ Ошибка соединения с сервером. Попробуйте позже.</div>';
+    }
+}
+
+async function trainAI() {
+    const fileInput = document.getElementById('aiTrainFile');
+    const brandInput = document.getElementById('aiTrainBrand');
+    const numberInput = document.getElementById('aiTrainNumber');
+    
+    if (!fileInput || !fileInput.files[0]) {
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('Выберите изображение маркера');
+        } else {
+            alert('Выберите изображение маркера');
+        }
+        return;
     }
     
-    function addToCartFromAI(num) {
-        updateMarkerCart(num, 1);
-        tg.showAlert(`Маркер №${num} добавлен в корзину`);
+    if (!brandInput || !brandInput.value.trim()) {
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('Введите бренд маркера');
+        } else {
+            alert('Введите бренд маркера');
+        }
+        return;
     }
     
-    async function trainAI() {
-        const fileInput = document.getElementById('aiTrainFile');
-        const brandInput = document.getElementById('aiTrainBrand');
-        const numberInput = document.getElementById('aiTrainNumber');
-        
-        if (!fileInput || !fileInput.files[0]) {
-            tg.showAlert('Выберите изображение маркера');
-            return;
+    if (!numberInput || !numberInput.value.trim()) {
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('Введите номер маркера');
+        } else {
+            alert('Введите номер маркера');
         }
-        if (!brandInput || !brandInput.value) {
-            tg.showAlert('Введите бренд');
-            return;
-        }
-        if (!numberInput || !numberInput.value) {
-            tg.showAlert('Введите номер маркера');
-            return;
-        }
-        
-        tg.showAlert('Демо: Обучение ИИ (требуется бэкенд)');
+        return;
     }
+    
+    if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.showAlert('📤 Отправка данных для обучения...');
+    }
+    
+    try {
+        const formData = new FormData();
+        formData.append('photo', fileInput.files[0]);
+        formData.append('brand', brandInput.value.trim());
+        formData.append('number', numberInput.value.trim());
+        
+        const response = await fetch(`${SERVER_URL}/api/train_ai`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result && result.status === 'ok') {
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.showAlert('✅ Маркер добавлен в базу обучения!');
+            } else {
+                alert('✅ Маркер добавлен в базу обучения!');
+            }
+            fileInput.value = '';
+            brandInput.value = '';
+            numberInput.value = '';
+        } else {
+            throw new Error(result?.message || 'Ошибка обучения');
+        }
+    } catch (error) {
+        console.error('Train AI error:', error);
+        const msg = '❌ Ошибка: ' + (error.message || 'Попробуйте позже');
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert(msg);
+        } else {
+            alert(msg);
+        }
+    }
+}
+
+function addToCartFromAI(num) {
+    updateMarkerCart(num, 1);
+    if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.showAlert(`Маркер №${num} добавлен в корзину`);
+    } else {
+        alert(`Маркер №${num} добавлен в корзину`);
+    }
+}
     
     function buyItem(itemId) {
         const prices = {

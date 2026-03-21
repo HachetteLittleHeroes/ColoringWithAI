@@ -2657,41 +2657,42 @@ for (let i = 1; i <= 47; i++) {
         }
         
         async function loadUserProgress() {
-            try {
-                const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
-                const stats = await response.json();
-                if (stats) {
-                    userProgress = stats;
-                }
-                return userProgress;
-            } catch (error) {
-                console.error('Ошибка загрузки прогресса:', error);
-                return {};
-            }
-        }
+    try {
+        const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
+        const stats = await response.json();
+        console.log('📊 Loaded stats from server:', stats);
         
+        if (stats) {
+            userProgress = stats;
+        }
+        return userProgress;
+    } catch (error) {
+        console.error('Ошибка загрузки прогресса:', error);
+        return {};
+    }
+}
         async function loadUnlockedStatuses() {
-            try {
-                console.log('Loading unlocked statuses for user:', userId);
-                const response = await fetch(`${SERVER_URL}/api/unlocked_statuses?user_id=${userId}`);
-                const statuses = await response.json();
-                console.log('Loaded statuses:', statuses);
-                
-                if (statuses && Array.isArray(statuses)) {
-                    user.unlockedStatuses = statuses;
-                    if (!user.unlockedStatuses.includes('Новичок')) {
-                        user.unlockedStatuses.unshift('Новичок');
-                    }
-                }
-                return user.unlockedStatuses;
-            } catch (error) {
-                console.error('Ошибка загрузки статусов:', error);
-                if (!user.unlockedStatuses || user.unlockedStatuses.length === 0) {
-                    user.unlockedStatuses = ['Новичок'];
-                }
-                return user.unlockedStatuses;
+    try {
+        console.log('Loading unlocked statuses for user:', userId);
+        const response = await fetch(`${SERVER_URL}/api/unlocked_statuses?user_id=${userId}`);
+        const statuses = await response.json();
+        console.log('Loaded statuses:', statuses);
+        
+        if (statuses && Array.isArray(statuses)) {
+            user.unlockedStatuses = statuses;
+            if (!user.unlockedStatuses.includes('Новичок')) {
+                user.unlockedStatuses.unshift('Новичок');
             }
         }
+        return user.unlockedStatuses;
+    } catch (error) {
+        console.error('Ошибка загрузки статусов:', error);
+        if (!user.unlockedStatuses || user.unlockedStatuses.length === 0) {
+            user.unlockedStatuses = ['Новичок'];
+        }
+        return user.unlockedStatuses;
+    }
+}
         
         async function loadUserAchievements() {
             try {
@@ -2711,33 +2712,34 @@ for (let i = 1; i <= 47; i++) {
         // ФУНКЦИИ ДЛЯ РАБОТЫ С ЗАДАНИЯМИ
         // ==========================================
         
-        function getLevelProgress(branchKey, levelIndex) {
-            const progress = userProgress || {};
-            const branchProgress = progress[branchKey] || {};
-            return branchProgress[`level_${levelIndex}`] || 0;
-        }
-        
         function isBranchCompleted(branchKey) {
-            const levels = TASK_BRANCHES[branchKey].levels;
-            for (let i = 0; i < levels.length; i++) {
-                const currentProgress = getLevelProgress(branchKey, i);
-                if (currentProgress < levels[i].maxProgress) {
-                    return false;
-                }
-            }
-            return true;
+    const levels = TASK_BRANCHES[branchKey].levels;
+    for (let i = 0; i < levels.length; i++) {
+        const currentProgress = getLevelProgress(branchKey, i);
+        console.log(`Level ${i}: progress=${currentProgress}, max=${levels[i].maxProgress}`);
+        if (currentProgress < levels[i].maxProgress) {
+            return false;
         }
+    }
+    return true;
+}
+
+function getLevelProgress(branchKey, levelIndex) {
+    const progress = userProgress || {};
+    const branchProgress = progress[branchKey] || {};
+    return branchProgress[`level_${levelIndex}`] || 0;
+}
         
         function getCurrentLevelIndex(branchKey) {
-            const levels = TASK_BRANCHES[branchKey].levels;
-            for (let i = 0; i < levels.length; i++) {
-                const currentProgress = getLevelProgress(branchKey, i);
-                if (currentProgress < levels[i].maxProgress) {
-                    return i;
-                }
-            }
-            return levels.length;
+    const levels = TASK_BRANCHES[branchKey].levels;
+    for (let i = 0; i < levels.length; i++) {
+        const currentProgress = getLevelProgress(branchKey, i);
+        if (currentProgress < levels[i].maxProgress) {
+            return i;
         }
+    }
+    return levels.length; // Все уровни пройдены
+}
         
         // ==========================================
         // ОТПРАВКА ФОТО НА ПРОВЕРКУ (ГЛАВНАЯ ФУНКЦИЯ)
@@ -3023,61 +3025,68 @@ async function submitTaskPhoto(event) {
         // ==========================================
         
         async function refreshUserProgress() {
-            console.log('🔄 Refreshing user progress...');
+    console.log('🔄 Refreshing user progress...');
+    
+    try {
+        // Загружаем баланс
+        await loadUserBalance();
+        
+        // Загружаем прогресс заданий
+        await loadUserProgress();
+        
+        // Загружаем разблокированные статусы
+        await loadUnlockedStatuses();
+        
+        // Загружаем достижения
+        await loadUserAchievements();
+        
+        // Проверяем разблокировку новых статусов
+        await checkAndUnlockStatuses();
+        
+        // Обновляем отображение заданий
+        renderBranchTasks();
+        
+        // Обновляем UI
+        updateUI();
+        
+        console.log('✅ Progress refreshed, current userProgress:', userProgress);
+        console.log('✅ Current balance:', user.balance);
+        console.log('✅ Current statuses:', user.unlockedStatuses);
+        
+    } catch (error) {
+        console.error('Error refreshing progress:', error);
+    }
+}
+        
+        async function checkAndUnlockStatuses() {
+    try {
+        console.log('Checking status unlocks...');
+        let statusUnlocked = false;
+        
+        for (const [branchKey, rewardStatus] of Object.entries(BRANCH_REWARDS)) {
+            const isCompleted = isBranchCompleted(branchKey);
+            const isUnlocked = user.unlockedStatuses.includes(rewardStatus);
             
-            try {
-                await loadUserBalance();
-                await loadUserProgress();
-                await loadUnlockedStatuses();
-                await loadUserAchievements();
-                
-                await checkAndUnlockStatuses();
-                
-                renderBranchTasks();
-                updateUI();
-                
-                console.log('✅ Progress refreshed, balance:', user.balance, 'statuses:', user.unlockedStatuses);
-            } catch (error) {
-                console.error('Error refreshing progress:', error);
+            console.log(`Branch ${branchKey}: completed=${isCompleted}, unlocked=${isUnlocked}`);
+            
+            if (isCompleted && !isUnlocked) {
+                console.log(`🎉 New status unlocked: ${rewardStatus}`);
+                user.unlockedStatuses.push(rewardStatus);
+                statusUnlocked = true;
             }
         }
         
-        async function checkAndUnlockStatuses() {
-            try {
-                console.log('Checking status unlocks...');
-                let statusUnlocked = false;
-                
-                for (const [branchKey, rewardStatus] of Object.entries(BRANCH_REWARDS)) {
-                    if (isBranchCompleted(branchKey) && !user.unlockedStatuses.includes(rewardStatus)) {
-                        console.log(`🎉 New status unlocked: ${rewardStatus}`);
-                        user.unlockedStatuses.push(rewardStatus);
-                        statusUnlocked = true;
-                        
-                        if (tg) {
-                            tg.showAlert(`🏆 Поздравляем!\nВы разблокировали статус: ${rewardStatus}!\n+50 ашетиков!`);
-                        }
-                        
-                        try {
-                            await fetchAPI('/api/sync_status', {
-                                user_id: userId,
-                                status: rewardStatus,
-                                action: 'unlock'
-                            });
-                        } catch (e) {
-                            console.error('Failed to sync status with server:', e);
-                        }
-                    }
-                }
-                
-                if (statusUnlocked) {
-                    saveUserData();
-                    updateUI();
-                    await refreshUserProgress();
-                }
-            } catch (error) {
-                console.error('Error checking status unlocks:', error);
+        if (statusUnlocked) {
+            saveUserData();
+            updateUI();
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.showAlert('🏆 Новый статус разблокирован!');
             }
         }
+    } catch (error) {
+        console.error('Error checking status unlocks:', error);
+    }
+}
         
         let refreshInterval = null;
         
@@ -3093,21 +3102,22 @@ async function submitTaskPhoto(event) {
         // ==========================================
         
         function updateUI() {
-            const nameEl = document.getElementById('displayUsername');
-            const avatarEl = document.getElementById('user-avatar');
-            const balanceEl = document.getElementById('userBalance');
-            const statusBadge = document.getElementById('currentStatus');
-            
-            if (nameEl) nameEl.innerText = user.name;
-            if (avatarEl) avatarEl.src = user.avatar;
-            if (balanceEl) balanceEl.innerText = user.balance;
-            if (statusBadge) statusBadge.innerText = user.status || 'Новичок';
-            
-            console.log('UI Updated - Current status:', user.status);
-            
-            updateCartBadge();
-            renderShowcase();
-        }
+    const nameEl = document.getElementById('displayUsername');
+    const avatarEl = document.getElementById('user-avatar');
+    const balanceEl = document.getElementById('userBalance');
+    const statusBadge = document.getElementById('currentStatus');
+    
+    if (nameEl) nameEl.innerText = user.name;
+    if (avatarEl) avatarEl.src = user.avatar;
+    if (balanceEl) balanceEl.innerText = user.balance;
+    if (statusBadge) statusBadge.innerText = user.status || 'Новичок';
+    
+    console.log('UI Updated - Current status:', user.status);
+    console.log('UI Updated - Balance:', user.balance);
+    
+    updateCartBadge();
+    renderShowcase();
+}
         
         function updateCartBadge() {
             let totalItems = 0;

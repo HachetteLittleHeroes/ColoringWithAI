@@ -1682,113 +1682,151 @@
         /* ==========================================
            20. ТОМА И ОТВЕТЫ (КАРТОЧКИ + СВАЙПЫ)
            ========================================== */
-        .books-section {
-            padding: 0 15px;
-        }
+        /* ==========================================
+   УЛУЧШЕННЫЕ СТИЛИ ДЛЯ ТОМОВ
+   ========================================== */
+.book-card {
+    background: var(--bg-header);
+    padding: 15px;
+    border-radius: 24px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 320px;
+}
 
-        .books-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
+.book-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+}
 
-        .book-card {
-            background: var(--bg-header);
-            padding: 15px 15px 20px;
-            border-radius: 24px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
+.book-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--text);
+    line-height: 1.3;
+    min-height: 40px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
 
-        .book-card:active {
-            transform: scale(0.98);
-        }
+.book-price {
+    color: var(--accent);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
 
-        .book-card img {
-            width: 100%;
-            height: 140px;
-            object-fit: contain;
-            margin-bottom: 12px;
-            border-radius: 16px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-        }
+.book-card .cart-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background: var(--card-bg);
+    padding: 8px 12px;
+    border-radius: 30px;
+    margin-top: auto;
+    width: 100%;
+}
 
-        .book-card h4 {
-            font-size: 16px;
-            margin: 0 0 8px 0;
-            color: var(--text);
-        }
+.book-card .cart-controls button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    flex-shrink: 0;
+}
 
-        .book-price {
-            color: var(--accent);
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
+.book-card .cart-controls button.minus {
+    background: #444;
+}
 
-        .book-card .cart-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            background: var(--card-bg);
-            padding: 10px;
-            border-radius: 30px;
-            margin-top: 10px;
-        }
+.book-card .cart-controls button.minus:not(:disabled) {
+    background: var(--status-red);
+}
 
-        .book-card .cart-controls button {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-        }
+.book-card .cart-controls span {
+    font-size: 16px;
+    font-weight: 700;
+    min-width: 30px;
+    text-align: center;
+    color: var(--text);
+}
 
-        .book-card .cart-controls button.minus {
-            background: #444;
-        }
+.add-to-cart-btn {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: auto;
+    transition: all 0.2s;
+}
 
-        .book-card .cart-controls button.minus:not(:disabled) {
-            background: var(--status-red);
-        }
+.add-to-cart-btn:active {
+    transform: scale(0.98);
+}
 
-        .book-card .cart-controls span {
-            font-size: 16px;
-            font-weight: 700;
-            min-width: 30px;
-            text-align: center;
-            color: var(--text);
-        }
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
 
-        .add-to-cart-btn {
-            width: 100%;
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: all 0.2s;
-        }
-
-        .add-to-cart-btn:active {
-            transform: scale(0.95);
-        }
+/* Адаптация для мобильных */
+@media (max-width: 480px) {
+    .books-grid {
+        gap: 12px;
+    }
+    
+    .book-card {
+        padding: 12px;
+        min-height: 300px;
+    }
+    
+    .book-card h4 {
+        font-size: 12px;
+        min-height: 36px;
+    }
+    
+    .book-price {
+        font-size: 14px;
+    }
+    
+    .book-card .cart-controls button {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+    
+    .add-to-cart-btn {
+        padding: 10px;
+        font-size: 12px;
+    }
+}
 
         /* Модальное окно просмотра ответов (на всю страницу) */
         .answers-viewer-modal {
@@ -2598,15 +2636,59 @@ async function showAnswerPageAsync() {
         // ДАННЫЕ ТОМОВ (47 ТОМОВ)
         // ==========================================
         
-        const VOLUMES_DATA = [];
-for (let i = 1; i <= 47; i++) {
-    VOLUMES_DATA.push({
-        id: `t${i}`,
-        name: `Том ${i}`,
-        price: 1500,
-        pages: 26
-    });
-}
+        // ==========================================
+// ДАННЫЕ ТОМОВ (47 ТОМОВ)
+// ==========================================
+
+const VOLUMES_DATA = [
+    { id: "t1", name: "Les Grands Classiques tome 11", price: 2890, pages: 26, img: "assets/img/t1.png" },
+    { id: "t2", name: "Les Grands Classiques tome 3", price: 2890, pages: 26, img: "assets/img/t2.png" },
+    { id: "t3", name: "Vitraux tome 2", price: 2890, pages: 26, img: "assets/img/t3.png" },
+    { id: "t4", name: "Trompe L'oeil Babies", price: 2890, pages: 26, img: "assets/img/t4.png" },
+    { id: "t5", name: "Trompe L'oeil Grand Bloc", price: 2890, pages: 26, img: "assets/img/t5.png" },
+    { id: "t6", name: "Stitch Au numero", price: 2890, pages: 26, img: "assets/img/t6.png" },
+    { id: "t7", name: "Sous L'Ocean", price: 2890, pages: 26, img: "assets/img/t7.png" },
+    { id: "t8", name: "Saisons", price: 2890, pages: 26, img: "assets/img/t8.png" },
+    { id: "t9", name: "Romantasy", price: 2890, pages: 26, img: "assets/img/t9.png" },
+    { id: "t10", name: "Princesses tome 1", price: 2890, pages: 26, img: "assets/img/t10.png" },
+    { id: "t11", name: "Princesses tome 2", price: 2890, pages: 26, img: "assets/img/t11.png" },
+    { id: "t12", name: "Princes&Heros", price: 2890, pages: 26, img: "assets/img/t12.png" },
+    { id: "t13", name: "Portraits De Famille", price: 2890, pages: 26, img: "assets/img/t13.png" },
+    { id: "t14", name: "Pokemon", price: 2890, pages: 26, img: "assets/img/t14.png" },
+    { id: "t15", name: "Pixar", price: 2890, pages: 26, img: "assets/img/t15.png" },
+    { id: "t16", name: "Petites Princesses", price: 2890, pages: 26, img: "assets/img/t16.png" },
+    { id: "t17", name: "Petites Betes", price: 2890, pages: 26, img: "assets/img/t17.png" },
+    { id: "t18", name: "Mondes Fantastiques", price: 2890, pages: 26, img: "assets/img/t18.png" },
+    { id: "t19", name: "Mickey, Donald&Co", price: 2890, pages: 26, img: "assets/img/t19.png" },
+    { id: "t20", name: "Mechants", price: 2890, pages: 26, img: "assets/img/t20.png" },
+    { id: "t21", name: "Marsupilami", price: 2890, pages: 26, img: "assets/img/t21.png" },
+    { id: "t22", name: "Love Stories", price: 2890, pages: 26, img: "assets/img/t22.png" },
+    { id: "t23", name: "Looney Tunes tome 3", price: 2890, pages: 26, img: "assets/img/t23.png" },
+    { id: "t24", name: "Lilo Et Stitch", price: 2890, pages: 26, img: "assets/img/t24.png" },
+    { id: "t25", name: "Les Grands Classiques Special Debutants tome 1", price: 2890, pages: 26, img: "assets/img/t25.png" },
+    { id: "t26", name: "Les Grands Classiques Special Debutants tome 2", price: 2890, pages: 26, img: "assets/img/t26.png" },
+    { id: "t27", name: "Les Grands Classiques Au numero", price: 2890, pages: 26, img: "assets/img/t27.png" },
+    { id: "t28", name: "La Petite Sirene", price: 2890, pages: 26, img: "assets/img/t28.png" },
+    { id: "t29", name: "Les Schtroumpfs tome 1", price: 2890, pages: 26, img: "assets/img/t29.png" },
+    { id: "t30", name: "Les Schtroumpfs tome 2", price: 2890, pages: 26, img: "assets/img/t30.png" },
+    { id: "t31", name: "L'age Glace", price: 2890, pages: 26, img: "assets/img/t31.png" },
+    { id: "t32", name: "Hiver", price: 2890, pages: 26, img: "assets/img/t32.png" },
+    { id: "t33", name: "Heros&Mechants La Battle", price: 2890, pages: 26, img: "assets/img/t33.png" },
+    { id: "t34", name: "Grands Classiques Grand Bloc", price: 2890, pages: 26, img: "assets/img/t34.png" },
+    { id: "t35", name: "Les Grands Classiques Coliector", price: 2890, pages: 26, img: "assets/img/t35.png" },
+    { id: "t36", name: "Girl Power", price: 2890, pages: 26, img: "assets/img/t36.png" },
+    { id: "t37", name: "Fees, Sorciers Et Magiciens", price: 2890, pages: 26, img: "assets/img/t37.png" },
+    { id: "t38", name: "Famille", price: 2890, pages: 26, img: "assets/img/t38.png" },
+    { id: "t39", name: "Escapades Merveilleuses Douce France", price: 2890, pages: 26, img: "assets/img/t39.png" },
+    { id: "t40", name: "Chiots&Chiens", price: 2890, pages: 26, img: "assets/img/t40.png" },
+    { id: "t41", name: "Chevaux", price: 2890, pages: 26, img: "assets/img/t41.png" },
+    { id: "t42", name: "Bisounours tome 1", price: 2890, pages: 26, img: "assets/img/t42.png" },
+    { id: "t43", name: "Best Of Pixar", price: 2890, pages: 26, img: "assets/img/t43.png" },
+    { id: "t44", name: "Best Of Les Grands Classiques", price: 2890, pages: 26, img: "assets/img/t44.png" },
+    { id: "t45", name: "La Belle Et La Bete", price: 2890, pages: 26, img: "assets/img/t45.png" },
+    { id: "t46", name: "Bestiaire", price: 2890, pages: 26, img: "assets/img/t46.png" },
+    { id: "t47", name: "Best Of Heroines", price: 2890, pages: 26, img: "assets/img/t47.png" }
+];
         
         // ==========================================
         // ДАННЫЕ БРЕНДОВ
@@ -3613,34 +3695,31 @@ async function submitTaskPhoto(event) {
                     </div>
                 `;
             }
-        } else if (key.startsWith('volume_')) {
-            const volumeId = key.replace('volume_', '');
-            const volume = VOLUMES_DATA.find(v => v.id === volumeId);
-            if (volume) {
-                const itemTotal = volume.price * count;
-                totalSum += itemTotal;
-                itemsHtml += `
-                    <div class="cart-item">
-                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), #ff9500); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <span style="font-size: 28px;">📘</span>
+    } else if (key.startsWith('volume_')) {
+    const volumeId = key.replace('volume_', '');
+    const volume = VOLUMES_DATA.find(v => v.id === volumeId);
+    if (volume) {
+        const itemTotal = volume.price * count;
+        totalSum += itemTotal;
+        itemsHtml += `
+            <div class="cart-item">
+                <img src="${volume.img}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23f0f0f0%22/%3E%3Ctext x=%2230%22 y=%2230%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22%3E📘%3C/text%3E%3C/svg%3E'" style="width: 60px; height: 60px; object-fit: contain; border-radius: 12px;">
+                <div class="cart-item-info">
+                    <h4>${volume.name}</h4>
+                    <div class="cart-item-price">${volume.price} ₽ / шт <span style="font-size: 11px;">(под заказ)</span></div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-controls">
+                            <button class="minus" onclick="updateVolumeCart('${volumeId}', -1)">−</button>
+                            <span>${count}</span>
+                            <button onclick="updateVolumeCart('${volumeId}', 1)">+</button>
                         </div>
-                        <div class="cart-item-info">
-                            <h4>${volume.name}</h4>
-                            <div class="cart-item-price">${volume.price} ₽ / шт</div>
-                            <div class="cart-item-details">
-                                <div class="cart-item-controls">
-                                    <button class="minus" onclick="updateVolumeCart('${volumeId}', -1)">−</button>
-                                    <span>${count}</span>
-                                    <button onclick="updateVolumeCart('${volumeId}', 1)">+</button>
-                                </div>
-                                <div class="cart-item-total">${itemTotal} ₽</div>
-                            </div>
-                        </div>
+                        <div class="cart-item-total">${itemTotal} ₽</div>
                     </div>
-                `;
-            }
-        }
+                </div>
+            </div>
+        `;
     }
+}
     
     container.innerHTML = itemsHtml;
     if (totalSpan) totalSpan.innerText = totalSum;
@@ -3730,18 +3809,16 @@ async function submitTaskPhoto(event) {
         card.className = 'book-card';
         card.onclick = () => openVolumeAnswers(volume.id, volume.pages);
         card.innerHTML = `
-            <div style="background: linear-gradient(135deg, var(--accent), #ff9500); width: 100%; height: 140px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-                <span style="font-size: 48px;">📘</span>
-            </div>
+            <img src="${volume.img}" alt="${volume.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22 viewBox=%220 0 150 150%22%3E%3Crect width=%22150%22 height=%22150%22 fill=%22%23f0f0f0%22/%3E%3Ctext x=%2275%22 y=%2275%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22%3E📘%3C/text%3E%3C/svg%3E'">
             <h4>${volume.name}</h4>
-            <div class="book-price">${volume.price} ₽</div>
+            <div class="book-price">${volume.price} ₽ <span style="font-size: 12px; color: #888;">(под заказ)</span></div>
             <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}">
                 <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)">−</button>
                 <span id="book-count-${volume.id}">${cartCount}</span>
                 <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)">+</button>
             </div>
             <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}">
-                <i class="fas fa-cart-plus"></i> В корзину
+                <i class="fas fa-cart-plus"></i> В корзину <span style="font-size: 11px;">(под заказ)</span>
             </button>
         `;
         container.appendChild(card);

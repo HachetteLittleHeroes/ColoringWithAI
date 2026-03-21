@@ -2774,63 +2774,94 @@
                 if (tg) tg.showAlert(`Фото удалено. Осталось: ${tempPhotos.length}`);
             }
         }
-        
-        async function submitTaskPhoto() {
+        // Обязательно добавьте (event) в скобки!
+async function submitTaskPhoto(event) {
+    if (event) event.preventDefault(); // 🛑 Блокируем перезагрузку страницы!
+    
+    console.log('=== НАЧАЛО ОТПРАВКИ ЗАДАНИЯ ===');
+    
     if (isUploading) return;
     if (!tempPhotos || tempPhotos.length === 0) {
-        tg.showAlert('❌ Вы не выбрали фото!');
+        if (tg) tg.showAlert('❌ Выберите хотя бы одно фото');
         return;
     }
-
+    
+    // Получаем элементы для вывода статуса прямо в окно, а не в алерт
+    const titleEl = document.getElementById('taskUploadTitle');
+    const originalTitle = titleEl ? titleEl.innerText : '';
+    
     isUploading = true;
-    tg.showConfirm("Отправить фото на проверку?", async (confirm) => {
-        if (!confirm) {
-            isUploading = false;
-            return;
+    
+    // Вместо алерта используем главную кнопку Telegram
+    if (tg && tg.MainButton) {
+        tg.MainButton.setText("⏳ ОТПРАВКА ФОТО...").show();
+        tg.MainButton.showProgress();
+    }
+    if (titleEl) titleEl.innerHTML = '<span style="color:#ff9500;">⏳ Отправляем фото на сервер, подождите...</span>';
+    
+    try {
+        const formData = new FormData();
+        formData.append('user', userId.toString());
+        formData.append('branchKey', currentUploadBranch);
+        formData.append('levelIndex', currentUploadLevel.toString());
+        
+        // ВАЖНО: Проверка размера файлов перед отправкой
+        let totalSize = 0;
+        for (let i = 0; i < tempPhotos.length; i++) {
+            totalSize += tempPhotos[i].size;
+            formData.append('photos', tempPhotos[i]);
+        }
+        
+        // Если фото больше 4 МБ, предупреждаем, что сервер может отклонить
+        if (totalSize > 4 * 1024 * 1024) {
+            console.warn("Файл очень большой! Возможна ошибка 413 от сервера.");
         }
 
-        tg.MainButton.setText("⏳ ОТПРАВКА...").show();
-
-        try {
-            const formData = new FormData();
-            formData.append('user', userId);
-            formData.append('branchKey', currentUploadBranch);
-            formData.append('levelIndex', currentUploadLevel);
-
-            for (let i = 0; i < tempPhotos.length; i++) {
-                formData.append('photos', tempPhotos[i]);
+        // Убедитесь, что SERVER_URL начинается с https:// (http:// на айфоне не сработает)
+        const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        // Проверяем статус ответа (например 413 Payload Too Large)
+        if (!response.ok) {
+            throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
+        }
+        
+        const text = await response.text();
+        const result = JSON.parse(text);
+        
+        if (result && result.status === 'ok') {
+            if (tg) {
+                tg.showAlert('✅ Фото успешно отправлено на проверку!');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
-
-            // ВНИМАНИЕ: Проверьте, что SERVER_URL начинается с https://
-            const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
-                method: 'POST',
-                body: formData
-            });
-
-            // Если сервер ответил, но статус не 200-299
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Сервер ответил ошибкой ${response.status}: ${errorText}`);
-            }
-
-            const result = await response.json();
-
-            if (result.status === 'ok') {
-                tg.showAlert('✅ Успешно отправлено!');
-                closeTaskUploadModal();
-                await refreshUserProgress();
-            } else {
-                tg.showAlert(`❌ Сервер отклонил: ${result.message}`);
-            }
-
-        } catch (error) {
-            // Вот здесь мы поймаем отсутствие интернета или HTTPS
-            tg.showAlert(`❌ КРИТИЧЕСКАЯ ОШИБКА: ${error.message}`);
-        } finally {
-            isUploading = false;
+            closeTaskUploadModal();
+            await refreshUserProgress();
+        } else {
+            throw new Error(result?.message || 'Сервер вернул ошибку');
+        }
+        
+    } catch (error) {
+        console.error('❌ Ошибка при отправке:', error);
+        
+        // Выводим ошибку ПРЯМО В ОКНО, чтобы вы 100% её увидели на iPhone
+        if (titleEl) {
+            titleEl.innerHTML = `<span style="color:red; font-weight:bold;">❌ Ошибка: ${error.message}</span>`;
+        }
+        if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
+        
+    } finally {
+        isUploading = false;
+        if (tg && tg.MainButton) {
+            tg.MainButton.hideProgress();
             tg.MainButton.hide();
         }
-    });
+        // Возвращаем старый заголовок через 5 секунд, если окно не закрылось
+        setTimeout(() => {
+            if (titleEl && isUploading === false) titleEl.innerText = originalTitle;
+        }, 5000);
+    }
 }
 
         

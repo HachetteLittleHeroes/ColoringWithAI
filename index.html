@@ -2527,15 +2527,14 @@
         // ==========================================
         
         const VOLUMES_DATA = [];
-        for (let i = 1; i <= 47; i++) {
-            VOLUMES_DATA.push({
-                id: `t${i}`,
-                name: `Том ${i}`,
-                price: 1500,
-                img: `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/books/book${((i-1) % 10) + 1}.png`,
-                pages: 26
-            });
-        }
+for (let i = 1; i <= 47; i++) {
+    VOLUMES_DATA.push({
+        id: `t${i}`,
+        name: `Том ${i}`,
+        price: 1500,
+        pages: 26
+    });
+}
         
         // ==========================================
         // ДАННЫЕ БРЕНДОВ
@@ -3490,80 +3489,81 @@ async function submitTaskPhoto(event) {
         // ==========================================
         
         function renderCart() {
-            const container = document.getElementById('cartItemsList');
-            const totalSpan = document.getElementById('cartTotalSum');
-            
-            if (!container) return;
-            
-            let totalSum = 0;
-            let itemsHtml = '';
-            
-            if (!cart || Object.keys(cart).length === 0) {
-                container.innerHTML = '<div class="no-results" style="padding: 40px; text-align: center;">🛒 Корзина пуста</div>';
-                if (totalSpan) totalSpan.innerText = '0';
-                return;
-            }
-            
-            for (let key in cart) {
-                const count = cart[key];
-                if (count <= 0) continue;
-                
-                if (key.startsWith('marker_')) {
-                    const num = key.replace('marker_', '');
-                    const marker = markersDB.find(m => m.num === num);
-                    if (marker) {
-                        const itemTotal = MARKER_PRICE * count;
-                        totalSum += itemTotal;
-                        itemsHtml += `
-                            <div class="cart-item">
-                                <div class="color-circle" style="background-color: var(--bg);"></div>
-                                <div class="cart-item-info">
-                                    <h4>Маркер №${num}</h4>
-                                    <div class="cart-item-price">${MARKER_PRICE} ₽ / шт</div>
-                                    <div class="cart-item-details">
-                                        <div class="cart-item-controls">
-                                            <button class="minus" onclick="updateMarkerCart('${num}', -1)">−</button>
-                                            <span>${count}</span>
-                                            <button onclick="updateMarkerCart('${num}', 1)">+</button>
-                                        </div>
-                                        <div class="cart-item-total">${itemTotal} ₽</div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                } else if (key.startsWith('volume_')) {
-                    const volumeId = key.replace('volume_', '');
-                    const volume = VOLUMES_DATA.find(v => v.id === volumeId);
-                    if (volume) {
-                        const itemTotal = volume.price * count;
-                        totalSum += itemTotal;
-                        itemsHtml += `
-                            <div class="cart-item">
-                                <img src="${volume.img}" onerror="this.src='https://via.placeholder.com/60?text=Том'">
-                                <div class="cart-item-info">
-                                    <h4>${volume.name}</h4>
-                                    <div class="cart-item-price">${volume.price} ₽ / шт</div>
-                                    <div class="cart-item-details">
-                                        <div class="cart-item-controls">
-                                            <button class="minus" onclick="updateVolumeCart('${volumeId}', -1)">−</button>
-                                            <span>${count}</span>
-                                            <button onclick="updateVolumeCart('${volumeId}', 1)">+</button>
-                                        </div>
-                                        <div class="cart-item-total">${itemTotal} ₽</div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                }
-            }
-            
-            container.innerHTML = itemsHtml;
-            if (totalSpan) totalSpan.innerText = totalSum;
-            updateCartBadge();
-        }
+    const container = document.getElementById('cartItemsList');
+    const totalSpan = document.getElementById('cartTotalSum');
+    
+    if (!container) return;
+    
+    let totalSum = 0;
+    let itemsHtml = '';
+    
+    if (!cart || Object.keys(cart).length === 0) {
+        container.innerHTML = '<div class="no-results" style="padding: 40px; text-align: center;">🛒 Корзина пуста</div>';
+        if (totalSpan) totalSpan.innerText = '0';
+        return;
+    }
+    
+    for (let key in cart) {
+        const count = cart[key];
+        if (count <= 0) continue;
         
+        if (key.startsWith('marker_')) {
+            const num = key.replace('marker_', '');
+            const marker = markersDB.find(m => m.num === num);
+            if (marker) {
+                const itemTotal = MARKER_PRICE * count;
+                totalSum += itemTotal;
+                itemsHtml += `
+                    <div class="cart-item">
+                        <div class="color-circle" style="background-color: var(--bg);"></div>
+                        <div class="cart-item-info">
+                            <h4>Маркер №${num}</h4>
+                            <div class="cart-item-price">${MARKER_PRICE} ₽ / шт</div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-controls">
+                                    <button class="minus" onclick="updateMarkerCart('${num}', -1)">−</button>
+                                    <span>${count}</span>
+                                    <button onclick="updateMarkerCart('${num}', 1)">+</button>
+                                </div>
+                                <div class="cart-item-total">${itemTotal} ₽</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        } else if (key.startsWith('volume_')) {
+            const volumeId = key.replace('volume_', '');
+            const volume = VOLUMES_DATA.find(v => v.id === volumeId);
+            if (volume) {
+                const itemTotal = volume.price * count;
+                totalSum += itemTotal;
+                itemsHtml += `
+                    <div class="cart-item">
+                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), #ff9500); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 28px;">📘</span>
+                        </div>
+                        <div class="cart-item-info">
+                            <h4>${volume.name}</h4>
+                            <div class="cart-item-price">${volume.price} ₽ / шт</div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-controls">
+                                    <button class="minus" onclick="updateVolumeCart('${volumeId}', -1)">−</button>
+                                    <span>${count}</span>
+                                    <button onclick="updateVolumeCart('${volumeId}', 1)">+</button>
+                                </div>
+                                <div class="cart-item-total">${itemTotal} ₽</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    }
+    
+    container.innerHTML = itemsHtml;
+    if (totalSpan) totalSpan.innerText = totalSum;
+    updateCartBadge();
+}
         function checkout() {
             if (!cart || Object.keys(cart).length === 0) {
                 if (tg) tg.showAlert('Корзина пуста');
@@ -3634,106 +3634,136 @@ async function submitTaskPhoto(event) {
         let touchStartX = 0;
         let touchEndX = 0;
         
-        function renderVolumes() {
-            const container = document.getElementById('volumesContainer');
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            VOLUMES_DATA.forEach(volume => {
-                const cartKey = `volume_${volume.id}`;
-                const cartCount = cart[cartKey] || 0;
-                
-                const card = document.createElement('div');
-                card.className = 'book-card';
-                card.onclick = () => openVolumeAnswers(volume.id, volume.pages);
-                card.innerHTML = `
-                    <img src="${volume.img}" alt="${volume.name}" onerror="this.src='https://via.placeholder.com/150?text=Том'">
-                    <h4>${volume.name}</h4>
-                    <div class="book-price">${volume.price} ₽</div>
-                    <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}">
-                        <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)">−</button>
-                        <span id="book-count-${volume.id}">${cartCount}</span>
-                        <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)">+</button>
-                    </div>
-                    <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}">
-                        <i class="fas fa-cart-plus"></i> В корзину
-                    </button>
-                `;
-                container.appendChild(card);
-            });
-        }
+      function renderVolumes() {
+    const container = document.getElementById('volumesContainer');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    VOLUMES_DATA.forEach(volume => {
+        const cartKey = `volume_${volume.id}`;
+        const cartCount = cart[cartKey] || 0;
         
+        const card = document.createElement('div');
+        card.className = 'book-card';
+        card.onclick = () => openVolumeAnswers(volume.id, volume.pages);
+        card.innerHTML = `
+            <div style="background: linear-gradient(135deg, var(--accent), #ff9500); width: 100%; height: 140px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <span style="font-size: 48px;">📘</span>
+            </div>
+            <h4>${volume.name}</h4>
+            <div class="book-price">${volume.price} ₽</div>
+            <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}">
+                <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)">−</button>
+                <span id="book-count-${volume.id}">${cartCount}</span>
+                <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)">+</button>
+            </div>
+            <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}">
+                <i class="fas fa-cart-plus"></i> В корзину
+            </button>
+        `;
+        container.appendChild(card);
+    });
+}
         function updateVolumeCart(volumeId, delta) {
-            const cartKey = `volume_${volumeId}`;
-            const currentCount = cart[cartKey] || 0;
-            const newCount = currentCount + delta;
-            
-            if (newCount < 0) return;
-            if (newCount === 0) {
-                delete cart[cartKey];
-            } else {
-                cart[cartKey] = newCount;
-            }
-            
-            const countSpan = document.getElementById(`book-count-${volumeId}`);
-            const controlsDiv = document.getElementById(`book-controls-${volumeId}`);
-            const addBtn = document.getElementById(`book-add-${volumeId}`);
-            
-            if (countSpan) countSpan.innerText = newCount;
-            if (controlsDiv && addBtn) {
-                if (newCount > 0) {
-                    controlsDiv.style.display = 'flex';
-                    addBtn.style.display = 'none';
-                } else {
-                    controlsDiv.style.display = 'none';
-                    addBtn.style.display = 'block';
-                }
-            }
-            
-            saveUserData();
-            renderCart();
-            updateCartBadge();
+    const cartKey = `volume_${volumeId}`;
+    const currentCount = cart[cartKey] || 0;
+    const newCount = currentCount + delta;
+    
+    if (newCount < 0) return;
+    if (newCount === 0) {
+        delete cart[cartKey];
+    } else {
+        cart[cartKey] = newCount;
+    }
+    
+    const countSpan = document.getElementById(`book-count-${volumeId}`);
+    const controlsDiv = document.getElementById(`book-controls-${volumeId}`);
+    const addBtn = document.getElementById(`book-add-${volumeId}`);
+    
+    if (countSpan) countSpan.innerText = newCount;
+    if (controlsDiv && addBtn) {
+        if (newCount > 0) {
+            controlsDiv.style.display = 'flex';
+            addBtn.style.display = 'none';
+        } else {
+            controlsDiv.style.display = 'none';
+            addBtn.style.display = 'block';
         }
+    }
+    
+    saveUserData();
+    renderCart();
+    updateCartBadge();
+}
         
         function openVolumeAnswers(volumeId, pagesCount) {
-            currentVolumeId = volumeId;
-            currentVolumePages = pagesCount;
-            currentPageIndex = 1;
-            
-            const modal = document.getElementById('answersViewerModal');
-            if (modal) {
-                modal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-                showAnswerPage();
-            }
-        }
+    console.log('📖 Opening volume:', volumeId, 'pages:', pagesCount);
+    
+    currentVolumeId = volumeId;
+    currentVolumePages = pagesCount;
+    currentPageIndex = 1;
+    
+    const modal = document.getElementById('answersViewerModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        showAnswerPage();
+    }
+}
         
         function showAnswerPage() {
-            const imageUrl = `assets/otveti/${currentVolumeId}/${currentPageIndex}.png`;
-            const imgElement = document.getElementById('answersViewerImage');
-            const pageInfo = document.getElementById('answersPageInfo');
-            const prevBtn = document.getElementById('answersPrevBtn');
-            const nextBtn = document.getElementById('answersNextBtn');
-            const titleEl = document.getElementById('answersViewerTitle');
-            
-            if (titleEl) titleEl.innerText = `${currentVolumeId.toUpperCase()} - Ответы`;
-            if (imgElement) {
-                imgElement.src = imageUrl;
-                imgElement.onerror = () => {
-                    imgElement.src = 'https://via.placeholder.com/600x800?text=Изображение+не+найдено';
-                };
-            }
-            if (pageInfo) {
-                pageInfo.innerText = `${currentPageIndex} / ${currentVolumePages}`;
-            }
-            if (prevBtn) {
-                prevBtn.disabled = currentPageIndex <= 1;
-            }
-            if (nextBtn) {
-                nextBtn.disabled = currentPageIndex >= currentVolumePages;
-            }
-        }
+    // Правильный путь: assets/otveti/t1/1.png
+    const imageUrl = `assets/otveti/${currentVolumeId}/${currentPageIndex}.png`;
+    
+    console.log('📸 Loading answer:', imageUrl);
+    
+    const imgElement = document.getElementById('answersViewerImage');
+    const pageInfo = document.getElementById('answersPageInfo');
+    const prevBtn = document.getElementById('answersPrevBtn');
+    const nextBtn = document.getElementById('answersNextBtn');
+    const titleEl = document.getElementById('answersViewerTitle');
+    
+    if (titleEl) titleEl.innerText = `${currentVolumeId.toUpperCase()} - Ответы`;
+    
+    if (imgElement) {
+        imgElement.style.opacity = '0.5';
+        imgElement.src = '';
+        
+        const img = new Image();
+        img.onload = function() {
+            imgElement.src = imageUrl;
+            imgElement.style.opacity = '1';
+            console.log('✅ Image loaded:', imageUrl);
+        };
+        img.onerror = function() {
+            console.error('❌ Image not found:', imageUrl);
+            // Показываем заглушку с информацией
+            imgElement.src = 'data:image/svg+xml,' + encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
+                    <rect width="600" height="800" fill="#f0f0f0"/>
+                    <text x="300" y="100" font-size="20" text-anchor="middle" fill="#ff9500">📖 Ответ не найден</text>
+                    <text x="300" y="150" font-size="14" text-anchor="middle" fill="#666">Файл: ${imageUrl}</text>
+                    <text x="300" y="180" font-size="12" text-anchor="middle" fill="#999">Том ${currentVolumeId}, страница ${currentPageIndex}</text>
+                    <text x="300" y="250" font-size="12" text-anchor="middle" fill="#999">Загрузите файлы в папку:</text>
+                    <text x="300" y="280" font-size="11" text-anchor="middle" fill="#999">assets/otveti/${currentVolumeId}/${currentPageIndex}.png</text>
+                </svg>
+            `);
+            imgElement.style.opacity = '1';
+        };
+        img.src = imageUrl;
+    }
+    
+    if (pageInfo) {
+        pageInfo.innerText = `${currentPageIndex} / ${currentVolumePages}`;
+    }
+    if (prevBtn) {
+        prevBtn.disabled = currentPageIndex <= 1;
+    }
+    if (nextBtn) {
+        nextBtn.disabled = currentPageIndex >= currentVolumePages;
+    }
+}
         
         function prevAnswerPage() {
             if (currentPageIndex > 1) {

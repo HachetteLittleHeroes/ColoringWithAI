@@ -2836,7 +2836,7 @@ async function submitTaskPhoto(event) {
                 tg.showAlert('✅ Фото успешно отправлено на проверку!');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
-            closeTaskUploadModal();
+            //closeTaskUploadModal();
             await refreshUserProgress();
         } else {
             throw new Error(result?.message || 'Сервер вернул ошибку');

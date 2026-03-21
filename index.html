@@ -2362,6 +2362,78 @@
         let markersLoading = false;
         let userProgress = {};
         
+        // Кэш форматов файлов
+const fileFormatCache = {};
+
+async function getImageUrl(volumeId, pageNumber) {
+    const cacheKey = `${volumeId}_${pageNumber}`;
+    
+    if (fileFormatCache[cacheKey]) {
+        return fileFormatCache[cacheKey];
+    }
+    
+    const extensions = ['png', 'jpg', 'jpeg'];
+    
+    for (const ext of extensions) {
+        const url = `assets/otveti/${volumeId}/${pageNumber}.${ext}`;
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            if (response.ok) {
+                fileFormatCache[cacheKey] = url;
+                return url;
+            }
+        } catch(e) {
+            // продолжаем проверять
+        }
+    }
+    
+    return null;
+}
+
+// Обновленная версия showAnswerPage с кэшем
+async function showAnswerPageAsync() {
+    const pageInfo = document.getElementById('answersPageInfo');
+    const prevBtn = document.getElementById('answersPrevBtn');
+    const nextBtn = document.getElementById('answersNextBtn');
+    const titleEl = document.getElementById('answersViewerTitle');
+    const imgElement = document.getElementById('answersViewerImage');
+    
+    if (titleEl) titleEl.innerText = `${currentVolumeId.toUpperCase()} - Ответы`;
+    
+    if (imgElement) {
+        imgElement.style.opacity = '0.5';
+        
+        const imageUrl = await getImageUrl(currentVolumeId, currentPageIndex);
+        
+        if (imageUrl) {
+            console.log(`✅ Loading: ${imageUrl}`);
+            imgElement.src = imageUrl;
+            imgElement.style.opacity = '1';
+        } else {
+            console.error(`❌ Image not found for ${currentVolumeId}/${currentPageIndex}`);
+            imgElement.src = 'data:image/svg+xml,' + encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
+                    <rect width="600" height="800" fill="#f0f0f0"/>
+                    <text x="300" y="100" font-size="20" text-anchor="middle" fill="#ff9500">📖 Ответ не найден</text>
+                    <text x="300" y="150" font-size="14" text-anchor="middle" fill="#666">Файл: ${currentVolumeId}/${currentPageIndex}.{png,jpg}</text>
+                    <text x="300" y="180" font-size="12" text-anchor="middle" fill="#999">Проверьте папку assets/otveti/${currentVolumeId}/</text>
+                </svg>
+            `);
+            imgElement.style.opacity = '1';
+        }
+    }
+    
+    if (pageInfo) {
+        pageInfo.innerText = `${currentPageIndex} / ${currentVolumePages}`;
+    }
+    if (prevBtn) {
+        prevBtn.disabled = currentPageIndex <= 1;
+    }
+    if (nextBtn) {
+        nextBtn.disabled = currentPageIndex >= currentVolumePages;
+    }
+}
+        
         // ==========================================
         // ДАННЫЕ ЗАДАНИЙ (ВЕТКИ)
         // ==========================================
@@ -3708,50 +3780,61 @@ async function submitTaskPhoto(event) {
     if (modal) {
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        showAnswerPage();
+        showAnswerPage(); // или showAnswerPageAsync() если используете асинхронную версию
     }
 }
         
         function showAnswerPage() {
-    // Правильный путь: assets/otveti/t1/1.png
-    const imageUrl = `assets/otveti/${currentVolumeId}/${currentPageIndex}.png`;
-    
-    console.log('📸 Loading answer:', imageUrl);
-    
-    const imgElement = document.getElementById('answersViewerImage');
     const pageInfo = document.getElementById('answersPageInfo');
     const prevBtn = document.getElementById('answersPrevBtn');
     const nextBtn = document.getElementById('answersNextBtn');
     const titleEl = document.getElementById('answersViewerTitle');
+    const imgElement = document.getElementById('answersViewerImage');
     
     if (titleEl) titleEl.innerText = `${currentVolumeId.toUpperCase()} - Ответы`;
     
     if (imgElement) {
-        imgElement.style.opacity = '0.5';
-        imgElement.src = '';
+        // Пробуем загрузить с разными расширениями
+        const extensions = ['png', 'jpg', 'jpeg'];
+        let currentExtIndex = 0;
         
-        const img = new Image();
-        img.onload = function() {
-            imgElement.src = imageUrl;
-            imgElement.style.opacity = '1';
-            console.log('✅ Image loaded:', imageUrl);
-        };
-        img.onerror = function() {
-            console.error('❌ Image not found:', imageUrl);
-            // Показываем заглушку с информацией
-            imgElement.src = 'data:image/svg+xml,' + encodeURIComponent(`
-                <svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
-                    <rect width="600" height="800" fill="#f0f0f0"/>
-                    <text x="300" y="100" font-size="20" text-anchor="middle" fill="#ff9500">📖 Ответ не найден</text>
-                    <text x="300" y="150" font-size="14" text-anchor="middle" fill="#666">Файл: ${imageUrl}</text>
-                    <text x="300" y="180" font-size="12" text-anchor="middle" fill="#999">Том ${currentVolumeId}, страница ${currentPageIndex}</text>
-                    <text x="300" y="250" font-size="12" text-anchor="middle" fill="#999">Загрузите файлы в папку:</text>
-                    <text x="300" y="280" font-size="11" text-anchor="middle" fill="#999">assets/otveti/${currentVolumeId}/${currentPageIndex}.png</text>
-                </svg>
-            `);
-            imgElement.style.opacity = '1';
-        };
-        img.src = imageUrl;
+        function tryLoadImage() {
+            if (currentExtIndex >= extensions.length) {
+                // Все форматы не загрузились
+                console.error('❌ Image not found in any format');
+                imgElement.src = 'data:image/svg+xml,' + encodeURIComponent(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
+                        <rect width="600" height="800" fill="#f0f0f0"/>
+                        <text x="300" y="100" font-size="20" text-anchor="middle" fill="#ff9500">📖 Ответ не найден</text>
+                        <text x="300" y="150" font-size="14" text-anchor="middle" fill="#666">Файл: ${currentVolumeId}/${currentPageIndex}.{png,jpg}</text>
+                        <text x="300" y="180" font-size="12" text-anchor="middle" fill="#999">Проверьте папку assets/otveti/${currentVolumeId}/</text>
+                    </svg>
+                `);
+                imgElement.style.opacity = '1';
+                return;
+            }
+            
+            const ext = extensions[currentExtIndex];
+            const imageUrl = `assets/otveti/${currentVolumeId}/${currentPageIndex}.${ext}`;
+            console.log(`📸 Trying to load: ${imageUrl}`);
+            
+            imgElement.style.opacity = '0.5';
+            
+            const img = new Image();
+            img.onload = function() {
+                console.log(`✅ Image loaded: ${imageUrl}`);
+                imgElement.src = imageUrl;
+                imgElement.style.opacity = '1';
+            };
+            img.onerror = function() {
+                console.log(`❌ Not found: ${imageUrl}`);
+                currentExtIndex++;
+                tryLoadImage();
+            };
+            img.src = imageUrl;
+        }
+        
+        tryLoadImage();
     }
     
     if (pageInfo) {

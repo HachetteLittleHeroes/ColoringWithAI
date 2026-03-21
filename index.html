@@ -2620,14 +2620,34 @@
         return userProgress;
     }
     
-    async function loadUnlockedStatuses() {
-        const statuses = await fetchAPI(`/api/unlocked_statuses?user_id=${userId}`);
+   // ==========================================
+// ЗАГРУЗКА СТАТУСОВ С СЕРВЕРА
+// ==========================================
+
+async function loadUnlockedStatuses() {
+    try {
+        console.log('Loading unlocked statuses for user:', userId);
+        const response = await fetch(`${SERVER_URL}/api/unlocked_statuses?user_id=${userId}`);
+        const statuses = await response.json();
+        console.log('Loaded statuses:', statuses);
+        
         if (statuses && Array.isArray(statuses)) {
             user.unlockedStatuses = statuses;
+            // Убедимся, что 'Новичок' всегда есть
+            if (!user.unlockedStatuses.includes('Новичок')) {
+                user.unlockedStatuses.unshift('Новичок');
+            }
+        }
+        return user.unlockedStatuses;
+    } catch (error) {
+        console.error('Ошибка загрузки статусов:', error);
+        // Если не удалось загрузить, оставляем текущие
+        if (!user.unlockedStatuses || user.unlockedStatuses.length === 0) {
+            user.unlockedStatuses = ['Новичок'];
         }
         return user.unlockedStatuses;
     }
-    
+}
     async function loadUserAchievements() {
         const achievements = await fetchAPI(`/api/achievements?user_id=${userId}`);
         if (achievements && Array.isArray(achievements)) {
@@ -2727,82 +2747,94 @@
         }
     }
     
-    // ==========================================
-    // ОТПРАВКА ФОТО НА ПРОВЕРКУ
-    // ==========================================
+   // ==========================================
+// ОТПРАВКА ФОТО НА ПРОВЕРКУ (ИСПРАВЛЕННАЯ)
+// ==========================================
+
+let currentUploadBranch = null;
+let currentUploadLevel = null;
+let tempPhotos = [];
+
+function openTaskUpload(branchKey, levelIndex) {
+    console.log('openTaskUpload called:', branchKey, levelIndex);
+    currentUploadBranch = branchKey;
+    currentUploadLevel = levelIndex;
     
-    let currentUploadBranch = null;
-    let currentUploadLevel = null;
-    let tempPhotos = [];
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = true;
+    fileInput.onchange = handleTaskFilesSelected;
+    fileInput.click();
+}
+
+function handleTaskFilesSelected(event) {
+    console.log('handleTaskFilesSelected called');
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
     
-    function openTaskUpload(branchKey, levelIndex) {
-        currentUploadBranch = branchKey;
-        currentUploadLevel = levelIndex;
-        
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'image/*';
-        fileInput.multiple = true;
-        fileInput.onchange = handleTaskFilesSelected;
-        fileInput.click();
+    tempPhotos = files;
+    
+    const previewContainer = document.getElementById('taskPhotoPreviewContainer');
+    if (previewContainer) {
+        previewContainer.innerHTML = '';
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = '70px';
+                img.style.height = '70px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '12px';
+                previewContainer.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
     }
     
-    function handleTaskFilesSelected(event) {
-        const files = Array.from(event.target.files);
-        if (files.length === 0) return;
-        
-        tempPhotos = files;
-        
-        const previewContainer = document.getElementById('taskPhotoPreviewContainer');
-        if (previewContainer) {
-            previewContainer.innerHTML = '';
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.width = '70px';
-                    img.style.height = '70px';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '12px';
-                    previewContainer.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-        
-        const modal = document.getElementById('taskUploadModal');
-        if (modal) modal.style.display = 'flex';
+    const modal = document.getElementById('taskUploadModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        console.log('Modal opened, photos count:', files.length);
     }
+}
+
+async function submitTaskPhoto() {
+    console.log('submitTaskPhoto called');
+    console.log('currentUploadBranch:', currentUploadBranch);
+    console.log('currentUploadLevel:', currentUploadLevel);
+    console.log('tempPhotos length:', tempPhotos.length);
     
-    async function submitTaskPhoto() {
     if (!currentUploadBranch || currentUploadLevel === null) {
+        const msg = 'Ошибка: задание не выбрано';
         if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.showAlert('Ошибка: задание не выбрано');
+            window.Telegram.WebApp.showAlert(msg);
         } else {
-            alert('Ошибка: задание не выбрано');
+            alert(msg);
         }
         return;
     }
     
     if (tempPhotos.length === 0) {
+        const msg = 'Выберите фото для отправки';
         if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.showAlert('Выберите фото для отправки');
+            window.Telegram.WebApp.showAlert(msg);
         } else {
-            alert('Выберите фото для отправки');
+            alert(msg);
         }
         return;
     }
     
     const branch = TASK_BRANCHES[currentUploadBranch];
     if (!branch) {
-        alert('Ошибка: ветка не найдена');
+        alert('Ошибка: ветка задания не найдена');
         return;
     }
     
     const level = branch.levels[currentUploadLevel];
     if (!level) {
-        alert('Ошибка: уровень не найден');
+        alert('Ошибка: уровень задания не найден');
         return;
     }
     
@@ -2827,18 +2859,23 @@
             formData.append('photos', tempPhotos[i]);
         }
         
+        console.log('Sending to:', `${SERVER_URL}/api/check_achievement`);
+        
         const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
             method: 'POST',
             body: formData
         });
         
+        console.log('Response status:', response.status);
+        
         const result = await response.json();
+        console.log('Response result:', result);
         
         if (result && result.status === 'ok') {
             if (window.Telegram?.WebApp) {
-                window.Telegram.WebApp.showAlert('✅ Фото отправлено на проверку!');
+                window.Telegram.WebApp.showAlert('✅ Фото отправлено на проверку администратору!');
             } else {
-                alert('✅ Фото отправлено на проверку!');
+                alert('✅ Фото отправлено на проверку администратору!');
             }
             closeTaskUploadModal();
         } else {
@@ -2846,25 +2883,26 @@
         }
     } catch (error) {
         console.error('Upload error:', error);
+        const msg = '❌ Ошибка: ' + (error.message || 'Проверьте интернет');
         if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.showAlert('❌ Ошибка: ' + error.message);
+            window.Telegram.WebApp.showAlert(msg);
         } else {
-            alert('❌ Ошибка: ' + error.message);
+            alert(msg);
         }
     }
 }
+
+function closeTaskUploadModal() {
+    const modal = document.getElementById('taskUploadModal');
+    const previewContainer = document.getElementById('taskPhotoPreviewContainer');
     
-    function closeTaskUploadModal() {
-        const modal = document.getElementById('taskUploadModal');
-        const previewContainer = document.getElementById('taskPhotoPreviewContainer');
-        
-        if (modal) modal.style.display = 'none';
-        if (previewContainer) previewContainer.innerHTML = '';
-        
-        currentUploadBranch = null;
-        currentUploadLevel = null;
-        tempPhotos = [];
-    }
+    if (modal) modal.style.display = 'none';
+    if (previewContainer) previewContainer.innerHTML = '';
+    
+    currentUploadBranch = null;
+    currentUploadLevel = null;
+    tempPhotos = [];
+}
     
     // ==========================================
     // ТОМА И ОТВЕТЫ (СВАЙПЫ)
@@ -3066,19 +3104,21 @@
     // ==========================================
     
     function updateUI() {
-        const nameEl = document.getElementById('displayUsername');
-        const avatarEl = document.getElementById('user-avatar');
-        const balanceEl = document.getElementById('userBalance');
-        const statusBadge = document.getElementById('currentStatus');
-        
-        if (nameEl) nameEl.innerText = user.name;
-        if (avatarEl) avatarEl.src = user.avatar;
-        if (balanceEl) balanceEl.innerText = user.balance;
-        if (statusBadge) statusBadge.innerText = user.status || 'Новичок';
-        
-        updateCartBadge();
-        renderShowcase();
-    }
+    const nameEl = document.getElementById('displayUsername');
+    const avatarEl = document.getElementById('user-avatar');
+    const balanceEl = document.getElementById('userBalance');
+    const statusBadge = document.getElementById('currentStatus');
+    
+    if (nameEl) nameEl.innerText = user.name;
+    if (avatarEl) avatarEl.src = user.avatar;
+    if (balanceEl) balanceEl.innerText = user.balance;
+    if (statusBadge) statusBadge.innerText = user.status || 'Новичок';
+    
+    console.log('UI Updated - Current status:', user.status);
+    
+    updateCartBadge();
+    renderShowcase();
+}
     
     function updateCartBadge() {
         let totalItems = 0;
@@ -3277,42 +3317,92 @@
         if (modal) modal.style.display = 'none';
     }
     
-    function openStatusInfo() {
-        const list = document.getElementById('availableStatusesList');
-        if (!list) return;
-        list.innerHTML = '';
-        
-        const allStatuses = ['Новичок', ...Object.values(BRANCH_REWARDS)];
-        
-        allStatuses.forEach(status => {
-            const isUnlocked = user.unlockedStatuses.includes(status);
-            const isActive = user.status === status;
-            
-            const div = document.createElement('div');
-            div.style.cssText = `padding:12px; margin:8px 0; border-radius:12px; background:var(--card-bg); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);`;
-            
-            if (isUnlocked) {
-                div.innerHTML = `
-                    <span>${status}</span>
-                    ${!isActive ? `<button class="balance-btn" style="padding:6px 12px; width:auto;" onclick="selectStatus('${status}')">Выбрать</button>` : '<span style="color:var(--status-green);">✓ Активен</span>'}
-                `;
-            } else {
-                div.innerHTML = `<span style="opacity:0.6;">${status}</span><span style="color:var(--text-gray);">🔒 Выполните все уровни ветки</span>`;
-            }
-            list.appendChild(div);
-        });
-        
-        const modal = document.getElementById('statusSelectModal');
-        if (modal) modal.style.display = 'flex';
+    // ==========================================
+// ВЫБОР СТАТУСА (ИСПРАВЛЕННАЯ)
+// ==========================================
+
+function openStatusInfo() {
+    console.log('openStatusInfo called');
+    console.log('user.unlockedStatuses:', user.unlockedStatuses);
+    
+    const list = document.getElementById('availableStatusesList');
+    if (!list) {
+        console.error('availableStatusesList not found');
+        return;
     }
     
-    function selectStatus(statusName) {
-        user.status = statusName;
-        saveUserData();
-        const modal = document.getElementById('statusSelectModal');
-        if (modal) modal.style.display = 'none';
-        updateUI();
+    list.innerHTML = '';
+    
+    const allStatuses = ['Новичок', ...Object.values(BRANCH_REWARDS)];
+    console.log('allStatuses:', allStatuses);
+    
+    allStatuses.forEach(status => {
+        const isUnlocked = user.unlockedStatuses.includes(status);
+        const isActive = user.status === status;
+        
+        const div = document.createElement('div');
+        div.style.cssText = `padding:12px; margin:8px 0; border-radius:12px; background:var(--card-bg); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);`;
+        
+        if (isUnlocked) {
+            if (isActive) {
+                div.innerHTML = `
+                    <span>${status}</span>
+                    <span style="color:var(--status-green);">✓ Активен</span>
+                `;
+            } else {
+                const btn = document.createElement('button');
+                btn.innerText = 'Выбрать';
+                btn.className = 'balance-btn';
+                btn.style.padding = '6px 12px';
+                btn.style.width = 'auto';
+                btn.onclick = (function(s) {
+                    return function() { selectStatus(s); };
+                })(status);
+                div.innerHTML = `<span>${status}</span>`;
+                div.appendChild(btn);
+            }
+        } else {
+            div.innerHTML = `<span style="opacity:0.6;">${status}</span><span style="color:var(--text-gray);">🔒 Выполните все уровни ветки</span>`;
+        }
+        list.appendChild(div);
+    });
+    
+    const modal = document.getElementById('statusSelectModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        console.log('Status modal opened');
     }
+}
+
+function selectStatus(statusName) {
+    console.log('selectStatus called with:', statusName);
+    console.log('Previous status:', user.status);
+    console.log('Unlocked statuses:', user.unlockedStatuses);
+    
+    if (!user.unlockedStatuses.includes(statusName)) {
+        const msg = `Статус "${statusName}" не разблокирован`;
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert(msg);
+        } else {
+            alert(msg);
+        }
+        return;
+    }
+    
+    user.status = statusName;
+    saveUserData();
+    
+    const modal = document.getElementById('statusSelectModal');
+    if (modal) modal.style.display = 'none';
+    
+    updateUI();
+    
+    if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.showAlert(`✅ Статус изменен на "${statusName}"`);
+    } else {
+        alert(`✅ Статус изменен на "${statusName}"`);
+    }
+}
     
     function openSupport() {
         window.open('https://boosty.to/coloringapp', '_blank');

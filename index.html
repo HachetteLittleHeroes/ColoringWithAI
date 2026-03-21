@@ -2776,55 +2776,83 @@
     }
     
     async function submitTaskPhoto() {
-        if (!currentUploadBranch || currentUploadLevel === null) {
-            tg.showAlert('Ошибка: задание не выбрано');
-            return;
+    if (!currentUploadBranch || currentUploadLevel === null) {
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('Ошибка: задание не выбрано');
+        } else {
+            alert('Ошибка: задание не выбрано');
+        }
+        return;
+    }
+    
+    if (tempPhotos.length === 0) {
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('Выберите фото для отправки');
+        } else {
+            alert('Выберите фото для отправки');
+        }
+        return;
+    }
+    
+    const branch = TASK_BRANCHES[currentUploadBranch];
+    if (!branch) {
+        alert('Ошибка: ветка не найдена');
+        return;
+    }
+    
+    const level = branch.levels[currentUploadLevel];
+    if (!level) {
+        alert('Ошибка: уровень не найден');
+        return;
+    }
+    
+    const rewardStatus = BRANCH_REWARDS[currentUploadBranch] || '';
+    
+    if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.showAlert('📤 Отправка фото...');
+    }
+    
+    try {
+        const formData = new FormData();
+        formData.append('user', userId);
+        formData.append('title', `${branch.name} - Уровень ${currentUploadLevel + 1}: ${level.title}`);
+        formData.append('id', `${currentUploadBranch}_${currentUploadLevel}`);
+        formData.append('level', currentUploadLevel + 1);
+        formData.append('branchKey', currentUploadBranch);
+        formData.append('levelIndex', currentUploadLevel);
+        formData.append('rewardStatus', rewardStatus);
+        formData.append('maxProgress', level.maxProgress);
+        
+        for (let i = 0; i < tempPhotos.length; i++) {
+            formData.append('photos', tempPhotos[i]);
         }
         
-        if (tempPhotos.length === 0) {
-            tg.showAlert('Выберите фото для отправки');
-            return;
-        }
+        const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
+            method: 'POST',
+            body: formData
+        });
         
-        const branch = TASK_BRANCHES[currentUploadBranch];
-        const level = branch.levels[currentUploadLevel];
-        const rewardStatus = BRANCH_REWARDS[currentUploadBranch];
+        const result = await response.json();
         
-        tg.showAlert('📤 Отправка фото... Пожалуйста, подождите');
-        
-        try {
-            const formData = new FormData();
-            formData.append('user', userId);
-            formData.append('title', `${branch.name} - Уровень ${currentUploadLevel + 1}: ${level.title}`);
-            formData.append('id', `${currentUploadBranch}_${currentUploadLevel}`);
-            formData.append('level', currentUploadLevel + 1);
-            formData.append('branchKey', currentUploadBranch);
-            formData.append('levelIndex', currentUploadLevel);
-            formData.append('rewardStatus', rewardStatus);
-            formData.append('maxProgress', level.maxProgress);
-            
-            for (let i = 0; i < tempPhotos.length; i++) {
-                formData.append('photos', tempPhotos[i]);
-            }
-            
-            const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
-                method: 'POST',
-                body: formData
-            });
-            
-            const result = await response.json();
-            
-            if (result && result.status === 'ok') {
-                tg.showAlert('✅ Фото отправлено на проверку администратору!');
-                closeTaskUploadModal();
+        if (result && result.status === 'ok') {
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.showAlert('✅ Фото отправлено на проверку!');
             } else {
-                tg.showAlert('❌ Ошибка отправки. Попробуйте позже.');
+                alert('✅ Фото отправлено на проверку!');
             }
-        } catch (error) {
-            console.error('Upload error:', error);
-            tg.showAlert('❌ Ошибка соединения. Проверьте интернет и попробуйте снова.');
+            closeTaskUploadModal();
+        } else {
+            throw new Error(result?.message || 'Ошибка отправки');
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.showAlert('❌ Ошибка: ' + error.message);
+        } else {
+            alert('❌ Ошибка: ' + error.message);
         }
     }
+}
     
     function closeTaskUploadModal() {
         const modal = document.getElementById('taskUploadModal');

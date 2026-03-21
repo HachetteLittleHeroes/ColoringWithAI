@@ -45,21 +45,6 @@
             --input-bg: #2c2c2e;
         }
 
-        [data-theme="dark"] .theme-option span,
-        [data-theme="dark"] .theme-option .color-preview {
-            color: #ffffff !important;
-        }
-
-        [data-theme="dark"] .theme-option {
-            background: #2c2c2e;
-            border-color: #3a3a3c;
-        }
-
-        [data-theme="dark"] .theme-option.active {
-            background: rgba(255,149,0,0.2);
-            border-color: var(--accent);
-        }
-
         [data-theme="blue"] {
             --bg: #f0f9ff;
             --bg-secondary: #ffffff;
@@ -100,11 +85,11 @@
             --accent-gradient: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
         }
 
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            -webkit-tap-highlight-color: transparent; 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
             outline: none;
         }
 
@@ -117,22 +102,22 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        .header { 
-            font-size: 26px; 
-            font-weight: 800; 
-            padding: 20px 15px 10px; 
+        .header {
+            font-size: 26px;
+            font-weight: 800;
+            padding: 20px 15px 10px;
             text-align: left;
             letter-spacing: -0.5px;
         }
 
-        .page { 
-            display: none; 
+        .page {
+            display: none;
             width: 100%;
             animation: fadeIn 0.3s ease-out;
         }
 
-        .page.active { 
-            display: block !important; 
+        .page.active {
+            display: block !important;
         }
 
         @keyframes fadeIn {
@@ -140,16 +125,16 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        button { 
-            border: none; 
+        button {
+            border: none;
             background: none;
             cursor: pointer;
             transition: all 0.15s;
             user-select: none;
         }
 
-        button:active { 
-            transform: scale(0.96); 
+        button:active {
+            transform: scale(0.96);
             opacity: 0.8;
         }
 
@@ -163,7 +148,7 @@
            ========================================== */
         .profile-header-block {
             background: var(--bg-header);
-            margin: 15px; 
+            margin: 15px;
             padding: 20px;
             border-radius: 24px;
             display: flex;
@@ -174,7 +159,7 @@
         }
 
         .avatar-wrapper {
-            width: 90px; 
+            width: 90px;
             height: 90px;
             border-radius: 50%;
             border: 3px solid var(--accent) !important;
@@ -185,24 +170,24 @@
             cursor: pointer;
         }
 
-        .avatar-wrapper img { 
-            width: 100%; 
-            height: 100%; 
-            border-radius: 50%; 
-            object-fit: cover; 
+        .avatar-wrapper img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         .avatar-edit-icon {
             position: absolute;
-            bottom: 0; 
+            bottom: 0;
             right: 0;
             background: var(--accent);
             color: white;
-            width: 28px; 
+            width: 28px;
             height: 28px;
             border-radius: 50%;
-            display: flex; 
-            align-items: center; 
+            display: flex;
+            align-items: center;
             justify-content: center;
             font-size: 14px;
             border: 3px solid var(--bg-header);
@@ -214,27 +199,27 @@
             flex: 1;
         }
 
-        .name-row { 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
+        .name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             cursor: pointer;
             margin-bottom: 6px;
         }
 
-        .name-row h2 { 
-            font-size: 22px; 
+        .name-row h2 {
+            font-size: 22px;
             font-weight: 700;
             margin: 0;
             color: var(--text);
         }
 
-        .status-badge { 
-            font-size: 13px; 
-            font-weight: 600; 
-            display: inline-block; 
-            padding: 6px 16px; 
-            border-radius: 20px; 
+        .status-badge {
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
             background: rgba(0,0,0,0.05);
             color: var(--text-gray);
             cursor: pointer;
@@ -314,9 +299,9 @@
            ========================================== */
         .balance-card {
             background: var(--accent-gradient);
-            margin: 15px; 
+            margin: 15px;
             padding: 24px;
-            border-radius: 28px; 
+            border-radius: 28px;
             text-align: center;
             box-shadow: 0 12px 24px rgba(0,0,0,0.15);
             position: relative;
@@ -327,40 +312,42 @@
         .balance-card::before {
             content: '';
             position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
             background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
             pointer-events: none;
         }
 
-        .balance-label { 
-            font-size: 13px; 
-            letter-spacing: 1.5px; 
-            opacity: 0.85; 
+        .balance-label {
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            opacity: 0.85;
             text-transform: uppercase;
             font-weight: 600;
         }
 
         .balance-main {
-            font-size: 46px; 
+            font-size: 46px;
             font-weight: 900;
             margin: 8px 0 20px;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 12px;
             text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        .gold-book { 
-            color: #FFD700; 
+        .gold-book {
+            color: #FFD700;
             filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
         }
 
-        .balance-controls { 
-            display: flex; 
+        .balance-controls {
+            display: flex;
             flex-direction: column;
-            gap: 10px; 
+            gap: 10px;
             max-width: 280px;
             margin: 0 auto;
         }
@@ -369,9 +356,9 @@
             width: 100%;
             background: rgba(255, 255, 255, 0.18);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white; 
+            color: white;
             padding: 14px 10px;
-            font-size: 15px; 
+            font-size: 15px;
             font-weight: 700;
             border-radius: 16px;
             backdrop-filter: blur(5px);
@@ -460,7 +447,58 @@
         }
 
         /* ==========================================
-           6. ЗАДАНИЯ (ВЕТКИ)
+           6. ЗАРАБОТОК АШЕТИКОВ
+           ========================================== */
+        .earn-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .earn-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 14px 18px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .earn-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .earn-left i {
+            color: var(--accent);
+            font-size: 18px;
+            width: 24px;
+        }
+
+        .earn-left span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .earn-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .earn-amount {
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 16px;
+        }
+    </style>
+</head>
+    <style>
+        /* ==========================================
+           7. ЗАДАНИЯ (ВЕТКИ)
            ========================================== */
         .tasks-section {
             background: var(--bg-header);
@@ -615,7 +653,7 @@
         }
 
         /* ==========================================
-           7. ВИТРИНА ДОСТИЖЕНИЙ
+           8. ВИТРИНА ДОСТИЖЕНИЙ
            ========================================== */
         .showcase-container {
             background: var(--bg-header);
@@ -624,6 +662,12 @@
             border-radius: 24px;
             border: 2px solid var(--accent);
             cursor: pointer;
+        }
+
+        .showcase-container h3 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--text);
         }
 
         .showcase-grid {
@@ -661,10 +705,11 @@
             text-align: center;
             color: var(--text-gray);
             font-size: 12px;
+            cursor: pointer;
         }
 
         /* ==========================================
-           8. ПОДДЕРЖАТЬ НАС
+           9. ПОДДЕРЖАТЬ НАС
            ========================================== */
         .support-section {
             background: var(--bg-header);
@@ -707,7 +752,7 @@
         }
 
         /* ==========================================
-           9. ТЕМЫ ОФОРМЛЕНИЯ
+           10. ТЕМЫ ОФОРМЛЕНИЯ
            ========================================== */
         .themes-section {
             background: var(--bg-header);
@@ -820,7 +865,7 @@
         }
 
         /* ==========================================
-           10. ПОИСК
+           11. ПОИСК
            ========================================== */
         .search-container {
             padding: 0 15px 15px;
@@ -861,7 +906,7 @@
         }
 
         /* ==========================================
-           11. ГАЛЕРЕЯ ДОСТИЖЕНИЙ
+           12. ГАЛЕРЕЯ ДОСТИЖЕНИЙ
            ========================================== */
         .achievements-grid {
             display: grid;
@@ -923,7 +968,7 @@
         }
 
         /* ==========================================
-           12. МАРКЕРЫ
+           13. МАРКЕРЫ
            ========================================== */
         .markers-section {
             padding: 0 15px;
@@ -951,6 +996,10 @@
             border: 2px solid var(--border-color);
             flex-shrink: 0;
             background: var(--bg);
+        }
+
+        .color-circle.trained {
+            border: 2px solid var(--accent);
         }
 
         .marker-info {
@@ -984,10 +1033,21 @@
             font-weight: 600;
         }
 
-        .marker-stock.out-of-stock { color: var(--status-red); }
-        .marker-stock.low-stock { color: var(--status-dark-orange); }
-        .marker-stock.medium-stock { color: var(--status-green); }
-        .marker-stock.high-stock { color: var(--status-green); }
+        .marker-stock.out-of-stock {
+            color: var(--status-red);
+        }
+
+        .marker-stock.low-stock {
+            color: var(--status-dark-orange);
+        }
+
+        .marker-stock.medium-stock {
+            color: var(--status-green);
+        }
+
+        .marker-stock.high-stock {
+            color: var(--status-green);
+        }
 
         .marker-controls {
             display: flex;
@@ -1034,11 +1094,8 @@
             text-align: center;
             color: var(--text);
         }
-    </style>
-</head>
-    <style>
         /* ==========================================
-           13. КОРЗИНА
+           14. КОРЗИНА
            ========================================== */
         .cart-wrapper {
             position: relative;
@@ -1182,7 +1239,7 @@
         }
 
         /* ==========================================
-           14. ИИ ПАЛИТРА
+           15. ИИ ПАЛИТРА
            ========================================== */
         .ai-section {
             padding: 0 15px;
@@ -1195,6 +1252,7 @@
             text-align: center;
             cursor: pointer;
             background: rgba(255,149,0,0.05);
+            margin: 0 15px;
         }
 
         .upload-area i {
@@ -1215,6 +1273,8 @@
             background: var(--bg-header);
             border: 2px solid var(--status-green);
             border-radius: 24px;
+            margin: 15px;
+            display: none;
         }
 
         .admin-panel h4 {
@@ -1235,7 +1295,8 @@
             margin-bottom: 5px;
         }
 
-        .admin-panel input, .admin-panel select {
+        .admin-panel input,
+        .admin-panel select {
             width: 100%;
             padding: 12px;
             border-radius: 12px;
@@ -1271,6 +1332,7 @@
             border-radius: 16px;
             display: none;
             border: 1px solid var(--border-color);
+            margin: 15px;
         }
 
         .loading {
@@ -1285,12 +1347,16 @@
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* ==========================================
-           15. НАВИГАЦИЯ
+           16. НАВИГАЦИЯ
            ========================================== */
         .nav {
             position: fixed;
@@ -1342,7 +1408,7 @@
         }
 
         /* ==========================================
-           16. МОДАЛЬНЫЕ ОКНА
+           17. МОДАЛЬНЫЕ ОКНА
            ========================================== */
         .modal-overlay {
             position: fixed;
@@ -1350,7 +1416,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 100000;
             display: none;
             align-items: center;
@@ -1433,7 +1499,8 @@
             border-top: 1px solid var(--border-color);
         }
 
-        input[type="text"], input[type="number"] {
+        input[type="text"],
+        input[type="number"] {
             width: 100%;
             padding: 14px;
             border-radius: 14px;
@@ -1444,7 +1511,7 @@
         }
 
         /* ==========================================
-           17. ИНВЕНТАРЬ И ОРГАНАЙЗЕРЫ
+           18. ИНВЕНТАРЬ И ОРГАНАЙЗЕРЫ
            ========================================== */
         .inventory-main-block {
             background: var(--bg-header);
@@ -1465,7 +1532,7 @@
         }
 
         .inventory-header:active {
-            background: rgba(0,0,0,0.05);
+            background: rgba(0, 0, 0, 0.05);
         }
 
         .inventory-header-left {
@@ -1489,7 +1556,7 @@
         }
 
         .beta-badge {
-            background: rgba(255,149,0,0.2);
+            background: rgba(255, 149, 0, 0.2);
             color: var(--accent);
             padding: 4px 10px;
             border-radius: 20px;
@@ -1500,6 +1567,7 @@
         .inventory-content {
             padding: 0 20px 20px;
             border-top: 1px solid var(--border-color);
+            display: none;
         }
 
         .inventory-subblock {
@@ -1521,7 +1589,7 @@
         }
 
         .subblock-header:active {
-            background: rgba(0,0,0,0.03);
+            background: rgba(0, 0, 0, 0.03);
         }
 
         .subblock-header-left {
@@ -1540,6 +1608,7 @@
         .subblock-content {
             padding: 15px;
             border-top: 1px solid var(--border-color);
+            display: none;
         }
 
         .create-organizer-btn {
@@ -1570,32 +1639,27 @@
             padding-right: 5px;
         }
 
-        #organizersList > div {
+        #organizersList>div {
             animation: fadeIn 0.2s ease;
         }
 
         #selectedOrganizerGrid {
             display: flex;
             justify-content: center;
+            margin-top: 15px;
         }
 
-        #selectedOrganizerGrid > div {
+        #selectedOrganizerGrid>div {
             overflow-x: auto;
         }
 
-        #selectedOrganizerGrid > div > div {
-            transition: transform 0.1s;
-        }
-
-        #selectedOrganizerGrid > div > div:active {
-            transform: scale(0.95);
-        }
-
         /* ==========================================
-           18. БРЕНДЫ
+           19. БРЕНДЫ
            ========================================== */
         .brand-content {
             scrollbar-width: thin;
+            max-height: 200px;
+            overflow-y: auto;
         }
 
         .brand-content::-webkit-scrollbar {
@@ -1610,55 +1674,6 @@
         .brand-content::-webkit-scrollbar-thumb {
             background: var(--accent);
             border-radius: 4px;
-        }
-
-        /* ==========================================
-           19. ЗАРАБОТОК АШЕТИКОВ
-           ========================================== */
-        .earn-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .earn-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 14px 18px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-        }
-
-        .earn-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .earn-left i {
-            color: var(--accent);
-            font-size: 18px;
-            width: 24px;
-        }
-
-        .earn-left span {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text);
-        }
-
-        .earn-right {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .earn-amount {
-            color: var(--accent);
-            font-weight: 800;
-            font-size: 16px;
         }
 
         /* ==========================================
@@ -1697,7 +1712,7 @@
             margin-bottom: 12px;
             border-radius: 16px;
             padding: 10px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .book-card h4 {
@@ -1852,13 +1867,13 @@
         /* ==========================================
            21. ГЛОБАЛЬНЫЙ ФИКС КЛИКОВ
            ========================================== */
-        button, 
-        .nav-btn, 
+        button,
+        .nav-btn,
         .marker-controls button,
-        .theme-option, 
-        .photo-upload-btn, 
-        .upload-area, 
-        .showcase-slot, 
+        .theme-option,
+        .photo-upload-btn,
+        .upload-area,
+        .showcase-slot,
         .reward-card,
         .avatar-wrapper,
         .status-badge,
@@ -1867,12 +1882,13 @@
         .modal-close-btn,
         .checkout-btn,
         .add-to-cart-btn,
-        .inventory-tab-btn,
         .apply-theme-btn,
         .task-submit-btn,
         .book-card,
         .create-organizer-btn,
-        .close-view-btn {
+        .close-view-btn,
+        .inventory-header,
+        .subblock-header {
             pointer-events: auto !important;
             cursor: pointer !important;
         }
@@ -1888,7 +1904,7 @@
         /* Альфа-тест бейдж */
         .ai-alpha-badge {
             display: inline-block;
-            background: rgba(255,149,0,0.2);
+            background: rgba(255, 149, 0, 0.2);
             color: var(--accent);
             padding: 4px 10px;
             border-radius: 20px;
@@ -1916,7 +1932,386 @@
             background: #444;
         }
     </style>
-    <script>
+</head>
+<body>
+
+<!-- ========== ПРОФИЛЬ ========== -->
+<div id="profile" class="page active">
+    <div class="profile-header-block">
+        <div class="avatar-wrapper" onclick="toggleAvatarEditor()">
+            <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png">
+            <div class="avatar-edit-icon"><i class="fas fa-pencil-alt"></i></div>
+        </div>
+        <div class="profile-info">
+            <div class="name-row" onclick="changeNickname()">
+                <h2 id="displayUsername">Без имени</h2>
+                <i class="fas fa-pencil-alt" style="color: var(--text-gray); font-size: 14px;"></i>
+            </div>
+            <button id="currentStatus" class="status-badge" onclick="openStatusInfo()">Новичок</button>
+        </div>
+    </div>
+
+    <div id="avatarEditor" class="avatar-editor">
+        <p>Выберите аватарку:</p>
+        <div id="avatarPresets" class="preset-avatars-grid"></div>
+        <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
+        <button class="upload-photo-btn" onclick="document.getElementById('customAvatarInput').click()"><i class="fas fa-camera"></i> Загрузить фото</button>
+    </div>
+
+    <div class="balance-card">
+        <p class="balance-label">ВАШ БАЛАНС</p>
+        <div class="balance-main"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
+        <div class="balance-controls">
+            <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🏆</button>
+            <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
+        </div>
+    </div>
+
+    <div id="rewards-section" class="rewards-section">
+        <h3>Товары за ашетики</h3>
+        <div class="rewards-grid">
+            <div class="reward-card" onclick="buyItem('bookmark')">
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b1.png" class="reward-img">
+                <h4>Книжная закладка Hachette</h4>
+                <div class="reward-price"><span class="price-amount">750</span> <i class="fas fa-book-open gold-book"></i></div>
+                <button class="reward-buy-btn">Приобрести</button>
+            </div>
+            <div class="reward-card" onclick="buyItem('petites')">
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b3.png" class="reward-img">
+                <h4>Petites Poupees</h4>
+                <div class="reward-price"><span class="price-amount">950</span> <i class="fas fa-book-open gold-book"></i></div>
+                <button class="reward-buy-btn">Приобрести</button>
+            </div>
+            <div class="reward-card" onclick="buyItem('tracker')">
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img">
+                <h4>Трекер от Hachette</h4>
+                <div class="reward-price"><span class="price-amount">950</span> <i class="fas fa-book-open gold-book"></i></div>
+                <button class="reward-buy-btn">Приобрести</button>
+            </div>
+            <div class="reward-card" onclick="buyItem('alcohol')">
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img">
+                <h4>Спиртовая раскраска</h4>
+                <div class="reward-price"><span class="price-amount">1250</span> <i class="fas fa-book-open gold-book"></i></div>
+                <button class="reward-buy-btn">Приобрести</button>
+            </div>
+            <div class="reward-card" onclick="buyItem('coloriages')">
+                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img">
+                <h4>Hachette Coloriages (А4 том)</h4>
+                <div class="reward-price"><span class="price-amount">1500</span> <i class="fas fa-book-open gold-book"></i></div>
+                <button class="reward-buy-btn">Приобрести</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="earn-section" class="rewards-section" style="display:none;">
+        <h3>Как получить ашетики</h3>
+        <div class="earn-list">
+            <div class="earn-item"><div class="earn-left"><i class="fas fa-star"></i><span>За отзыв</span></div><div class="earn-right"><span class="earn-amount">+25</span><i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 3 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+10</span><i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 5 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+20</span><i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 7 500 ₽</span></div><div class="earn-right"><span class="earn-amount">+30</span><i class="fas fa-book-open gold-book"></i></div></div>
+            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 10 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+40</span><i class="fas fa-book-open gold-book"></i></div></div>
+        </div>
+    </div>
+
+    <div class="tasks-section">
+        <button class="tasks-header" onclick="toggleTasks()">
+            <span>Задания на статусы</span>
+            <i class="fas fa-chevron-down" id="tasksArrow"></i>
+        </button>
+        <div id="tasksContent" class="tasks-content">
+            <div id="branchTasksList"></div>
+        </div>
+    </div>
+
+    <div class="showcase-container">
+        <h3>Витрина Топ-3</h3>
+        <div class="showcase-grid">
+            <div class="showcase-slot" id="slot-0"><i class="fas fa-plus"></i></div>
+            <div class="showcase-slot" id="slot-1"><i class="fas fa-plus"></i></div>
+            <div class="showcase-slot" id="slot-2"><i class="fas fa-plus"></i></div>
+        </div>
+        <div class="showcase-info" onclick="openAchievementsGallery()">Нажмите для просмотра всех достижений</div>
+    </div>
+
+    <!-- ========== МОЙ ИНВЕНТАРЬ ========== -->
+    <div class="inventory-main-block">
+        <div class="inventory-header" onclick="toggleInventoryBlock()">
+            <div class="inventory-header-left"><i class="fas fa-boxes"></i><span>Мой инвентарь</span></div>
+            <div class="inventory-header-right"><span class="beta-badge">Бета-Тест</span><i class="fas fa-chevron-down" id="inventoryArrow"></i></div>
+        </div>
+        <div id="inventoryContent" class="inventory-content">
+            <div class="inventory-subblock">
+                <div class="subblock-header" onclick="toggleOrganizersBlock()">
+                    <div class="subblock-header-left"><i class="fas fa-layer-group"></i><span>Органайзеры</span></div>
+                    <i class="fas fa-chevron-down" id="organizersArrow"></i>
+                </div>
+                <div id="organizersBlockContent" class="subblock-content">
+                    <button class="create-organizer-btn" onclick="openOrganizerCreator()"><i class="fas fa-plus"></i> Создать органайзер</button>
+                    <div id="organizersList"></div>
+                    <div id="selectedOrganizerView" style="display: none; margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h4 id="selectedOrganizerName" style="margin:0; font-size: 16px;"></h4>
+                            <button class="close-view-btn" onclick="closeOrganizerView()">✖ Закрыть</button>
+                        </div>
+                        <div id="selectedOrganizerGrid"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="inventory-subblock">
+                <div class="subblock-header" onclick="toggleMarkersBlock()">
+                    <div class="subblock-header-left"><i class="fas fa-palette"></i><span>Маркеры</span></div>
+                    <i class="fas fa-chevron-down" id="markersArrow"></i>
+                </div>
+                <div id="markersBlockContent" class="subblock-content">
+                    <div id="brandsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="support-section" onclick="openSupport()">
+        <h3>Поддержать нас</h3>
+        <p>Помогите проекту развиваться</p>
+        <div class="support-button"><i class="fas fa-heart"></i><span>Boosty</span></div>
+    </div>
+
+    <div class="themes-section">
+        <h3>Темы оформления</h3>
+        <div class="themes-grid">
+            <div class="theme-option active" data-theme="light" onclick="setTheme('light')"><div class="color-preview" style="background: #ffffff; border: 2px solid #000;"></div><span>Светлая</span></div>
+            <div class="theme-option" data-theme="dark" onclick="setTheme('dark')"><div class="color-preview" style="background: #1c1c1e; border: 2px solid #fff;"></div><span>Темная</span></div>
+            <div class="theme-option" data-theme="blue" onclick="setTheme('blue')"><div class="color-preview" style="background: #3b82f6;"></div><span>Голубая</span></div>
+            <div class="theme-option" data-theme="green" onclick="setTheme('green')"><div class="color-preview" style="background: #22c55e;"></div><span>Зеленая</span></div>
+            <div class="theme-option" data-theme="purple" onclick="setTheme('purple')"><div class="color-preview" style="background: #a855f7;"></div><span>Фиолетовая</span></div>
+            <div class="theme-option" data-theme="pink" onclick="setTheme('pink')"><div class="color-preview" style="background: #ec4899;"></div><span>Розовая</span></div>
+        </div>
+        <div class="custom-theme">
+            <h4>Своя тема</h4>
+            <div class="theme-controls">
+                <div class="theme-row"><label>Фон:</label><select id="themeBgMode"><option value="light">Светлый</option><option value="dark">Темный</option></select></div>
+                <div class="theme-row"><label>Цвет акцента:</label><input type="color" id="themeAccentColor" value="#ff9500"></div>
+                <button class="apply-theme-btn" onclick="applyCustomTheme()">Применить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== МАРКЕРЫ ========== -->
+<div id="markers" class="page">
+    <div class="header">
+        Маркеры
+        <button onclick="loadMarkers()" style="float: right; background: var(--accent); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
+            <i class="fas fa-sync-alt"></i> Обновить
+        </button>
+    </div>
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="searchMarkers()">
+        </div>
+    </div>
+    <div class="markers-section">
+        <div id="markersList"></div>
+    </div>
+</div>
+
+<!-- ========== ОТВЕТЫ И ТОМА ========== -->
+<div id="answers" class="page">
+    <div class="header">Ответы и Тома</div>
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="volumeSearch" placeholder="Поиск по названию тома..." oninput="searchVolumes()">
+        </div>
+    </div>
+    <div class="books-section">
+        <div id="volumesContainer" class="books-grid"></div>
+    </div>
+</div>
+
+<!-- ========== ИИ ПАЛИТРА ========== -->
+<div id="aipalette" class="page">
+    <div class="header">
+        ИИ Палитра ✨
+        <span class="ai-alpha-badge">Альфа-тест</span>
+    </div>
+    <div class="ai-section">
+        <div class="upload-area" onclick="document.getElementById('aiInput').click()">
+            <i class="fas fa-camera"></i>
+            <p>Загрузить фото для определения цвета</p>
+        </div>
+        <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
+        <div id="adminAiBlock" class="admin-panel">
+            <h4><i class="fas fa-robot"></i> Обучение ИИ (Админ)</h4>
+            <div class="form-group"><label>Изображение маркера</label><input type="file" id="aiTrainFile" accept="image/*"></div>
+            <div class="form-group"><label>Бренд</label><input type="text" id="aiTrainBrand" placeholder="Guangna"></div>
+            <div class="form-group"><label>Номер маркера</label><input type="text" id="aiTrainNumber" placeholder="101"></div>
+            <button onclick="trainAI()"><i class="fas fa-brain"></i> Обучить ИИ</button>
+            <div id="aiTrainStatus" class="info-text"></div>
+        </div>
+        <div id="aiResult" class="ai-result"></div>
+    </div>
+</div>
+
+<!-- ========== КОРЗИНА ========== -->
+<div id="cart" class="page">
+    <div class="header">Корзина</div>
+    <div class="cart-wrapper">
+        <div id="cartItemsList" class="cart-items"></div>
+        <div class="cart-footer">
+            <div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div>
+            <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== НАВИГАЦИЯ ========== -->
+<nav class="nav">
+    <button id="btn-profile" class="nav-btn active" onclick="tab('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
+    <button id="btn-markers" class="nav-btn" onclick="tab('markers')"><i class="fas fa-pen"></i><span>Маркеры</span></button>
+    <button id="btn-answers" class="nav-btn" onclick="tab('answers')"><i class="fas fa-book"></i><span>Ответы</span></button>
+    <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><i class="fas fa-magic"></i><span>ИИ Палитра</span></button>
+    <button id="btn-cart" class="nav-btn" onclick="tab('cart')"><i class="fas fa-shopping-cart"></i><span>Корзина</span><span id="cartBadge" class="badge" style="display:none;">0</span></button>
+</nav>
+
+<!-- ========== МОДАЛЬНЫЕ ОКНА ========== -->
+
+<!-- Модалка изменения имени -->
+<div id="nameModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Настройки профиля</h3>
+        <input type="text" id="newNameInput" placeholder="Введите ник...">
+        <button class="modal-action-btn" onclick="saveNewNickname()">Сохранить ник</button>
+        <hr>
+        <button class="modal-close-btn" style="background: var(--status-red);" onclick="resetAllData()">Сбросить весь прогресс</button>
+        <button class="modal-close-btn" onclick="closeNameModal()">Отмена</button>
+    </div>
+</div>
+
+<!-- Модалка выбора статуса -->
+<div id="statusSelectModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Выберите статус</h3>
+        <div id="availableStatusesList"></div>
+        <button class="modal-close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">Отмена</button>
+    </div>
+</div>
+
+<!-- Модалка галереи достижений -->
+<div id="achievementsGalleryModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Все достижения</h3>
+        <div id="allAchievementsList" class="achievements-grid"></div>
+        <button class="modal-close-btn" onclick="document.getElementById('achievementsGalleryModal').style.display='none'">Закрыть</button>
+    </div>
+</div>
+
+<!-- Модалка информации о достижении -->
+<div id="achInfoModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="achInfoTitle"></h3>
+        <img id="achInfoImg" style="width:100px; margin:10px auto; display:block;">
+        <p id="achInfoDesc"></p>
+        <p id="achInfoCondition" style="color:var(--accent);"></p>
+        <button class="modal-close-btn" onclick="closeAchievementInfo()">Закрыть</button>
+    </div>
+</div>
+
+<!-- Модалка отправки задания -->
+<div id="taskUploadModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Отправка на проверку</h3>
+        <div id="taskPhotoPreviewContainer" class="photo-preview-container"></div>
+        <div class="modal-buttons-row">
+            <button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button>
+            <button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка создания органайзера -->
+<div id="organizerModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Создать органайзер</h3>
+        <input type="text" id="organizerName" placeholder="Название органайзера">
+        <div class="form-group">
+            <label>Количество столбцов:</label>
+            <input type="number" id="organizerCols" value="3" min="1" max="10">
+        </div>
+        <div class="form-group">
+            <label>Количество строк:</label>
+            <input type="number" id="organizerRows" value="3" min="1" max="10">
+        </div>
+        <button class="modal-action-btn" onclick="createOrganizer()">Создать</button>
+        <button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button>
+    </div>
+</div>
+
+<!-- Модалка добавления маркера -->
+<div id="addMarkerModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>➕ Добавить маркер</h3>
+        <div class="form-group">
+            <label>Бренд:</label>
+            <select id="addMarkerBrand">
+                <option value="GuangNa">GuangNa</option>
+                <option value="Languo">Languo</option>
+                <option value="Zibeef">Zibeef</option>
+                <option value="Grasp">Grasp</option>
+                <option value="InfiArt">InfiArt</option>
+                <option value="Tooli-Art">Tooli-Art</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Номер маркера:</label>
+            <input type="text" id="addMarkerNumber" placeholder="Например: 101">
+        </div>
+        <div class="form-group">
+            <label>Количество:</label>
+            <input type="number" id="addMarkerCount" value="1" min="1" max="100">
+        </div>
+        <button class="modal-action-btn" onclick="confirmAddMarker()" style="cursor:pointer;">✅ Добавить</button>
+        <button class="modal-close-btn" onclick="closeAddMarkerModal()" style="cursor:pointer;">❌ Отмена</button>
+    </div>
+</div>
+
+<!-- Модалка выбора достижения для витрины -->
+<div id="showcaseSelectorModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Выберите достижение</h3>
+        <div id="showcaseAchievementsList" class="achievements-grid"></div>
+        <button class="modal-close-btn" onclick="document.getElementById('showcaseSelectorModal').style.display='none'">Отмена</button>
+    </div>
+</div>
+
+<!-- Модалка уведомления о достижении -->
+<div id="achievementAlert" class="modal-overlay">
+    <div class="modal-content">
+        <h3>🏆 Новое достижение!</h3>
+        <img id="alertAchImg" style="width:80px; margin:10px auto; display:none;">
+        <p id="alertAchText"></p>
+        <button class="modal-close-btn" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
+    </div>
+</div>
+
+<!-- Модалка просмотра ответов (свайпы) -->
+<div id="answersViewerModal" class="modal-overlay">
+    <div class="modal-content answers-viewer-modal">
+        <h3 id="answersViewerTitle">Просмотр ответов</h3>
+        <div class="answers-viewer-content">
+            <img id="answersViewerImage" class="answers-viewer-image" src="" alt="Ответ">
+            <div class="answers-nav">
+                <button id="answersPrevBtn" onclick="prevAnswerPage()" disabled>‹</button>
+                <span id="answersPageInfo" class="answers-page-info">1 / 1</span>
+                <button id="answersNextBtn" onclick="nextAnswerPage()" disabled>›</button>
+            </div>
+            <button class="answers-close-btn" onclick="closeAnswersViewer()">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<script>
     // ==========================================
     // КОНФИГУРАЦИЯ И ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
     // ==========================================
@@ -1956,7 +2351,7 @@
     let inventory = { organizers: [], userMarkers: {} };
     let markersDB = [];
     let markersLoading = false;
-    let window.userProgress = {};
+    let userProgress = {};
     
     // ==========================================
     // ДАННЫЕ ЗАДАНИЙ (ВЕТКИ)
@@ -2220,11 +2615,11 @@
     async function loadUserProgress() {
         const stats = await fetchAPI(`/api/stats?user_id=${userId}`);
         if (stats) {
-            window.userProgress = stats;
+            userProgress = stats;
         } else {
-            window.userProgress = {};
+            userProgress = {};
         }
-        return window.userProgress;
+        return userProgress;
     }
     
     async function loadUnlockedStatuses() {
@@ -2242,13 +2637,19 @@
         }
         return user.achievements;
     }
-    
+</script>
+</body>
+</html>
+📦 ЧАСТЬ 5 ИЗ 6 (JavaScript продолжение: функции заданий, отправка фото, тома, ответы, свайпы, обновление прогресса, профиль)
+
+```html
+<script>
     // ==========================================
     // ОТОБРАЖЕНИЕ ЗАДАНИЙ (ТОЛЬКО АКТИВНЫЙ УРОВЕНЬ)
     // ==========================================
     
     function getCurrentLevelIndex(branchKey) {
-        const progress = window.userProgress || {};
+        const progress = userProgress || {};
         const branchProgress = progress[branchKey] || {};
         
         const levels = TASK_BRANCHES[branchKey].levels;
@@ -2263,7 +2664,7 @@
     }
     
     function getLevelProgress(branchKey, levelIndex) {
-        const progress = window.userProgress || {};
+        const progress = userProgress || {};
         const branchProgress = progress[branchKey] || {};
         return branchProgress[`level_${levelIndex}`] || 0;
     }
@@ -2890,7 +3291,655 @@
         localStorage.setItem('coloring_cart', JSON.stringify(cart));
         updateUI();
     }
+</script>
+<script>
+    // ==========================================
+    // ОТОБРАЖЕНИЕ ЗАДАНИЙ (ТОЛЬКО АКТИВНЫЙ УРОВЕНЬ)
+    // ==========================================
     
+    function getCurrentLevelIndex(branchKey) {
+        const progress = userProgress || {};
+        const branchProgress = progress[branchKey] || {};
+        
+        const levels = TASK_BRANCHES[branchKey].levels;
+        for (let i = 0; i < levels.length; i++) {
+            const levelProgress = branchProgress[`level_${i}`] || 0;
+            const maxProgress = levels[i].maxProgress;
+            if (levelProgress < maxProgress) {
+                return i;
+            }
+        }
+        return levels.length;
+    }
+    
+    function getLevelProgress(branchKey, levelIndex) {
+        const progress = userProgress || {};
+        const branchProgress = progress[branchKey] || {};
+        return branchProgress[`level_${levelIndex}`] || 0;
+    }
+    
+    function isBranchCompleted(branchKey) {
+        const levels = TASK_BRANCHES[branchKey].levels;
+        const currentLevel = getCurrentLevelIndex(branchKey);
+        return currentLevel >= levels.length;
+    }
+    
+    function renderBranchTasks() {
+        const container = document.getElementById('branchTasksList');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        for (const [branchKey, branch] of Object.entries(TASK_BRANCHES)) {
+            const isCompleted = isBranchCompleted(branchKey);
+            const currentLevelIndex = getCurrentLevelIndex(branchKey);
+            const levels = branch.levels;
+            
+            const branchCard = document.createElement('div');
+            branchCard.className = `branch-task-card ${isCompleted ? 'completed' : ''}`;
+            
+            branchCard.innerHTML = `
+                <div class="branch-header">
+                    <h3>${branch.name}</h3>
+                    <p>${branch.desc}</p>
+                </div>
+            `;
+            
+            if (isCompleted) {
+                const completedDiv = document.createElement('div');
+                completedDiv.className = 'level-card';
+                completedDiv.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <div class="completed-badge" style="display: inline-block; margin-bottom: 10px;">✅ Ветка завершена</div>
+                        <div style="color: var(--status-green);">
+                            <i class="fas fa-trophy"></i> Получен статус: ${BRANCH_REWARDS[branchKey]}
+                        </div>
+                    </div>
+                `;
+                branchCard.appendChild(completedDiv);
+            } else if (currentLevelIndex < levels.length) {
+                const level = levels[currentLevelIndex];
+                const currentProgress = getLevelProgress(branchKey, currentLevelIndex);
+                const percent = (currentProgress / level.maxProgress) * 100;
+                
+                const levelCard = document.createElement('div');
+                levelCard.className = 'level-card';
+                levelCard.innerHTML = `
+                    <div class="level-header">
+                        <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
+                        <span class="level-progress">${currentProgress}/${level.maxProgress}</span>
+                    </div>
+                    <div class="level-desc">${level.desc}</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                    </div>
+                    <button class="task-submit-btn" onclick="openTaskUpload('${branchKey}', ${currentLevelIndex})">
+                        <i class="fas fa-camera"></i> Отправить фото на проверку
+                    </button>
+                `;
+                branchCard.appendChild(levelCard);
+            }
+            
+            container.appendChild(branchCard);
+        }
+    }
+    
+    // ==========================================
+    // ОТПРАВКА ФОТО НА ПРОВЕРКУ
+    // ==========================================
+    
+    let currentUploadBranch = null;
+    let currentUploadLevel = null;
+    let tempPhotos = [];
+    
+    function openTaskUpload(branchKey, levelIndex) {
+        currentUploadBranch = branchKey;
+        currentUploadLevel = levelIndex;
+        
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.multiple = true;
+        fileInput.onchange = handleTaskFilesSelected;
+        fileInput.click();
+    }
+    
+    function handleTaskFilesSelected(event) {
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
+        
+        tempPhotos = files;
+        
+        const previewContainer = document.getElementById('taskPhotoPreviewContainer');
+        if (previewContainer) {
+            previewContainer.innerHTML = '';
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '70px';
+                    img.style.height = '70px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '12px';
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        const modal = document.getElementById('taskUploadModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    async function submitTaskPhoto() {
+        if (!currentUploadBranch || currentUploadLevel === null) {
+            tg.showAlert('Ошибка: задание не выбрано');
+            return;
+        }
+        
+        if (tempPhotos.length === 0) {
+            tg.showAlert('Выберите фото для отправки');
+            return;
+        }
+        
+        const branch = TASK_BRANCHES[currentUploadBranch];
+        const level = branch.levels[currentUploadLevel];
+        const rewardStatus = BRANCH_REWARDS[currentUploadBranch];
+        
+        tg.showAlert('Отправка фото на проверку...');
+        
+        await uploadTaskPhoto(
+            currentUploadBranch,
+            currentUploadLevel,
+            `${branch.name} - Уровень ${currentUploadLevel + 1}: ${level.title}`,
+            level.maxProgress,
+            rewardStatus,
+            tempPhotos
+        );
+        
+        closeTaskUploadModal();
+    }
+    
+    function closeTaskUploadModal() {
+        const modal = document.getElementById('taskUploadModal');
+        const previewContainer = document.getElementById('taskPhotoPreviewContainer');
+        
+        if (modal) modal.style.display = 'none';
+        if (previewContainer) previewContainer.innerHTML = '';
+        
+        currentUploadBranch = null;
+        currentUploadLevel = null;
+        tempPhotos = [];
+    }
+    
+    // ==========================================
+    // ТОМА И ОТВЕТЫ (СВАЙПЫ)
+    // ==========================================
+    
+    let currentVolumeId = null;
+    let currentPageIndex = 0;
+    let currentVolumePages = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    function renderVolumes() {
+        const container = document.getElementById('volumesContainer');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        VOLUMES_DATA.forEach(volume => {
+            const cartKey = `volume_${volume.id}`;
+            const cartCount = cart[cartKey] || 0;
+            
+            const card = document.createElement('div');
+            card.className = 'book-card';
+            card.onclick = () => openVolumeAnswers(volume.id, volume.pages);
+            card.innerHTML = `
+                <img src="${volume.img}" alt="${volume.name}" onerror="this.src='https://via.placeholder.com/150?text=Том'">
+                <h4>${volume.name}</h4>
+                <div class="book-price">${volume.price} ₽</div>
+                <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}">
+                    <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)">−</button>
+                    <span id="book-count-${volume.id}">${cartCount}</span>
+                    <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)">+</button>
+                </div>
+                <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}">
+                    <i class="fas fa-cart-plus"></i> В корзину
+                </button>
+            `;
+            container.appendChild(card);
+        });
+    }
+    
+    function updateVolumeCart(volumeId, delta) {
+        const cartKey = `volume_${volumeId}`;
+        const currentCount = cart[cartKey] || 0;
+        const newCount = currentCount + delta;
+        
+        if (newCount < 0) return;
+        if (newCount === 0) {
+            delete cart[cartKey];
+        } else {
+            cart[cartKey] = newCount;
+        }
+        
+        const countSpan = document.getElementById(`book-count-${volumeId}`);
+        const controlsDiv = document.getElementById(`book-controls-${volumeId}`);
+        const addBtn = document.getElementById(`book-add-${volumeId}`);
+        
+        if (countSpan) countSpan.innerText = newCount;
+        if (controlsDiv && addBtn) {
+            if (newCount > 0) {
+                controlsDiv.style.display = 'flex';
+                addBtn.style.display = 'none';
+            } else {
+                controlsDiv.style.display = 'none';
+                addBtn.style.display = 'block';
+            }
+        }
+        
+        saveUserData();
+        renderCart();
+        updateCartBadge();
+    }
+    
+    function openVolumeAnswers(volumeId, pagesCount) {
+        currentVolumeId = volumeId;
+        currentVolumePages = pagesCount;
+        currentPageIndex = 1;
+        
+        const modal = document.getElementById('answersViewerModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            showAnswerPage();
+        }
+    }
+    
+    function showAnswerPage() {
+        const imageUrl = `assets/otveti/${currentVolumeId}/${currentPageIndex}.png`;
+        const imgElement = document.getElementById('answersViewerImage');
+        const pageInfo = document.getElementById('answersPageInfo');
+        const prevBtn = document.getElementById('answersPrevBtn');
+        const nextBtn = document.getElementById('answersNextBtn');
+        const titleEl = document.getElementById('answersViewerTitle');
+        
+        if (titleEl) titleEl.innerText = `${currentVolumeId.toUpperCase()} - Ответы`;
+        if (imgElement) {
+            imgElement.src = imageUrl;
+            imgElement.onerror = () => {
+                imgElement.src = 'https://via.placeholder.com/600x800?text=Изображение+не+найдено';
+            };
+        }
+        if (pageInfo) {
+            pageInfo.innerText = `${currentPageIndex} / ${currentVolumePages}`;
+        }
+        if (prevBtn) {
+            prevBtn.disabled = currentPageIndex <= 1;
+        }
+        if (nextBtn) {
+            nextBtn.disabled = currentPageIndex >= currentVolumePages;
+        }
+    }
+    
+    function prevAnswerPage() {
+        if (currentPageIndex > 1) {
+            currentPageIndex--;
+            showAnswerPage();
+        }
+    }
+    
+    function nextAnswerPage() {
+        if (currentPageIndex < currentVolumePages) {
+            currentPageIndex++;
+            showAnswerPage();
+        }
+    }
+    
+    function closeAnswersViewer() {
+        const modal = document.getElementById('answersViewerModal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        currentVolumeId = null;
+    }
+    
+    function initSwipeListeners() {
+        const viewerImage = document.getElementById('answersViewerImage');
+        if (!viewerImage) return;
+        
+        viewerImage.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        viewerImage.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const swipeThreshold = 50;
+            const diff = touchEndX - touchStartX;
+            
+            if (Math.abs(diff) < swipeThreshold) return;
+            
+            if (diff > 0) {
+                prevAnswerPage();
+            } else {
+                nextAnswerPage();
+            }
+        });
+    }
+    
+    function searchVolumes() {
+        const query = document.getElementById('volumeSearch');
+        if (!query) return;
+        const searchQuery = query.value.toLowerCase();
+        const volumeCards = document.querySelectorAll('.book-card');
+        
+        volumeCards.forEach(card => {
+            const titleEl = card.querySelector('h4');
+            const title = titleEl ? titleEl.innerText.toLowerCase() : '';
+            if (title.includes(searchQuery)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    
+    // ==========================================
+    // ОБНОВЛЕНИЕ ПРОГРЕССА
+    // ==========================================
+    
+    async function refreshUserProgress() {
+        await loadUserBalance();
+        await loadUserProgress();
+        await loadUnlockedStatuses();
+        await loadUserAchievements();
+        renderBranchTasks();
+        updateUI();
+    }
+    
+    let refreshInterval = null;
+    
+    function startProgressRefresh() {
+        if (refreshInterval) clearInterval(refreshInterval);
+        refreshInterval = setInterval(() => {
+            refreshUserProgress();
+        }, 30000);
+    }
+    
+    // ==========================================
+    // ПРОФИЛЬ
+    // ==========================================
+    
+    function updateUI() {
+        const nameEl = document.getElementById('displayUsername');
+        const avatarEl = document.getElementById('user-avatar');
+        const balanceEl = document.getElementById('userBalance');
+        const statusBadge = document.getElementById('currentStatus');
+        
+        if (nameEl) nameEl.innerText = user.name;
+        if (avatarEl) avatarEl.src = user.avatar;
+        if (balanceEl) balanceEl.innerText = user.balance;
+        if (statusBadge) statusBadge.innerText = user.status || 'Новичок';
+        
+        updateCartBadge();
+        renderShowcase();
+    }
+    
+    function updateCartBadge() {
+        let totalItems = 0;
+        if (cart) {
+            for (let key in cart) {
+                totalItems += cart[key];
+            }
+        }
+        const badge = document.getElementById('cartBadge');
+        if (badge) {
+            if (totalItems > 0) {
+                badge.innerText = totalItems;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+    
+    function renderShowcase() {
+        for (let i = 0; i < 3; i++) {
+            const slot = document.getElementById(`slot-${i}`);
+            if (!slot) continue;
+            const achId = user.showcase && user.showcase[i] ? user.showcase[i] : null;
+            slot.innerHTML = '';
+            slot.style.cursor = 'pointer';
+            slot.onclick = (function(index) {
+                return function() { openShowcaseSelector(index); };
+            })(i);
+            
+            if (achId && ACHIEVEMENTS_DB[achId]) {
+                const img = document.createElement('img');
+                img.src = ACHIEVEMENTS_DB[achId].img;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                slot.appendChild(img);
+                slot.classList.add('filled');
+            } else {
+                slot.innerHTML = '<i class="fas fa-plus"></i>';
+                slot.classList.remove('filled');
+            }
+        }
+    }
+    
+    function openShowcaseSelector(slotIndex) {
+        const list = document.getElementById('showcaseAchievementsList');
+        if (!list) return;
+        list.innerHTML = '';
+        
+        const unlockedAchievements = user.achievements.filter(achId => ACHIEVEMENTS_DB[achId]);
+        
+        if (unlockedAchievements.length === 0) {
+            list.innerHTML = '<div class="no-results">Нет разблокированных достижений</div>';
+        } else {
+            unlockedAchievements.forEach(achId => {
+                const ach = ACHIEVEMENTS_DB[achId];
+                if (ach) {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'display:flex; align-items:center; gap:10px; padding:10px; cursor:pointer; margin-bottom:8px; border-radius:12px; background:var(--card-bg);';
+                    div.onclick = () => {
+                        user.showcase[slotIndex] = achId;
+                        saveUserData();
+                        renderShowcase();
+                        const modal = document.getElementById('showcaseSelectorModal');
+                        if (modal) modal.style.display = 'none';
+                    };
+                    div.innerHTML = `<img src="${ach.img}" style="width:50px; height:50px; border-radius:12px; object-fit:cover;"><span style="flex:1;">${ach.name}</span>`;
+                    list.appendChild(div);
+                }
+            });
+        }
+        
+        const modal = document.getElementById('showcaseSelectorModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function openAchievementsGallery() {
+        const list = document.getElementById('allAchievementsList');
+        if (!list) return;
+        list.innerHTML = '';
+        Object.values(ACHIEVEMENTS_DB).forEach(ach => {
+            const isUnlocked = user.achievements.includes(ach.id);
+            const div = document.createElement('div');
+            div.className = `achievement-item ${!isUnlocked ? 'locked' : ''}`;
+            div.onclick = () => showAchievementInfo(ach);
+            div.innerHTML = `
+                <img src="${ach.img}" alt="${ach.name}">
+                <div class="achievement-info">
+                    <h4>${ach.name}</h4>
+                    <p>${ach.desc}</p>
+                    <div class="achievement-condition">${ach.condition}</div>
+                    ${!isUnlocked ? '<div class="achievement-lock"><i class="fas fa-lock"></i> Заблокировано</div>' : ''}
+                </div>
+            `;
+            list.appendChild(div);
+        });
+        const modal = document.getElementById('achievementsGalleryModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function showAchievementInfo(ach) {
+        const titleEl = document.getElementById('achInfoTitle');
+        const imgEl = document.getElementById('achInfoImg');
+        const descEl = document.getElementById('achInfoDesc');
+        const conditionEl = document.getElementById('achInfoCondition');
+        
+        if (titleEl) titleEl.innerText = ach.name;
+        if (imgEl) imgEl.src = ach.img;
+        if (descEl) descEl.innerText = ach.desc;
+        if (conditionEl) conditionEl.innerText = ach.condition;
+        
+        const galleryModal = document.getElementById('achievementsGalleryModal');
+        if (galleryModal) galleryModal.style.display = 'none';
+        
+        const infoModal = document.getElementById('achInfoModal');
+        if (infoModal) infoModal.style.display = 'flex';
+    }
+    
+    function closeAchievementInfo() {
+        const modal = document.getElementById('achInfoModal');
+        if (modal) modal.style.display = 'none';
+    }
+    
+    function toggleAvatarEditor() {
+        const editor = document.getElementById('avatarEditor');
+        if (editor) {
+            if (editor.style.display === 'none' || editor.style.display === '') {
+                renderAvatarPresets();
+                editor.style.display = 'block';
+            } else {
+                editor.style.display = 'none';
+            }
+        }
+    }
+    
+    function renderAvatarPresets() {
+        const container = document.getElementById('avatarPresets');
+        if (!container) return;
+        container.innerHTML = '';
+        for (let i = 1; i <= 8; i++) {
+            const url = `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av${i}.png`;
+            const div = document.createElement('div');
+            div.className = 'preset-avatar-item';
+            div.onclick = () => {
+                user.avatar = url;
+                saveUserData();
+                const editor = document.getElementById('avatarEditor');
+                if (editor) editor.style.display = 'none';
+                tg.showAlert('Аватар изменен!');
+            };
+            div.innerHTML = `<img src="${url}">`;
+            container.appendChild(div);
+        }
+    }
+    
+    function handleCustomAvatar(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                user.avatar = e.target.result;
+                saveUserData();
+                const editor = document.getElementById('avatarEditor');
+                if (editor) editor.style.display = 'none';
+                tg.showAlert('Аватар изменен!');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    function changeNickname() {
+        const modal = document.getElementById('nameModal');
+        const input = document.getElementById('newNameInput');
+        if (input) input.value = user.name;
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function saveNewNickname() {
+        const input = document.getElementById('newNameInput');
+        if (!input) return;
+        const newName = input.value.trim();
+        if (newName.length > 0 && newName.length <= 20) {
+            user.name = newName;
+            saveUserData();
+            const modal = document.getElementById('nameModal');
+            if (modal) modal.style.display = 'none';
+            tg.showAlert('Имя изменено!');
+        } else {
+            tg.showAlert("Имя должно быть от 1 до 20 символов");
+        }
+    }
+    
+    function closeNameModal() {
+        const modal = document.getElementById('nameModal');
+        if (modal) modal.style.display = 'none';
+    }
+    
+    function openStatusInfo() {
+        const list = document.getElementById('availableStatusesList');
+        if (!list) return;
+        list.innerHTML = '';
+        
+        const allStatuses = ['Новичок', ...Object.values(BRANCH_REWARDS)];
+        
+        allStatuses.forEach(status => {
+            const isUnlocked = user.unlockedStatuses.includes(status);
+            const isActive = user.status === status;
+            
+            const div = document.createElement('div');
+            div.style.cssText = `padding:12px; margin:8px 0; border-radius:12px; background:var(--card-bg); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);`;
+            
+            if (isUnlocked) {
+                div.innerHTML = `
+                    <span>${status}</span>
+                    ${!isActive ? `<button class="balance-btn" style="padding:6px 12px; width:auto;" onclick="selectStatus('${status}')">Выбрать</button>` : '<span style="color:var(--status-green);">✓ Активен</span>'}
+                `;
+            } else {
+                div.innerHTML = `<span style="opacity:0.6;">${status}</span><span style="color:var(--text-gray);">🔒 Выполните все уровни ветки</span>`;
+            }
+            list.appendChild(div);
+        });
+        
+        const modal = document.getElementById('statusSelectModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function selectStatus(statusName) {
+        user.status = statusName;
+        saveUserData();
+        const modal = document.getElementById('statusSelectModal');
+        if (modal) modal.style.display = 'none';
+        updateUI();
+    }
+    
+    function openSupport() {
+        window.open('https://boosty.to/coloringapp', '_blank');
+    }
+    
+    function resetAllData() {
+        tg.showConfirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?", (confirm) => {
+            if (confirm) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        });
+    }
+    
+    function saveUserData() {
+        localStorage.setItem('coloring_user', JSON.stringify(user));
+        localStorage.setItem('coloring_cart', JSON.stringify(cart));
+        updateUI();
+    }
     // ==========================================
     // МАРКЕРЫ
     // ==========================================
@@ -3958,385 +5007,6 @@
         
         console.log('=== APP READY ===');
     };
-    </script>
-</head>
-<body>
-
-<!-- ========== ПРОФИЛЬ ========== -->
-<div id="profile" class="page active">
-    <div class="profile-header-block">
-        <div class="avatar-wrapper" onclick="toggleAvatarEditor()">
-            <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png">
-            <div class="avatar-edit-icon"><i class="fas fa-pencil-alt"></i></div>
-        </div>
-        <div class="profile-info">
-            <div class="name-row" onclick="changeNickname()">
-                <h2 id="displayUsername">Без имени</h2>
-                <i class="fas fa-pencil-alt" style="color: var(--text-gray); font-size: 14px;"></i>
-            </div>
-            <button id="currentStatus" class="status-badge" onclick="openStatusInfo()">Новичок</button>
-        </div>
-    </div>
-
-    <div id="avatarEditor" class="avatar-editor">
-        <p>Выберите аватарку:</p>
-        <div id="avatarPresets" class="preset-avatars-grid"></div>
-        <input type="file" id="customAvatarInput" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)">
-        <button class="upload-photo-btn" onclick="document.getElementById('customAvatarInput').click()"><i class="fas fa-camera"></i> Загрузить фото</button>
-    </div>
-
-    <div class="balance-card">
-        <p class="balance-label">ВАШ БАЛАНС</p>
-        <div class="balance-main"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
-        <div class="balance-controls">
-            <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🏆</button>
-            <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
-        </div>
-    </div>
-
-    <div id="rewards-section" class="rewards-section">
-        <h3>Товары за ашетики</h3>
-        <div class="rewards-grid">
-            <div class="reward-card" onclick="buyItem('bookmark')">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b1.png" class="reward-img">
-                <h4>Книжная закладка Hachette</h4>
-                <div class="reward-price"><span class="price-amount">750</span> <i class="fas fa-book-open gold-book"></i></div>
-                <button class="reward-buy-btn">Приобрести</button>
-            </div>
-            <div class="reward-card" onclick="buyItem('petites')">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b3.png" class="reward-img">
-                <h4>Petites Poupees</h4>
-                <div class="reward-price"><span class="price-amount">950</span> <i class="fas fa-book-open gold-book"></i></div>
-                <button class="reward-buy-btn">Приобрести</button>
-            </div>
-            <div class="reward-card" onclick="buyItem('tracker')">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img">
-                <h4>Трекер от Hachette</h4>
-                <div class="reward-price"><span class="price-amount">950</span> <i class="fas fa-book-open gold-book"></i></div>
-                <button class="reward-buy-btn">Приобрести</button>
-            </div>
-            <div class="reward-card" onclick="buyItem('alcohol')">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img">
-                <h4>Спиртовая раскраска</h4>
-                <div class="reward-price"><span class="price-amount">1250</span> <i class="fas fa-book-open gold-book"></i></div>
-                <button class="reward-buy-btn">Приобрести</button>
-            </div>
-            <div class="reward-card" onclick="buyItem('coloriages')">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img">
-                <h4>Hachette Coloriages (А4 том)</h4>
-                <div class="reward-price"><span class="price-amount">1500</span> <i class="fas fa-book-open gold-book"></i></div>
-                <button class="reward-buy-btn">Приобрести</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="earn-section" class="rewards-section" style="display:none;">
-        <h3>Как получить ашетики</h3>
-        <div class="earn-list">
-            <div class="earn-item"><div class="earn-left"><i class="fas fa-star"></i><span>За отзыв</span></div><div class="earn-right"><span class="earn-amount">+25</span><i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 3 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+10</span><i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 5 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+20</span><i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 7 500 ₽</span></div><div class="earn-right"><span class="earn-amount">+30</span><i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 10 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+40</span><i class="fas fa-book-open gold-book"></i></div></div>
-        </div>
-    </div>
-
-    <div class="tasks-section">
-        <button class="tasks-header" onclick="toggleTasks()">
-            <span>Задания на статусы</span>
-            <i class="fas fa-chevron-down" id="tasksArrow"></i>
-        </button>
-        <div id="tasksContent" class="tasks-content">
-            <div id="branchTasksList"></div>
-        </div>
-    </div>
-
-    <div class="showcase-container">
-        <h3>Витрина Топ-3</h3>
-        <div class="showcase-grid">
-            <div class="showcase-slot" id="slot-0"><i class="fas fa-plus"></i></div>
-            <div class="showcase-slot" id="slot-1"><i class="fas fa-plus"></i></div>
-            <div class="showcase-slot" id="slot-2"><i class="fas fa-plus"></i></div>
-        </div>
-        <div class="showcase-info" onclick="openAchievementsGallery()">Нажмите для просмотра всех достижений</div>
-    </div>
-
-    <!-- ========== МОЙ ИНВЕНТАРЬ ========== -->
-    <div class="inventory-main-block">
-        <div class="inventory-header" onclick="toggleInventoryBlock()">
-            <div class="inventory-header-left"><i class="fas fa-boxes"></i><span>Мой инвентарь</span></div>
-            <div class="inventory-header-right"><span class="beta-badge">Бета-Тест</span><i class="fas fa-chevron-down" id="inventoryArrow"></i></div>
-        </div>
-        <div id="inventoryContent" class="inventory-content" style="display: none;">
-            <div class="inventory-subblock">
-                <div class="subblock-header" onclick="toggleOrganizersBlock()">
-                    <div class="subblock-header-left"><i class="fas fa-layer-group"></i><span>Органайзеры</span></div>
-                    <i class="fas fa-chevron-down" id="organizersArrow"></i>
-                </div>
-                <div id="organizersBlockContent" class="subblock-content" style="display: none;">
-                    <button class="create-organizer-btn" onclick="openOrganizerCreator()"><i class="fas fa-plus"></i> Создать органайзер</button>
-                    <div id="organizersList"></div>
-                    <div id="selectedOrganizerView" style="display: none; margin-top: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <h4 id="selectedOrganizerName" style="margin:0; font-size: 16px;"></h4>
-                            <button class="close-view-btn" onclick="closeOrganizerView()">✖ Закрыть</button>
-                        </div>
-                        <div id="selectedOrganizerGrid"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="inventory-subblock">
-                <div class="subblock-header" onclick="toggleMarkersBlock()">
-                    <div class="subblock-header-left"><i class="fas fa-palette"></i><span>Маркеры</span></div>
-                    <i class="fas fa-chevron-down" id="markersArrow"></i>
-                </div>
-                <div id="markersBlockContent" class="subblock-content" style="display: none;">
-                    <div id="brandsList"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="support-section" onclick="openSupport()">
-        <h3>Поддержать нас</h3>
-        <p>Помогите проекту развиваться</p>
-        <div class="support-button"><i class="fas fa-heart"></i><span>Boosty</span></div>
-    </div>
-
-    <div class="themes-section">
-        <h3>Темы оформления</h3>
-        <div class="themes-grid">
-            <div class="theme-option active" data-theme="light" onclick="setTheme('light')"><div class="color-preview" style="background: #ffffff; border: 2px solid #000;"></div><span>Светлая</span></div>
-            <div class="theme-option" data-theme="dark" onclick="setTheme('dark')"><div class="color-preview" style="background: #1c1c1e; border: 2px solid #fff;"></div><span>Темная</span></div>
-            <div class="theme-option" data-theme="blue" onclick="setTheme('blue')"><div class="color-preview" style="background: #3b82f6;"></div><span>Голубая</span></div>
-            <div class="theme-option" data-theme="green" onclick="setTheme('green')"><div class="color-preview" style="background: #22c55e;"></div><span>Зеленая</span></div>
-            <div class="theme-option" data-theme="purple" onclick="setTheme('purple')"><div class="color-preview" style="background: #a855f7;"></div><span>Фиолетовая</span></div>
-            <div class="theme-option" data-theme="pink" onclick="setTheme('pink')"><div class="color-preview" style="background: #ec4899;"></div><span>Розовая</span></div>
-        </div>
-        <div class="custom-theme">
-            <h4>Своя тема</h4>
-            <div class="theme-controls">
-                <div class="theme-row"><label>Фон:</label><select id="themeBgMode"><option value="light">Светлый</option><option value="dark">Темный</option></select></div>
-                <div class="theme-row"><label>Цвет акцента:</label><input type="color" id="themeAccentColor" value="#ff9500"></div>
-                <button class="apply-theme-btn" onclick="applyCustomTheme()">Применить</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ========== МАРКЕРЫ ========== -->
-<div id="markers" class="page">
-    <div class="header">
-        Маркеры
-        <button onclick="loadMarkers()" style="float: right; background: var(--accent); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
-            <i class="fas fa-sync-alt"></i> Обновить
-        </button>
-    </div>
-    <div class="search-container">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="searchMarkers()">
-        </div>
-    </div>
-    <div class="markers-section">
-        <div id="markersList"></div>
-    </div>
-</div>
-
-<!-- ========== ОТВЕТЫ И ТОМА ========== -->
-<div id="answers" class="page">
-    <div class="header">Ответы и Тома</div>
-    <div class="search-container">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="volumeSearch" placeholder="Поиск по названию тома..." oninput="searchVolumes()">
-        </div>
-    </div>
-    <div class="books-section">
-        <div id="volumesContainer" class="books-grid"></div>
-    </div>
-</div>
-
-<!-- ========== ИИ ПАЛИТРА ========== -->
-<div id="aipalette" class="page">
-    <div class="header">
-        ИИ Палитра ✨
-        <span class="ai-alpha-badge">Альфа-тест</span>
-    </div>
-    <div class="ai-section">
-        <div class="upload-area" onclick="document.getElementById('aiInput').click()">
-            <i class="fas fa-camera"></i>
-            <p>Загрузить фото для определения цвета</p>
-        </div>
-        <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
-        <div id="adminAiBlock" class="admin-panel" style="display:none;">
-            <h4><i class="fas fa-robot"></i> Обучение ИИ (Админ)</h4>
-            <div class="form-group"><label>Изображение маркера</label><input type="file" id="aiTrainFile" accept="image/*"></div>
-            <div class="form-group"><label>Бренд</label><input type="text" id="aiTrainBrand" placeholder="Guangna"></div>
-            <div class="form-group"><label>Номер маркера</label><input type="text" id="aiTrainNumber" placeholder="101"></div>
-            <button onclick="trainAI()"><i class="fas fa-brain"></i> Обучить ИИ</button>
-            <div id="aiTrainStatus" class="info-text"></div>
-        </div>
-        <div id="aiResult" class="ai-result"></div>
-    </div>
-</div>
-
-<!-- ========== КОРЗИНА ========== -->
-<div id="cart" class="page">
-    <div class="header">Корзина</div>
-    <div class="cart-wrapper">
-        <div id="cartItemsList" class="cart-items"></div>
-        <div class="cart-footer">
-            <div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div>
-            <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
-        </div>
-    </div>
-</div>
-
-<!-- ========== НАВИГАЦИЯ ========== -->
-<nav class="nav">
-    <button id="btn-profile" class="nav-btn active" onclick="tab('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
-    <button id="btn-markers" class="nav-btn" onclick="tab('markers')"><i class="fas fa-pen"></i><span>Маркеры</span></button>
-    <button id="btn-answers" class="nav-btn" onclick="tab('answers')"><i class="fas fa-book"></i><span>Ответы</span></button>
-    <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><i class="fas fa-magic"></i><span>ИИ Палитра</span></button>
-    <button id="btn-cart" class="nav-btn" onclick="tab('cart')"><i class="fas fa-shopping-cart"></i><span>Корзина</span><span id="cartBadge" class="badge" style="display:none;">0</span></button>
-</nav>
-
-<!-- ========== МОДАЛЬНЫЕ ОКНА ========== -->
-
-<!-- Модалка изменения имени -->
-<div id="nameModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Настройки профиля</h3>
-        <input type="text" id="newNameInput" placeholder="Введите ник...">
-        <button class="modal-action-btn" onclick="saveNewNickname()">Сохранить ник</button>
-        <hr>
-        <button class="modal-close-btn" style="background: var(--status-red);" onclick="resetAllData()">Сбросить весь прогресс</button>
-        <button class="modal-close-btn" onclick="closeNameModal()">Отмена</button>
-    </div>
-</div>
-
-<!-- Модалка выбора статуса -->
-<div id="statusSelectModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Выберите статус</h3>
-        <div id="availableStatusesList"></div>
-        <button class="modal-close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">Отмена</button>
-    </div>
-</div>
-
-<!-- Модалка галереи достижений -->
-<div id="achievementsGalleryModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Все достижения</h3>
-        <div id="allAchievementsList" class="achievements-grid"></div>
-        <button class="modal-close-btn" onclick="document.getElementById('achievementsGalleryModal').style.display='none'">Закрыть</button>
-    </div>
-</div>
-
-<!-- Модалка информации о достижении -->
-<div id="achInfoModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3 id="achInfoTitle"></h3>
-        <img id="achInfoImg" style="width:100px; margin:10px auto; display:block;">
-        <p id="achInfoDesc"></p>
-        <p id="achInfoCondition" style="color:var(--accent);"></p>
-        <button class="modal-close-btn" onclick="closeAchievementInfo()">Закрыть</button>
-    </div>
-</div>
-
-<!-- Модалка отправки задания -->
-<div id="taskUploadModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Отправка на проверку</h3>
-        <div id="taskPhotoPreviewContainer" class="photo-preview-container"></div>
-        <div class="modal-buttons-row">
-            <button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button>
-            <button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button>
-        </div>
-    </div>
-</div>
-
-<!-- Модалка создания органайзера -->
-<div id="organizerModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Создать органайзер</h3>
-        <input type="text" id="organizerName" placeholder="Название органайзера">
-        <div class="form-group">
-            <label>Количество столбцов:</label>
-            <input type="number" id="organizerCols" value="3" min="1" max="10">
-        </div>
-        <div class="form-group">
-            <label>Количество строк:</label>
-            <input type="number" id="organizerRows" value="3" min="1" max="10">
-        </div>
-        <button class="modal-action-btn" onclick="createOrganizer()">Создать</button>
-        <button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button>
-    </div>
-</div>
-
-<!-- Модалка добавления маркера -->
-<div id="addMarkerModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>➕ Добавить маркер</h3>
-        <div class="form-group">
-            <label>Бренд:</label>
-            <select id="addMarkerBrand">
-                <option value="GuangNa">GuangNa</option>
-                <option value="Languo">Languo</option>
-                <option value="Zibeef">Zibeef</option>
-                <option value="Grasp">Grasp</option>
-                <option value="InfiArt">InfiArt</option>
-                <option value="Tooli-Art">Tooli-Art</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Номер маркера:</label>
-            <input type="text" id="addMarkerNumber" placeholder="Например: 101">
-        </div>
-        <div class="form-group">
-            <label>Количество:</label>
-            <input type="number" id="addMarkerCount" value="1" min="1" max="100">
-        </div>
-        <button class="modal-action-btn" onclick="confirmAddMarker()" style="cursor:pointer;">✅ Добавить</button>
-        <button class="modal-close-btn" onclick="closeAddMarkerModal()" style="cursor:pointer;">❌ Отмена</button>
-    </div>
-</div>
-
-<!-- Модалка выбора достижения для витрины -->
-<div id="showcaseSelectorModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Выберите достижение</h3>
-        <div id="showcaseAchievementsList" class="achievements-grid"></div>
-        <button class="modal-close-btn" onclick="document.getElementById('showcaseSelectorModal').style.display='none'">Отмена</button>
-    </div>
-</div>
-
-<!-- Модалка уведомления о достижении -->
-<div id="achievementAlert" class="modal-overlay">
-    <div class="modal-content">
-        <h3>🏆 Новое достижение!</h3>
-        <img id="alertAchImg" style="width:80px; margin:10px auto; display:none;">
-        <p id="alertAchText"></p>
-        <button class="modal-close-btn" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
-    </div>
-</div>
-
-<!-- Модалка просмотра ответов (свайпы) -->
-<div id="answersViewerModal" class="modal-overlay">
-    <div class="modal-content answers-viewer-modal">
-        <h3 id="answersViewerTitle">Просмотр ответов</h3>
-        <div class="answers-viewer-content">
-            <img id="answersViewerImage" class="answers-viewer-image" src="" alt="Ответ">
-            <div class="answers-nav">
-                <button id="answersPrevBtn" onclick="prevAnswerPage()" disabled>‹</button>
-                <span id="answersPageInfo" class="answers-page-info">1 / 1</span>
-                <button id="answersNextBtn" onclick="nextAnswerPage()" disabled>›</button>
-            </div>
-            <button class="answers-close-btn" onclick="closeAnswersViewer()">Закрыть</button>
-        </div>
-    </div>
-</div>
-
+</script>
 </body>
 </html>

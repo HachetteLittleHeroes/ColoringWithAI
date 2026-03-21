@@ -484,57 +484,124 @@
             margin-bottom: 12px;
         }
 
-        /* Многоуровневые задания */
-        .level-task {
+        /* Карточка задания */
+        .branch-task-card {
             background: var(--card-bg);
-            padding: 16px;
-            border-radius: 16px;
-            margin-bottom: 10px;
-            border-left: 6px solid;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            overflow: hidden;
             border: 1px solid var(--border-color);
+            transition: all 0.2s;
         }
 
-        .level-task.lvl-1 { border-left-color: var(--lvl-1); }
-        .level-task.lvl-2 { border-left-color: var(--lvl-2); }
-        .level-task.lvl-3 { border-left-color: var(--lvl-3); }
-        .level-task.lvl-4 { border-left-color: var(--lvl-4); }
-        .level-task.lvl-5 { border-left-color: var(--lvl-5); }
-
-        /* Временные задания */
-        .time-task {
-            background: var(--card-bg);
-            padding: 16px;
-            border-radius: 16px;
-            margin-bottom: 10px;
-            border: 1px solid var(--border-color);
+        .branch-task-card.completed {
+            opacity: 0.6;
+            background: var(--bg);
         }
 
-        .time-task .task-header {
+        .branch-task-card.completed .task-submit-btn {
+            display: none;
+        }
+
+        .branch-task-card.completed .completed-badge {
+            display: block;
+        }
+
+        .completed-badge {
+            display: none;
+            background: var(--status-green);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .branch-header {
+            background: var(--accent-gradient);
+            padding: 14px 16px;
+            color: white;
+        }
+
+        .branch-header h3 {
+            font-size: 18px;
+            margin: 0 0 4px 0;
+        }
+
+        .branch-header p {
+            font-size: 12px;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .level-card {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .level-card:last-child {
+            border-bottom: none;
+        }
+
+        .level-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
         }
 
-        .time-badge {
-            background: var(--accent);
-            color: white;
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 20px;
+        .level-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        .level-progress {
+            font-size: 14px;
+            color: var(--accent);
             font-weight: 600;
         }
 
-        .task-reward {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 14px;
+        .level-desc {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-bottom: 12px;
         }
 
-        .task-footer {
+        .progress-bar-container {
+            background: var(--border-color);
+            border-radius: 10px;
+            height: 8px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            background: var(--accent-gradient);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .task-submit-btn {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
             margin-top: 12px;
+            cursor: pointer;
             display: flex;
-            justify-content: flex-end;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .task-submit-btn:active {
+            transform: scale(0.98);
         }
 
         .photo-upload-btn {
@@ -1500,34 +1567,6 @@
             display: block;
         }
 
-        .task-progress-bg {
-            background: var(--border-color);
-            border-radius: 10px;
-            height: 12px;
-            width: 100%;
-            margin: 10px 0;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .task-progress-fill {
-            background: var(--accent-gradient);
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-
-        .task-progress-text {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            font-size: 10px;
-            color: #fff;
-            line-height: 12px;
-            font-weight: bold;
-            text-shadow: 0px 0px 2px rgba(0,0,0,0.8);
-        }
-
         /* ИНВЕНТАРЬ */
         .inventory-section {
             background: var(--bg-header);
@@ -1573,7 +1612,8 @@
         .checkout-btn,
         .add-to-cart-btn,
         .inventory-tab-btn,
-        .apply-theme-btn {
+        .apply-theme-btn,
+        .task-submit-btn {
             pointer-events: auto !important;
             cursor: pointer !important;
         }
@@ -1584,136 +1624,6 @@
 
         .nav {
             z-index: 1000 !important;
-        }
-
-        /* Стили для модальных окон органайзера */
-        #organizerModal .modal-content,
-        #addMarkerModal .modal-content {
-            background: var(--bg-header);
-        }
-
-        #organizerModal input,
-        #organizerModal select,
-        #addMarkerModal input,
-        #addMarkerModal select {
-            background: var(--input-bg);
-            color: var(--text);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px;
-            width: 100%;
-            margin-bottom: 12px;
-        }
-
-        #organizerModal .form-group {
-            margin-bottom: 15px;
-        }
-
-        #organizerModal label {
-            display: block;
-            color: var(--text-gray);
-            font-size: 12px;
-            margin-bottom: 5px;
-        }
-
-        #organizersList {
-            max-height: 60vh;
-            overflow-y: auto;
-        }
-
-        /* Стили для ячеек при наведении */
-        [style*="cursor: pointer"]:hover {
-            transform: scale(1.02);
-            transition: transform 0.2s;
-        }
-
-        /* Исправление для темной темы */
-        [data-theme="dark"] .theme-option span,
-        [data-theme="dark"] .custom-theme h4,
-        [data-theme="dark"] .theme-row label {
-            color: #ffffff !important;
-        }
-
-        [data-theme="dark"] .theme-row select,
-        [data-theme="dark"] .theme-row input {
-            background: #2c2c2e;
-            color: #ffffff;
-            border-color: #3a3a3c;
-        }
-
-        /* Стили для инвентаря */
-        .inventory-section {
-            background: var(--bg-header);
-            margin: 15px;
-            padding: 20px;
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-        }
-
-        .inventory-tab-btn {
-            padding: 8px 16px;
-            background: transparent;
-            color: var(--text-gray);
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 20px;
-            transition: all 0.2s;
-        }
-
-        .inventory-tab-btn.active {
-            color: var(--accent);
-            background: rgba(255,149,0,0.1);
-        }
-
-        #organizersList {
-            max-height: 60vh;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        /* Стили для ячеек органайзера */
-        #organizersList > div {
-            animation: fadeIn 0.2s ease;
-        }
-
-        #organizersList [style*="cursor: pointer"]:hover {
-            transform: scale(1.02);
-            background: rgba(255,149,0,0.05);
-        }
-
-        /* Стили для модальных окон органайзера */
-        #organizerModal .modal-content,
-        #addMarkerModal .modal-content {
-            background: var(--bg-header);
-            border-radius: 28px;
-        }
-
-        #organizerModal input,
-        #organizerModal select,
-        #addMarkerModal input,
-        #addMarkerModal select {
-            background: var(--input-bg);
-            color: var(--text);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 14px;
-            width: 100%;
-            margin-bottom: 12px;
-            font-size: 15px;
-        }
-
-        #organizerModal .form-group {
-            margin-bottom: 18px;
-        }
-
-        #organizerModal label {
-            display: block;
-            color: var(--text-gray);
-            font-size: 13px;
-            margin-bottom: 6px;
-            font-weight: 500;
         }
 
         /* Блок инвентаря в профиле */
@@ -2108,141 +2018,50 @@
     </style>
     <script>
     // ==========================================
-    // 🚨 БЛОК ИНИЦИАЛИЗАЦИИ И ЗАГЛУШЕК
+    // КОНФИГУРАЦИЯ И ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
     // ==========================================
-
-    // 1. Безопасная обертка для Telegram (чтобы клики работали в обычном браузере на ПК)
-    const tg = window.Telegram?.WebApp || {
-        showAlert: function(msg) { alert(msg); },
-        showConfirm: function(msg, callback) { callback(confirm(msg)); }
-    };
-
-    // 2. Объявление важнейших глобальных переменных
-    let inventory = { organizers: [], userMarkers: {} };
-    let cart = {};
-    let activeTaskId = null;
     
-    // 3. Инициализация user с дефолтными значениями
-    if (!window.user) {
-        window.user = { 
-            balance: 0, 
-            theme: 'light', 
-            branchProgress: {}, 
-            branchCompleted: {},
-            achievements: [],
-            showcase: [null, null, null],
-            levelTasksProgress: [0, 0, 0, 0, 0],
-            timeTasksProgress: {},
-            name: 'Без имени',
-            xp: 0,
-            level: 1,
-            avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
-            status: 'Новичок',
-            unlockedStatuses: ['Новичок'],
-            aiUsageCount: 0
-        };
-    }
-
-    // 4. Заглушки баз данных (чтобы функции рендера не ломались)
-    window.markersDB = window.markersDB || [];
-    window.brands = window.brands || [
-        { name: 'GuangNa', total: 100 },
-        { name: 'Languo', total: 100 },
-        { name: 'Zibeef', total: 100 }
-    ];
-    window.taskBranches = window.taskBranches || {};
-
-    // Заглушки для недостающих функций обновления UI
-    window.updateUI = window.updateUI || function() { console.log("UI updated"); };
-    window.saveData = window.saveData || function() { localStorage.setItem('user', JSON.stringify(user)); };
-
-    // ==========================================
-    // ТЕСТИРОВАНИЕ В БРАУЗЕРЕ
-    // ==========================================
-    const isTelegram = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe);
-    const tgSafe = isTelegram ? window.Telegram.WebApp : {
-        expand: () => {},
-        ready: () => {},
-        showAlert: (msg) => alert(msg),
-        showConfirm: (msg, callback) => callback(confirm(msg)),
-        sendData: (data) => console.log('Send data:', data),
-        initDataUnsafe: { user: { id: 496779756, first_name: 'Без имени' } }
-    };
-
-    if (isTelegram) {
-        tgSafe.expand();
-        tgSafe.ready();
-    }
-
-    const tgUserId = tgSafe.initDataUnsafe?.user?.id;
-    const userId = tgUserId || 496779756;
-    const ADMIN_ID = 496779756;
     const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io';
     const MARKER_PRICE = 75;
-
-    // ==========================================
-    // ДАННЫЕ
-    // ==========================================
-    const levelConfig = [
-        { level: 1, name: "Новичок", xpReq: 0, color: "lvl-1" },
-        { level: 2, name: "Любитель", xpReq: 100, color: "lvl-2" },
-        { level: 3, name: "Художник", xpReq: 300, color: "lvl-3" },
-        { level: 4, name: "Мастер", xpReq: 600, color: "lvl-4" },
-        { level: 5, name: "Легенда", xpReq: 1000, color: "lvl-5" }
-    ];
-
-    const achievementsDB = {
-        'first_task': { 
-            id: 'first_task', 
-            name: 'Первый шаг', 
-            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach1.png', 
-            desc: 'Выполнено первое задание',
-            condition: 'Выполните любое задание'
-        },
-        'rich_boy': { 
-            id: 'rich_boy', 
-            name: 'Копилка', 
-            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach2.png', 
-            desc: 'Накоплено 1000 ашетиков',
-            condition: 'Накопите 1000 ашетиков'
-        },
-        'shopaholic': { 
-            id: 'shopaholic', 
-            name: 'Шопоголик', 
-            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach4.png', 
-            desc: 'Сделан первый заказ в корзине',
-            condition: 'Сделайте первый заказ'
-        },
-        'collector': { 
-            id: 'collector', 
-            name: 'Коллекционер', 
-            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach5.png', 
-            desc: 'Разблокировано 3 статуса',
-            condition: 'Получите 3 разных статуса'
-        },
-        'speed_draw': {
-            id: 'speed_draw',
-            name: 'Скоростная раскраска',
-            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach2.png',
-            desc: 'Выполнено 3 временных задания за неделю',
-            condition: 'Выполните 3 временных задания за 7 дней'
-        }
+    
+    // Telegram WebApp
+    const tg = window.Telegram?.WebApp || {
+        showAlert: (msg) => alert(msg),
+        showConfirm: (msg, callback) => callback(confirm(msg)),
+        initDataUnsafe: { user: { id: 496779756, first_name: 'Без имени' } }
     };
-
-    const levelTasks = [
-        { level: 1, title: 'Начинающий художник', description: 'Нужно подтвердить 1 раскрашенную страницу', maxProgress: 1, xp: 50 },
-        { level: 2, title: 'Любитель цвета', description: 'Нужно подтвердить 3 раскрашенные страницы', maxProgress: 3, xp: 100 },
-        { level: 3, title: 'Опытный колорист', description: 'Нужно подтвердить 5 раскрашенных страниц', maxProgress: 5, xp: 150 },
-        { level: 4, title: 'Мастер оттенков', description: 'Нужно подтвердить 10 раскрашенных страниц', maxProgress: 10, xp: 200 },
-        { level: 5, title: 'Легенда раскрасок', description: 'Нужно подтвердить 20 раскрашенных страниц', maxProgress: 20, xp: 300 }
-    ];
-
-    const timeTasksList = [
-        { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 }
-    ];
-
-    // Статусы за выполнение веток заданий
-    const statusRewards = {
+    
+    if (window.Telegram?.WebApp) {
+        tg.expand();
+        tg.ready();
+    }
+    
+    const userId = tg.initDataUnsafe?.user?.id || 496779756;
+    const ADMIN_ID = 496779756;
+    
+    // Глобальные данные
+    let user = {
+        id: userId,
+        name: tg.initDataUnsafe?.user?.first_name || 'Без имени',
+        balance: 0,
+        avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
+        status: 'Новичок',
+        unlockedStatuses: ['Новичок'],
+        achievements: [],
+        showcase: [null, null, null],
+        theme: localStorage.getItem('app_theme') || 'light'
+    };
+    
+    let cart = {};
+    let inventory = { organizers: [], userMarkers: {} };
+    let markersDB = [];
+    let markersLoading = false;
+    
+    // ==========================================
+    // ДАННЫЕ ЗАДАНИЙ (ВЕТКИ)
+    // ==========================================
+    
+    const BRANCH_REWARDS = {
         trainer: "Великий тренер",
         alcohol: "Спиртесса",
         shock: "Шок контент",
@@ -2253,12 +2072,11 @@
         sea: "Морская дева",
         queen: "Злая королева"
     };
-
-    // Ветки заданий
-    const taskBranches = {
+    
+    const TASK_BRANCHES = {
         trainer: {
             name: "Великий тренер",
-            desc: "Раскрасить картинки в томе с покемонами",
+            desc: "Раскрасить картинки с покемонами",
             levels: [
                 { title: "Начинающий тренер", maxProgress: 1, desc: "Раскрась 1 картинку с покемонами" },
                 { title: "Любитель покемонов", maxProgress: 3, desc: "Раскрась 3 картинки с покемонами" },
@@ -2280,15 +2098,14 @@
         },
         shock: {
             name: "Шок контент",
-            desc: "Раскрасить любые развороты (1 разворот = 1 цельная картинка)",
+            desc: "Раскрасить любые развороты",
             levels: [
                 { title: "Первые шаги", maxProgress: 5, desc: "Раскрась 5 разворотов" },
                 { title: "Набирающий темп", maxProgress: 10, desc: "Раскрась 10 разворотов" },
                 { title: "Опытный мастер", maxProgress: 20, desc: "Раскрась 20 разворотов" },
                 { title: "Профессионал", maxProgress: 30, desc: "Раскрась 30 разворотов" },
                 { title: "Шок контент", maxProgress: 35, desc: "Раскрась 35 разворотов" }
-            ],
-            reward: "Любой том Hachette А4 на выбор"
+            ]
         },
         lion: {
             name: "Королева прайда",
@@ -2303,13 +2120,13 @@
         },
         dragons: {
             name: "Мать Драконов",
-            desc: "Раскрасить картинки драконов из м/ф и не из м/ф",
+            desc: "Раскрасить картинки драконов",
             levels: [
-                { title: "Любитель мультфильмов", maxProgress: 1, type: "cartoon", desc: "Раскрась 1 дракона из м/ф" },
-                { title: "Любитель фэнтези", maxProgress: 1, type: "fantasy", desc: "Раскрась 1 дракона не из м/ф" },
-                { title: "Знаток драконов", maxProgress: 2, type: "both", desc: "Раскрась 1 дракона из м/ф и 1 дракона не из м/ф" },
-                { title: "Мастер драконов", maxProgress: 6, type: "both", desc: "Раскрась 3 драконов из м/ф и 3 драконов не из м/ф" },
-                { title: "Мать Драконов", maxProgress: 8, type: "both", desc: "Раскрась 4 драконов из м/ф и 4 драконов не из м/ф" }
+                { title: "Любитель мультфильмов", maxProgress: 1, desc: "Раскрась 1 дракона из м/ф" },
+                { title: "Любитель фэнтези", maxProgress: 1, desc: "Раскрась 1 дракона не из м/ф" },
+                { title: "Знаток драконов", maxProgress: 2, desc: "Раскрась 1 из м/ф и 1 не из м/ф" },
+                { title: "Мастер драконов", maxProgress: 6, desc: "Раскрась 3 из м/ф и 3 не из м/ф" },
+                { title: "Мать Драконов", maxProgress: 8, desc: "Раскрась 4 из м/ф и 4 не из м/ф" }
             ]
         },
         bear: {
@@ -2327,11 +2144,11 @@
             name: "Знаток фауны",
             desc: "Раскрасить картинки с разными животными",
             levels: [
-                { title: "Знакомство с фауной", maxProgress: 1, type: "deer", desc: "Раскрась 1 картинку с оленем" },
-                { title: "Друг животных", maxProgress: 2, type: "mouse+bear", desc: "Раскрась 1 картинку с мышью и 1 с медведем" },
-                { title: "Любитель животных", maxProgress: 3, type: "fox+bear+mouse", desc: "Раскрась 1 с лисом, 1 с медведем, 1 с мышью" },
-                { title: "Знаток животных", maxProgress: 5, type: "deer+fox+mouse", desc: "Раскрась 2 с оленями, 2 с лисами, 1 с мышью" },
-                { title: "Знаток фауны", maxProgress: 9, type: "all", desc: "Раскрась 2 с оленем, 2 с мышью, 3 с медведями, 2 с лисами" }
+                { title: "Знакомство с фауной", maxProgress: 1, desc: "Раскрась 1 картинку с оленем" },
+                { title: "Друг животных", maxProgress: 2, desc: "Раскрась 1 с мышью и 1 с медведем" },
+                { title: "Любитель животных", maxProgress: 3, desc: "Раскрась 1 с лисом, 1 с медведем, 1 с мышью" },
+                { title: "Знаток животных", maxProgress: 5, desc: "Раскрась 2 с оленями, 2 с лисами, 1 с мышью" },
+                { title: "Знаток фауны", maxProgress: 9, desc: "Раскрась 2 с оленем, 2 с мышью, 3 с медведями, 2 с лисами" }
             ]
         },
         sea: {
@@ -2349,261 +2166,334 @@
             name: "Злая королева",
             desc: "Раскрасить картинки со злодеями",
             levels: [
-                { title: "Знакомство со злодеями", maxProgress: 1, type: "jafar", desc: "Раскрась 1 картинку с Джафаром" },
-                { title: "Любитель злодеев", maxProgress: 2, type: "cruella", desc: "Раскрась 1 картинку с Круэллой и 1 со Шрамом" },
-                { title: "Знаток злодеев", maxProgress: 2, type: "scar", desc: "Раскрась 1 картинку со Шрамом и 1 с Малефисентой" },
-                { title: "Мастер злодеев", maxProgress: 4, type: "jafar+cruella", desc: "Раскрась 2 картинки с Джафаром и 2 с Круэллой" },
-                { title: "Злая королева", maxProgress: 8, type: "all", desc: "Раскрась 2 с Джафаром, 2 с Круэллой, 2 со Шрамом, 2 с Малефисентой" }
+                { title: "Знакомство со злодеями", maxProgress: 1, desc: "Раскрась 1 картинку с Джафаром" },
+                { title: "Любитель злодеев", maxProgress: 2, desc: "Раскрась 1 с Круэллой и 1 со Шрамом" },
+                { title: "Знаток злодеев", maxProgress: 2, desc: "Раскрась 1 со Шрамом и 1 с Малефисентой" },
+                { title: "Мастер злодеев", maxProgress: 4, desc: "Раскрась 2 с Джафаром и 2 с Круэллой" },
+                { title: "Злая королева", maxProgress: 8, desc: "Раскрась 2 с Джафаром, 2 с Круэллой, 2 со Шрамом, 2 с Малефисентой" }
             ]
         }
     };
-
-    const products = {
-        'tome1': { 
-            id: 'tome1', 
-            name: 'Том 1', 
-            price: 1500, 
-            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', 
-            type: 'book' 
-        },
-        'tome2': { 
-            id: 'tome2', 
-            name: 'Том 2', 
-            price: 1500, 
-            img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png', 
-            type: 'book' 
+    
+    // ==========================================
+    // API ВЫЗОВЫ
+    // ==========================================
+    
+    async function fetchAPI(endpoint, data = null) {
+        const options = {
+            method: data ? 'POST' : 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'omit'
+        };
+        if (data) {
+            options.body = JSON.stringify(data);
         }
-    };
-
-    const brands = [
-        { name: 'GuangNa', total: 408, trained: 0 },
-        { name: 'Languo', total: 288, trained: 0 },
-        { name: 'Zibeef', total: 240, trained: 0 },
-        { name: 'Grasp', total: 168, trained: 0 },
-        { name: 'InfiArt', total: 288, trained: 0 },
-        { name: 'Tooli-Art', total: 508, trained: 0 }
-    ];
-
-    let trainedColors = JSON.parse(localStorage.getItem('trained_colors')) || {};
-    let markersDB = [];
-    let markersLoading = false;
-    let markersLoaded = false;
-    let tempTaskPhotos = [];
-
-    // Данные о томах с ответами
-    const volumesData = [
-        { id: 't1', name: 'Том 1', pages: 26 },
-        { id: 't2', name: 'Том 2', pages: 26 },
-        { id: 't3', name: 'Том 3', pages: 26 },
-        { id: 't4', name: 'Том 4', pages: 26 },
-        { id: 't5', name: 'Том 5', pages: 26 },
-        { id: 't6', name: 'Том 6', pages: 26 },
-        { id: 't7', name: 'Том 7', pages: 26 },
-        { id: 't8', name: 'Том 8', pages: 26 },
-        { id: 't9', name: 'Том 9', pages: 26 },
-        { id: 't10', name: 'Том 10', pages: 26 },
-        { id: 't11', name: 'Том 11', pages: 26 },
-        { id: 't12', name: 'Том 12', pages: 26 },
-        { id: 't13', name: 'Том 13', pages: 26 },
-        { id: 't14', name: 'Том 14', pages: 26 },
-        { id: 't15', name: 'Том 15', pages: 26 },
-        { id: 't16', name: 'Том 16', pages: 26 },
-        { id: 't17', name: 'Том 17', pages: 26 },
-        { id: 't18', name: 'Том 18', pages: 26 },
-        { id: 't19', name: 'Том 19', pages: 26 },
-        { id: 't20', name: 'Том 20', pages: 26 },
-        { id: 't21', name: 'Том 21', pages: 26 },
-        { id: 't22', name: 'Том 22', pages: 26 },
-        { id: 't23', name: 'Том 23', pages: 26 },
-        { id: 't24', name: 'Том 24', pages: 26 },
-        { id: 't25', name: 'Том 25', pages: 26 },
-        { id: 't26', name: 'Том 26', pages: 26 },
-        { id: 't27', name: 'Том 27', pages: 26 },
-        { id: 't28', name: 'Том 28', pages: 26 },
-        { id: 't29', name: 'Том 29', pages: 26 },
-        { id: 't30', name: 'Том 30', pages: 26 },
-        { id: 't31', name: 'Том 31', pages: 26 },
-        { id: 't32', name: 'Том 32', pages: 26 },
-        { id: 't33', name: 'Том 33', pages: 26 },
-        { id: 't34', name: 'Том 34', pages: 26 },
-        { id: 't35', name: 'Том 35', pages: 26 },
-        { id: 't36', name: 'Том 36', pages: 26 },
-        { id: 't37', name: 'Том 37', pages: 26 },
-        { id: 't38', name: 'Том 38', pages: 26 },
-        { id: 't39', name: 'Том 39', pages: 26 },
-        { id: 't40', name: 'Том 40', pages: 26 },
-        { id: 't41', name: 'Том 41', pages: 26 },
-        { id: 't42', name: 'Том 42', pages: 26 },
-        { id: 't43', name: 'Том 43', pages: 26 },
-        { id: 't44', name: 'Том 44', pages: 26 },
-        { id: 't45', name: 'Том 45', pages: 26 },
-        { id: 't46', name: 'Том 46', pages: 26 },
-        { id: 't47', name: 'Том 47', pages: 26 }
-    ];
-
-    // Функция для рендера всех томов
-    function renderVolumes() {
-        const container = document.getElementById('volumesContainer');
+        try {
+            const response = await fetch(`${SERVER_URL}${endpoint}`, options);
+            return await response.json();
+        } catch (error) {
+            console.error(`API Error ${endpoint}:`, error);
+            return null;
+        }
+    }
+    
+    async function uploadTaskPhoto(branchKey, levelIndex, title, maxProgress, rewardStatus, photos) {
+        const formData = new FormData();
+        formData.append('user', userId);
+        formData.append('title', title);
+        formData.append('id', `${branchKey}_${levelIndex}`);
+        formData.append('level', levelIndex + 1);
+        formData.append('branchKey', branchKey);
+        formData.append('levelIndex', levelIndex);
+        formData.append('rewardStatus', rewardStatus);
+        formData.append('maxProgress', maxProgress);
+        
+        for (let i = 0; i < photos.length; i++) {
+            formData.append('photos', photos[i]);
+        }
+        
+        try {
+            const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
+                method: 'POST',
+                body: formData
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Upload error:', error);
+            return null;
+        }
+    }
+    
+    async function loadUserProgress() {
+        const stats = await fetchAPI(`/api/stats?user_id=${userId}`);
+        if (stats) {
+            window.userProgress = stats;
+        } else {
+            window.userProgress = {};
+        }
+        return window.userProgress;
+    }
+    
+    async function loadUnlockedStatuses() {
+        const statuses = await fetchAPI(`/api/unlocked_statuses?user_id=${userId}`);
+        if (statuses && Array.isArray(statuses)) {
+            user.unlockedStatuses = statuses;
+        }
+        return user.unlockedStatuses;
+    }
+    
+    async function loadUserAchievements() {
+        const achievements = await fetchAPI(`/api/achievements?user_id=${userId}`);
+        if (achievements && Array.isArray(achievements)) {
+            user.achievements = achievements;
+        }
+        return user.achievements;
+    }
+    // ==========================================
+    // ОТОБРАЖЕНИЕ ЗАДАНИЙ (ТОЛЬКО АКТИВНЫЙ УРОВЕНЬ)
+    // ==========================================
+    
+    function getCurrentLevelIndex(branchKey) {
+        const progress = window.userProgress || {};
+        const branchProgress = progress[branchKey] || {};
+        
+        // Ищем первый незавершенный уровень
+        const levels = TASK_BRANCHES[branchKey].levels;
+        for (let i = 0; i < levels.length; i++) {
+            const levelProgress = branchProgress[`level_${i}`] || 0;
+            const maxProgress = levels[i].maxProgress;
+            if (levelProgress < maxProgress) {
+                return i;
+            }
+        }
+        // Все уровни завершены
+        return levels.length;
+    }
+    
+    function getLevelProgress(branchKey, levelIndex) {
+        const progress = window.userProgress || {};
+        const branchProgress = progress[branchKey] || {};
+        return branchProgress[`level_${levelIndex}`] || 0;
+    }
+    
+    function isBranchCompleted(branchKey) {
+        const levels = TASK_BRANCHES[branchKey].levels;
+        const currentLevel = getCurrentLevelIndex(branchKey);
+        return currentLevel >= levels.length;
+    }
+    
+    function renderBranchTasks() {
+        const container = document.getElementById('branchTasksList');
         if (!container) return;
         
         container.innerHTML = '';
         
-        volumesData.forEach(volume => {
-            const volumeCard = document.createElement('div');
-            volumeCard.className = 'volume-card';
-            volumeCard.innerHTML = `
-                <div class="volume-header" onclick="toggleVolume('${volume.id}')">
-                    <div class="volume-title">
-                        <i class="fas fa-book"></i>
-                        <span>${volume.name}</span>
-                    </div>
-                    <i class="fas fa-chevron-down volume-arrow" id="arrow-${volume.id}"></i>
-                </div>
-                <div class="volume-pages" id="pages-${volume.id}" style="display: none;">
-                    <div class="pages-grid" id="grid-${volume.id}"></div>
+        for (const [branchKey, branch] of Object.entries(TASK_BRANCHES)) {
+            const isCompleted = isBranchCompleted(branchKey);
+            const currentLevelIndex = getCurrentLevelIndex(branchKey);
+            const levels = branch.levels;
+            
+            // Создаем карточку ветки
+            const branchCard = document.createElement('div');
+            branchCard.className = `branch-task-card ${isCompleted ? 'completed' : ''}`;
+            
+            // Заголовок ветки
+            branchCard.innerHTML = `
+                <div class="branch-header">
+                    <h3>${branch.name}</h3>
+                    <p>${branch.desc}</p>
                 </div>
             `;
-            container.appendChild(volumeCard);
             
-            const pagesGrid = document.getElementById(`grid-${volume.id}`);
-            if (pagesGrid) {
-                for (let i = 1; i <= volume.pages; i++) {
-                    const pageDiv = document.createElement('div');
-                    pageDiv.className = 'page-item';
-                    pageDiv.onclick = (function(vId, pNum) {
-                        return function() { openAnswerImage(vId, pNum); };
-                    })(volume.id, i);
-                    pageDiv.innerHTML = `
-                        <div class="page-number">${i}</div>
-                        <div class="page-preview">
-                            <i class="fas fa-image"></i>
+            if (isCompleted) {
+                // Ветка полностью завершена
+                const completedDiv = document.createElement('div');
+                completedDiv.className = 'level-card';
+                completedDiv.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <div class="completed-badge" style="display: inline-block; margin-bottom: 10px;">✅ Ветка завершена</div>
+                        <div style="color: var(--status-green);">
+                            <i class="fas fa-trophy"></i> Получен статус: ${BRANCH_REWARDS[branchKey]}
                         </div>
-                    `;
-                    pagesGrid.appendChild(pageDiv);
-                }
+                    </div>
+                `;
+                branchCard.appendChild(completedDiv);
+            } else if (currentLevelIndex < levels.length) {
+                // Показываем только текущий активный уровень
+                const level = levels[currentLevelIndex];
+                const currentProgress = getLevelProgress(branchKey, currentLevelIndex);
+                const percent = (currentProgress / level.maxProgress) * 100;
+                
+                const levelCard = document.createElement('div');
+                levelCard.className = 'level-card';
+                levelCard.innerHTML = `
+                    <div class="level-header">
+                        <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
+                        <span class="level-progress">${currentProgress}/${level.maxProgress}</span>
+                    </div>
+                    <div class="level-desc">${level.desc}</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                    </div>
+                    <button class="task-submit-btn" onclick="openTaskUpload('${branchKey}', ${currentLevelIndex})">
+                        <i class="fas fa-camera"></i> Отправить фото на проверку
+                    </button>
+                `;
+                branchCard.appendChild(levelCard);
             }
-        });
-    }
-
-    function toggleVolume(volumeId) {
-        const pagesDiv = document.getElementById(`pages-${volumeId}`);
-        const arrow = document.getElementById(`arrow-${volumeId}`);
-        
-        if (pagesDiv && pagesDiv.style.display === 'none' || (pagesDiv && pagesDiv.style.display === '')) {
-            if (pagesDiv) pagesDiv.style.display = 'block';
-            if (arrow) arrow.style.transform = 'rotate(180deg)';
-        } else if (pagesDiv) {
-            pagesDiv.style.display = 'none';
-            if (arrow) arrow.style.transform = 'rotate(0deg)';
+            
+            container.appendChild(branchCard);
         }
     }
-
-    function openAnswerImage(volumeId, pageNumber) {
-        const imageUrl = `assets/otveti/${volumeId}/${pageNumber}.png`;
-        
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.style.display = 'flex';
-        modal.innerHTML = `
-            <div class="modal-content answer-modal">
-                <h3>${volumeId.toUpperCase()} - Страница ${pageNumber}</h3>
-                <img src="${imageUrl}" class="answer-image" onerror="this.src='https://via.placeholder.com/300x400?text=Изображение+не+найдено'">
-                <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-
-    function searchVolumes() {
-        const query = document.getElementById('volumeSearch');
-        if (!query) return;
-        const searchQuery = query.value.toLowerCase();
-        const volumeCards = document.querySelectorAll('.volume-card');
-        
-        volumeCards.forEach(card => {
-            const titleEl = card.querySelector('.volume-title span');
-            if (titleEl) {
-                const title = titleEl.innerText.toLowerCase();
-                if (title.includes(searchQuery)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            }
-        });
-    }
-
-    // ==========================================
-    // ПОЛЬЗОВАТЕЛЬ
-    // ==========================================
-    const defaultUser = {
-        name: tgSafe.initDataUnsafe?.user?.first_name || 'Без имени',
-        balance: 0,
-        xp: 0,
-        level: 1,
-        avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
-        status: 'Новичок',
-        achievements: [],
-        showcase: [null, null, null],
-        levelTasksProgress: [0, 0, 0, 0, 0],
-        branchProgress: {
-            trainer: [0, 0, 0, 0, 0],
-            alcohol: [0, 0, 0, 0, 0],
-            shock: [0, 0, 0, 0, 0],
-            lion: [0, 0, 0, 0, 0],
-            dragons: [0, 0, 0, 0, 0],
-            bear: [0, 0, 0, 0, 0],
-            fauna: [0, 0, 0, 0, 0],
-            sea: [0, 0, 0, 0, 0],
-            queen: [0, 0, 0, 0, 0]
-        },
-        branchCompleted: {
-            trainer: false,
-            alcohol: false,
-            shock: false,
-            lion: false,
-            dragons: false,
-            bear: false,
-            fauna: false,
-            sea: false,
-            queen: false
-        },
-        unlockedStatuses: ['Новичок'],
-        timeTasksProgress: {},
-        timeTasksReset: Date.now(),
-        aiUsageCount: 0,
-        theme: localStorage.getItem('app_theme') || 'light',
-        customThemeBg: localStorage.getItem('custom_theme_bg') || 'light',
-        customThemeAccent: localStorage.getItem('custom_theme_accent') || '#ff9500'
-    };
-
-    let savedLocalUser = JSON.parse(localStorage.getItem('coloring_user')) || {};
-    let user = { ...defaultUser, ...savedLocalUser };
     
-    // Инициализация недостающих полей
-    if (!Array.isArray(user.levelTasksProgress)) user.levelTasksProgress = [...defaultUser.levelTasksProgress];
-    if (!user.timeTasksProgress) user.timeTasksProgress = {};
-    if (!user.branchProgress) user.branchProgress = { ...defaultUser.branchProgress };
-    if (!user.branchCompleted) user.branchCompleted = { ...defaultUser.branchCompleted };
-    if (!user.unlockedStatuses) user.unlockedStatuses = ['Новичок'];
-    if (!user.showcase) user.showcase = [null, null, null];
-    if (!user.achievements) user.achievements = [];
+    // ==========================================
+    // ОТПРАВКА ФОТО НА ПРОВЕРКУ
+    // ==========================================
     
-    user.isAdmin = (userId === ADMIN_ID);
-
-    let cartData = JSON.parse(localStorage.getItem('coloring_cart')) || {};
-    cart = cartData;
-
+    let currentUploadBranch = null;
+    let currentUploadLevel = null;
+    let tempPhotos = [];
+    
+    function openTaskUpload(branchKey, levelIndex) {
+        currentUploadBranch = branchKey;
+        currentUploadLevel = levelIndex;
+        
+        // Создаем input для выбора файлов
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.multiple = true;
+        fileInput.onchange = handleTaskFilesSelected;
+        fileInput.click();
+    }
+    
+    function handleTaskFilesSelected(event) {
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
+        
+        tempPhotos = files;
+        
+        // Показываем превью
+        const previewContainer = document.getElementById('taskPhotoPreviewContainer');
+        if (previewContainer) {
+            previewContainer.innerHTML = '';
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '70px';
+                    img.style.height = '70px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '12px';
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Показываем модальное окно
+        const modal = document.getElementById('taskUploadModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    async function submitTaskPhoto() {
+        if (!currentUploadBranch || currentUploadLevel === null) {
+            tg.showAlert('Ошибка: задание не выбрано');
+            return;
+        }
+        
+        if (tempPhotos.length === 0) {
+            tg.showAlert('Выберите фото для отправки');
+            return;
+        }
+        
+        const branch = TASK_BRANCHES[currentUploadBranch];
+        const level = branch.levels[currentUploadLevel];
+        const rewardStatus = BRANCH_REWARDS[currentUploadBranch];
+        
+        tg.showAlert('Отправка фото на проверку...');
+        
+        const result = await uploadTaskPhoto(
+            currentUploadBranch,
+            currentUploadLevel,
+            `${branch.name} - Уровень ${currentUploadLevel + 1}: ${level.title}`,
+            level.maxProgress,
+            rewardStatus,
+            tempPhotos
+        );
+        
+        if (result && result.status === 'ok') {
+            tg.showAlert('✅ Фото отправлено на проверку администратору!');
+        } else {
+            tg.showAlert('❌ Ошибка отправки. Попробуйте позже.');
+        }
+        
+        closeTaskUploadModal();
+    }
+    
+    function closeTaskUploadModal() {
+        const modal = document.getElementById('taskUploadModal');
+        const previewContainer = document.getElementById('taskPhotoPreviewContainer');
+        const fileInput = document.getElementById('taskFileInput');
+        
+        if (modal) modal.style.display = 'none';
+        if (previewContainer) previewContainer.innerHTML = '';
+        if (fileInput) fileInput.value = '';
+        
+        currentUploadBranch = null;
+        currentUploadLevel = null;
+        tempPhotos = [];
+    }
+    
     // ==========================================
-    // ОБНОВЛЕНИЕ БЕЙДЖА КОРЗИНЫ
+    // ОБНОВЛЕНИЕ ПРОГРЕССА С СЕРВЕРА
     // ==========================================
+    
+    async function refreshUserProgress() {
+        await loadUserProgress();
+        await loadUnlockedStatuses();
+        await loadUserAchievements();
+        renderBranchTasks();
+        updateUI();
+    }
+    
+    // ==========================================
+    // ПЕРИОДИЧЕСКОЕ ОБНОВЛЕНИЕ (КАЖДЫЕ 30 СЕКУНД)
+    // ==========================================
+    
+    let refreshInterval = null;
+    
+    function startProgressRefresh() {
+        if (refreshInterval) clearInterval(refreshInterval);
+        refreshInterval = setInterval(() => {
+            refreshUserProgress();
+        }, 30000);
+    }
+    
+    // ==========================================
+    // ОСТАЛЬНЫЕ ФУНКЦИИ (ПРОФИЛЬ, МАРКЕРЫ, КОРЗИНА)
+    // ==========================================
+    
+    function updateUI() {
+        const nameEl = document.getElementById('displayUsername');
+        const avatarEl = document.getElementById('user-avatar');
+        const balanceEl = document.getElementById('userBalance');
+        const statusBadge = document.getElementById('currentStatus');
+        
+        if (nameEl) nameEl.innerText = user.name;
+        if (avatarEl) avatarEl.src = user.avatar;
+        if (balanceEl) balanceEl.innerText = user.balance;
+        if (statusBadge) statusBadge.innerText = user.status || 'Новичок';
+        
+        updateCartBadge();
+    }
+    
     function updateCartBadge() {
         let totalItems = 0;
-        if (typeof cart !== 'undefined' && cart) {
+        if (cart) {
             for (let key in cart) {
-                if (cart.hasOwnProperty(key)) {
-                    totalItems += cart[key];
-                }
+                totalItems += cart[key];
             }
         }
         const badge = document.getElementById('cartBadge');
@@ -2616,150 +2506,147 @@
             }
         }
     }
-
+    
     // ==========================================
-    // ВИТРИНА ДОСТИЖЕНИЙ
+    // ПРОФИЛЬ
     // ==========================================
-    function renderShowcase() {
-        for (let i = 0; i < 3; i++) {
-            const slot = document.getElementById(`slot-${i}`);
-            if (!slot) continue;
-            const achId = user.showcase && user.showcase[i] ? user.showcase[i] : null;
-            slot.innerHTML = '';
-            slot.style.cursor = 'pointer';
-            slot.onclick = (function(index) {
-                return function() { 
-                    if (typeof openShowcaseSelector === 'function') {
-                        openShowcaseSelector(index); 
-                    }
-                };
-            })(i);
-            
-            if (achId && achievementsDB[achId]) {
-                const img = document.createElement('img');
-                img.src = achievementsDB[achId].img;
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.objectFit = 'cover';
-                slot.appendChild(img);
-                slot.classList.add('filled');
+    
+    function toggleAvatarEditor() {
+        const editor = document.getElementById('avatarEditor');
+        if (editor) {
+            if (editor.style.display === 'none' || editor.style.display === '') {
+                renderAvatarPresets();
+                editor.style.display = 'block';
             } else {
-                slot.innerHTML = '<i class="fas fa-plus"></i>';
-                slot.classList.remove('filled');
+                editor.style.display = 'none';
             }
         }
     }
     
-    // ==========================================
-    // ТЕМЫ
-    // ==========================================
-    const commonStyles = `
-        button, .nav-btn, .marker-controls, .theme-option, .photo-upload-btn, .upload-area, .showcase-slot, .reward-card { 
-            position: relative !important; 
-            z-index: 10 !important; 
-            pointer-events: auto !important; 
-            cursor: pointer !important;
+    function renderAvatarPresets() {
+        const container = document.getElementById('avatarPresets');
+        if (!container) return;
+        container.innerHTML = '';
+        for (let i = 1; i <= 8; i++) {
+            const url = `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av${i}.png`;
+            const div = document.createElement('div');
+            div.className = 'preset-avatar-item';
+            div.onclick = () => {
+                user.avatar = url;
+                saveUserData();
+                const editor = document.getElementById('avatarEditor');
+                if (editor) editor.style.display = 'none';
+                tg.showAlert('Аватар изменен!');
+            };
+            div.innerHTML = `<img src="${url}">`;
+            container.appendChild(div);
         }
-        .modal-overlay { z-index: 10000 !important; }
-        .page { position: relative; z-index: 1; }
-    `;
-
-    function setTheme(themeName) {
-        const oldStyle = document.getElementById('custom-theme-style');
-        if (oldStyle) oldStyle.remove();
-
-        if (themeName === 'custom') {
-            applyCustomTheme(true);
+    }
+    
+    function handleCustomAvatar(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                user.avatar = e.target.result;
+                saveUserData();
+                const editor = document.getElementById('avatarEditor');
+                if (editor) editor.style.display = 'none';
+                tg.showAlert('Аватар изменен!');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    function changeNickname() {
+        const modal = document.getElementById('nameModal');
+        const input = document.getElementById('newNameInput');
+        if (input) input.value = user.name;
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function saveNewNickname() {
+        const input = document.getElementById('newNameInput');
+        if (!input) return;
+        const newName = input.value.trim();
+        if (newName.length > 0 && newName.length <= 20) {
+            user.name = newName;
+            saveUserData();
+            const modal = document.getElementById('nameModal');
+            if (modal) modal.style.display = 'none';
+            tg.showAlert('Имя изменено!');
         } else {
-            document.documentElement.setAttribute('data-theme', themeName);
-            user.theme = themeName;
-            localStorage.setItem('app_theme', themeName);
-            localStorage.removeItem('custom_theme_bg');
-            localStorage.removeItem('custom_theme_accent');
+            tg.showAlert("Имя должно быть от 1 до 20 символов");
         }
+    }
+    
+    function closeNameModal() {
+        const modal = document.getElementById('nameModal');
+        if (modal) modal.style.display = 'none';
+    }
+    
+    function openStatusInfo() {
+        const list = document.getElementById('availableStatusesList');
+        if (!list) return;
+        list.innerHTML = '';
         
-        document.querySelectorAll('.theme-option').forEach(el => {
-            el.classList.remove('active');
-            if (el.dataset.theme === themeName) el.classList.add('active');
+        const allStatuses = ['Новичок', ...Object.values(BRANCH_REWARDS)];
+        
+        allStatuses.forEach(status => {
+            const isUnlocked = user.unlockedStatuses.includes(status);
+            const isActive = user.status === status;
+            
+            const div = document.createElement('div');
+            div.style.cssText = `padding:12px; margin:8px 0; border-radius:12px; background:var(--card-bg); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);`;
+            
+            if (isUnlocked) {
+                div.innerHTML = `
+                    <span>${status}</span>
+                    ${!isActive ? `<button class="balance-btn" style="padding:6px 12px; width:auto;" onclick="selectStatus('${status}')">Выбрать</button>` : '<span style="color:var(--status-green);">✓ Активен</span>'}
+                `;
+            } else {
+                div.innerHTML = `<span style="opacity:0.6;">${status}</span><span style="color:var(--text-gray);">🔒 Выполните все уровни ветки</span>`;
+            }
+            list.appendChild(div);
         });
         
+        const modal = document.getElementById('statusSelectModal');
+        if (modal) modal.style.display = 'flex';
+    }
+    
+    function selectStatus(statusName) {
+        user.status = statusName;
+        saveUserData();
+        const modal = document.getElementById('statusSelectModal');
+        if (modal) modal.style.display = 'none';
         updateUI();
     }
-
-    function applyCustomTheme(loadFromCache = false) {
-        let bgMode, accentColor;
-        if (loadFromCache) {
-            bgMode = localStorage.getItem('custom_theme_bg') || 'light';
-            accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
-            const bgEl = document.getElementById('themeBgMode');
-            const accEl = document.getElementById('themeAccentColor');
-            if(bgEl) bgEl.value = bgMode;
-            if(accEl) accEl.value = accentColor;
-        } else {
-            const bgEl = document.getElementById('themeBgMode');
-            const accEl = document.getElementById('themeAccentColor');
-            bgMode = bgEl ? bgEl.value : 'light';
-            accentColor = accEl ? accEl.value : '#ff9500';
-            localStorage.setItem('custom_theme_bg', bgMode);
-            localStorage.setItem('custom_theme_accent', accentColor);
-        }
-        
-        const oldStyle = document.getElementById('custom-theme-style');
-        if (oldStyle) oldStyle.remove();
-        const style = document.createElement('style');
-        style.id = 'custom-theme-style';
-        
-        if (bgMode === 'light') {
-            style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
-        } else {
-            style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; } ${commonStyles}`;
-        }
-        document.head.appendChild(style);
-        document.documentElement.removeAttribute('data-theme');
-        user.theme = 'custom';
-        localStorage.setItem('app_theme', 'custom');
-        
-        updateUI();
+    
+    function openSupport() {
+        window.open('https://boosty.to/coloringapp', '_blank');
     }
-
-    // ==========================================
-    // СОХРАНЕНИЕ
-    // ==========================================
-    function saveDataLocal() {
+    
+    function resetAllData() {
+        tg.showConfirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?", (confirm) => {
+            if (confirm) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        });
+    }
+    
+    function saveUserData() {
         localStorage.setItem('coloring_user', JSON.stringify(user));
         localStorage.setItem('coloring_cart', JSON.stringify(cart));
         updateUI();
     }
-
-    function saveData() {
-        saveDataLocal();
-    }
-
-    function updateUI() {
-        const nameEl = document.getElementById('displayUsername');
-        const avatarEl = document.getElementById('user-avatar');
-        const balanceEl = document.getElementById('userBalance');
-        const statusBadge = document.getElementById('currentStatus');
-        if (nameEl) nameEl.innerText = user.name;
-        if (avatarEl) avatarEl.src = user.avatar;
-        if (balanceEl) balanceEl.innerText = user.balance;
-        if (statusBadge) statusBadge.innerText = user.status || 'Без статуса';
-        updateStatusProgress();
-        renderShowcase();
-        updateCartBadge();
-    }
-
-    function updateStatusProgress() {
-        const progressBar = document.querySelector('.task-progress-fill');
-        const progressText = document.querySelector('.task-progress-text');
-        if (progressBar) progressBar.style.width = '0%';
-        if (progressText) progressText.innerText = '0 / 5';
-    }
+    
     // ==========================================
     // МАРКЕРЫ
     // ==========================================
+    
     async function loadMarkers() {
-        if (markersLoading || markersLoaded) return;
+        if (markersLoading) return;
         markersLoading = true;
         
         const markersContainer = document.getElementById('markersList');
@@ -2769,16 +2656,8 @@
         
         const csvUrl = 'https://docs.google.com/spreadsheets/d/1Yrsif-aQwbuT6fLPnP4MsM22UuwuUWz5FYegELPxzFU/gviz/tq?tqx=out:csv&cache=' + new Date().getTime();
         
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => {
-            controller.abort();
-            console.error('Timeout: Загрузка маркеров превысила 10 секунд');
-        }, 10000);
-        
         try {
-            const res = await fetch(csvUrl, { signal: controller.signal });
-            clearTimeout(timeoutId);
-            
+            const res = await fetch(csvUrl);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             
             const text = await res.text();
@@ -2796,33 +2675,14 @@
             });
             
             markersDB = temp.filter((v, i, a) => a.findIndex(t => (t.num === v.num)) === i);
-            markersLoaded = true;
-            
-            if (cart) {
-                for (let key in cart) {
-                    if (key.startsWith('marker_')) {
-                        const num = key.replace('marker_', '');
-                        const marker = markersDB.find(m => m.num === num);
-                        if (marker && cart[key] > marker.stock) {
-                            cart[key] = marker.stock;
-                        }
-                    }
-                }
-                saveData();
-            }
-            
-            console.log('✅ Маркеры загружены:', markersDB.length);
             
             const activePage = document.querySelector('.page.active');
             if (activePage && activePage.id === 'markers') {
                 renderMarkers();
             }
-            
         } catch (error) {
-            clearTimeout(timeoutId);
             console.error('Ошибка загрузки маркеров:', error);
             markersDB = [];
-            
             if (markersContainer) {
                 markersContainer.innerHTML = '<div class="no-results">⚠️ Ошибка загрузки данных. Проверьте подключение к интернету.</div>';
             }
@@ -2830,20 +2690,7 @@
             markersLoading = false;
         }
     }
-
-    function getStockColor(stock) {
-        if (stock === 0) return 'out-of-stock';
-        if (stock === 1) return 'low-stock';
-        if (stock <= 3) return 'medium-stock';
-        return 'high-stock';
-    }
-
-    function getStockText(stock) {
-        if (stock === 0) return 'Нет в наличии';
-        if (stock === 1) return '1 шт.';
-        return `${stock} шт.`;
-    }
-
+    
     function renderMarkers() {
         const container = document.getElementById('markersList');
         if (!container) return;
@@ -2886,7 +2733,20 @@
             container.appendChild(div);
         });
     }
-
+    
+    function getStockColor(stock) {
+        if (stock === 0) return 'out-of-stock';
+        if (stock === 1) return 'low-stock';
+        if (stock <= 3) return 'medium-stock';
+        return 'high-stock';
+    }
+    
+    function getStockText(stock) {
+        if (stock === 0) return 'Нет в наличии';
+        if (stock === 1) return '1 шт.';
+        return `${stock} шт.`;
+    }
+    
     function updateMarkerCart(num, delta) {
         const cartKey = `marker_${num}`;
         const currentCount = cart[cartKey] || 0;
@@ -2894,9 +2754,9 @@
         const marker = markersDB.find(m => m.num === num);
         if (!marker) return;
         
-        if (newCount > marker.stock) { 
-            tgSafe.showAlert(`Максимум доступно: ${marker.stock} шт.`); 
-            return; 
+        if (newCount > marker.stock) {
+            tg.showAlert(`Максимум доступно: ${marker.stock} шт.`);
+            return;
         }
         if (newCount < 0) return;
         
@@ -2909,19 +2769,11 @@
         const countSpan = document.getElementById(`marker-count-${num}`);
         if (countSpan) countSpan.innerText = newCount;
         
-        const markerItem = document.querySelector(`.marker-item[data-num="${num}"]`);
-        if (markerItem) {
-            const minusBtn = markerItem.querySelector('.minus');
-            const plusBtn = markerItem.querySelector('button:last-child');
-            if (minusBtn) minusBtn.disabled = (newCount === 0);
-            if (plusBtn) plusBtn.disabled = (newCount >= marker.stock);
-        }
-        
-        saveData();
+        saveUserData();
         renderCart();
         updateCartBadge();
     }
-
+    
     function searchMarkers() {
         const query = document.getElementById('markerSearch');
         if (!query) return;
@@ -2938,1204 +2790,9 @@
     }
     
     // ==========================================
-    // ДОСТИЖЕНИЯ И ВИТРИНА
-    // ==========================================
-    function openAchievementsGallery() {
-        const list = document.getElementById('allAchievementsList');
-        if (!list) return;
-        list.innerHTML = '';
-        Object.values(achievementsDB).forEach(ach => {
-            const isUnlocked = user.achievements && user.achievements.includes(ach.id);
-            const div = document.createElement('div');
-            div.className = `achievement-item ${!isUnlocked ? 'locked' : ''}`;
-            div.onclick = () => showAchievementInfo(ach);
-            div.innerHTML = `
-                <img src="${ach.img}" alt="${ach.name}">
-                <div class="achievement-info">
-                    <h4>${ach.name}</h4>
-                    <p>${ach.desc}</p>
-                    <div class="achievement-condition">${ach.condition}</div>
-                    ${!isUnlocked ? '<div class="achievement-lock"><i class="fas fa-lock"></i> Заблокировано</div>' : ''}
-                </div>
-            `;
-            list.appendChild(div);
-        });
-        const modal = document.getElementById('achievementsGalleryModal');
-        if (modal) modal.style.display = 'flex';
-    }
-
-    function showAchievementInfo(ach) {
-        const titleEl = document.getElementById('achInfoTitle');
-        const imgEl = document.getElementById('achInfoImg');
-        const descEl = document.getElementById('achInfoDesc');
-        const conditionEl = document.getElementById('achInfoCondition');
-        
-        if (titleEl) titleEl.innerText = ach.name;
-        if (imgEl) imgEl.src = ach.img;
-        if (descEl) descEl.innerText = ach.desc;
-        if (conditionEl) conditionEl.innerText = ach.condition;
-        
-        const galleryModal = document.getElementById('achievementsGalleryModal');
-        if (galleryModal) galleryModal.style.display = 'none';
-        
-        const infoModal = document.getElementById('achInfoModal');
-        if (infoModal) infoModal.style.display = 'flex';
-    }
-
-    function closeAchievementInfo() {
-        const modal = document.getElementById('achInfoModal');
-        if (modal) modal.style.display = 'none';
-    }
-
-    function openShowcaseSelector(slotIndex) {
-        const list = document.getElementById('showcaseAchievementsList');
-        if (!list) return;
-        list.innerHTML = '';
-        
-        const unlockedAchievements = user.achievements ? user.achievements.filter(achId => achievementsDB[achId]) : [];
-        
-        if (unlockedAchievements.length === 0) {
-            list.innerHTML = '<div class="no-results">Нет разблокированных достижений</div>';
-        } else {
-            unlockedAchievements.forEach(achId => {
-                const ach = achievementsDB[achId];
-                if (ach) {
-                    const div = document.createElement('div');
-                    div.style.cssText = 'display:flex; align-items:center; gap:10px; padding:10px; cursor:pointer; margin-bottom:8px; border-radius:12px; background:var(--card-bg);';
-                    div.onclick = () => {
-                        user.showcase[slotIndex] = achId;
-                        saveData();
-                        renderShowcase();
-                        const modal = document.getElementById('showcaseSelectorModal');
-                        if (modal) modal.style.display = 'none';
-                    };
-                    div.innerHTML = `<img src="${ach.img}" style="width:50px; height:50px; border-radius:12px; object-fit:cover;"><span style="flex:1;">${ach.name}</span>`;
-                    list.appendChild(div);
-                }
-            });
-        }
-        
-        const modal = document.getElementById('showcaseSelectorModal');
-        if (modal) modal.style.display = 'flex';
-    }
-    
-    // ==========================================
-    // ПРОФИЛЬ
-    // ==========================================
-    function toggleAvatarEditor() {
-        const editor = document.getElementById('avatarEditor');
-        if (editor) {
-            if (editor.style.display === 'none' || editor.style.display === '') {
-                renderAvatarPresets();
-                editor.style.display = 'block';
-            } else {
-                editor.style.display = 'none';
-            }
-        }
-    }
-
-    function renderAvatarPresets() {
-        const container = document.getElementById('avatarPresets');
-        if (!container) return;
-        container.innerHTML = '';
-        for (let i = 1; i <= 8; i++) {
-            const url = `https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av${i}.png`;
-            const div = document.createElement('div');
-            div.className = 'preset-avatar-item';
-            div.onclick = () => { 
-                user.avatar = url; 
-                saveData(); 
-                const editor = document.getElementById('avatarEditor');
-                if (editor) editor.style.display = 'none'; 
-                tgSafe.showAlert('Аватар изменен!'); 
-            };
-            div.innerHTML = `<img src="${url}">`;
-            container.appendChild(div);
-        }
-    }
-
-    function handleCustomAvatar(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) { 
-                user.avatar = e.target.result; 
-                saveData(); 
-                const editor = document.getElementById('avatarEditor');
-                if (editor) editor.style.display = 'none'; 
-                tgSafe.showAlert('Аватар изменен!'); 
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function changeNickname() {
-        const nameInput = document.getElementById('newNameInput');
-        if (nameInput) nameInput.value = user.name;
-        const modal = document.getElementById('nameModal');
-        if (modal) modal.style.display = 'flex';
-    }
-
-    function saveNewNickname() {
-        const nameInput = document.getElementById('newNameInput');
-        if (!nameInput) return;
-        const newName = nameInput.value.trim();
-        if (newName.length > 0 && newName.length <= 20) {
-            user.name = newName;
-            saveData();
-            const modal = document.getElementById('nameModal');
-            if (modal) modal.style.display = 'none';
-            tgSafe.showAlert('Имя изменено!');
-        } else {
-            tgSafe.showAlert("Имя должно быть от 1 до 20 символов");
-        }
-    }
-
-    function closeNameModal() { 
-        const modal = document.getElementById('nameModal');
-        if (modal) modal.style.display = 'none'; 
-    }
-
-    function openStatusInfo() {
-        const list = document.getElementById('availableStatusesList');
-        if (!list) return;
-        list.innerHTML = '';
-        
-        const allStatuses = ['Новичок', ...Object.values(statusRewards)];
-        
-        allStatuses.forEach(status => {
-            const isUnlocked = user.unlockedStatuses && user.unlockedStatuses.includes(status);
-            const isActive = user.status === status;
-            
-            const div = document.createElement('div');
-            div.style.cssText = `padding:12px; margin:8px 0; border-radius:12px; background:var(--card-bg); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);`;
-            
-            if (isUnlocked) {
-                div.innerHTML = `
-                    <span>${status}</span>
-                    ${!isActive ? `<button class="balance-btn" style="padding:6px 12px; width:auto;" onclick="selectStatus('${status}')">Выбрать</button>` : '<span style="color:var(--status-green);">✓ Активен</span>'}
-                `;
-            } else {
-                div.innerHTML = `<span style="opacity:0.6;">${status}</span><span style="color:var(--text-gray);">🔒 Выполните все уровни ветки</span>`;
-            }
-            list.appendChild(div);
-        });
-        
-        const modal = document.getElementById('statusSelectModal');
-        if (modal) modal.style.display = 'flex';
-    }
-
-    function selectStatus(statusName) { 
-        user.status = statusName; 
-        saveData(); 
-        const modal = document.getElementById('statusSelectModal');
-        if (modal) modal.style.display = 'none'; 
-    }
-
-    function openSupport() { 
-        window.open('https://boosty.to/coloringapp', '_blank'); 
-    }
-
-    function resetAllData() {
-        tgSafe.showConfirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?", (confirm) => {
-            if (confirm) {
-                localStorage.removeItem('coloring_user');
-                localStorage.removeItem('coloring_cart');
-                localStorage.removeItem('trained_colors');
-                localStorage.removeItem('coloring_inventory');
-                localStorage.removeItem('app_theme');
-                window.location.reload();
-            }
-        });
-    }
-
-    // ==========================================
-    // ИИ ПАЛИТРА
-    // ==========================================
-    async function processAI(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const resultDiv = document.getElementById('aiResult');
-            if (resultDiv) {
-                resultDiv.style.display = 'block';
-                resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Анализ изображения...</div>';
-                setTimeout(() => {
-                    resultDiv.innerHTML = `
-                        <h4 style="margin-bottom:15px;">Распознанные маркеры:</h4>
-                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:var(--card-bg); padding:10px; border-radius:8px;">
-                            <div style="width:30px; height:30px; border-radius:5px; background:#FF5733;"></div>
-                            <div><div style="font-weight:bold;">GuangNa №101</div>
-                            <button class="photo-upload-btn" style="padding:5px 10px; font-size:11px; cursor:pointer;" onclick="addToCartFromAI('101')"><i class="fas fa-cart-plus"></i> Добавить в корзину</button></div>
-                        </div>
-                    `;
-                }, 1500);
-            }
-        }
-    }
-
-    function addToCartFromAI(num) {
-        updateMarkerCart(num, 1);
-        tgSafe.showAlert(`Маркер №${num} добавлен в корзину`);
-    }
-
-    async function trainAI() {
-        tgSafe.showAlert('Демо: Обучение ИИ (требуется бэкенд)');
-    }
-
-    async function adminChangeBalance() {
-        tgSafe.showAlert('Демо: Изменение баланса (требуется бэкенд)');
-    }
-
-    // ==========================================
-    // ИНВЕНТАРЬ
-    // ==========================================
-    function loadInventory() {
-        const saved = localStorage.getItem('coloring_inventory');
-        if (saved) {
-            inventory = JSON.parse(saved);
-            // Проверяем и исправляем структуру старых органайзеров
-            if (inventory.organizers) {
-                inventory.organizers = inventory.organizers.map(org => {
-                    if (!org.cells || org.cells.length !== org.rows) {
-                        // Пересоздаем cells с правильными размерами
-                        const newCells = Array(org.rows).fill().map(() => Array(org.cols).fill().map(() => []));
-                        // Переносим существующие данные если есть
-                        if (org.cells) {
-                            for (let r = 0; r < Math.min(org.rows, org.cells.length); r++) {
-                                for (let c = 0; c < Math.min(org.cols, org.cells[r]?.length || 0); c++) {
-                                    if (org.cells[r] && org.cells[r][c]) {
-                                        newCells[r][c] = org.cells[r][c];
-                                    }
-                                }
-                            }
-                        }
-                        org.cells = newCells;
-                    }
-                    return org;
-                });
-            } else {
-                inventory.organizers = [];
-            }
-        } else {
-            // Создаем органайзер 5×5 по умолчанию
-            const defaultCells = Array(5).fill().map(() => Array(5).fill().map(() => []));
-            inventory = {
-                organizers: [{
-                    id: 'default',
-                    name: 'Мой органайзер',
-                    cols: 5,
-                    rows: 5,
-                    cells: defaultCells
-                }],
-                userMarkers: {}
-            };
-        }
-        if (!inventory.userMarkers) inventory.userMarkers = {};
-        renderOrganizers();
-        renderBrands();
-    }
-    
-    function saveInventory() {
-        localStorage.setItem('coloring_inventory', JSON.stringify(inventory));
-    }
-
-    function openOrganizerCreator() {
-        const modal = document.getElementById('organizerModal');
-        if (modal) modal.style.display = 'flex';
-    }
-
-    function closeOrganizerModal() {
-        const modal = document.getElementById('organizerModal');
-        if (modal) modal.style.display = 'none';
-    }
-
-    function createOrganizer() {
-        const nameInput = document.getElementById('organizerName');
-        const colsInput = document.getElementById('organizerCols');
-        const rowsInput = document.getElementById('organizerRows');
-        
-        const name = nameInput ? nameInput.value.trim() : '';
-        const cols = colsInput ? parseInt(colsInput.value) : 3;
-        const rows = rowsInput ? parseInt(rowsInput.value) : 3;
-        
-        if (!name) { tgSafe.showAlert('Введите название'); return; }
-        if (cols < 1 || rows < 1) { tgSafe.showAlert('Количество столбцов и строк должно быть не менее 1'); return; }
-        
-        // Создаем пустую сетку с правильными размерами
-        const cells = Array(rows).fill().map(() => Array(cols).fill().map(() => []));
-        
-        inventory.organizers.push({ 
-            id: Date.now().toString(), 
-            name: name, 
-            cols: cols, 
-            rows: rows, 
-            cells: cells 
-        });
-        saveInventory();
-        renderOrganizers();
-        closeOrganizerModal();
-        tgSafe.showAlert('Органайзер создан!');
-    }
-    
-    let currentOrganizerId = null;
-    let currentCellRow = null;
-    let currentCellCol = null;
-    
-    function openCellModal(orgId, row, col) {
-        currentOrganizerId = orgId;
-        currentCellRow = row;
-        currentCellCol = col;
-        const org = inventory.organizers.find(o => o.id === orgId);
-        if (!org) return;
-        
-        // Проверяем существование ячейки
-        if (!org.cells[row]) org.cells[row] = [];
-        if (!org.cells[row][col]) org.cells[row][col] = [];
-        
-        const cellMarkers = org.cells[row][col];
-        const cellLabel = String.fromCharCode(65 + row) + (col + 1);
-        
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.style.display = 'flex';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <h3>Ячейка ${cellLabel}</h3>
-                <div id="cellMarkersList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
-                <button class="modal-action-btn" onclick="showAddMarkerToCell()" style="cursor:pointer;">+ Добавить маркер</button>
-                <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()" style="cursor:pointer;">Закрыть</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        renderCellMarkers(cellMarkers);
-    }
-
-    function renderCellMarkers(markers) {
-        const container = document.getElementById('cellMarkersList');
-        if (!container) return;
-        if (!markers || markers.length === 0) { 
-            container.innerHTML = '<div class="no-results">Нет маркеров</div>'; 
-            return; 
-        }
-        container.innerHTML = '';
-        markers.forEach((marker, idx) => {
-            const div = document.createElement('div');
-            div.style.cssText = 'background: var(--bg); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;';
-            div.innerHTML = `
-                <div><strong>${marker.brand}</strong> №${marker.number} ×${marker.count}</div>
-                <button class="photo-upload-btn" onclick="removeMarkerFromCell(${idx})" style="background: var(--status-red); color: white; padding: 4px 8px; cursor:pointer;">🗑</button>
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    function showAddMarkerToCell() {
-        const modal = document.getElementById('addMarkerModal');
-        if (modal) {
-            modal.style.display = 'flex';
-        } else {
-            console.error('addMarkerModal not found');
-        }
-    }
-
-    function closeAddMarkerModal() {
-        const modal = document.getElementById('addMarkerModal');
-        if (modal) {
-            modal.style.display = 'none';
-        }
-        // Очищаем поля
-        const numInput = document.getElementById('addMarkerNumber');
-        const countInput = document.getElementById('addMarkerCount');
-        if (numInput) numInput.value = '';
-        if (countInput) countInput.value = '1';
-    }
-
-    function confirmAddMarker() {
-        const brandSelect = document.getElementById('addMarkerBrand');
-        const numberInput = document.getElementById('addMarkerNumber');
-        const countInput = document.getElementById('addMarkerCount');
-        
-        const brand = brandSelect ? brandSelect.value : 'GuangNa';
-        const number = numberInput ? numberInput.value : '';
-        const count = countInput ? parseInt(countInput.value) : 1;
-        
-        if (!number) { tgSafe.showAlert('Введите номер'); return; }
-        const org = inventory.organizers.find(o => o.id === currentOrganizerId);
-        if (org && currentCellRow !== null && currentCellCol !== null) {
-            if (!org.cells[currentCellRow]) org.cells[currentCellRow] = [];
-            if (!org.cells[currentCellRow][currentCellCol]) org.cells[currentCellRow][currentCellCol] = [];
-            
-            const cellMarkers = org.cells[currentCellRow][currentCellCol];
-            const existing = cellMarkers.find(m => m.brand === brand && m.number === number);
-            if (existing) {
-                existing.count += count;
-            } else {
-                cellMarkers.push({ brand, number, count });
-            }
-            const key = `${brand}_${number}`;
-            if (!inventory.userMarkers) inventory.userMarkers = {};
-            inventory.userMarkers[key] = (inventory.userMarkers[key] || 0) + count;
-            saveInventory();
-            renderCellMarkers(cellMarkers);
-            renderOrganizers();
-            renderBrands();
-            tgSafe.showAlert(`Маркер ${brand} №${number} добавлен!`);
-        }
-        closeAddMarkerModal();
-    }
-
-    function removeMarkerFromCell(idx) {
-        const org = inventory.organizers.find(o => o.id === currentOrganizerId);
-        if (org && currentCellRow !== null && currentCellCol !== null) {
-            if (!org.cells[currentCellRow]) org.cells[currentCellRow] = [];
-            if (!org.cells[currentCellRow][currentCellCol]) org.cells[currentCellRow][currentCellCol] = [];
-            
-            const cellMarkers = org.cells[currentCellRow][currentCellCol];
-            const marker = cellMarkers[idx];
-            if (marker) {
-                const key = `${marker.brand}_${marker.number}`;
-                if (inventory.userMarkers) {
-                    inventory.userMarkers[key] = Math.max(0, (inventory.userMarkers[key] || 0) - marker.count);
-                    if (inventory.userMarkers[key] === 0) delete inventory.userMarkers[key];
-                }
-                cellMarkers.splice(idx, 1);
-                saveInventory();
-                renderCellMarkers(cellMarkers);
-                renderOrganizers();
-                renderBrands();
-                tgSafe.showAlert('Маркер удален');
-            }
-        }
-    }
-
-    function deleteOrganizer(orgId) {
-        tgSafe.showConfirm('Удалить органайзер? Все маркеры будут потеряны!', (confirm) => {
-            if (confirm) {
-                inventory.organizers = inventory.organizers.filter(o => o.id !== orgId);
-                saveInventory();
-                renderOrganizers();
-            }
-        });
-    }
-
-    function addMarkersToOrganizer(orgId) {
-        currentOrganizerId = orgId;
-        currentCellRow = 0;
-        currentCellCol = 0;
-        showAddMarkerToCell();
-    }
-
-    function renderBrands() {
-        const container = document.getElementById('brandsList');
-        if (!container) return;
-        container.innerHTML = '';
-        
-        const markersData = markersDB;
-        
-        brands.forEach(brand => {
-            // Собираем уникальные номера маркеров этого бренда ИЗ ИНВЕНТАРЯ
-            const uniqueNumbersInInventory = new Set();
-            
-            if (inventory.organizers) {
-                inventory.organizers.forEach(org => {
-                    if (org.cells) {
-                        org.cells.forEach(row => {
-                            if (row) {
-                                row.forEach(cell => {
-                                    if (cell) {
-                                        cell.forEach(marker => {
-                                            if (marker.brand === brand.name) {
-                                                uniqueNumbersInInventory.add(marker.number);
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-            
-            // Получаем все существующие номера для этого бренда из базы маркеров
-            const existingNumbersForBrand = markersData
-                .filter(m => m.num && parseInt(m.num) <= brand.total)
-                .map(m => m.num)
-                .slice(0, 50);
-            
-            const uniqueCount = uniqueNumbersInInventory.size;
-            
-            // Создаем карточку бренда
-            const div = document.createElement('div');
-            div.style.cssText = 'background: var(--card-bg); border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border-color); overflow: hidden;';
-            
-            // Заголовок бренда
-            const headerDiv = document.createElement('div');
-            headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; cursor: pointer; background: var(--bg);';
-            headerDiv.onclick = () => {
-                const content = div.querySelector('.brand-content');
-                const arrow = headerDiv.querySelector('.brand-arrow');
-                if (content && content.style.display === 'none') {
-                    content.style.display = 'block';
-                    if (arrow) arrow.style.transform = 'rotate(180deg)';
-                } else if (content) {
-                    content.style.display = 'none';
-                    if (arrow) arrow.style.transform = 'rotate(0deg)';
-                }
-            };
-            headerDiv.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-palette" style="color: var(--accent);"></i>
-                    <strong style="font-size: 16px;">${brand.name}</strong>
-                    <span style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px;">${uniqueCount}/${existingNumbersForBrand.length}</span>
-                </div>
-                <i class="fas fa-chevron-down brand-arrow" style="color: var(--text-gray); transition: transform 0.2s;"></i>
-            `;
-            
-            // Контент с номерами маркеров
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'brand-content';
-            contentDiv.style.cssText = 'display: none; padding: 12px 15px; border-top: 1px solid var(--border-color); max-height: 200px; overflow-y: auto;';
-            
-            let numbersHtml = '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
-            existingNumbersForBrand.forEach(num => {
-                const isCollected = uniqueNumbersInInventory.has(num);
-                numbersHtml += `
-                    <div onclick="toggleMarkerInBrand('${brand.name}', '${num}', ${isCollected})" style="
-                        width: 45px;
-                        padding: 6px 0;
-                        text-align: center;
-                        background: ${isCollected ? 'var(--accent)' : 'var(--bg)'};
-                        color: ${isCollected ? 'white' : 'var(--text)'};
-                        border-radius: 8px;
-                        border: 1px solid var(--border-color);
-                        font-size: 12px;
-                        font-weight: ${isCollected ? 'bold' : 'normal'};
-                        cursor: pointer;
-                        transition: all 0.2s;
-                    ">
-                        ${num}
-                    </div>
-                `;
-            });
-            numbersHtml += '</div>';
-            contentDiv.innerHTML = numbersHtml;
-            
-            div.appendChild(headerDiv);
-            div.appendChild(contentDiv);
-            container.appendChild(div);
-        });
-    }
-    
-    function openBrandDetail(brandName, collectedNumbers, existingNumbers) {
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.style.display = 'flex';
-        
-        const brand = brands.find(b => b.name === brandName);
-        const total = brand ? brand.total : 100;
-        
-        // Показываем только существующие номера (из базы маркеров)
-        const numbersToShow = existingNumbers.filter(num => parseInt(num) <= total);
-        
-        let numbersHtml = '';
-        numbersToShow.forEach(num => {
-            const isCollected = collectedNumbers.has(num);
-            numbersHtml += `
-                <div style="
-                    display: inline-block;
-                    width: 55px;
-                    margin: 5px;
-                    padding: 8px 4px;
-                    text-align: center;
-                    background: ${isCollected ? 'var(--accent)' : 'var(--bg)'};
-                    color: ${isCollected ? 'white' : 'var(--text)'};
-                    border-radius: 10px;
-                    border: 1px solid var(--border-color);
-                    font-size: 12px;
-                    font-weight: ${isCollected ? 'bold' : 'normal'};
-                    cursor: pointer;
-                    transition: all 0.2s;
-                " onclick="toggleMarkerInBrand('${brandName}', '${num}', ${isCollected})">
-                    ${num}
-                    ${isCollected ? '✓' : '+'}
-                </div>
-            `;
-        });
-        
-        modal.innerHTML = `
-            <div class="modal-content" style="max-width: 500px;">
-                <h3>🎨 ${brandName}</h3>
-                <p style="margin-bottom: 15px; color: var(--text-gray);">
-                    <i class="fas fa-check-circle" style="color: var(--status-green);"></i> Собрано уникальных: ${collectedNumbers.size}/${numbersToShow.length}
-                </p>
-                <div style="max-height: 50vh; overflow-y: auto; display: flex; flex-wrap: wrap; justify-content: center;">
-                    ${numbersHtml}
-                </div>
-                <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()" style="margin-top: 20px;">Закрыть</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-    
-    function toggleMarkerInBrand(brandName, number, isCollected) {
-        if (isCollected) {
-            // Удаляем маркер из инвентаря
-            tgSafe.showConfirm(`Удалить маркер ${brandName} №${number} из инвентаря?`, (confirm) => {
-                if (confirm) {
-                    let removed = false;
-                    if (inventory.organizers) {
-                        inventory.organizers.forEach(org => {
-                            if (org.cells) {
-                                org.cells.forEach(row => {
-                                    if (row) {
-                                        row.forEach(cell => {
-                                            if (cell) {
-                                                for (let i = cell.length - 1; i >= 0; i--) {
-                                                    if (cell[i].brand === brandName && cell[i].number === number) {
-                                                        cell.splice(i, 1);
-                                                        removed = true;
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                    if (removed) {
-                        saveInventory();
-                        renderOrganizers();
-                        renderBrands();
-                        tgSafe.showAlert(`Маркер ${brandName} №${number} удален`);
-                        // Закрываем модалку и открываем заново для обновления
-                        const modal = document.querySelector('.modal-overlay');
-                        if (modal) modal.remove();
-                        // Переоткрываем с обновленными данными
-                        const updatedNumbers = new Set();
-                        if (inventory.organizers) {
-                            inventory.organizers.forEach(org => {
-                                if (org.cells) {
-                                    org.cells.forEach(row => {
-                                        if (row) {
-                                            row.forEach(cell => {
-                                                if (cell) {
-                                                    cell.forEach(marker => {
-                                                        if (marker.brand === brandName) {
-                                                            updatedNumbers.add(marker.number);
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                        const markersData = markersDB;
-                        const existingNumbers = markersData
-                            .filter(m => m.num && parseInt(m.num) <= (brands.find(b => b.name === brandName)?.total || 100))
-                            .map(m => m.num);
-                        openBrandDetail(brandName, updatedNumbers, existingNumbers);
-                    }
-                }
-            });
-        } else {
-            // Добавляем маркер в инвентарь
-            if (inventory.organizers && inventory.organizers.length > 0) {
-                const org = inventory.organizers[0];
-                // Находим первую пустую ячейку или ячейку с этим брендом
-                let targetCell = null;
-                let targetRow = 0, targetCol = 0;
-                
-                for (let row = 0; row < org.rows; row++) {
-                    for (let col = 0; col < org.cols; col++) {
-                        if (!org.cells[row]) org.cells[row] = [];
-                        if (!org.cells[row][col]) org.cells[row][col] = [];
-                        const cell = org.cells[row][col];
-                        const existing = cell.find(m => m.brand === brandName && m.number === number);
-                        if (existing) {
-                            targetCell = cell;
-                            targetRow = row;
-                            targetCol = col;
-                            break;
-                        }
-                        if (!targetCell && cell.length === 0) {
-                            targetCell = cell;
-                            targetRow = row;
-                            targetCol = col;
-                        }
-                    }
-                    if (targetCell) break;
-                }
-                
-                if (!targetCell) {
-                    targetCell = org.cells[0][0];
-                    targetRow = 0;
-                    targetCol = 0;
-                }
-                
-                const existing = targetCell.find(m => m.brand === brandName && m.number === number);
-                if (existing) {
-                    existing.count += 1;
-                } else {
-                    targetCell.push({ brand: brandName, number: number, count: 1 });
-                }
-                
-                const key = `${brandName}_${number}`;
-                if (!inventory.userMarkers) inventory.userMarkers = {};
-                inventory.userMarkers[key] = (inventory.userMarkers[key] || 0) + 1;
-                saveInventory();
-                renderOrganizers();
-                renderBrands();
-                tgSafe.showAlert(`Маркер ${brandName} №${number} добавлен в ячейку ${String.fromCharCode(65 + targetRow)}${targetCol + 1}`);
-                
-                // Закрываем модалку и открываем заново для обновления
-                const modal = document.querySelector('.modal-overlay');
-                if (modal) modal.remove();
-                
-                // Обновляем данные и переоткрываем
-                const updatedNumbers = new Set();
-                if (inventory.organizers) {
-                    inventory.organizers.forEach(org => {
-                        if (org.cells) {
-                            org.cells.forEach(row => {
-                                if (row) {
-                                    row.forEach(cell => {
-                                        if (cell) {
-                                            cell.forEach(marker => {
-                                                if (marker.brand === brandName) {
-                                                    updatedNumbers.add(marker.number);
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-                const markersData = markersDB;
-                const existingNumbers = markersData
-                    .filter(m => m.num && parseInt(m.num) <= (brands.find(b => b.name === brandName)?.total || 100))
-                    .map(m => m.num);
-                openBrandDetail(brandName, updatedNumbers, existingNumbers);
-            } else {
-                tgSafe.showAlert('Сначала создайте органайзер!');
-            }
-        }
-    }
-    function addBrandMarkers(brandName) {
-        const brand = brands.find(b => b.name === brandName);
-        if (!brand) return;
-        tgSafe.showConfirm(`Добавить все маркеры ${brandName} (${brand.total} шт.)?`, (confirm) => {
-            if (confirm && inventory.organizers && inventory.organizers.length > 0) {
-                const org = inventory.organizers[0];
-                const cell = org.cells[0][0];
-                for (let i = 1; i <= Math.min(brand.total, 50); i++) {
-                    const number = i.toString();
-                    const existing = cell.find(m => m.brand === brandName && m.number === number);
-                    if (existing) {
-                        existing.count += 1;
-                    } else {
-                        cell.push({ brand: brandName, number: number, count: 1 });
-                    }
-                    const key = `${brandName}_${number}`;
-                    if (!inventory.userMarkers) inventory.userMarkers = {};
-                    inventory.userMarkers[key] = (inventory.userMarkers[key] || 0) + 1;
-                }
-                saveInventory();
-                renderOrganizers();
-                renderBrands();
-                tgSafe.showAlert(`Добавлено 50 маркеров ${brandName} в первый органайзер`);
-            }
-        });
-    }
-
-    function removeBrandMarkers(brandName) {
-        tgSafe.showConfirm(`Удалить все маркеры ${brandName}?`, (confirm) => {
-            if (confirm) {
-                if (inventory.organizers) {
-                    inventory.organizers.forEach(org => {
-                        if (org.cells) {
-                            org.cells.forEach(row => {
-                                if (row) {
-                                    row.forEach(cell => {
-                                        if (cell) {
-                                            for (let i = cell.length - 1; i >= 0; i--) {
-                                                if (cell[i].brand === brandName) cell.splice(i, 1);
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-                if (inventory.userMarkers) {
-                    for (let key in inventory.userMarkers) {
-                        if (key.startsWith(brandName)) delete inventory.userMarkers[key];
-                    }
-                }
-                saveInventory();
-                renderOrganizers();
-                renderBrands();
-                tgSafe.showAlert(`Маркеры ${brandName} удалены`);
-            }
-        });
-    }
-
-    function switchInventoryTab(tab) {
-        // Скрываем все вкладки
-        const brandsTab = document.getElementById('brandsTab');
-        const searchTab = document.getElementById('searchTab');
-        
-        if (brandsTab) brandsTab.style.display = 'none';
-        if (searchTab) searchTab.style.display = 'none';
-        
-        // Показываем выбранную
-        if (tab === 'brands') {
-            if (brandsTab) brandsTab.style.display = 'block';
-            renderBrands();
-        } else if (tab === 'search') {
-            if (searchTab) searchTab.style.display = 'block';
-        }
-        
-        // Обновляем активную кнопку
-        document.querySelectorAll('.inventory-tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.getAttribute('data-tab') === tab) {
-                btn.classList.add('active');
-            }
-        });
-    }
-
-    function searchInventory() {
-        const queryInput = document.getElementById('inventorySearchInput');
-        const resultsDiv = document.getElementById('searchResults');
-        
-        if (!queryInput || !resultsDiv) return;
-        const query = queryInput.value.toLowerCase();
-        
-        if (!query) { 
-            resultsDiv.innerHTML = '<div class="no-results">Введите номер или бренд для поиска</div>'; 
-            return; 
-        }
-        
-        const found = [];
-        if (inventory.organizers) {
-            inventory.organizers.forEach(org => {
-                if (org.cells) {
-                    org.cells.forEach((row, rowIdx) => {
-                        if (row) {
-                            row.forEach((cell, colIdx) => {
-                                if (cell) {
-                                    cell.forEach(marker => {
-                                        if (marker.number.includes(query) || marker.brand.toLowerCase().includes(query)) {
-                                            found.push({ 
-                                                brand: marker.brand, 
-                                                number: marker.number, 
-                                                count: marker.count, 
-                                                organizer: org.name, 
-                                                cell: `${String.fromCharCode(65 + rowIdx)}${colIdx + 1}` 
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        }
-        
-        if (found.length === 0) { 
-            resultsDiv.innerHTML = '<div class="no-results">Маркеры не найдены</div>'; 
-            return; 
-        }
-        
-        resultsDiv.innerHTML = found.map(m => `
-            <div style="background: var(--card-bg); padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border-color);">
-                <div><strong>${m.brand} №${m.number}</strong> ×${m.count}</div>
-                <div style="font-size: 12px; color: var(--text-gray);"><i class="fas fa-box"></i> ${m.organizer} • Ячейка ${m.cell}</div>
-            </div>
-        `).join('');
-    }
-
-    // ==========================================
-    // НАВИГАЦИЯ
-    // ==========================================
-    function tab(pageId) {
-        console.log('=== TAB SWITCH START ===');
-        console.log('Target page:', pageId);
-        
-        try {
-            // Проверяем существование страницы
-            const targetPage = document.getElementById(pageId);
-            if (!targetPage) {
-                console.error('❌ Page not found:', pageId);
-                return;
-            }
-            
-            // Скрываем все страницы
-            const allPages = document.querySelectorAll('.page');
-            console.log('Found pages:', allPages.length);
-            allPages.forEach(p => {
-                p.classList.remove('active');
-            });
-            
-            // Показываем выбранную страницу
-            targetPage.classList.add('active');
-            console.log('✅ Activated page:', pageId);
-            
-            // Обновляем активную кнопку навигации
-            const allNavBtns = document.querySelectorAll('.nav-btn');
-            allNavBtns.forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            const activeBtn = document.getElementById('btn-' + pageId);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-                console.log('✅ Activated button: btn-' + pageId);
-            } else {
-                console.warn('⚠️ Button not found: btn-' + pageId);
-            }
-            
-            window.scrollTo(0, 0);
-            
-            // Обновляем содержимое в зависимости от страницы
-            console.log('Updating content for page:', pageId);
-            
-            switch(pageId) {
-                case 'markers':
-                    console.log('  → Loading markers...');
-                    const isDBEmpty = typeof markersDB === 'undefined' || !markersDB || markersDB.length === 0;
-                    const isLoading = typeof markersLoading !== 'undefined' && markersLoading === true;
-                    
-                    if (isDBEmpty && !isLoading) {
-                        loadMarkers();
-                    } else if (typeof renderMarkers === 'function') {
-                        renderMarkers();
-                    }
-                    const markerSearch = document.getElementById('markerSearch');
-                    if (markerSearch) markerSearch.value = '';
-                    break;
-                    
-                case 'answers':
-                    console.log('  → Loading answers...');
-                    const volumesContainer = document.getElementById('volumesContainer');
-                    if (volumesContainer && volumesContainer.children.length === 0) {
-                        renderVolumes();
-                    }
-                    const volumeSearch = document.getElementById('volumeSearch');
-                    if (volumeSearch) volumeSearch.value = '';
-                    break;
-                    
-                case 'cart':
-                    console.log('  → Loading cart...');
-                    if (typeof renderCart === 'function') {
-                        if (typeof cart === 'undefined') cart = {};
-                        renderCart();
-                    }
-                    break;
-                    
-                case 'aipalette':
-                    console.log('  → Loading AI palette...');
-                    break;
-                    
-                case 'profile':
-                    console.log('  → Updating profile...');
-                    if (typeof updateUI === 'function') {
-                        updateUI();
-                    }
-                    break;
-                    
-                default:
-                    console.log('  → No specific handler for:', pageId);
-            }
-            
-            console.log('=== TAB SWITCH COMPLETE ===');
-            
-        } catch (error) {
-            console.error('❌ FATAL ERROR in tab():', error);
-            console.error('Error stack:', error.stack);
-            
-            // Пытаемся восстановиться - показываем профиль
-            try {
-                const profilePage = document.getElementById('profile');
-                if (profilePage) {
-                    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                    profilePage.classList.add('active');
-                    const profileBtn = document.getElementById('btn-profile');
-                    if (profileBtn) profileBtn.classList.add('active');
-                    console.log('✅ Fallback: switched to profile');
-                }
-            } catch (fallbackError) {
-                console.error('❌ Fallback failed:', fallbackError);
-            }
-        }
-    }
-
-    function toggleSection(sectionId) {
-        const section = document.getElementById(sectionId);
-        if (section) {
-            if (section.style.display === 'none' || section.style.display === '') {
-                document.querySelectorAll('.rewards-section').forEach(el => { 
-                    if (el && el !== section) el.style.display = 'none'; 
-                });
-                section.style.display = 'block';
-            } else {
-                section.style.display = 'none';
-            }
-        }
-    }
-
-    function searchBooks() {
-        const queryInput = document.getElementById('bookSearch');
-        if (!queryInput) return;
-        const query = queryInput.value.toLowerCase();
-        const items = document.querySelectorAll('.book-card');
-        items.forEach(item => {
-            const titleEl = item.querySelector('h4');
-            const title = titleEl ? titleEl.innerText.toLowerCase() : '';
-            if (title.includes(query)) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
-    
-    let currentSelectedOrganizer = null;
-
-    function renderOrganizers() {
-        const container = document.getElementById('organizersList');
-        if (!container) return;
-        
-        if (!inventory.organizers || inventory.organizers.length === 0) {
-            container.innerHTML = '<div class="no-results" style="padding: 20px; text-align: center;">📦 Нет органайзеров. Нажмите "Создать органайзер"</div>';
-            return;
-        }
-        
-        container.innerHTML = '';
-        
-        inventory.organizers.forEach((org) => {
-            const orgCard = document.createElement('div');
-            orgCard.style.cssText = 'background: var(--bg); border-radius: 16px; padding: 12px 16px; margin-bottom: 10px; border: 1px solid var(--border-color); cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;';
-            orgCard.onclick = () => openOrganizerView(org.id);
-            orgCard.innerHTML = `
-                <div>
-                    <strong style="font-size: 16px;">📦 ${org.name}</strong>
-                    <div style="font-size: 12px; color: var(--text-gray); margin-top: 4px;">${org.rows}×${org.cols} | Маркеров: ${countMarkersInOrganizer(org)}</div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="photo-upload-btn" style="padding: 6px 12px; font-size: 12px;" onclick="event.stopPropagation(); addMarkersToOrganizer('${org.id}')">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <button class="photo-upload-btn" style="padding: 6px 12px; font-size: 12px; background: var(--status-red); color: white;" onclick="event.stopPropagation(); deleteOrganizer('${org.id}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `;
-            container.appendChild(orgCard);
-        });
-    }
-
-    function countMarkersInOrganizer(org) {
-        let total = 0;
-        if (org.cells) {
-            for (let row = 0; row < org.rows; row++) {
-                if (org.cells[row]) {
-                    for (let col = 0; col < org.cols; col++) {
-                        if (org.cells[row][col]) {
-                            org.cells[row][col].forEach(marker => {
-                                total += marker.count;
-                            });
-                        }
-                    }
-                }
-            }
-        }
-        return total;
-    }
-
-    function openOrganizerView(orgId) {
-        const org = inventory.organizers.find(o => o.id === orgId);
-        if (!org) return;
-        
-        currentSelectedOrganizer = org;
-        
-        const nameEl = document.getElementById('selectedOrganizerName');
-        if (nameEl) nameEl.innerHTML = `📦 ${org.name} (${org.rows}×${org.cols})`;
-        
-        const viewEl = document.getElementById('selectedOrganizerView');
-        const listEl = document.getElementById('organizersList');
-        
-        if (viewEl) viewEl.style.display = 'block';
-        if (listEl) listEl.style.display = 'none';
-        
-        renderOrganizerGrid(org);
-    }
-
-    function renderOrganizerGrid(org) {
-        const container = document.getElementById('selectedOrganizerGrid');
-        if (!container) return;
-        
-        const gridWrapper = document.createElement('div');
-        gridWrapper.style.cssText = 'overflow-x: auto;';
-        
-        const gridContainer = document.createElement('div');
-        gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, minmax(55px, 70px)); gap: 8px; justify-content: start;`;
-        
-        for (let row = 0; row < org.rows; row++) {
-            for (let col = 0; col < org.cols; col++) {
-                if (!org.cells[row]) org.cells[row] = [];
-                if (!org.cells[row][col]) org.cells[row][col] = [];
-                
-                const cellMarkers = org.cells[row][col];
-                const markerCount = cellMarkers.length;
-                const cellLabel = String.fromCharCode(65 + row) + (col + 1);
-                
-                const cellDiv = document.createElement('div');
-                cellDiv.style.cssText = `
-                    background: var(--bg);
-                    border: 2px solid ${markerCount > 0 ? 'var(--accent)' : 'var(--border-color)'};
-                    border-radius: 12px;
-                    padding: 10px 4px;
-                    text-align: center;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                `;
-                cellDiv.onclick = (function(r, c) {
-                    return function() { openCellModal(org.id, r, c); };
-                })(row, col);
-                cellDiv.innerHTML = `
-                    <div style="font-size: 11px; color: var(--text-gray); margin-bottom: 4px;">${cellLabel}</div>
-                    <div style="font-size: 16px; font-weight: bold; color: var(--accent);">${markerCount}</div>
-                `;
-                gridContainer.appendChild(cellDiv);
-            }
-        }
-        
-        gridWrapper.appendChild(gridContainer);
-        container.innerHTML = '';
-        container.appendChild(gridWrapper);
-    }
-
-    function closeOrganizerView() {
-        const viewEl = document.getElementById('selectedOrganizerView');
-        const listEl = document.getElementById('organizersList');
-        
-        if (viewEl) viewEl.style.display = 'none';
-        if (listEl) listEl.style.display = 'block';
-        currentSelectedOrganizer = null;
-        renderOrganizers();
-    }
-
-    // ==========================================
     // КОРЗИНА
     // ==========================================
+    
     function renderCart() {
         const container = document.getElementById('cartItemsList');
         const totalSpan = document.getElementById('cartTotalSum');
@@ -4179,27 +2836,6 @@
                         </div>
                     `;
                 }
-            } else if (products[key]) {
-                const product = products[key];
-                const itemTotal = product.price * count;
-                totalSum += itemTotal;
-                itemsHtml += `
-                    <div class="cart-item">
-                        <img src="${product.img}" alt="${product.name}">
-                        <div class="cart-item-info">
-                            <h4>${product.name}</h4>
-                            <div class="cart-item-price">${product.price} ₽ / шт</div>
-                            <div class="cart-item-details">
-                                <div class="cart-item-controls">
-                                    <button class="minus" onclick="updateBookCart('${key}', -1)">−</button>
-                                    <span>${count}</span>
-                                    <button onclick="updateBookCart('${key}', 1)">+</button>
-                                </div>
-                                <div class="cart-item-total">${itemTotal} ₽</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
             }
         }
         
@@ -4208,48 +2844,13 @@
         updateCartBadge();
     }
     
-    function updateBookCart(bookId, delta) {
-        const currentCount = cart[bookId] || 0;
-        const newCount = currentCount + delta;
-        
-        if (newCount < 0) return;
-        if (newCount === 0) {
-            delete cart[bookId];
-        } else {
-            cart[bookId] = newCount;
-        }
-        
-        const countSpan = document.getElementById(`book-count-${bookId}`);
-        const controlsDiv = document.getElementById(`book-controls-${bookId}`);
-        const addBtn = document.getElementById(`book-add-${bookId}`);
-        
-        if (countSpan) countSpan.innerText = newCount;
-        if (controlsDiv && addBtn) {
-            if (newCount > 0) {
-                controlsDiv.style.display = 'flex';
-                addBtn.style.display = 'none';
-            } else {
-                controlsDiv.style.display = 'none';
-                addBtn.style.display = 'block';
-            }
-        }
-        
-        saveData();
-        renderCart();
-        updateCartBadge();
-    }
-    
-    function addToCart(bookId) {
-        updateBookCart(bookId, 1);
-    }
-    
     function checkout() {
         if (!cart || Object.keys(cart).length === 0) {
-            tgSafe.showAlert('Корзина пуста');
+            tg.showAlert('Корзина пуста');
             return;
         }
         
-        tgSafe.showConfirm('Оформить заказ?', (confirm) => {
+        tg.showConfirm('Оформить заказ?', async (confirm) => {
             if (confirm) {
                 let orderText = '🛍 Заказ:\n';
                 let total = 0;
@@ -4263,157 +2864,81 @@
                             orderText += `Маркер №${num} x${count} = ${MARKER_PRICE * count} ₽\n`;
                             total += MARKER_PRICE * count;
                         }
-                    } else if (products[key]) {
-                        orderText += `${products[key].name} x${count} = ${products[key].price * count} ₽\n`;
-                        total += products[key].price * count;
                     }
                 }
                 orderText += `\n💰 Итого: ${total} ₽`;
                 
-                tgSafe.showAlert(orderText);
+                // Отправляем заказ на сервер
+                const result = await fetchAPI('/api/new_order', {
+                    user_id: userId,
+                    text_details: orderText
+                });
                 
-                // Очищаем корзину
-                cart = {};
-                saveData();
+                if (result && result.status === 'ok') {
+                    tg.showAlert('✅ Заказ отправлен администратору!');
+                    cart = {};
+                    saveUserData();
+                    renderCart();
+                    updateCartBadge();
+                } else {
+                    tg.showAlert('❌ Ошибка отправки заказа. Попробуйте позже.');
+                }
+            }
+        });
+    }
+    
+    // ==========================================
+    // НАВИГАЦИЯ
+    // ==========================================
+    
+    function tab(pageId) {
+        const targetPage = document.getElementById(pageId);
+        if (!targetPage) return;
+        
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        targetPage.classList.add('active');
+        
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.getElementById('btn-' + pageId);
+        if (activeBtn) activeBtn.classList.add('active');
+        
+        window.scrollTo(0, 0);
+        
+        // Обновляем содержимое страницы
+        switch(pageId) {
+            case 'markers':
+                if (!markersDB || markersDB.length === 0) loadMarkers();
+                else renderMarkers();
+                break;
+            case 'cart':
                 renderCart();
-                updateCartBadge();
-            }
-        });
-    }
-
-    // ==========================================
-    // ОТОБРАЖЕНИЕ ЗАДАНИЙ НА СТАТУС
-    // ==========================================
-    function renderLevelTasks() {
-        console.log('renderLevelTasks CALLED');
-
-        const container = document.getElementById('levelTasksList');
-        if (!container) {
-            console.error('levelTasksList not found');
-            return;
-        }
-        container.innerHTML = '';
-
-        // Гарантия что user существует
-        if (!user) user = {};
-
-        // Инициализация
-        if (!user.branchCompleted) {
-            user.branchCompleted = {
-                trainer: false, alcohol: false, shock: false, lion: false,
-                dragons: false, bear: false, fauna: false, sea: false, queen: false
-            };
-        }
-
-        if (!user.branchProgress) {
-            user.branchProgress = {};
-        }
-
-        if (typeof taskBranches === 'undefined' || !taskBranches) {
-            console.error('taskBranches not defined');
-            return;
-        }
-
-        // Проходим по всем веткам заданий
-        for (let branchKey in taskBranches) {
-            const branch = taskBranches[branchKey];
-
-            if (!branch.levels) continue;
-
-            const progress = (user.branchProgress && user.branchProgress[branchKey]) ? user.branchProgress[branchKey] : [0, 0, 0, 0, 0];
-
-            const branchDiv = document.createElement('div');
-            branchDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px; border-left: 4px solid var(--accent);';
-            branchDiv.innerHTML = `
-                <div style="font-size: 16px; font-weight: bold; color: var(--accent); margin-bottom: 5px;">${branch.name}</div>
-                <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 12px;">${branch.desc}</div>
-            `;
-
-            for (let i = 0; i < branch.levels.length; i++) {
-                const level = branch.levels[i];
-                if (!level) continue;
-
-                const currentProgress = progress[i] || 0;
-                const max = level.maxProgress || 1;
-                const isCompleted = currentProgress >= max;
-                const percent = Math.min(100, (currentProgress / max) * 100);
-
-                const taskDiv = document.createElement('div');
-                taskDiv.style.cssText = 'background: var(--card-bg); padding: 16px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border-color);';
-
-                taskDiv.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="font-weight: bold;">Уровень ${i + 1}: ${level.title}</span>
-                        ${isCompleted 
-                            ? '<span style="color: var(--status-green);">✓ Выполнено</span>' 
-                            : `<span style="color: var(--accent);">${currentProgress}/${max}</span>`}
-                    </div>
-                    <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 8px;">${level.desc}</p>
-                    <div style="background: var(--border-color); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 10px;">
-                        <div style="width: ${percent}%; background: var(--accent-gradient); height: 100%;"></div>
-                    </div>
-                    <button onclick="openTaskUpload('${branchKey}_${i}')" 
-                        style="width: 100%; background: var(--accent); color: white; padding:10px; border-radius:8px; cursor:pointer;">
-                        📷 Отправить
-                    </button>
-                `;
-
-                branchDiv.appendChild(taskDiv);
-            }
-
-            container.appendChild(branchDiv);
+                break;
+            case 'profile':
+                updateUI();
+                refreshUserProgress();
+                break;
         }
     }
     
-    // ==========================================
-    // ОТОБРАЖЕНИЕ ВРЕМЕННЫХ ЗАДАНИЙ
-    // ==========================================
-    function renderTimeTasks() {
-        const container = document.getElementById('timeTasksList');
-        if (!container) return;
-        container.innerHTML = '';
-        
-        const timeTasksData = [
-            { id: 'time_1', title: 'Раскраска за завтраком', description: 'Раскрась страницу утром', reward: 5 }
-        ];
-        
-        timeTasksData.forEach(task => {
-            const isCompleted = user.timeTasksProgress && user.timeTasksProgress[task.id] === 'completed';
-            const div = document.createElement('div');
-            div.className = 'time-task';
-            div.style.cssText = 'border: 2px solid var(--accent); padding: 15px; border-radius: 12px; margin-bottom: 12px; background: var(--card-bg);';
-            div.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span class="time-badge" style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">
-                        <i class="far fa-clock"></i> Еженедельное задание
-                    </span>
-                    <span style="color: #FFD700; font-weight: bold; font-size: 14px;">
-                        +${task.reward} <i class="fas fa-book-open gold-book"></i>
-                    </span>
-                </div>
-                <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px;">${task.title}</div>
-                <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 12px;">${task.description}</p>
-                ${!isCompleted ? `
-                    <button class="photo-upload-btn" onclick="openTaskUpload('${task.id}')" style="width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor:pointer;">
-                        <i class="fas fa-camera"></i> Отправить фото
-                    </button>
-                ` : '<div style="text-align: center; color: var(--status-green);">✅ Задание выполнено!</div>'}
-            `;
-            container.appendChild(div);
-        });
+    function toggleSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            if (section.style.display === 'none' || section.style.display === '') {
+                document.querySelectorAll('.rewards-section').forEach(el => {
+                    if (el && el !== section) el.style.display = 'none';
+                });
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        }
     }
     
-    // ==========================================
-    // РАСКРЫТИЕ/СКРЫТИЕ БЛОКА ЗАДАНИЙ
-    // ==========================================
     function toggleTasks() {
         const content = document.getElementById('tasksContent');
         const arrow = document.getElementById('tasksArrow');
         
-        if (!content) {
-            console.error('tasksContent not found');
-            return;
-        }
+        if (!content) return;
         
         if (content.style.display === 'block') {
             content.style.display = 'none';
@@ -4421,157 +2946,75 @@
         } else {
             content.style.display = 'block';
             if (arrow) arrow.style.transform = 'rotate(180deg)';
-            
-            // Рендерим задания при открытии
-            if (typeof renderLevelTasks === 'function') {
-                renderLevelTasks();
-            } else {
-                console.error('renderLevelTasks not defined');
-            }
-            
-            if (typeof renderTimeTasks === 'function') {
-                renderTimeTasks();
-            } else {
-                console.error('renderTimeTasks not defined');
-            }
+            renderBranchTasks();
         }
-    }
-    
-    function openTaskUpload(taskId) {
-        activeTaskId = taskId;
-        const fileInput = document.getElementById('taskFileInput');
-        if (fileInput) {
-            fileInput.click();
-        } else {
-            console.error('taskFileInput not found');
-        }
-    }
-    
-    function handleTaskFile(event) {
-        const files = event.target.files;
-        if (!files || files.length === 0) return;
-        
-        const previewContainer = document.getElementById('taskPhotoPreviewContainer');
-        if (previewContainer) {
-            previewContainer.innerHTML = '';
-            for (let i = 0; i < files.length; i++) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.width = '70px';
-                    img.style.height = '70px';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '12px';
-                    previewContainer.appendChild(img);
-                };
-                reader.readAsDataURL(files[i]);
-            }
-        }
-        
-        const modal = document.getElementById('taskUploadModal');
-        if (modal) modal.style.display = 'flex';
-    }
-    
-    function closeTaskUploadModal() {
-        const modal = document.getElementById('taskUploadModal');
-        const fileInput = document.getElementById('taskFileInput');
-        const previewContainer = document.getElementById('taskPhotoPreviewContainer');
-        
-        if (modal) modal.style.display = 'none';
-        if (fileInput) fileInput.value = '';
-        if (previewContainer) previewContainer.innerHTML = '';
-        activeTaskId = null;
-    }
-    
-    function submitTaskPhoto() {
-        if (activeTaskId) {
-            tgSafe.showAlert(`Фото отправлено на проверку! Задание: ${activeTaskId}`);
-            
-            // Симуляция выполнения задания
-            if (activeTaskId.startsWith('time_')) {
-                if (!user.timeTasksProgress) user.timeTasksProgress = {};
-                user.timeTasksProgress[activeTaskId] = 'completed';
-                user.balance += 5;
-                saveData();
-                renderTimeTasks();
-                updateUI();
-            } else if (activeTaskId.includes('_')) {
-                const parts = activeTaskId.split('_');
-                const branchKey = parts[0];
-                const levelIndex = parseInt(parts[1]);
-                
-                if (!user.branchProgress) user.branchProgress = {};
-                if (!user.branchProgress[branchKey]) user.branchProgress[branchKey] = [0, 0, 0, 0, 0];
-                
-                user.branchProgress[branchKey][levelIndex] = Math.min(
-                    (user.branchProgress[branchKey][levelIndex] || 0) + 1,
-                    taskBranches[branchKey]?.levels[levelIndex]?.maxProgress || 1
-                );
-                
-                saveData();
-                renderLevelTasks();
-            }
-        }
-        closeTaskUploadModal();
     }
     
     // ==========================================
-    // РАСКРЫТИЕ БЛОКОВ ИНВЕНТАРЯ
+    // ТЕМЫ
     // ==========================================
-    function toggleInventoryBlock() {
-        const content = document.getElementById('inventoryContent');
-        const arrow = document.getElementById('inventoryArrow');
-        if (!content) return;
+    
+    function setTheme(themeName) {
+        const oldStyle = document.getElementById('custom-theme-style');
+        if (oldStyle) oldStyle.remove();
         
-        if (content.style.display === 'none' || content.style.display === '') {
-            content.style.display = 'block';
-            if (arrow) arrow.style.transform = 'rotate(180deg)';
+        if (themeName === 'custom') {
+            applyCustomTheme(true);
         } else {
-            content.style.display = 'none';
-            if (arrow) arrow.style.transform = 'rotate(0deg)';
+            document.documentElement.setAttribute('data-theme', themeName);
+            user.theme = themeName;
+            localStorage.setItem('app_theme', themeName);
         }
+        
+        document.querySelectorAll('.theme-option').forEach(el => {
+            el.classList.remove('active');
+            if (el.dataset.theme === themeName) el.classList.add('active');
+        });
     }
-
-    function toggleOrganizersBlock() {
-        const content = document.getElementById('organizersBlockContent');
-        const arrow = document.getElementById('organizersArrow');
-        if (!content) return;
-        
-        if (content.style.display === 'none' || content.style.display === '') {
-            content.style.display = 'block';
-            if (arrow) arrow.style.transform = 'rotate(180deg)';
-            renderOrganizers();
+    
+    function applyCustomTheme(loadFromCache = false) {
+        let bgMode, accentColor;
+        if (loadFromCache) {
+            bgMode = localStorage.getItem('custom_theme_bg') || 'light';
+            accentColor = localStorage.getItem('custom_theme_accent') || '#ff9500';
+            const bgEl = document.getElementById('themeBgMode');
+            const accEl = document.getElementById('themeAccentColor');
+            if (bgEl) bgEl.value = bgMode;
+            if (accEl) accEl.value = accentColor;
         } else {
-            content.style.display = 'none';
-            if (arrow) arrow.style.transform = 'rotate(0deg)';
+            const bgEl = document.getElementById('themeBgMode');
+            const accEl = document.getElementById('themeAccentColor');
+            bgMode = bgEl ? bgEl.value : 'light';
+            accentColor = accEl ? accEl.value : '#ff9500';
+            localStorage.setItem('custom_theme_bg', bgMode);
+            localStorage.setItem('custom_theme_accent', accentColor);
         }
-    }
-
-    function toggleMarkersBlock() {
-        const content = document.getElementById('markersBlockContent');
-        const arrow = document.getElementById('markersArrow');
-        if (!content) return;
         
-        if (content.style.display === 'none' || content.style.display === '') {
-            content.style.display = 'block';
-            if (arrow) arrow.style.transform = 'rotate(180deg)';
-            renderBrands();
+        const oldStyle = document.getElementById('custom-theme-style');
+        if (oldStyle) oldStyle.remove();
+        const style = document.createElement('style');
+        style.id = 'custom-theme-style';
+        
+        const commonStyles = `
+            button, .nav-btn, .task-submit-btn { pointer-events: auto !important; cursor: pointer !important; }
+            .modal-overlay { z-index: 10000 !important; }
+        `;
+        
+        if (bgMode === 'light') {
+            style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
         } else {
-            content.style.display = 'none';
-            if (arrow) arrow.style.transform = 'rotate(0deg)';
+            style.textContent = `:root { --bg: #121212; --bg-secondary: #1e1e1e; --bg-header: #1c1c1e; --text: #ffffff; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(255,255,255,0.1); --card-bg: #1c1c1e; --input-bg: #2c2c2e; } ${commonStyles}`;
         }
+        document.head.appendChild(style);
+        document.documentElement.removeAttribute('data-theme');
+        user.theme = 'custom';
+        localStorage.setItem('app_theme', 'custom');
     }
     
     function buyItem(itemId) {
         const prices = {
-            bookmark: 750,
-            petites: 950,
-            tracker: 950,
-            alcohol: 1250,
-            coloriages: 1500
+            bookmark: 750, petites: 950, tracker: 950, alcohol: 1250, coloriages: 1500
         };
-        
         const names = {
             bookmark: 'Книжную закладку Hachette',
             petites: 'Petites Poupees',
@@ -4584,125 +3027,77 @@
         const name = names[itemId];
         
         if (user.balance >= price) {
-            tgSafe.showConfirm(`Купить ${name} за ${price} ашетиков?`, (confirm) => {
+            tg.showConfirm(`Купить ${name} за ${price} ашетиков?`, (confirm) => {
                 if (confirm) {
                     user.balance -= price;
-                    saveData();
-                    tgSafe.showAlert(`✅ Вы приобрели ${name}!`);
+                    saveUserData();
+                    tg.showAlert(`✅ Вы приобрели ${name}!`);
                     updateUI();
                 }
             });
         } else {
-            tgSafe.showAlert(`❌ Недостаточно ашетиков! Нужно ${price}, у вас ${user.balance}`);
+            tg.showAlert(`❌ Недостаточно ашетиков! Нужно ${price}, у вас ${user.balance}`);
         }
     }
-
+    
     // ==========================================
     // ИНИЦИАЛИЗАЦИЯ
     // ==========================================
-    window.onload = () => {
-        try {
-            console.log('=== APP START ===');
-
-            // Инициализация всех нужных полей
-            if (!user.branchProgress) user.branchProgress = {};
-            if (!user.branchCompleted) user.branchCompleted = {};
-            if (!user.timeTasksProgress) user.timeTasksProgress = {};
-            if (!user.theme) user.theme = 'light';
-            if (!user.achievements) user.achievements = [];
-            if (!user.showcase) user.showcase = [null, null, null];
-            if (!user.unlockedStatuses) user.unlockedStatuses = ['Новичок'];
-            if (!user.levelTasksProgress) user.levelTasksProgress = [0, 0, 0, 0, 0];
-
-            window.activeTaskId = null;
-
-            console.log('user after init:', user);
-
-            // Тема
-            const savedTheme = localStorage.getItem('app_theme');
-
-            if (savedTheme === 'custom') {
-                if (typeof applyCustomTheme === 'function') {
-                    applyCustomTheme(true);
-                }
-            } else if (savedTheme && savedTheme !== 'light') {
-                if (typeof setTheme === 'function') {
-                    setTheme(savedTheme);
-                }
-            } else {
-                if (typeof setTheme === 'function') {
-                    setTheme(user.theme || 'light');
-                }
-            }
-
-            // Основные данные
-            if (typeof updateUI === 'function') updateUI();
-            if (typeof loadMarkers === 'function') loadMarkers();
-            if (typeof renderCart === 'function') renderCart();
-            if (typeof loadInventory === 'function') loadInventory();
-            if (typeof renderVolumes === 'function') renderVolumes();
-
-            // Задания
-            if (typeof renderLevelTasks === 'function') {
-                renderLevelTasks();
-            } else {
-                console.error('renderLevelTasks NOT FOUND');
-            }
-
-            if (typeof renderTimeTasks === 'function') {
-                renderTimeTasks();
-            } else {
-                console.error('renderTimeTasks NOT FOUND');
-            }
-
-            // Бренды
-            if (typeof renderBrands === 'function') renderBrands();
-
-            // Восстановление корзины
-            if (typeof cart !== 'undefined' && cart !== null) {
-                for (let key in cart) {
-                    if (!key.startsWith('marker_')) {
-                        const countSpan = document.getElementById(`book-count-${key}`);
-                        const controlsDiv = document.getElementById(`book-controls-${key}`);
-                        const addBtn = document.getElementById(`book-add-${key}`);
-
-                        if (countSpan) countSpan.innerText = cart[key];
-                        if (controlsDiv && addBtn && cart[key] > 0) {
-                            controlsDiv.style.display = 'flex';
-                            addBtn.style.display = 'none';
-                        }
-                    }
-                }
-            }
-
-            // Админ блок
-            if (user.isAdmin) {
-                const adminBlock = document.getElementById('adminAiBlock');
-                if (adminBlock) {
-                    adminBlock.style.display = 'block';
-                }
-            }
-
-            // Закрытие модалок
-            window.onclick = function(event) {
-                document.querySelectorAll('.modal-overlay').forEach(modal => {
-                    if (event.target === modal) {
-                        modal.style.display = "none";
-                    }
-                });
-            };
-
-            console.log('=== APP READY ===');
-
-        } catch (error) {
-            console.error('=== APP ERROR ===', error);
-
-            if (window.Telegram?.WebApp) {
-                window.Telegram.WebApp.showAlert('Ошибка загрузки: ' + error.message);
-            } else {
-                alert('Ошибка загрузки: ' + error.message);
-            }
+    
+    window.onload = async () => {
+        console.log('=== APP START ===');
+        
+        // Загружаем сохраненные данные
+        const savedUser = localStorage.getItem('coloring_user');
+        if (savedUser) {
+            Object.assign(user, JSON.parse(savedUser));
         }
+        
+        const savedCart = localStorage.getItem('coloring_cart');
+        if (savedCart) {
+            cart = JSON.parse(savedCart);
+        }
+        
+        // Загружаем прогресс с сервера
+        await loadUserProgress();
+        await loadUnlockedStatuses();
+        await loadUserAchievements();
+        
+        // Применяем тему
+        const savedTheme = localStorage.getItem('app_theme');
+        if (savedTheme === 'custom') {
+            applyCustomTheme(true);
+        } else if (savedTheme && savedTheme !== 'light') {
+            setTheme(savedTheme);
+        } else {
+            setTheme(user.theme || 'light');
+        }
+        
+        // Рендерим задания
+        renderBranchTasks();
+        
+        // Загружаем маркеры
+        loadMarkers();
+        
+        // Рендерим корзину
+        renderCart();
+        
+        // Обновляем UI
+        updateUI();
+        
+        // Запускаем периодическое обновление прогресса
+        startProgressRefresh();
+        
+        // Закрытие модалок по клику вне
+        window.onclick = function(event) {
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            });
+        };
+        
+        console.log('=== APP READY ===');
     };
     </script>
 </head>
@@ -4803,11 +3198,12 @@
     </div>
 
     <div class="tasks-section">
-        <button class="tasks-header" onclick="toggleTasks()"><span>Задания</span><i class="fas fa-chevron-down" id="tasksArrow"></i></button>
+        <button class="tasks-header" onclick="toggleTasks()">
+            <span>Задания на статусы</span>
+            <i class="fas fa-chevron-down" id="tasksArrow"></i>
+        </button>
         <div id="tasksContent" class="tasks-content">
-            <div class="tasks-category"><h4>Задания на статус</h4><div id="levelTasksList"></div></div>
-            <div class="tasks-category"><h4>Временные задания (неделя)</h4><div id="timeTasksList"></div></div>
-            <input type="file" id="taskFileInput" accept="image/*" multiple style="display:none;" onchange="handleTaskFile(event)">
+            <div id="branchTasksList"></div>
         </div>
     </div>
 
@@ -4821,7 +3217,7 @@
         <div class="showcase-info" onclick="openAchievementsGallery()">Нажмите для просмотра всех достижений</div>
     </div>
 
-    <!-- ========== МОЙ ИНВЕНТАРЬ (раскрывающийся блок) ========== -->
+    <!-- ========== МОЙ ИНВЕНТАРЬ ========== -->
     <div class="inventory-main-block">
         <div class="inventory-header" onclick="toggleInventoryBlock()">
             <div class="inventory-header-left"><i class="fas fa-boxes"></i><span>Мой инвентарь</span></div>
@@ -4892,8 +3288,15 @@
             <i class="fas fa-sync-alt"></i> Обновить
         </button>
     </div>
-    <div class="search-container"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="searchMarkers()"></div></div>
-    <div class="markers-section"><div id="markersList"></div></div>
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="searchMarkers()">
+        </div>
+    </div>
+    <div class="markers-section">
+        <div id="markersList"></div>
+    </div>
 </div>
 
 <!-- ========== ОТВЕТЫ И ТОМА ========== -->
@@ -4917,7 +3320,10 @@
         <span class="ai-alpha-badge">Альфа-тест</span>
     </div>
     <div class="ai-section">
-        <div class="upload-area" onclick="document.getElementById('aiInput').click()"><i class="fas fa-camera"></i><p>Загрузить фото для определения цвета</p></div>
+        <div class="upload-area" onclick="document.getElementById('aiInput').click()">
+            <i class="fas fa-camera"></i>
+            <p>Загрузить фото для определения цвета</p>
+        </div>
         <input type="file" id="aiInput" accept="image/*" style="display:none;" onchange="processAI(event)">
         <div id="adminAiBlock" class="admin-panel" style="display:none;">
             <h4><i class="fas fa-robot"></i> Обучение ИИ (Админ)</h4>
@@ -4936,7 +3342,10 @@
     <div class="header">Корзина</div>
     <div class="cart-wrapper">
         <div id="cartItemsList" class="cart-items"></div>
-        <div class="cart-footer"><div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div><button class="checkout-btn" onclick="checkout()">Оформить заказ</button></div>
+        <div class="cart-footer">
+            <div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div>
+            <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
+        </div>
     </div>
 </div>
 
@@ -4950,23 +3359,107 @@
 </nav>
 
 <!-- ========== МОДАЛЬНЫЕ ОКНА ========== -->
-<div id="nameModal" class="modal-overlay"><div class="modal-content"><h3>Настройки профиля</h3><input type="text" id="newNameInput" placeholder="Введите ник..."><button class="modal-action-btn" onclick="saveNewNickname()">Сохранить ник</button><hr><button class="modal-close-btn" style="background: var(--status-red);" onclick="resetAllData()">Сбросить весь прогресс</button><button class="modal-close-btn" onclick="closeNameModal()">Отмена</button></div></div>
-<div id="statusSelectModal" class="modal-overlay"><div class="modal-content"><h3>Выберите статус</h3><div id="availableStatusesList"></div><button class="modal-close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">Отмена</button></div></div>
-<div id="achievementsGalleryModal" class="modal-overlay"><div class="modal-content"><h3>Все достижения</h3><div id="allAchievementsList" class="achievements-grid"></div><button class="modal-close-btn" onclick="document.getElementById('achievementsGalleryModal').style.display='none'">Закрыть</button></div></div>
-<div id="achInfoModal" class="modal-overlay"><div class="modal-content"><h3 id="achInfoTitle"></h3><img id="achInfoImg" style="width:100px; margin:10px auto; display:block;"><p id="achInfoDesc"></p><p id="achInfoCondition" style="color:var(--accent);"></p><button class="modal-close-btn" onclick="closeAchievementInfo()">Закрыть</button></div></div>
-<div id="achievementAlert" class="modal-overlay"><div class="modal-content"><h3>🏆 Новое достижение!</h3><img id="alertAchImg" style="width:80px; margin:10px auto; display:none;"><p id="alertAchText"></p><button class="modal-close-btn" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button></div></div>
-<div id="taskUploadModal" class="modal-overlay"><div class="modal-content"><h3>Отправка на проверку</h3><div id="taskPhotoPreviewContainer" class="photo-preview-container"></div><div class="modal-buttons-row"><button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button><button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button></div></div></div>
-<div id="organizerModal" class="modal-overlay"><div class="modal-content"><h3>Создать органайзер</h3><input type="text" id="organizerName" placeholder="Название органайзера"><div class="form-group"><label>Количество столбцов:</label><input type="number" id="organizerCols" value="3" min="1" max="10"></div><div class="form-group"><label>Количество строк:</label><input type="number" id="organizerRows" value="3" min="1" max="10"></div><button class="modal-action-btn" onclick="createOrganizer()">Создать</button><button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button></div></div>
+
+<!-- Модалка изменения имени -->
+<div id="nameModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Настройки профиля</h3>
+        <input type="text" id="newNameInput" placeholder="Введите ник...">
+        <button class="modal-action-btn" onclick="saveNewNickname()">Сохранить ник</button>
+        <hr>
+        <button class="modal-close-btn" style="background: var(--status-red);" onclick="resetAllData()">Сбросить весь прогресс</button>
+        <button class="modal-close-btn" onclick="closeNameModal()">Отмена</button>
+    </div>
+</div>
+
+<!-- Модалка выбора статуса -->
+<div id="statusSelectModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Выберите статус</h3>
+        <div id="availableStatusesList"></div>
+        <button class="modal-close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">Отмена</button>
+    </div>
+</div>
+
+<!-- Модалка галереи достижений -->
+<div id="achievementsGalleryModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Все достижения</h3>
+        <div id="allAchievementsList" class="achievements-grid"></div>
+        <button class="modal-close-btn" onclick="document.getElementById('achievementsGalleryModal').style.display='none'">Закрыть</button>
+    </div>
+</div>
+
+<!-- Модалка информации о достижении -->
+<div id="achInfoModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="achInfoTitle"></h3>
+        <img id="achInfoImg" style="width:100px; margin:10px auto; display:block;">
+        <p id="achInfoDesc"></p>
+        <p id="achInfoCondition" style="color:var(--accent);"></p>
+        <button class="modal-close-btn" onclick="closeAchievementInfo()">Закрыть</button>
+    </div>
+</div>
+
+<!-- Модалка отправки задания -->
+<div id="taskUploadModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Отправка на проверку</h3>
+        <div id="taskPhotoPreviewContainer" class="photo-preview-container"></div>
+        <div class="modal-buttons-row">
+            <button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button>
+            <button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка создания органайзера -->
+<div id="organizerModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Создать органайзер</h3>
+        <input type="text" id="organizerName" placeholder="Название органайзера">
+        <div class="form-group">
+            <label>Количество столбцов:</label>
+            <input type="number" id="organizerCols" value="3" min="1" max="10">
+        </div>
+        <div class="form-group">
+            <label>Количество строк:</label>
+            <input type="number" id="organizerRows" value="3" min="1" max="10">
+        </div>
+        <button class="modal-action-btn" onclick="createOrganizer()">Создать</button>
+        <button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button>
+    </div>
+</div>
+
+<!-- Модалка добавления маркера -->
 <div id="addMarkerModal" class="modal-overlay">
     <div class="modal-content">
         <h3>➕ Добавить маркер</h3>
-        <div class="form-group"><label>Бренд:</label><select id="addMarkerBrand"><option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option><option value="Grasp">Grasp</option><option value="InfiArt">InfiArt</option><option value="Tooli-Art">Tooli-Art</option></select></div>
-        <div class="form-group"><label>Номер маркера:</label><input type="text" id="addMarkerNumber" placeholder="Например: 101"></div>
-        <div class="form-group"><label>Количество:</label><input type="number" id="addMarkerCount" value="1" min="1" max="100"></div>
+        <div class="form-group">
+            <label>Бренд:</label>
+            <select id="addMarkerBrand">
+                <option value="GuangNa">GuangNa</option>
+                <option value="Languo">Languo</option>
+                <option value="Zibeef">Zibeef</option>
+                <option value="Grasp">Grasp</option>
+                <option value="InfiArt">InfiArt</option>
+                <option value="Tooli-Art">Tooli-Art</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Номер маркера:</label>
+            <input type="text" id="addMarkerNumber" placeholder="Например: 101">
+        </div>
+        <div class="form-group">
+            <label>Количество:</label>
+            <input type="number" id="addMarkerCount" value="1" min="1" max="100">
+        </div>
         <button class="modal-action-btn" onclick="confirmAddMarker()" style="cursor:pointer;">✅ Добавить</button>
         <button class="modal-close-btn" onclick="closeAddMarkerModal()" style="cursor:pointer;">❌ Отмена</button>
     </div>
 </div>
+
+<!-- Модалка выбора достижения для витрины -->
 <div id="showcaseSelectorModal" class="modal-overlay">
     <div class="modal-content">
         <h3>Выберите достижение</h3>
@@ -4974,5 +3467,16 @@
         <button class="modal-close-btn" onclick="document.getElementById('showcaseSelectorModal').style.display='none'">Отмена</button>
     </div>
 </div>
+
+<!-- Модалка уведомления о достижении -->
+<div id="achievementAlert" class="modal-overlay">
+    <div class="modal-content">
+        <h3>🏆 Новое достижение!</h3>
+        <img id="alertAchImg" style="width:80px; margin:10px auto; display:none;">
+        <p id="alertAchText"></p>
+        <button class="modal-close-btn" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
+    </div>
+</div>
+
 </body>
 </html>

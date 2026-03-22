@@ -4378,7 +4378,7 @@
                 }
             }
             
-            // Расчет бонусных ашетиков
+            // Расчет возможного бонуса
             let bonusAchetiki = 0;
             if (totalSum >= 10000) {
                 bonusAchetiki = 50;
@@ -4390,13 +4390,13 @@
                 bonusAchetiki = 20;
             }
             
-            // Добавляем блок с бонусами
+            // Добавляем блок с информацией о бонусе
             let bonusHtml = '';
             if (bonusAchetiki > 0) {
                 bonusHtml = `
-                    <div style="background: linear-gradient(135deg, #FFD700, #FFA500); padding: 12px; border-radius: 16px; margin-top: 15px; text-align: center;">
-                        <i class="fas fa-gift"></i> <strong>Бонус за заказ!</strong><br>
-                        При оформлении заказа вы получите <strong>+${bonusAchetiki} ашетиков</strong> на счет!
+                    <div style="background: rgba(255,215,0,0.1); padding: 12px; border-radius: 16px; margin-top: 15px; text-align: center; border: 1px dashed #FFD700;">
+                        <i class="fas fa-gift" style="color: #FFD700;"></i> <strong>Бонус за заказ!</strong><br>
+                        При подтверждении заказа вы получите <strong>+${bonusAchetiki} ашетиков</strong> на счет!
                     </div>
                 `;
             } else if (totalSum > 0) {
@@ -4461,7 +4461,7 @@
                 }
             }
             
-            // Расчет бонусных ашетиков
+            // Расчет возможного бонуса (только для информации, не начисляется автоматически)
             if (total >= 10000) {
                 bonusAchetiki = 50;
             } else if (total >= 7500) {
@@ -4474,14 +4474,14 @@
             
             orderText += `\n💰 ИТОГО: ${total} ₽`;
             if (bonusAchetiki > 0) {
-                orderText += `\n🎁 БОНУС: +${bonusAchetiki} ашетиков`;
+                orderText += `\n🎁 ПОТЕНЦИАЛЬНЫЙ БОНУС: +${bonusAchetiki} ашетиков (начисляется после подтверждения заказа)`;
             }
             
             const result = await fetchAPI('/api/new_order', {
                 user_id: userId,
                 text_details: orderText,
                 total: total,
-                bonus: bonusAchetiki
+                potential_bonus: bonusAchetiki
             });
             
             if (result && result.status === 'ok') {

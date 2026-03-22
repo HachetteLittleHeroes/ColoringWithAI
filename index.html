@@ -1949,7 +1949,7 @@
                     <h2 id="displayUsername">Без имени</h2>
                     <i class="fas fa-pencil-alt" style="color: var(--text-gray); font-size: 14px;"></i>
                 </div>
-                <button id="currentStatus" class="status-badge" onclick="openStatusInfo()">Новичок</button>
+                <button id="currentStatus" class="status-badge" onclick="openStatusInfo()">Без статуса</button>
             </div>
         </div>
 
@@ -2349,8 +2349,8 @@
             name: tg.initDataUnsafe?.user?.first_name || 'Без имени',
             balance: 0,
             avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
-            status: 'Новичок',
-            unlockedStatuses: ['Новичок'],
+            status: 'Без статуса',
+            unlockedStatuses: ['Без статуса'],
             achievements: [],
             showcase: [null, null, null],
             theme: localStorage.getItem('app_theme') || 'light'
@@ -2447,7 +2447,9 @@ async function showAnswerPageAsync() {
             bear: "Мишка",
             fauna: "Знаток фауны",
             sea: "Морская дева",
-            queen: "Злая королева"
+            queen: "Злая королева",
+            scrooge: "Скрудж"
+            benefactor: "Благодетель"
         };
         
         const TASK_BRANCHES = {
@@ -2539,6 +2541,21 @@ async function showAnswerPageAsync() {
                     { title: "Морская дева", maxProgress: 8, desc: "Раскрась 8 картинок с морскими обитателями" }
                 ]
             },
+               scrooge: {
+        name: "Скрудж",
+        desc: "Соберите 2500 ашетиков на счету",
+        levels: [
+            { title: "Скрудж", maxProgress: 2500, desc: "Накопите 2500 ашетиков", isBalance: true }
+        ]
+    },
+    benefactor: {
+        name: "Благодетель",
+        desc: "Поддержите развитие проекта",
+        levels: [
+            { title: "Благодетель", maxProgress: 1, desc: "Поддержите проект", isDonation: true }
+        ]
+    }
+},
             queen: {
                 name: "Злая королева",
                 desc: "Раскрасить картинки со злодеями",
@@ -2585,13 +2602,20 @@ async function showAnswerPageAsync() {
                 desc: 'Разблокировано 3 статуса',
                 condition: 'Получите 3 разных статуса'
             },
-            'speed_draw': {
-                id: 'speed_draw',
-                name: 'Скоростная раскраска',
-                img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/ach2.png',
-                desc: 'Выполнено 3 временных задания за неделю',
-                condition: 'Выполните 3 временных задания за 7 дней'
-            }
+            'scrooge_achievement': { 
+        id: 'scrooge_achievement', 
+        name: 'Скрудж', 
+        img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/scrooge.png', 
+        desc: 'Накоплено 2500 ашетиков',
+        condition: 'Накопите 2500 ашетиков'
+    },
+    'benefactor_achievement': { 
+        id: 'benefactor_achievement', 
+        name: 'Благодетель', 
+        img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/benefactor.png', 
+        desc: 'Поддержали проект',
+        condition: 'Поддержите развитие проекта'
+    }
         };
         
         // ==========================================
@@ -2680,15 +2704,15 @@ for (let i = 1; i <= 47; i++) {
         
         if (statuses && Array.isArray(statuses)) {
             user.unlockedStatuses = statuses;
-            if (!user.unlockedStatuses.includes('Новичок')) {
-                user.unlockedStatuses.unshift('Новичок');
+            if (!user.unlockedStatuses.includes('Без статуса ')) {
+                user.unlockedStatuses.unshift('Без статуса');
             }
         }
         return user.unlockedStatuses;
     } catch (error) {
         console.error('Ошибка загрузки статусов:', error);
         if (!user.unlockedStatuses || user.unlockedStatuses.length === 0) {
-            user.unlockedStatuses = ['Новичок'];
+            user.unlockedStatuses = ['Без статуса'];
         }
         return user.unlockedStatuses;
     }
@@ -3024,7 +3048,7 @@ async function submitTaskPhoto(event) {
         // ОБНОВЛЕНИЕ ПРОГРЕССА
         // ==========================================
         
-        async function refreshUserProgress() {
+       async function refreshUserProgress() {
     console.log('🔄 Refreshing user progress...');
     
     try {
@@ -3040,7 +3064,10 @@ async function submitTaskPhoto(event) {
         // Загружаем достижения
         await loadUserAchievements();
         
-        // Проверяем разблокировку новых статусов
+        // Проверяем баланс для статуса Скрудж (ВАЖНО!)
+        await checkBalanceStatus();
+        
+        // Проверяем разблокировку других статусов
         await checkAndUnlockStatuses();
         
         // Обновляем отображение заданий
@@ -3049,9 +3076,8 @@ async function submitTaskPhoto(event) {
         // Обновляем UI
         updateUI();
         
-        console.log('✅ Progress refreshed, current userProgress:', userProgress);
-        console.log('✅ Current balance:', user.balance);
-        console.log('✅ Current statuses:', user.unlockedStatuses);
+        console.log('✅ Progress refreshed, current balance:', user.balance);
+        console.log('✅ Unlocked statuses:', user.unlockedStatuses);
         
     } catch (error) {
         console.error('Error refreshing progress:', error);
@@ -3110,7 +3136,7 @@ async function submitTaskPhoto(event) {
     if (nameEl) nameEl.innerText = user.name;
     if (avatarEl) avatarEl.src = user.avatar;
     if (balanceEl) balanceEl.innerText = user.balance;
-    if (statusBadge) statusBadge.innerText = user.status || 'Новичок';
+    if (statusBadge) statusBadge.innerText = user.status || 'Без статуса';
     
     console.log('UI Updated - Current status:', user.status);
     console.log('UI Updated - Balance:', user.balance);
@@ -3332,7 +3358,7 @@ async function submitTaskPhoto(event) {
             
             list.innerHTML = '';
             
-            const allStatuses = ['Новичок', ...Object.values(BRANCH_REWARDS)];
+            const allStatuses = ['Без статуса', ...Object.values(BRANCH_REWARDS)];
             console.log('allStatuses:', allStatuses);
             
             allStatuses.forEach(status => {
@@ -4807,11 +4833,11 @@ async function submitTaskPhoto(event) {
             await loadUserProgress();
             await loadUnlockedStatuses();
             await loadUserAchievements();
-            
             await checkAndUnlockStatuses();
+               await checkBalanceStatus();
             
             if (user.status && !user.unlockedStatuses.includes(user.status)) {
-                user.status = 'Новичок';
+                user.status = 'Без статуса';
             }
             
             const savedTheme = localStorage.getItem('app_theme');
@@ -4869,6 +4895,90 @@ async function submitTaskPhoto(event) {
                 renderBranchTasks();
             }
         }, 3000);
+        // ==========================================
+// ПРОВЕРКА БАЛАНСА ДЛЯ СТАТУСА СКРУДЖ
+// ==========================================
+
+async function checkBalanceStatus() {
+    console.log('💰 Checking balance for Scrooge status...');
+    console.log('Current balance:', user.balance);
+    console.log('Has Scrooge status:', user.unlockedStatuses.includes('Скрудж'));
+    
+    // Проверяем, не разблокирован ли уже статус Скрудж
+    if (!user.unlockedStatuses.includes('Скрудж') && user.balance >= 2500) {
+        console.log('🎉 Unlocking Scrooge status!');
+        
+        // Разблокируем статус
+        user.unlockedStatuses.push('Скрудж');
+        
+        // Добавляем достижение
+        if (!user.achievements.includes('scrooge_achievement')) {
+            user.achievements.push('scrooge_achievement');
+        }
+        
+        // Начисляем бонус 50 ашетиков
+        const oldBalance = user.balance;
+        user.balance += 50;
+        console.log(`💰 Bonus added: ${oldBalance} → ${user.balance}`);
+        
+        // Сохраняем в localStorage
+        saveUserData();
+        
+        // Синхронизируем с сервером
+        try {
+            await fetchAPI('/api/sync_status', {
+                user_id: userId,
+                status: 'Скрудж',
+                action: 'unlock'
+            });
+            
+            // Обновляем баланс на сервере
+            await fetchAPI('/api/update_balance', {
+                user_id: userId,
+                amount: 50,
+                action: 'add'
+            });
+        } catch(e) {
+            console.error('Failed to sync with server:', e);
+        }
+        
+        // Уведомляем пользователя
+        if (tg) {
+            tg.showAlert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!\n+50 ашетиков в подарок!');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        } else {
+            alert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!\n+50 ашетиков в подарок!');
+        }
+        
+        // Обновляем интерфейс
+        updateUI();
+        renderBranchTasks();
+        
+        return true;
+    }
+    
+    return false;
+}
+// ==========================================
+// ОБНОВЛЕНИЕ БАЛАНСА НА СЕРВЕРЕ
+// ==========================================
+
+async function syncBalanceWithServer() {
+    try {
+        const response = await fetch(`${SERVER_URL}/api/sync_balance`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                balance: user.balance
+            })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Failed to sync balance:', error);
+        return null;
+    }
+}
     </script>
 </body>
 </html>

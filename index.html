@@ -4378,7 +4378,42 @@
                 }
             }
             
-            container.innerHTML = itemsHtml;
+            // Расчет бонусных ашетиков
+            let bonusAchetiki = 0;
+            if (totalSum >= 10000) {
+                bonusAchetiki = 50;
+            } else if (totalSum >= 7500) {
+                bonusAchetiki = 40;
+            } else if (totalSum >= 5000) {
+                bonusAchetiki = 30;
+            } else if (totalSum >= 3000) {
+                bonusAchetiki = 20;
+            }
+            
+            // Добавляем блок с бонусами
+            let bonusHtml = '';
+            if (bonusAchetiki > 0) {
+                bonusHtml = `
+                    <div style="background: linear-gradient(135deg, #FFD700, #FFA500); padding: 12px; border-radius: 16px; margin-top: 15px; text-align: center;">
+                        <i class="fas fa-gift"></i> <strong>Бонус за заказ!</strong><br>
+                        При оформлении заказа вы получите <strong>+${bonusAchetiki} ашетиков</strong> на счет!
+                    </div>
+                `;
+            } else if (totalSum > 0) {
+                let nextBonus = 3000;
+                if (totalSum < 3000) nextBonus = 3000;
+                else if (totalSum < 5000) nextBonus = 5000;
+                else if (totalSum < 7500) nextBonus = 7500;
+                else if (totalSum < 10000) nextBonus = 10000;
+                
+                bonusHtml = `
+                    <div style="background: rgba(0,0,0,0.05); padding: 12px; border-radius: 16px; margin-top: 15px; text-align: center;">
+                        <i class="fas fa-info-circle"></i> Добавьте товаров на <strong>${nextBonus - totalSum} ₽</strong>, чтобы получить бонусные ашетики!
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = itemsHtml + bonusHtml;
             if (totalSpan) totalSpan.innerText = totalSum;
             updateCartBadge();
         }
@@ -4405,6 +4440,7 @@
         async function sendOrderToServer() {
             let orderText = '🛍 ЗАКАЗ:\n\n';
             let total = 0;
+            let bonusAchetiki = 0;
             
             for (let key in cart) {
                 const count = cart[key];
@@ -4424,11 +4460,28 @@
                     }
                 }
             }
+            
+            // Расчет бонусных ашетиков
+            if (total >= 10000) {
+                bonusAchetiki = 50;
+            } else if (total >= 7500) {
+                bonusAchetiki = 40;
+            } else if (total >= 5000) {
+                bonusAchetiki = 30;
+            } else if (total >= 3000) {
+                bonusAchetiki = 20;
+            }
+            
             orderText += `\n💰 ИТОГО: ${total} ₽`;
+            if (bonusAchetiki > 0) {
+                orderText += `\n🎁 БОНУС: +${bonusAchetiki} ашетиков`;
+            }
             
             const result = await fetchAPI('/api/new_order', {
                 user_id: userId,
-                text_details: orderText
+                text_details: orderText,
+                total: total,
+                bonus: bonusAchetiki
             });
             
             if (result && result.status === 'ok') {

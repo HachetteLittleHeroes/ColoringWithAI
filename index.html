@@ -2789,32 +2789,48 @@ function getLevelProgress(branchKey, levelIndex) {
         // ==========================================
         
         function openTaskUpload(branchKey, levelIndex) {
-            console.log('📸 openTaskUpload called:', branchKey, levelIndex);
-            
-            const branch = TASK_BRANCHES[branchKey];
-            if (!branch) {
-                console.error('Branch not found:', branchKey);
-                if (tg) tg.showAlert('Ошибка: ветка задания не найдена');
-                return;
-            }
-            
-            const currentLevel = getCurrentLevelIndex(branchKey);
-            if (currentLevel !== levelIndex) {
-                console.warn('Wrong level! Current:', currentLevel, 'Attempted:', levelIndex);
-                if (tg) tg.showAlert('Этот уровень уже пройден или заблокирован!');
-                return;
-            }
-            
-            currentUploadBranch = branchKey;
-            currentUploadLevel = levelIndex;
-            
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
-            fileInput.multiple = true;
-            fileInput.onchange = handleTaskFilesSelected;
-            fileInput.click();
-        }
+    console.log('📸 openTaskUpload called:', branchKey, levelIndex);
+    
+    if (!branchKey || levelIndex === undefined) {
+        console.error('Invalid parameters:', branchKey, levelIndex);
+        if (tg) tg.showAlert('Ошибка: задание не выбрано');
+        return;
+    }
+    
+    const branch = TASK_BRANCHES[branchKey];
+    if (!branch) {
+        console.error('Branch not found:', branchKey);
+        if (tg) tg.showAlert('Ошибка: ветка задания не найдена');
+        return;
+    }
+    
+    const currentLevel = getCurrentLevelIndex(branchKey);
+    if (currentLevel !== levelIndex) {
+        console.warn('Wrong level! Current:', currentLevel, 'Attempted:', levelIndex);
+        if (tg) tg.showAlert('Этот уровень уже пройден или заблокирован!');
+        return;
+    }
+    
+    currentUploadBranch = branchKey;
+    currentUploadLevel = levelIndex;
+    
+    // Создаем input для выбора файлов
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = true;
+    fileInput.style.position = 'absolute';
+    fileInput.style.opacity = '0';
+    fileInput.style.pointerEvents = 'none';
+    document.body.appendChild(fileInput);
+    
+    fileInput.onchange = function(event) {
+        handleTaskFilesSelected(event);
+        document.body.removeChild(fileInput);
+    };
+    
+    fileInput.click();
+}
         
         function handleTaskFilesSelected(event) {
             const files = Array.from(event.target.files);
@@ -3109,10 +3125,10 @@ async function submitTaskPhoto(event) {
         let statusUnlocked = false;
         
         for (const [branchKey, rewardStatus] of Object.entries(BRANCH_REWARDS)) {
+            if (branchKey === 'scrooge' || branchKey === 'benefactor') continue;
+            
             const isCompleted = isBranchCompleted(branchKey);
             const isUnlocked = user.unlockedStatuses.includes(rewardStatus);
-            
-            console.log(`Branch ${branchKey}: completed=${isCompleted}, unlocked=${isUnlocked}`);
             
             if (isCompleted && !isUnlocked) {
                 console.log(`🎉 New status unlocked: ${rewardStatus}`);
@@ -3124,23 +3140,15 @@ async function submitTaskPhoto(event) {
         if (statusUnlocked) {
             saveUserData();
             updateUI();
-            if (window.Telegram?.WebApp) {
-                window.Telegram.WebApp.showAlert('🏆 Новый статус разблокирован!');
-            }
+            renderBranchTasks();
+            
+            // Уведомление без упоминания ашетиков
+            if (tg) tg.showAlert('🏆 Поздравляем!\nВы разблокировали новый статус!');
         }
     } catch (error) {
         console.error('Error checking status unlocks:', error);
     }
 }
-        
-        let refreshInterval = null;
-        
-        function startProgressRefresh() {
-            if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(() => {
-                refreshUserProgress();
-            }, 30000);
-        }
         
         // ==========================================
         // ПРОФИЛЬ И UI
@@ -4935,11 +4943,6 @@ async function checkBalanceStatus() {
             user.achievements.push('scrooge_achievement');
         }
         
-        // Начисляем бонус 50 ашетиков
-        const oldBalance = user.balance;
-        user.balance += 50;
-        console.log(`💰 Bonus added: ${oldBalance} → ${user.balance}`);
-        
         // Сохраняем в localStorage
         saveUserData();
         
@@ -4950,23 +4953,16 @@ async function checkBalanceStatus() {
                 status: 'Скрудж',
                 action: 'unlock'
             });
-            
-            // Обновляем баланс на сервере
-            await fetchAPI('/api/update_balance', {
-                user_id: userId,
-                amount: 50,
-                action: 'add'
-            });
         } catch(e) {
             console.error('Failed to sync with server:', e);
         }
         
-        // Уведомляем пользователя
+        // Уведомляем пользователя (без упоминания ашетиков)
         if (tg) {
-            tg.showAlert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!\n+50 ашетиков в подарок!');
+            tg.showAlert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!');
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         } else {
-            alert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!\n+50 ашетиков в подарок!');
+            alert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!');
         }
         
         // Обновляем интерфейс

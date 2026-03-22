@@ -2559,7 +2559,8 @@
             queen: "Злая королева",
             scrooge: "Скрудж",
             benefactor: "Благодетель",
-            mystery: "Загадка"
+            mystery: "Загадка",
+            anaconda: "Анаконда"
         };
         
         const TASK_BRANCHES = {
@@ -2676,6 +2677,17 @@
                     { title: "Благодетель", maxProgress: 1, desc: "Поддержите нас", isDonation: true }
                 ]
             },
+            'anaconda': {
+        name: "Анаконда",
+        desc: "Раскрасить картинки со змеей",
+        levels: [
+            { title: "Любитель змей", maxProgress: 1, desc: "Раскрась 1 картинку со змеей" },
+            { title: "Наблюдатель", maxProgress: 3, desc: "Раскрась 3 картинки со змеей" },
+            { title: "Знаток змей", maxProgress: 3, desc: "Раскрась ещё 3 картинки со змеей" },
+            { title: "Исследователь", maxProgress: 5, desc: "Раскрась 5 картинок со змеей" },
+            { title: "Анаконда", maxProgress: 8, desc: "Раскрась 8 картинок со змеей" }
+        ]
+    },
             'mystery': {
         name: "Загадка",
         desc: "Раскрасить картинки из м/ф Скуби-Ду",
@@ -2771,6 +2783,13 @@
                 desc: 'Поддержали проект',
                 condition: 'Поддержите нас'
             },
+            'anaconda': { 
+        id: 'anaconda', 
+        name: 'Анаконда', 
+        img: 'assets/achievements/ach13.png', 
+        desc: 'Завершена ветка "Анаконда"',
+        condition: 'Раскрасьте 20 картинок со змеей'
+    },
     'mystery': { 
         id: 'mystery', 
         name: 'Загадка', 

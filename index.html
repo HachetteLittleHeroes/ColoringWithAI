@@ -1092,12 +1092,162 @@
             text-align: center;
             color: var(--text);
         }
-    </style>
-</head>
-<body>
-<style>
+        
         /* ==========================================
-           14. КОРЗИНА
+           14. ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ ТОМОВ
+           ========================================== */
+        .books-section {
+            padding: 0 15px;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .book-card {
+            background: var(--bg-header);
+            padding: 15px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 320px;
+        }
+
+        .book-card:active {
+            transform: scale(0.98);
+        }
+
+        .book-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .book-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--text);
+            line-height: 1.3;
+            min-height: 40px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .book-price {
+            color: var(--accent);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .book-card .cart-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            background: var(--card-bg);
+            padding: 8px 12px;
+            border-radius: 30px;
+            margin-top: auto;
+            width: 100%;
+        }
+
+        .book-card .cart-controls button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            flex-shrink: 0;
+        }
+
+        .book-card .cart-controls button.minus {
+            background: #444;
+        }
+
+        .book-card .cart-controls button.minus:not(:disabled) {
+            background: var(--status-red);
+        }
+
+        .book-card .cart-controls span {
+            font-size: 16px;
+            font-weight: 700;
+            min-width: 30px;
+            text-align: center;
+            color: var(--text);
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: auto;
+            transition: all 0.2s;
+        }
+
+        .add-to-cart-btn:active {
+            transform: scale(0.98);
+        }
+
+        @media (max-width: 480px) {
+            .books-grid {
+                gap: 12px;
+            }
+            
+            .book-card {
+                padding: 12px;
+                min-height: 300px;
+            }
+            
+            .book-card h4 {
+                font-size: 12px;
+                min-height: 36px;
+            }
+            
+            .book-price {
+                font-size: 14px;
+            }
+            
+            .book-card .cart-controls button {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+            
+            .add-to-cart-btn {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+        
+        /* ==========================================
+           15. КОРЗИНА
            ========================================== */
         .cart-wrapper {
             position: relative;
@@ -1241,7 +1391,7 @@
         }
 
         /* ==========================================
-           15. ИИ ПАЛИТРА
+           16. ИИ ПАЛИТРА
            ========================================== */
         .ai-section {
             padding: 0 15px;
@@ -1358,7 +1508,7 @@
         }
 
         /* ==========================================
-           16. НАВИГАЦИЯ
+           17. НАВИГАЦИЯ
            ========================================== */
         .nav {
             position: fixed;
@@ -1410,7 +1560,7 @@
         }
 
         /* ==========================================
-           17. МОДАЛЬНЫЕ ОКНА
+           18. МОДАЛЬНЫЕ ОКНА
            ========================================== */
         .modal-overlay {
             position: fixed;
@@ -1514,7 +1664,7 @@
         }
 
         /* ==========================================
-           18. ИНВЕНТАРЬ И ОРГАНАЙЗЕРЫ
+           19. ИНВЕНТАРЬ И ОРГАНАЙЗЕРЫ
            ========================================== */
         .inventory-main-block {
             background: var(--bg-header);
@@ -1657,7 +1807,7 @@
         }
 
         /* ==========================================
-           19. БРЕНДЫ
+           20. БРЕНДЫ
            ========================================== */
         .brand-content {
             scrollbar-width: thin;
@@ -1679,118 +1829,7 @@
             border-radius: 4px;
         }
 
-        /* ==========================================
-           20. ТОМА И ОТВЕТЫ (КАРТОЧКИ + СВАЙПЫ)
-           ========================================== */
-        .books-section {
-            padding: 0 15px;
-        }
-
-        .books-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .book-card {
-            background: var(--bg-header);
-            padding: 15px 15px 20px;
-            border-radius: 24px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .book-card:active {
-            transform: scale(0.98);
-        }
-
-        .book-card img {
-            width: 100%;
-            height: 140px;
-            object-fit: contain;
-            margin-bottom: 12px;
-            border-radius: 16px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .book-card h4 {
-            font-size: 16px;
-            margin: 0 0 8px 0;
-            color: var(--text);
-        }
-
-        .book-price {
-            color: var(--accent);
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .book-card .cart-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            background: var(--card-bg);
-            padding: 10px;
-            border-radius: 30px;
-            margin-top: 10px;
-        }
-
-        .book-card .cart-controls button {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .book-card .cart-controls button.minus {
-            background: #444;
-        }
-
-        .book-card .cart-controls button.minus:not(:disabled) {
-            background: var(--status-red);
-        }
-
-        .book-card .cart-controls span {
-            font-size: 16px;
-            font-weight: 700;
-            min-width: 30px;
-            text-align: center;
-            color: var(--text);
-        }
-
-        .add-to-cart-btn {
-            width: 100%;
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: all 0.2s;
-        }
-
-        .add-to-cart-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Модальное окно просмотра ответов (на всю страницу) */
+        /* Модальное окно просмотра ответов */
         .answers-viewer-modal {
             max-width: 100vw;
             width: 100%;
@@ -1904,7 +1943,6 @@
             z-index: 1000 !important;
         }
 
-        /* Альфа-тест бейдж */
         .ai-alpha-badge {
             display: inline-block;
             background: rgba(255, 149, 0, 0.2);
@@ -1917,7 +1955,6 @@
             vertical-align: middle;
         }
 
-        /* Исправление для темной темы */
         [data-theme="dark"] .theme-option span,
         [data-theme="dark"] .custom-theme h4,
         [data-theme="dark"] .theme-row label {
@@ -2220,7 +2257,7 @@
         </div>
     </div>
 
-    <!-- Модалка отправки задания (ВАЖНО: здесь будет форма для фото) -->
+    <!-- Модалка отправки задания -->
     <div id="taskUploadModal" class="modal-overlay">
         <div class="modal-content">
             <h3>Отправка на проверку</h3>
@@ -2362,78 +2399,16 @@
         let markersLoading = false;
         let userProgress = {};
         
-        // Кэш форматов файлов
-const fileFormatCache = {};
+        // Переменные для томов
+        let currentVolumeId = null;
+        let currentPageIndex = 0;
+        let currentVolumePages = 0;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        // Кэш форматов файлов для ответов
+        const fileFormatCache = {};
 
-async function getImageUrl(volumeId, pageNumber) {
-    const cacheKey = `${volumeId}_${pageNumber}`;
-    
-    if (fileFormatCache[cacheKey]) {
-        return fileFormatCache[cacheKey];
-    }
-    
-    const extensions = ['png', 'jpg', 'jpeg'];
-    
-    for (const ext of extensions) {
-        const url = `assets/otveti/${volumeId}/${pageNumber}.${ext}`;
-        try {
-            const response = await fetch(url, { method: 'HEAD' });
-            if (response.ok) {
-                fileFormatCache[cacheKey] = url;
-                return url;
-            }
-        } catch(e) {
-            // продолжаем проверять
-        }
-    }
-    
-    return null;
-}
-
-// Обновленная версия showAnswerPage с кэшем
-async function showAnswerPageAsync() {
-    const pageInfo = document.getElementById('answersPageInfo');
-    const prevBtn = document.getElementById('answersPrevBtn');
-    const nextBtn = document.getElementById('answersNextBtn');
-    const titleEl = document.getElementById('answersViewerTitle');
-    const imgElement = document.getElementById('answersViewerImage');
-    
-    if (titleEl) titleEl.innerText = `${currentVolumeId.toUpperCase()} - Ответы`;
-    
-    if (imgElement) {
-        imgElement.style.opacity = '0.5';
-        
-        const imageUrl = await getImageUrl(currentVolumeId, currentPageIndex);
-        
-        if (imageUrl) {
-            console.log(`✅ Loading: ${imageUrl}`);
-            imgElement.src = imageUrl;
-            imgElement.style.opacity = '1';
-        } else {
-            console.error(`❌ Image not found for ${currentVolumeId}/${currentPageIndex}`);
-            imgElement.src = 'data:image/svg+xml,' + encodeURIComponent(`
-                <svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
-                    <rect width="600" height="800" fill="#f0f0f0"/>
-                    <text x="300" y="100" font-size="20" text-anchor="middle" fill="#ff9500">📖 Ответ не найден</text>
-                    <text x="300" y="150" font-size="14" text-anchor="middle" fill="#666">Файл: ${currentVolumeId}/${currentPageIndex}.{png,jpg}</text>
-                    <text x="300" y="180" font-size="12" text-anchor="middle" fill="#999">Проверьте папку assets/otveti/${currentVolumeId}/</text>
-                </svg>
-            `);
-            imgElement.style.opacity = '1';
-        }
-    }
-    
-    if (pageInfo) {
-        pageInfo.innerText = `${currentPageIndex} / ${currentVolumePages}`;
-    }
-    if (prevBtn) {
-        prevBtn.disabled = currentPageIndex <= 1;
-    }
-    if (nextBtn) {
-        nextBtn.disabled = currentPageIndex >= currentVolumePages;
-    }
-}
-        
         // ==========================================
         // ДАННЫЕ ЗАДАНИЙ (ВЕТКИ)
         // ==========================================
@@ -2448,7 +2423,7 @@ async function showAnswerPageAsync() {
             fauna: "Знаток фауны",
             sea: "Морская дева",
             queen: "Злая королева",
-            scrooge: "Скрудж"
+            scrooge: "Скрудж",
             benefactor: "Благодетель"
         };
         
@@ -2541,21 +2516,6 @@ async function showAnswerPageAsync() {
                     { title: "Морская дева", maxProgress: 8, desc: "Раскрась 8 картинок с морскими обитателями" }
                 ]
             },
-               scrooge: {
-        name: "Скрудж",
-        desc: "Соберите 2500 ашетиков на счету",
-        levels: [
-            { title: "Скрудж", maxProgress: 2500, desc: "Накопите 2500 ашетиков", isBalance: true }
-        ]
-    },
-    benefactor: {
-        name: "Благодетель",
-        desc: "Поддержите развитие проекта",
-        levels: [
-            { title: "Благодетель", maxProgress: 1, desc: "Поддержите проект", isDonation: true }
-        ]
-    }
-},
             queen: {
                 name: "Злая королева",
                 desc: "Раскрасить картинки со злодеями",
@@ -2565,6 +2525,20 @@ async function showAnswerPageAsync() {
                     { title: "Знаток злодеев", maxProgress: 2, desc: "Раскрась 1 со Шрамом и 1 с Малефисентой" },
                     { title: "Мастер злодеев", maxProgress: 4, desc: "Раскрась 2 с Джафаром и 2 с Круэллой" },
                     { title: "Злая королева", maxProgress: 8, desc: "Раскрась 2 с Джафаром, 2 с Круэллой, 2 со Шрамом, 2 с Малефисентой" }
+                ]
+            },
+            scrooge: {
+                name: "Скрудж",
+                desc: "Соберите 2500 ашетиков на счету",
+                levels: [
+                    { title: "Скрудж", maxProgress: 2500, desc: "Накопите 2500 ашетиков", isBalance: true }
+                ]
+            },
+            benefactor: {
+                name: "Благодетель",
+                desc: "Поддержите развитие проекта",
+                levels: [
+                    { title: "Благодетель", maxProgress: 1, desc: "Сделайте пожертвование от 2000 рублей", isDonation: true }
                 ]
             }
         };
@@ -2603,34 +2577,51 @@ async function showAnswerPageAsync() {
                 condition: 'Получите 3 разных статуса'
             },
             'scrooge_achievement': { 
-        id: 'scrooge_achievement', 
-        name: 'Скрудж', 
-        img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/scrooge.png', 
-        desc: 'Накоплено 2500 ашетиков',
-        condition: 'Накопите 2500 ашетиков'
-    },
-    'benefactor_achievement': { 
-        id: 'benefactor_achievement', 
-        name: 'Благодетель', 
-        img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/benefactor.png', 
-        desc: 'Поддержали проект',
-        condition: 'Поддержите развитие проекта'
-    }
+                id: 'scrooge_achievement', 
+                name: 'Скрудж', 
+                img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/scrooge.png', 
+                desc: 'Накоплено 2500 ашетиков',
+                condition: 'Накопите 2500 ашетиков'
+            },
+            'benefactor_achievement': { 
+                id: 'benefactor_achievement', 
+                name: 'Благодетель', 
+                img: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/achievements/benefactor.png', 
+                desc: 'Поддержали проект',
+                condition: 'Сделайте пожертвование от 2000 рублей'
+            }
         };
         
         // ==========================================
         // ДАННЫЕ ТОМОВ (47 ТОМОВ)
         // ==========================================
         
+        const VOLUME_NAMES = [
+            "Les Grands Classiques tome 11", "Les Grands Classiques tome 3", "Vitraux tome 2",
+            "Trompe L'oeil Babies", "Trompe L'oeil Grand Bloc", "Stitch Au numero",
+            "Sous L'Ocean", "Saisons", "Romantasy", "Princesses tome 1", "Princesses tome 2",
+            "Princes&Heros", "Portraits De Famille", "Pokemon", "Pixar", "Petites Princesses",
+            "Petites Betes", "Mondes Fantastiques", "Mickey, Donald&Co", "Mechants",
+            "Marsupilami", "Love Stories", "Looney Tunes tome 3", "Lilo Et Stitch",
+            "Les Grands Classiques Special Debutants tome 1", "Les Grands Classiques Special Debutants tome 2",
+            "Les Grands Classiques Au numero", "La Petite Sirene", "Les Schtroumpfs tome 1",
+            "Les Schtroumpfs tome 2", "L'age Glace", "Hiver", "Heros&Mechants La Battle",
+            "Grands Classiques Grand Bloc", "Les Grands Classiques Coliector", "Girl Power",
+            "Fees, Sorciers Et Magiciens", "Famille", "Escapades Merveilleuses Douce France",
+            "Chiots&Chiens", "Chevaux", "Bisounours tome 1", "Best Of Pixar",
+            "Best Of Les Grands Classiques", "La Belle Et La Bete", "Bestiaire", "Best Of Heroines"
+        ];
+        
         const VOLUMES_DATA = [];
-for (let i = 1; i <= 47; i++) {
-    VOLUMES_DATA.push({
-        id: `t${i}`,
-        name: `Том ${i}`,
-        price: 1500,
-        pages: 26
-    });
-}
+        for (let i = 0; i < 47; i++) {
+            VOLUMES_DATA.push({
+                id: `t${i + 1}`,
+                name: VOLUME_NAMES[i],
+                price: 2890,
+                pages: 26,
+                img: `assets/img/t${i + 1}.png`
+            });
+        }
         
         // ==========================================
         // ДАННЫЕ БРЕНДОВ
@@ -2644,7 +2635,7 @@ for (let i = 1; i <= 47; i++) {
             { name: 'InfiArt', total: 288 },
             { name: 'Tooli-Art', total: 508 }
         ];
-// ==========================================
+        // ==========================================
         // API ВЫЗОВЫ
         // ==========================================
         
@@ -2681,42 +2672,41 @@ for (let i = 1; i <= 47; i++) {
         }
         
         async function loadUserProgress() {
-    try {
-        const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
-        const stats = await response.json();
-        console.log('📊 Loaded stats from server:', stats);
-        
-        if (stats) {
-            userProgress = stats;
-        }
-        return userProgress;
-    } catch (error) {
-        console.error('Ошибка загрузки прогресса:', error);
-        return {};
-    }
-}
-        async function loadUnlockedStatuses() {
-    try {
-        console.log('Loading unlocked statuses for user:', userId);
-        const response = await fetch(`${SERVER_URL}/api/unlocked_statuses?user_id=${userId}`);
-        const statuses = await response.json();
-        console.log('Loaded statuses:', statuses);
-        
-        if (statuses && Array.isArray(statuses)) {
-            user.unlockedStatuses = statuses;
-            if (!user.unlockedStatuses.includes('Без статуса ')) {
-                user.unlockedStatuses.unshift('Без статуса');
+            try {
+                const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
+                const stats = await response.json();
+                console.log('📊 Loaded stats from server:', stats);
+                if (stats) {
+                    userProgress = stats;
+                }
+                return userProgress;
+            } catch (error) {
+                console.error('Ошибка загрузки прогресса:', error);
+                return {};
             }
         }
-        return user.unlockedStatuses;
-    } catch (error) {
-        console.error('Ошибка загрузки статусов:', error);
-        if (!user.unlockedStatuses || user.unlockedStatuses.length === 0) {
-            user.unlockedStatuses = ['Без статуса'];
+        
+        async function loadUnlockedStatuses() {
+            try {
+                console.log('Loading unlocked statuses for user:', userId);
+                const response = await fetch(`${SERVER_URL}/api/unlocked_statuses?user_id=${userId}`);
+                const statuses = await response.json();
+                console.log('Loaded statuses:', statuses);
+                if (statuses && Array.isArray(statuses)) {
+                    user.unlockedStatuses = statuses;
+                    if (!user.unlockedStatuses.includes('Без статуса')) {
+                        user.unlockedStatuses.unshift('Без статуса');
+                    }
+                }
+                return user.unlockedStatuses;
+            } catch (error) {
+                console.error('Ошибка загрузки статусов:', error);
+                if (!user.unlockedStatuses || user.unlockedStatuses.length === 0) {
+                    user.unlockedStatuses = ['Без статуса'];
+                }
+                return user.unlockedStatuses;
+            }
         }
-        return user.unlockedStatuses;
-    }
-}
         
         async function loadUserAchievements() {
             try {
@@ -2736,101 +2726,161 @@ for (let i = 1; i <= 47; i++) {
         // ФУНКЦИИ ДЛЯ РАБОТЫ С ЗАДАНИЯМИ
         // ==========================================
         
-        function isBranchCompleted(branchKey) {
-    // Для Скруджа проверяем баланс
-    if (branchKey === 'scrooge') {
-        return user.balance >= 2500;
-    }
-    
-    // Для Благодетеля проверяем статус
-    if (branchKey === 'benefactor') {
-        return user.unlockedStatuses.includes('Благодетель');
-    }
-    
-    const levels = TASK_BRANCHES[branchKey].levels;
-    for (let i = 0; i < levels.length; i++) {
-        const currentProgress = getLevelProgress(branchKey, i);
-        if (currentProgress < levels[i].maxProgress) {
-            return false;
+        function getLevelProgress(branchKey, levelIndex) {
+            const progress = userProgress || {};
+            const progressKey = `branch_${branchKey}_level_${levelIndex}`;
+            return progress[progressKey] || 0;
         }
-    }
-    return true;
-}
-function getLevelProgress(branchKey, levelIndex) {
-    const progress = userProgress || {};
-    // Правильный ключ - такой же, как на сервере
-    const progressKey = `branch_${branchKey}_level_${levelIndex}`;
-    return progress[progressKey] || 0;
-}
+        
+        function isBranchCompleted(branchKey) {
+            if (branchKey === 'scrooge') {
+                return user.balance >= 2500;
+            }
+            if (branchKey === 'benefactor') {
+                return user.unlockedStatuses.includes('Благодетель');
+            }
+            const levels = TASK_BRANCHES[branchKey].levels;
+            for (let i = 0; i < levels.length; i++) {
+                const currentProgress = getLevelProgress(branchKey, i);
+                if (currentProgress < levels[i].maxProgress) {
+                    return false;
+                }
+            }
+            return true;
+        }
         
         function getCurrentLevelIndex(branchKey) {
-    // Для Скруджа - если баланс меньше 2500, уровень не пройден
-    if (branchKey === 'scrooge') {
-        return user.balance >= 2500 ? 1 : 0;
-    }
-    
-    // Для Благодетеля
-    if (branchKey === 'benefactor') {
-        return user.unlockedStatuses.includes('Благодетель') ? 1 : 0;
-    }
-    
-    const levels = TASK_BRANCHES[branchKey].levels;
-    for (let i = 0; i < levels.length; i++) {
-        const currentProgress = getLevelProgress(branchKey, i);
-        if (currentProgress < levels[i].maxProgress) {
-            return i;
+            if (branchKey === 'scrooge') {
+                return user.balance >= 2500 ? 1 : 0;
+            }
+            if (branchKey === 'benefactor') {
+                return user.unlockedStatuses.includes('Благодетель') ? 1 : 0;
+            }
+            const levels = TASK_BRANCHES[branchKey].levels;
+            for (let i = 0; i < levels.length; i++) {
+                const currentProgress = getLevelProgress(branchKey, i);
+                if (currentProgress < levels[i].maxProgress) {
+                    return i;
+                }
+            }
+            return levels.length;
         }
-    }
-    return levels.length;
-}
         
         // ==========================================
-        // ОТПРАВКА ФОТО НА ПРОВЕРКУ (ГЛАВНАЯ ФУНКЦИЯ)
+        // ПРОВЕРКА БАЛАНСА ДЛЯ СТАТУСА СКРУДЖ
+        // ==========================================
+        
+        async function checkBalanceStatus() {
+            console.log('💰 Checking balance for Scrooge status...');
+            console.log('Current balance:', user.balance);
+            console.log('Has Scrooge status:', user.unlockedStatuses.includes('Скрудж'));
+            
+            if (!user.unlockedStatuses.includes('Скрудж') && user.balance >= 2500) {
+                console.log('🎉 Unlocking Scrooge status!');
+                user.unlockedStatuses.push('Скрудж');
+                if (!user.achievements.includes('scrooge_achievement')) {
+                    user.achievements.push('scrooge_achievement');
+                }
+                saveUserData();
+                try {
+                    await fetchAPI('/api/sync_status', {
+                        user_id: userId,
+                        status: 'Скрудж',
+                        action: 'unlock'
+                    });
+                } catch(e) {
+                    console.error('Failed to sync with server:', e);
+                }
+                if (tg) {
+                    tg.showAlert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!');
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                }
+                updateUI();
+                renderBranchTasks();
+                return true;
+            }
+            return false;
+        }
+        
+        // ==========================================
+        // ПРОВЕРКА РАЗБЛОКИРОВКИ СТАТУСОВ
+        // ==========================================
+        
+        async function checkAndUnlockStatuses() {
+            try {
+                console.log('Checking status unlocks...');
+                let statusUnlocked = false;
+                
+                for (const [branchKey, rewardStatus] of Object.entries(BRANCH_REWARDS)) {
+                    if (branchKey === 'scrooge' || branchKey === 'benefactor') continue;
+                    
+                    const isCompleted = isBranchCompleted(branchKey);
+                    const isUnlocked = user.unlockedStatuses.includes(rewardStatus);
+                    
+                    if (isCompleted && !isUnlocked) {
+                        console.log(`🎉 New status unlocked: ${rewardStatus}`);
+                        user.unlockedStatuses.push(rewardStatus);
+                        statusUnlocked = true;
+                    }
+                }
+                
+                if (statusUnlocked) {
+                    saveUserData();
+                    updateUI();
+                    renderBranchTasks();
+                    if (tg) tg.showAlert('🏆 Поздравляем!\nВы разблокировали новый статус!');
+                }
+            } catch (error) {
+                console.error('Error checking status unlocks:', error);
+            }
+        }
+        
+        // ==========================================
+        // ОТПРАВКА ФОТО НА ПРОВЕРКУ
         // ==========================================
         
         function openTaskUpload(branchKey, levelIndex) {
-    console.log('📸 openTaskUpload called:', branchKey, levelIndex);
-    
-    if (!branchKey || levelIndex === undefined) {
-        console.error('Invalid parameters:', branchKey, levelIndex);
-        if (tg) tg.showAlert('Ошибка: задание не выбрано');
-        return;
-    }
-    
-    const branch = TASK_BRANCHES[branchKey];
-    if (!branch) {
-        console.error('Branch not found:', branchKey);
-        if (tg) tg.showAlert('Ошибка: ветка задания не найдена');
-        return;
-    }
-    
-    const currentLevel = getCurrentLevelIndex(branchKey);
-    if (currentLevel !== levelIndex) {
-        console.warn('Wrong level! Current:', currentLevel, 'Attempted:', levelIndex);
-        if (tg) tg.showAlert('Этот уровень уже пройден или заблокирован!');
-        return;
-    }
-    
-    currentUploadBranch = branchKey;
-    currentUploadLevel = levelIndex;
-    
-    // Создаем input для выбора файлов
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.multiple = true;
-    fileInput.style.position = 'absolute';
-    fileInput.style.opacity = '0';
-    fileInput.style.pointerEvents = 'none';
-    document.body.appendChild(fileInput);
-    
-    fileInput.onchange = function(event) {
-        handleTaskFilesSelected(event);
-        document.body.removeChild(fileInput);
-    };
-    
-    fileInput.click();
-}
+            console.log('📸 openTaskUpload called:', branchKey, levelIndex);
+            
+            if (!branchKey || levelIndex === undefined) {
+                console.error('Invalid parameters:', branchKey, levelIndex);
+                if (tg) tg.showAlert('Ошибка: задание не выбрано');
+                return;
+            }
+            
+            const branch = TASK_BRANCHES[branchKey];
+            if (!branch) {
+                console.error('Branch not found:', branchKey);
+                if (tg) tg.showAlert('Ошибка: ветка задания не найдена');
+                return;
+            }
+            
+            const currentLevel = getCurrentLevelIndex(branchKey);
+            if (currentLevel !== levelIndex) {
+                console.warn('Wrong level! Current:', currentLevel, 'Attempted:', levelIndex);
+                if (tg) tg.showAlert('Этот уровень уже пройден или заблокирован!');
+                return;
+            }
+            
+            currentUploadBranch = branchKey;
+            currentUploadLevel = levelIndex;
+            
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.multiple = true;
+            fileInput.style.position = 'absolute';
+            fileInput.style.opacity = '0';
+            fileInput.style.pointerEvents = 'none';
+            document.body.appendChild(fileInput);
+            
+            fileInput.onchange = function(event) {
+                handleTaskFilesSelected(event);
+                document.body.removeChild(fileInput);
+            };
+            
+            fileInput.click();
+        }
         
         function handleTaskFilesSelected(event) {
             const files = Array.from(event.target.files);
@@ -2906,96 +2956,84 @@ function getLevelProgress(branchKey, levelIndex) {
                 if (tg) tg.showAlert(`Фото удалено. Осталось: ${tempPhotos.length}`);
             }
         }
-        // Обязательно добавьте (event) в скобки!
-async function submitTaskPhoto(event) {
-    if (event) event.preventDefault(); // 🛑 Блокируем перезагрузку страницы!
-    
-    console.log('=== НАЧАЛО ОТПРАВКИ ЗАДАНИЯ ===');
-    
-    if (isUploading) return;
-    if (!tempPhotos || tempPhotos.length === 0) {
-        if (tg) tg.showAlert('❌ Выберите хотя бы одно фото');
-        return;
-    }
-    
-    // Получаем элементы для вывода статуса прямо в окно, а не в алерт
-    const titleEl = document.getElementById('taskUploadTitle');
-    const originalTitle = titleEl ? titleEl.innerText : '';
-    
-    isUploading = true;
-    
-    // Вместо алерта используем главную кнопку Telegram
-    if (tg && tg.MainButton) {
-        tg.MainButton.setText("⏳ ОТПРАВКА ФОТО...").show();
-        tg.MainButton.showProgress();
-    }
-    if (titleEl) titleEl.innerHTML = '<span style="color:#ff9500;">⏳ Отправляем фото на сервер, подождите...</span>';
-    
-    try {
-        const formData = new FormData();
-        formData.append('user', userId.toString());
-        formData.append('branchKey', currentUploadBranch);
-        formData.append('levelIndex', currentUploadLevel.toString());
         
-        // ВАЖНО: Проверка размера файлов перед отправкой
-        let totalSize = 0;
-        for (let i = 0; i < tempPhotos.length; i++) {
-            totalSize += tempPhotos[i].size;
-            formData.append('photos', tempPhotos[i]);
-        }
-        
-        // Если фото больше 4 МБ, предупреждаем, что сервер может отклонить
-        if (totalSize > 4 * 1024 * 1024) {
-            console.warn("Файл очень большой! Возможна ошибка 413 от сервера.");
-        }
-
-        // Убедитесь, что SERVER_URL начинается с https:// (http:// на айфоне не сработает)
-        const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
-            method: 'POST',
-            body: formData
-        });
-        
-        // Проверяем статус ответа (например 413 Payload Too Large)
-        if (!response.ok) {
-            throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
-        }
-        
-        const text = await response.text();
-        const result = JSON.parse(text);
-        
-        if (result && result.status === 'ok') {
-            if (tg) {
-                tg.showAlert('✅ Фото успешно отправлено на проверку!');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        async function submitTaskPhoto(event) {
+            if (event) event.preventDefault();
+            
+            console.log('=== НАЧАЛО ОТПРАВКИ ЗАДАНИЯ ===');
+            
+            if (isUploading) return;
+            if (!tempPhotos || tempPhotos.length === 0) {
+                if (tg) tg.showAlert('❌ Выберите хотя бы одно фото');
+                return;
             }
-            //closeTaskUploadModal();
-            await refreshUserProgress();
-        } else {
-            throw new Error(result?.message || 'Сервер вернул ошибку');
+            
+            const titleEl = document.getElementById('taskUploadTitle');
+            const originalTitle = titleEl ? titleEl.innerText : '';
+            
+            isUploading = true;
+            
+            if (tg && tg.MainButton) {
+                tg.MainButton.setText("⏳ ОТПРАВКА ФОТО...").show();
+                tg.MainButton.showProgress();
+            }
+            if (titleEl) titleEl.innerHTML = '<span style="color:#ff9500;">⏳ Отправляем фото на сервер, подождите...</span>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('user', userId.toString());
+                formData.append('branchKey', currentUploadBranch);
+                formData.append('levelIndex', currentUploadLevel.toString());
+                
+                let totalSize = 0;
+                for (let i = 0; i < tempPhotos.length; i++) {
+                    totalSize += tempPhotos[i].size;
+                    formData.append('photos', tempPhotos[i]);
+                }
+                
+                if (totalSize > 4 * 1024 * 1024) {
+                    console.warn("Файл очень большой! Возможна ошибка 413 от сервера.");
+                }
+                
+                const response = await fetch(`${SERVER_URL}/api/check_achievement`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
+                }
+                
+                const text = await response.text();
+                const result = JSON.parse(text);
+                
+                if (result && result.status === 'ok') {
+                    if (tg) {
+                        tg.showAlert('✅ Фото успешно отправлено на проверку!');
+                        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    }
+                    await refreshUserProgress();
+                } else {
+                    throw new Error(result?.message || 'Сервер вернул ошибку');
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка при отправке:', error);
+                if (titleEl) {
+                    titleEl.innerHTML = `<span style="color:red; font-weight:bold;">❌ Ошибка: ${error.message}</span>`;
+                }
+                if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
+            } finally {
+                isUploading = false;
+                if (tg && tg.MainButton) {
+                    tg.MainButton.hideProgress();
+                    tg.MainButton.hide();
+                }
+                setTimeout(() => {
+                    if (titleEl && isUploading === false) titleEl.innerText = originalTitle;
+                }, 5000);
+            }
         }
-        
-    } catch (error) {
-        console.error('❌ Ошибка при отправке:', error);
-        
-        // Выводим ошибку ПРЯМО В ОКНО, чтобы вы 100% её увидели на iPhone
-        if (titleEl) {
-            titleEl.innerHTML = `<span style="color:red; font-weight:bold;">❌ Ошибка: ${error.message}</span>`;
-        }
-        if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
-        
-    } finally {
-        isUploading = false;
-        if (tg && tg.MainButton) {
-            tg.MainButton.hideProgress();
-            tg.MainButton.hide();
-        }
-        // Возвращаем старый заголовок через 5 секунд, если окно не закрылось
-        setTimeout(() => {
-            if (titleEl && isUploading === false) titleEl.innerText = originalTitle;
-        }, 5000);
-    }
-}
-
         
         function closeTaskUploadModal() {
             console.log('🔒 Закрытие модального окна');
@@ -3044,7 +3082,7 @@ async function submitTaskPhoto(event) {
                     completedDiv.className = 'level-card';
                     completedDiv.innerHTML = `
                         <div style="text-align: center; padding: 20px;">
-                            <div class="completed-badge" style="display: inline-block; margin-bottom: 10px;">✅ Ветка завершена</div>
+                            <div class="completed-badge" style="display: inline-block; margin-bottom: 10px;">✅ Задание выполнено</div>
                             <div style="color: var(--status-green);">
                                 <i class="fas fa-trophy"></i> Получен статус: ${BRANCH_REWARDS[branchKey]}
                             </div>
@@ -3053,25 +3091,62 @@ async function submitTaskPhoto(event) {
                     branchCard.appendChild(completedDiv);
                 } else if (currentLevelIndex < levels.length) {
                     const level = levels[currentLevelIndex];
-                    const currentProgress = getLevelProgress(branchKey, currentLevelIndex);
-                    const percent = (currentProgress / level.maxProgress) * 100;
                     
-                    const levelCard = document.createElement('div');
-                    levelCard.className = 'level-card';
-                    levelCard.innerHTML = `
-                        <div class="level-header">
-                            <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
-                            <span class="level-progress">${currentProgress}/${level.maxProgress}</span>
-                        </div>
-                        <div class="level-desc">${level.desc}</div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width: ${percent}%"></div>
-                        </div>
-                        <button class="task-submit-btn" onclick="openTaskUpload('${branchKey}', ${currentLevelIndex})">
-                            <i class="fas fa-camera"></i> Отправить фото на проверку
-                        </button>
-                    `;
-                    branchCard.appendChild(levelCard);
+                    if (branchKey === 'scrooge') {
+                        const currentProgress = user.balance;
+                        const percent = (currentProgress / level.maxProgress) * 100;
+                        const levelCard = document.createElement('div');
+                        levelCard.className = 'level-card';
+                        levelCard.innerHTML = `
+                            <div class="level-header">
+                                <span class="level-title">${level.title}</span>
+                                <span class="level-progress">${currentProgress}/${level.maxProgress} ашетиков</span>
+                            </div>
+                            <div class="level-desc">${level.desc}</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: ${Math.min(percent, 100)}%"></div>
+                            </div>
+                            <div class="level-desc" style="color: var(--accent); margin-top: 10px;">
+                                <i class="fas fa-coins"></i> Текущий баланс: ${user.balance} ашетиков
+                            </div>
+                        `;
+                        branchCard.appendChild(levelCard);
+                    } else if (branchKey === 'benefactor') {
+                        const levelCard = document.createElement('div');
+                        levelCard.className = 'level-card';
+                        levelCard.innerHTML = `
+                            <div class="level-header">
+                                <span class="level-title">${level.title}</span>
+                            </div>
+                            <div class="level-desc">${level.desc}</div>
+                            <button class="task-submit-btn" onclick="openSupportForStatus()">
+                                <i class="fas fa-heart"></i> Поддержать проект
+                            </button>
+                            <div class="level-desc" style="font-size: 12px; margin-top: 10px; color: var(--text-gray);">
+                                После подтверждения пожертвования статус будет разблокирован автоматически
+                            </div>
+                        `;
+                        branchCard.appendChild(levelCard);
+                    } else {
+                        const currentProgress = getLevelProgress(branchKey, currentLevelIndex);
+                        const percent = (currentProgress / level.maxProgress) * 100;
+                        const levelCard = document.createElement('div');
+                        levelCard.className = 'level-card';
+                        levelCard.innerHTML = `
+                            <div class="level-header">
+                                <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
+                                <span class="level-progress">${currentProgress}/${level.maxProgress}</span>
+                            </div>
+                            <div class="level-desc">${level.desc}</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                            </div>
+                            <button class="task-submit-btn" onclick="openTaskUpload('${branchKey}', ${currentLevelIndex})">
+                                <i class="fas fa-camera"></i> Отправить фото на проверку
+                            </button>
+                        `;
+                        branchCard.appendChild(levelCard);
+                    }
                 }
                 
                 container.appendChild(branchCard);
@@ -3083,94 +3158,57 @@ async function submitTaskPhoto(event) {
         // ОБНОВЛЕНИЕ ПРОГРЕССА
         // ==========================================
         
-       async function refreshUserProgress() {
-    console.log('🔄 Refreshing user progress...');
-    
-    try {
-        // Загружаем баланс
-        await loadUserBalance();
-        
-        // Загружаем прогресс заданий
-        await loadUserProgress();
-        
-        // Загружаем разблокированные статусы
-        await loadUnlockedStatuses();
-        
-        // Загружаем достижения
-        await loadUserAchievements();
-        
-        // Проверяем баланс для статуса Скрудж (ВАЖНО!)
-        await checkBalanceStatus();
-        
-        // Проверяем разблокировку других статусов
-        await checkAndUnlockStatuses();
-        
-        // Обновляем отображение заданий
-        renderBranchTasks();
-        
-        // Обновляем UI
-        updateUI();
-        
-        console.log('✅ Progress refreshed, current balance:', user.balance);
-        console.log('✅ Unlocked statuses:', user.unlockedStatuses);
-        
-    } catch (error) {
-        console.error('Error refreshing progress:', error);
-    }
-}
-        
-        async function checkAndUnlockStatuses() {
-    try {
-        console.log('Checking status unlocks...');
-        let statusUnlocked = false;
-        
-        for (const [branchKey, rewardStatus] of Object.entries(BRANCH_REWARDS)) {
-            if (branchKey === 'scrooge' || branchKey === 'benefactor') continue;
+        async function refreshUserProgress() {
+            console.log('🔄 Refreshing user progress...');
             
-            const isCompleted = isBranchCompleted(branchKey);
-            const isUnlocked = user.unlockedStatuses.includes(rewardStatus);
-            
-            if (isCompleted && !isUnlocked) {
-                console.log(`🎉 New status unlocked: ${rewardStatus}`);
-                user.unlockedStatuses.push(rewardStatus);
-                statusUnlocked = true;
+            try {
+                await loadUserBalance();
+                await loadUserProgress();
+                await loadUnlockedStatuses();
+                await loadUserAchievements();
+                await checkBalanceStatus();
+                await checkAndUnlockStatuses();
+                renderBranchTasks();
+                updateUI();
+                
+                console.log('✅ Progress refreshed, current balance:', user.balance);
+                console.log('✅ Unlocked statuses:', user.unlockedStatuses);
+            } catch (error) {
+                console.error('Error refreshing progress:', error);
             }
         }
         
-        if (statusUnlocked) {
-            saveUserData();
-            updateUI();
-            renderBranchTasks();
-            
-            // Уведомление без упоминания ашетиков
-            if (tg) tg.showAlert('🏆 Поздравляем!\nВы разблокировали новый статус!');
+        let refreshInterval = null;
+        
+        function startProgressRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(() => {
+                refreshUserProgress();
+            }, 30000);
+            console.log('✅ Progress refresh started (every 30 seconds)');
         }
-    } catch (error) {
-        console.error('Error checking status unlocks:', error);
-    }
-}
         
         // ==========================================
         // ПРОФИЛЬ И UI
         // ==========================================
         
         function updateUI() {
-    const nameEl = document.getElementById('displayUsername');
-    const avatarEl = document.getElementById('user-avatar');
-    const balanceEl = document.getElementById('userBalance');
-    const statusBadge = document.getElementById('currentStatus');
-    
-    if (nameEl) nameEl.innerText = user.name;
-    if (avatarEl) avatarEl.src = user.avatar;
-    if (balanceEl) balanceEl.innerText = user.balance;
-    if (statusBadge) statusBadge.innerText = user.status || 'Без статуса';
-    
-    console.log('UI Updated - Current status:', user.status);
-    console.log('UI Updated - Balance:', user.balance);
-    
-    updateCartBadge();
-    renderShowcase();
-}
+            const nameEl = document.getElementById('displayUsername');
+            const avatarEl = document.getElementById('user-avatar');
+            const balanceEl = document.getElementById('userBalance');
+            const statusBadge = document.getElementById('currentStatus');
+            
+            if (nameEl) nameEl.innerText = user.name;
+            if (avatarEl) avatarEl.src = user.avatar;
+            if (balanceEl) balanceEl.innerText = user.balance;
+            if (statusBadge) statusBadge.innerText = user.status || 'Без статуса';
+            
+            console.log('UI Updated - Current status:', user.status);
+            console.log('UI Updated - Balance:', user.balance);
+            
+            updateCartBadge();
+            renderShowcase();
+        }
         
         function updateCartBadge() {
             let totalItems = 0;
@@ -3450,6 +3488,25 @@ async function submitTaskPhoto(event) {
             window.open('https://boosty.to/coloringapp', '_blank');
         }
         
+        function openSupportForStatus() {
+            const supportUrl = 'https://boosty.to/coloringapp';
+            if (tg) {
+                tg.showConfirm(
+                    'Вы будете перенаправлены на страницу поддержки.\n\nПосле совершения пожертвования от 2000 рублей, напишите администратору для получения статуса "Благодетель".',
+                    (confirm) => {
+                        if (confirm) {
+                            window.open(supportUrl, '_blank');
+                            if (tg) tg.showAlert('Спасибо за поддержку! После пожертвования напишите @admin для получения статуса.');
+                        }
+                    }
+                );
+            } else {
+                if (confirm('Перейти на страницу поддержки?\n\nПосле пожертвования от 2000 рублей вы получите статус "Благодетель".')) {
+                    window.open(supportUrl, '_blank');
+                }
+            }
+        }
+        
         function resetAllData() {
             if (tg) {
                 tg.showConfirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?", (confirm) => {
@@ -3624,81 +3681,82 @@ async function submitTaskPhoto(event) {
         // ==========================================
         
         function renderCart() {
-    const container = document.getElementById('cartItemsList');
-    const totalSpan = document.getElementById('cartTotalSum');
-    
-    if (!container) return;
-    
-    let totalSum = 0;
-    let itemsHtml = '';
-    
-    if (!cart || Object.keys(cart).length === 0) {
-        container.innerHTML = '<div class="no-results" style="padding: 40px; text-align: center;">🛒 Корзина пуста</div>';
-        if (totalSpan) totalSpan.innerText = '0';
-        return;
-    }
-    
-    for (let key in cart) {
-        const count = cart[key];
-        if (count <= 0) continue;
-        
-        if (key.startsWith('marker_')) {
-            const num = key.replace('marker_', '');
-            const marker = markersDB.find(m => m.num === num);
-            if (marker) {
-                const itemTotal = MARKER_PRICE * count;
-                totalSum += itemTotal;
-                itemsHtml += `
-                    <div class="cart-item">
-                        <div class="color-circle" style="background-color: var(--bg);"></div>
-                        <div class="cart-item-info">
-                            <h4>Маркер №${num}</h4>
-                            <div class="cart-item-price">${MARKER_PRICE} ₽ / шт</div>
-                            <div class="cart-item-details">
-                                <div class="cart-item-controls">
-                                    <button class="minus" onclick="updateMarkerCart('${num}', -1)">−</button>
-                                    <span>${count}</span>
-                                    <button onclick="updateMarkerCart('${num}', 1)">+</button>
-                                </div>
-                                <div class="cart-item-total">${itemTotal} ₽</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+            const container = document.getElementById('cartItemsList');
+            const totalSpan = document.getElementById('cartTotalSum');
+            
+            if (!container) return;
+            
+            let totalSum = 0;
+            let itemsHtml = '';
+            
+            if (!cart || Object.keys(cart).length === 0) {
+                container.innerHTML = '<div class="no-results" style="padding: 40px; text-align: center;">🛒 Корзина пуста</div>';
+                if (totalSpan) totalSpan.innerText = '0';
+                return;
             }
-        } else if (key.startsWith('volume_')) {
-            const volumeId = key.replace('volume_', '');
-            const volume = VOLUMES_DATA.find(v => v.id === volumeId);
-            if (volume) {
-                const itemTotal = volume.price * count;
-                totalSum += itemTotal;
-                itemsHtml += `
-                    <div class="cart-item">
-                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), #ff9500); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <span style="font-size: 28px;">📘</span>
-                        </div>
-                        <div class="cart-item-info">
-                            <h4>${volume.name}</h4>
-                            <div class="cart-item-price">${volume.price} ₽ / шт</div>
-                            <div class="cart-item-details">
-                                <div class="cart-item-controls">
-                                    <button class="minus" onclick="updateVolumeCart('${volumeId}', -1)">−</button>
-                                    <span>${count}</span>
-                                    <button onclick="updateVolumeCart('${volumeId}', 1)">+</button>
+            
+            for (let key in cart) {
+                const count = cart[key];
+                if (count <= 0) continue;
+                
+                if (key.startsWith('marker_')) {
+                    const num = key.replace('marker_', '');
+                    const marker = markersDB.find(m => m.num === num);
+                    if (marker) {
+                        const itemTotal = MARKER_PRICE * count;
+                        totalSum += itemTotal;
+                        itemsHtml += `
+                            <div class="cart-item">
+                                <div class="color-circle" style="background-color: var(--bg);"></div>
+                                <div class="cart-item-info">
+                                    <h4>Маркер №${num}</h4>
+                                    <div class="cart-item-price">${MARKER_PRICE} ₽ / шт</div>
+                                    <div class="cart-item-details">
+                                        <div class="cart-item-controls">
+                                            <button class="minus" onclick="updateMarkerCart('${num}', -1)">−</button>
+                                            <span>${count}</span>
+                                            <button onclick="updateMarkerCart('${num}', 1)">+</button>
+                                        </div>
+                                        <div class="cart-item-total">${itemTotal} ₽</div>
+                                    </div>
                                 </div>
-                                <div class="cart-item-total">${itemTotal} ₽</div>
                             </div>
-                        </div>
-                    </div>
-                `;
+                        `;
+                    }
+                } else if (key.startsWith('volume_')) {
+                    const volumeId = key.replace('volume_', '');
+                    const volume = VOLUMES_DATA.find(v => v.id === volumeId);
+                    if (volume) {
+                        const itemTotal = volume.price * count;
+                        totalSum += itemTotal;
+                        itemsHtml += `
+                            <div class="cart-item">
+                                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), #ff9500); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <span style="font-size: 28px;">📘</span>
+                                </div>
+                                <div class="cart-item-info">
+                                    <h4>${volume.name}</h4>
+                                    <div class="cart-item-price">${volume.price} ₽ / шт <span style="font-size: 11px;">(под заказ)</span></div>
+                                    <div class="cart-item-details">
+                                        <div class="cart-item-controls">
+                                            <button class="minus" onclick="updateVolumeCart('${volumeId}', -1)">−</button>
+                                            <span>${count}</span>
+                                            <button onclick="updateVolumeCart('${volumeId}', 1)">+</button>
+                                        </div>
+                                        <div class="cart-item-total">${itemTotal} ₽</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
             }
+            
+            container.innerHTML = itemsHtml;
+            if (totalSpan) totalSpan.innerText = totalSum;
+            updateCartBadge();
         }
-    }
-    
-    container.innerHTML = itemsHtml;
-    if (totalSpan) totalSpan.innerText = totalSum;
-    updateCartBadge();
-}
+        
         function checkout() {
             if (!cart || Object.keys(cart).length === 0) {
                 if (tg) tg.showAlert('Корзина пуста');
@@ -3763,153 +3821,141 @@ async function submitTaskPhoto(event) {
         // ТОМА И ОТВЕТЫ (СВАЙПЫ)
         // ==========================================
         
-        let currentVolumeId = null;
-        let currentPageIndex = 0;
-        let currentVolumePages = 0;
-        let touchStartX = 0;
-        let touchEndX = 0;
-        
-      function renderVolumes() {
-    const container = document.getElementById('volumesContainer');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    VOLUMES_DATA.forEach(volume => {
-        const cartKey = `volume_${volume.id}`;
-        const cartCount = cart[cartKey] || 0;
-        
-        const card = document.createElement('div');
-        card.className = 'book-card';
-        card.onclick = () => openVolumeAnswers(volume.id, volume.pages);
-        card.innerHTML = `
-            <div style="background: linear-gradient(135deg, var(--accent), #ff9500); width: 100%; height: 140px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-                <span style="font-size: 48px;">📘</span>
-            </div>
-            <h4>${volume.name}</h4>
-            <div class="book-price">${volume.price} ₽</div>
-            <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}">
-                <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)">−</button>
-                <span id="book-count-${volume.id}">${cartCount}</span>
-                <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)">+</button>
-            </div>
-            <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}">
-                <i class="fas fa-cart-plus"></i> В корзину
-            </button>
-        `;
-        container.appendChild(card);
-    });
-}
-        function updateVolumeCart(volumeId, delta) {
-    const cartKey = `volume_${volumeId}`;
-    const currentCount = cart[cartKey] || 0;
-    const newCount = currentCount + delta;
-    
-    if (newCount < 0) return;
-    if (newCount === 0) {
-        delete cart[cartKey];
-    } else {
-        cart[cartKey] = newCount;
-    }
-    
-    const countSpan = document.getElementById(`book-count-${volumeId}`);
-    const controlsDiv = document.getElementById(`book-controls-${volumeId}`);
-    const addBtn = document.getElementById(`book-add-${volumeId}`);
-    
-    if (countSpan) countSpan.innerText = newCount;
-    if (controlsDiv && addBtn) {
-        if (newCount > 0) {
-            controlsDiv.style.display = 'flex';
-            addBtn.style.display = 'none';
-        } else {
-            controlsDiv.style.display = 'none';
-            addBtn.style.display = 'block';
+        function renderVolumes() {
+            const container = document.getElementById('volumesContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            VOLUMES_DATA.forEach(volume => {
+                const cartKey = `volume_${volume.id}`;
+                const cartCount = cart[cartKey] || 0;
+                
+                const card = document.createElement('div');
+                card.className = 'book-card';
+                card.onclick = () => openVolumeAnswers(volume.id, volume.pages);
+                card.innerHTML = `
+                    <img src="${volume.img}" alt="${volume.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%25%22 height=%22100%25%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23ff9500%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22 font-size=%2240%22%3E📘%3C/text%3E%3C/svg%3E'">
+                    <h4>${volume.name}</h4>
+                    <div class="book-price">${volume.price} ₽ <span style="font-size: 12px;">(под заказ)</span></div>
+                    <div id="book-controls-${volume.id}" class="cart-controls" style="display: ${cartCount > 0 ? 'flex' : 'none'}">
+                        <button class="minus" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', -1)">−</button>
+                        <span id="book-count-${volume.id}">${cartCount}</span>
+                        <button onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)">+</button>
+                    </div>
+                    <button id="book-add-${volume.id}" class="add-to-cart-btn" onclick="event.stopPropagation(); updateVolumeCart('${volume.id}', 1)" style="display: ${cartCount > 0 ? 'none' : 'block'}">
+                        <i class="fas fa-cart-plus"></i> В корзину <span style="font-size: 11px;">(под заказ)</span>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
         }
-    }
-    
-    saveUserData();
-    renderCart();
-    updateCartBadge();
-}
         
-        function openVolumeAnswers(volumeId, pagesCount) {
-    console.log('📖 Opening volume:', volumeId, 'pages:', pagesCount);
-    
-    currentVolumeId = volumeId;
-    currentVolumePages = pagesCount;
-    currentPageIndex = 1;
-    
-    const modal = document.getElementById('answersViewerModal');
-    if (modal) {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        showAnswerPage(); // или showAnswerPageAsync() если используете асинхронную версию
-    }
-}
-        
-        function showAnswerPage() {
-    const pageInfo = document.getElementById('answersPageInfo');
-    const prevBtn = document.getElementById('answersPrevBtn');
-    const nextBtn = document.getElementById('answersNextBtn');
-    const titleEl = document.getElementById('answersViewerTitle');
-    const imgElement = document.getElementById('answersViewerImage');
-    
-    if (titleEl) titleEl.innerText = `${currentVolumeId.toUpperCase()} - Ответы`;
-    
-    if (imgElement) {
-        // Пробуем загрузить с разными расширениями
-        const extensions = ['png', 'jpg', 'jpeg'];
-        let currentExtIndex = 0;
-        
-        function tryLoadImage() {
-            if (currentExtIndex >= extensions.length) {
-                // Все форматы не загрузились
-                console.error('❌ Image not found in any format');
-                imgElement.src = 'data:image/svg+xml,' + encodeURIComponent(`
-                    <svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
-                        <rect width="600" height="800" fill="#f0f0f0"/>
-                        <text x="300" y="100" font-size="20" text-anchor="middle" fill="#ff9500">📖 Ответ не найден</text>
-                        <text x="300" y="150" font-size="14" text-anchor="middle" fill="#666">Файл: ${currentVolumeId}/${currentPageIndex}.{png,jpg}</text>
-                        <text x="300" y="180" font-size="12" text-anchor="middle" fill="#999">Проверьте папку assets/otveti/${currentVolumeId}/</text>
-                    </svg>
-                `);
-                imgElement.style.opacity = '1';
-                return;
+        function updateVolumeCart(volumeId, delta) {
+            const cartKey = `volume_${volumeId}`;
+            const currentCount = cart[cartKey] || 0;
+            const newCount = currentCount + delta;
+            
+            if (newCount < 0) return;
+            if (newCount === 0) {
+                delete cart[cartKey];
+            } else {
+                cart[cartKey] = newCount;
             }
             
-            const ext = extensions[currentExtIndex];
-            const imageUrl = `assets/otveti/${currentVolumeId}/${currentPageIndex}.${ext}`;
-            console.log(`📸 Trying to load: ${imageUrl}`);
+            const countSpan = document.getElementById(`book-count-${volumeId}`);
+            const controlsDiv = document.getElementById(`book-controls-${volumeId}`);
+            const addBtn = document.getElementById(`book-add-${volumeId}`);
             
-            imgElement.style.opacity = '0.5';
+            if (countSpan) countSpan.innerText = newCount;
+            if (controlsDiv && addBtn) {
+                if (newCount > 0) {
+                    controlsDiv.style.display = 'flex';
+                    addBtn.style.display = 'none';
+                } else {
+                    controlsDiv.style.display = 'none';
+                    addBtn.style.display = 'block';
+                }
+            }
             
-            const img = new Image();
-            img.onload = function() {
-                console.log(`✅ Image loaded: ${imageUrl}`);
-                imgElement.src = imageUrl;
-                imgElement.style.opacity = '1';
-            };
-            img.onerror = function() {
-                console.log(`❌ Not found: ${imageUrl}`);
-                currentExtIndex++;
-                tryLoadImage();
-            };
-            img.src = imageUrl;
+            saveUserData();
+            renderCart();
+            updateCartBadge();
         }
         
-        tryLoadImage();
-    }
-    
-    if (pageInfo) {
-        pageInfo.innerText = `${currentPageIndex} / ${currentVolumePages}`;
-    }
-    if (prevBtn) {
-        prevBtn.disabled = currentPageIndex <= 1;
-    }
-    if (nextBtn) {
-        nextBtn.disabled = currentPageIndex >= currentVolumePages;
-    }
-}
+        function openVolumeAnswers(volumeId, pagesCount) {
+            console.log('📖 Opening volume:', volumeId, 'pages:', pagesCount);
+            currentVolumeId = volumeId;
+            currentVolumePages = pagesCount;
+            currentPageIndex = 1;
+            
+            const modal = document.getElementById('answersViewerModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                showAnswerPage();
+            }
+        }
+        
+        function showAnswerPage() {
+            const pageInfo = document.getElementById('answersPageInfo');
+            const prevBtn = document.getElementById('answersPrevBtn');
+            const nextBtn = document.getElementById('answersNextBtn');
+            const titleEl = document.getElementById('answersViewerTitle');
+            const imgElement = document.getElementById('answersViewerImage');
+            
+            if (titleEl) titleEl.innerText = `${currentVolumeId.toUpperCase()} - Ответы`;
+            
+            if (imgElement) {
+                const extensions = ['png', 'jpg', 'jpeg'];
+                let currentExtIndex = 0;
+                
+                function tryLoadImage() {
+                    if (currentExtIndex >= extensions.length) {
+                        console.error('❌ Image not found in any format');
+                        imgElement.src = 'data:image/svg+xml,' + encodeURIComponent(`
+                            <svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
+                                <rect width="600" height="800" fill="#f0f0f0"/>
+                                <text x="300" y="100" font-size="20" text-anchor="middle" fill="#ff9500">📖 Ответ не найден</text>
+                                <text x="300" y="150" font-size="14" text-anchor="middle" fill="#666">Файл: ${currentVolumeId}/${currentPageIndex}.{png,jpg}</text>
+                                <text x="300" y="180" font-size="12" text-anchor="middle" fill="#999">Проверьте папку assets/otveti/${currentVolumeId}/</text>
+                            </svg>
+                        `);
+                        imgElement.style.opacity = '1';
+                        return;
+                    }
+                    
+                    const ext = extensions[currentExtIndex];
+                    const imageUrl = `assets/otveti/${currentVolumeId}/${currentPageIndex}.${ext}`;
+                    console.log(`📸 Trying to load: ${imageUrl}`);
+                    imgElement.style.opacity = '0.5';
+                    
+                    const img = new Image();
+                    img.onload = function() {
+                        console.log(`✅ Image loaded: ${imageUrl}`);
+                        imgElement.src = imageUrl;
+                        imgElement.style.opacity = '1';
+                    };
+                    img.onerror = function() {
+                        console.log(`❌ Not found: ${imageUrl}`);
+                        currentExtIndex++;
+                        tryLoadImage();
+                    };
+                    img.src = imageUrl;
+                }
+                tryLoadImage();
+            }
+            
+            if (pageInfo) {
+                pageInfo.innerText = `${currentPageIndex} / ${currentVolumePages}`;
+            }
+            if (prevBtn) {
+                prevBtn.disabled = currentPageIndex <= 1;
+            }
+            if (nextBtn) {
+                nextBtn.disabled = currentPageIndex >= currentVolumePages;
+            }
+        }
         
         function prevAnswerPage() {
             if (currentPageIndex > 1) {
@@ -3946,9 +3992,7 @@ async function submitTaskPhoto(event) {
                 touchEndX = e.changedTouches[0].screenX;
                 const swipeThreshold = 50;
                 const diff = touchEndX - touchStartX;
-                
                 if (Math.abs(diff) < swipeThreshold) return;
-                
                 if (diff > 0) {
                     prevAnswerPage();
                 } else {
@@ -3962,7 +4006,6 @@ async function submitTaskPhoto(event) {
             if (!query) return;
             const searchQuery = query.value.toLowerCase();
             const volumeCards = document.querySelectorAll('.book-card');
-            
             volumeCards.forEach(card => {
                 const titleEl = card.querySelector('h4');
                 const title = titleEl ? titleEl.innerText.toLowerCase() : '';
@@ -3991,18 +4034,15 @@ async function submitTaskPhoto(event) {
             try {
                 const formData = new FormData();
                 formData.append('photo', file);
-                
                 const response = await fetch(`${SERVER_URL}/api/ai_analyze`, {
                     method: 'POST',
                     body: formData
                 });
-                
                 const result = await response.json();
                 console.log('AI analyze result:', result);
                 
                 if (result && result.status === 'ok') {
                     let html = '<h4 style="margin-bottom:15px;">🎨 Распознанные цвета:</h4>';
-                    
                     if (result.colors && result.colors.length > 0) {
                         result.colors.forEach(color => {
                             html += `
@@ -4019,7 +4059,6 @@ async function submitTaskPhoto(event) {
                     } else {
                         html += '<div class="no-results">Цвета не распознаны</div>';
                     }
-                    
                     if (result.markers && result.markers.length > 0) {
                         html += '<h4 style="margin-top:15px;">🖍️ Похожие маркеры:</h4>';
                         result.markers.forEach(marker => {
@@ -4036,7 +4075,6 @@ async function submitTaskPhoto(event) {
                             `;
                         });
                     }
-                    
                     resultDiv.innerHTML = html;
                 } else {
                     resultDiv.innerHTML = '<div class="no-results">⚠️ Не удалось распознать цвета. Попробуйте другое фото с лучшим освещением.</div>';
@@ -4056,17 +4094,14 @@ async function submitTaskPhoto(event) {
                 if (tg) tg.showAlert('Выберите изображение маркера');
                 return;
             }
-            
             if (!brandInput || !brandInput.value.trim()) {
                 if (tg) tg.showAlert('Введите бренд маркера');
                 return;
             }
-            
             if (!numberInput || !numberInput.value.trim()) {
                 if (tg) tg.showAlert('Введите номер маркера');
                 return;
             }
-            
             if (tg) tg.showAlert('📤 Отправка данных для обучения...');
             
             try {
@@ -4074,14 +4109,11 @@ async function submitTaskPhoto(event) {
                 formData.append('photo', fileInput.files[0]);
                 formData.append('brand', brandInput.value.trim());
                 formData.append('number', numberInput.value.trim());
-                
                 const response = await fetch(`${SERVER_URL}/api/train_ai`, {
                     method: 'POST',
                     body: formData
                 });
-                
                 const result = await response.json();
-                
                 if (result && result.status === 'ok') {
                     if (tg) tg.showAlert('✅ Маркер добавлен в базу обучения!');
                     fileInput.value = '';
@@ -4102,9 +4134,7 @@ async function submitTaskPhoto(event) {
         }
         
         function buyItem(itemId) {
-            const prices = {
-                bookmark: 750, petites: 950, tracker: 950, alcohol: 1250, coloriages: 1500
-            };
+            const prices = { bookmark: 750, petites: 950, tracker: 950, alcohol: 1250, coloriages: 1500 };
             const names = {
                 bookmark: 'Книжную закладку Hachette',
                 petites: 'Petites Poupees',
@@ -4112,10 +4142,8 @@ async function submitTaskPhoto(event) {
                 alcohol: 'Спиртовую раскраску',
                 coloriages: 'Hachette Coloriages (А4 том)'
             };
-            
             const price = prices[itemId];
             const name = names[itemId];
-            
             if (user.balance >= price) {
                 if (tg) {
                     tg.showConfirm(`Купить ${name} за ${price} ашетиков?`, (confirm) => {
@@ -4138,6 +4166,7 @@ async function submitTaskPhoto(event) {
                 if (tg) tg.showAlert(`❌ Недостаточно ашетиков! Нужно ${price}, у вас ${user.balance}`);
             }
         }
+        
         // ==========================================
         // НАВИГАЦИЯ
         // ==========================================
@@ -4196,9 +4225,7 @@ async function submitTaskPhoto(event) {
         function toggleTasks() {
             const content = document.getElementById('tasksContent');
             const arrow = document.getElementById('tasksArrow');
-            
             if (!content) return;
-            
             if (content.style.display === 'block') {
                 content.style.display = 'none';
                 if (arrow) arrow.style.transform = 'rotate(0deg)';
@@ -4213,7 +4240,6 @@ async function submitTaskPhoto(event) {
             const content = document.getElementById('inventoryContent');
             const arrow = document.getElementById('inventoryArrow');
             if (!content) return;
-            
             if (content.style.display === 'none' || content.style.display === '') {
                 content.style.display = 'block';
                 if (arrow) arrow.style.transform = 'rotate(180deg)';
@@ -4230,7 +4256,6 @@ async function submitTaskPhoto(event) {
         function setTheme(themeName) {
             const oldStyle = document.getElementById('custom-theme-style');
             if (oldStyle) oldStyle.remove();
-            
             if (themeName === 'custom') {
                 applyCustomTheme(true);
             } else {
@@ -4238,7 +4263,6 @@ async function submitTaskPhoto(event) {
                 user.theme = themeName;
                 localStorage.setItem('app_theme', themeName);
             }
-            
             document.querySelectorAll('.theme-option').forEach(el => {
                 el.classList.remove('active');
                 if (el.dataset.theme === themeName) el.classList.add('active');
@@ -4262,17 +4286,11 @@ async function submitTaskPhoto(event) {
                 localStorage.setItem('custom_theme_bg', bgMode);
                 localStorage.setItem('custom_theme_accent', accentColor);
             }
-            
             const oldStyle = document.getElementById('custom-theme-style');
             if (oldStyle) oldStyle.remove();
             const style = document.createElement('style');
             style.id = 'custom-theme-style';
-            
-            const commonStyles = `
-                button, .nav-btn, .task-submit-btn { pointer-events: auto !important; cursor: pointer !important; }
-                .modal-overlay { z-index: 10000 !important; }
-            `;
-            
+            const commonStyles = `button, .nav-btn, .task-submit-btn { pointer-events: auto !important; cursor: pointer !important; } .modal-overlay { z-index: 10000 !important; }`;
             if (bgMode === 'light') {
                 style.textContent = `:root { --bg: #f5f5f7; --bg-secondary: #ffffff; --bg-header: #ffffff; --text: #1c1c1e; --text-gray: #8e8e93; --accent: ${accentColor}; --accent-gradient: linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%); --border-color: rgba(0,0,0,0.1); --card-bg: #ffffff; --input-bg: #ffffff; } ${commonStyles}`;
             } else {
@@ -4283,7 +4301,6 @@ async function submitTaskPhoto(event) {
             user.theme = 'custom';
             localStorage.setItem('app_theme', 'custom');
         }
-        
         // ==========================================
         // ИНВЕНТАРЬ И ОРГАНАЙЗЕРЫ
         // ==========================================
@@ -4431,7 +4448,6 @@ async function submitTaskPhoto(event) {
         function closeOrganizerView() {
             const viewEl = document.getElementById('selectedOrganizerView');
             const listEl = document.getElementById('organizersList');
-            
             if (viewEl) viewEl.style.display = 'none';
             if (listEl) listEl.style.display = 'block';
             renderOrganizers();
@@ -4628,7 +4644,6 @@ async function submitTaskPhoto(event) {
             const content = document.getElementById('organizersBlockContent');
             const arrow = document.getElementById('organizersArrow');
             if (!content) return;
-            
             if (content.style.display === 'none' || content.style.display === '') {
                 content.style.display = 'block';
                 if (arrow) arrow.style.transform = 'rotate(180deg)';
@@ -4643,7 +4658,6 @@ async function submitTaskPhoto(event) {
             const content = document.getElementById('markersBlockContent');
             const arrow = document.getElementById('markersArrow');
             if (!content) return;
-            
             if (content.style.display === 'none' || content.style.display === '') {
                 content.style.display = 'block';
                 if (arrow) arrow.style.transform = 'rotate(180deg)';
@@ -4860,8 +4874,8 @@ async function submitTaskPhoto(event) {
             await loadUserProgress();
             await loadUnlockedStatuses();
             await loadUserAchievements();
+            await checkBalanceStatus();
             await checkAndUnlockStatuses();
-               await checkBalanceStatus();
             
             if (user.status && !user.unlockedStatuses.includes(user.status)) {
                 user.status = 'Без статуса';
@@ -4902,99 +4916,6 @@ async function submitTaskPhoto(event) {
             console.log('Unlocked statuses:', user.unlockedStatuses);
             console.log('Balance:', user.balance);
         };
-        
-        // Отладка
-        setTimeout(() => {
-            console.log('=== DEBUG AFTER LOAD ===');
-            console.log('user.status:', user.status);
-            console.log('user.unlockedStatuses:', user.unlockedStatuses);
-            console.log('BRANCH_REWARDS:', BRANCH_REWARDS);
-            
-            const statusBadge = document.getElementById('currentStatus');
-            if (statusBadge) {
-                console.log('Status badge text:', statusBadge.innerText);
-            }
-            
-            const taskButtons = document.querySelectorAll('.task-submit-btn');
-            console.log('Task buttons found:', taskButtons.length);
-            if (taskButtons.length === 0) {
-                console.warn('No task buttons found! Check renderBranchTasks');
-                renderBranchTasks();
-            }
-        }, 3000);
-        // ==========================================
-// ПРОВЕРКА БАЛАНСА ДЛЯ СТАТУСА СКРУДЖ
-// ==========================================
-
-async function checkBalanceStatus() {
-    console.log('💰 Checking balance for Scrooge status...');
-    console.log('Current balance:', user.balance);
-    console.log('Has Scrooge status:', user.unlockedStatuses.includes('Скрудж'));
-    
-    // Проверяем, не разблокирован ли уже статус Скрудж
-    if (!user.unlockedStatuses.includes('Скрудж') && user.balance >= 2500) {
-        console.log('🎉 Unlocking Scrooge status!');
-        
-        // Разблокируем статус
-        user.unlockedStatuses.push('Скрудж');
-        
-        // Добавляем достижение
-        if (!user.achievements.includes('scrooge_achievement')) {
-            user.achievements.push('scrooge_achievement');
-        }
-        
-        // Сохраняем в localStorage
-        saveUserData();
-        
-        // Синхронизируем с сервером
-        try {
-            await fetchAPI('/api/sync_status', {
-                user_id: userId,
-                status: 'Скрудж',
-                action: 'unlock'
-            });
-        } catch(e) {
-            console.error('Failed to sync with server:', e);
-        }
-        
-        // Уведомляем пользователя (без упоминания ашетиков)
-        if (tg) {
-            tg.showAlert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!');
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        } else {
-            alert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!');
-        }
-        
-        // Обновляем интерфейс
-        updateUI();
-        renderBranchTasks();
-        
-        return true;
-    }
-    
-    return false;
-}
-// ==========================================
-// ОБНОВЛЕНИЕ БАЛАНСА НА СЕРВЕРЕ
-// ==========================================
-
-async function syncBalanceWithServer() {
-    try {
-        const response = await fetch(`${SERVER_URL}/api/sync_balance`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                user_id: userId,
-                balance: user.balance
-            })
-        });
-        return await response.json();
-    } catch (error) {
-        console.error('Failed to sync balance:', error);
-        return null;
-    }
-}
     </script>
 </body>
 </html>
-        

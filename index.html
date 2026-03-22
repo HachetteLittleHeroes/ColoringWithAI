@@ -2073,6 +2073,77 @@
             flex-shrink: 0;
             margin-left: 12px;
         }
+        /* Стили для поиска маркеров в органайзерах */
+        .marker-search-result {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .marker-search-result:hover {
+            background: rgba(255,149,0,0.1);
+            border-color: var(--accent);
+        }
+        
+        .marker-search-result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .marker-search-result-brand {
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .marker-search-result-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text);
+        }
+        
+        .marker-search-result-location {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+        
+        .marker-search-result-count {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        
+        .no-results-found {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-gray);
+        }
+        @keyframes highlight {
+            0% {
+                background: var(--accent);
+                transform: scale(1);
+            }
+            50% {
+                background: var(--accent);
+                transform: scale(1.05);
+                box-shadow: 0 0 15px var(--accent);
+            }
+            100% {
+                background: var(--bg);
+                transform: scale(1);
+            }
+        }
+        
+        .organizer-cell.highlight {
+            animation: highlight 1s ease-in-out 3;
+        }
     </style>
 </head>
 <body>
@@ -2188,6 +2259,12 @@
                         <i class="fas fa-chevron-down" id="organizersArrow"></i>
                     </div>
                     <div id="organizersBlockContent" class="subblock-content">
+                        <!-- Добавляем поиск маркеров -->
+                        <div class="search-box" style="margin-bottom: 15px;">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="markerSearchInOrganizers" placeholder="Поиск маркера по номеру..." oninput="searchMarkerInOrganizers()">
+                        </div>
+                        <div id="markerSearchResults" style="display: none; margin-bottom: 15px; padding: 10px; background: var(--bg); border-radius: 12px;"></div>
                         <button class="create-organizer-btn" onclick="openOrganizerCreator()"><i class="fas fa-plus"></i> Создать органайзер</button>
                         <div id="organizersList"></div>
                         <div id="selectedOrganizerView" style="display: none; margin-top: 15px;">
@@ -2197,6 +2274,7 @@
                             </div>
                             <div id="selectedOrganizerGrid"></div>
                         </div>
+                    </div>
                     </div>
                 </div>
                 <div class="inventory-subblock">
@@ -2932,7 +3010,137 @@
         // ==========================================
         // ФУНКЦИИ ДЛЯ РАБОТЫ С ЗАДАНИЯМИ
         // ==========================================
+        // ==========================================
+        // ПОИСК МАРКЕРОВ В ОРГАНАЙЗЕРАХ
+        // ==========================================
         
+        function searchMarkerInOrganizers() {
+            const searchInput = document.getElementById('markerSearchInOrganizers');
+            const resultsDiv = document.getElementById('markerSearchResults');
+            
+            if (!searchInput || !resultsDiv) return;
+            
+            const searchQuery = searchInput.value.trim().toLowerCase();
+            
+            if (searchQuery.length === 0) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+            
+            const results = [];
+            
+            // Ищем во всех органайзерах
+            if (inventory.organizers) {
+                inventory.organizers.forEach(org => {
+                    if (org.cells) {
+                        for (let row = 0; row < org.rows; row++) {
+                            for (let col = 0; col < org.cols; col++) {
+                                const cell = org.cells[row]?.[col];
+                                if (cell && cell.length > 0) {
+                                    cell.forEach(marker => {
+                                        const markerNumber = marker.number.toString().toLowerCase();
+                                        if (markerNumber.includes(searchQuery)) {
+                                            results.push({
+                                                orgId: org.id,
+                                                orgName: org.name,
+                                                brand: marker.brand,
+                                                number: marker.number,
+                                                count: marker.count,
+                                                row: row,
+                                                col: col,
+                                                cellLabel: String.fromCharCode(65 + row) + (col + 1)
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Отображаем результаты
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div class="no-results-found">🔍 Маркер не найден</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            // Группируем результаты по номеру маркера
+            const groupedResults = {};
+            results.forEach(res => {
+                const key = `${res.brand}_${res.number}`;
+                if (!groupedResults[key]) {
+                    groupedResults[key] = {
+                        brand: res.brand,
+                        number: res.number,
+                        locations: []
+                    };
+                }
+                groupedResults[key].locations.push({
+                    orgName: res.orgName,
+                    cellLabel: res.cellLabel,
+                    count: res.count,
+                    orgId: res.orgId,
+                    row: res.row,
+                    col: res.col
+                });
+            });
+            
+            let html = '<div style="margin-bottom: 10px;"><strong>🔍 Найдено маркеров:</strong> ' + results.length + '</div>';
+            
+            for (const [key, marker] of Object.entries(groupedResults)) {
+                html += `
+                    <div class="marker-search-result" onclick="openOrganizerWithMarker('${marker.locations[0].orgId}', ${marker.locations[0].row}, ${marker.locations[0].col})">
+                        <div class="marker-search-result-header">
+                            <span class="marker-search-result-brand">${marker.brand}</span>
+                            <span class="marker-search-result-number">№${marker.number}</span>
+                            <span class="marker-search-result-count">${results.filter(r => r.brand === marker.brand && r.number === marker.number).reduce((sum, r) => sum + r.count, 0)} шт</span>
+                        </div>
+                `;
+                
+                marker.locations.forEach(loc => {
+                    html += `
+                        <div class="marker-search-result-location">
+                            📦 ${loc.orgName} → ячейка ${loc.cellLabel} (${loc.count} шт)
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+            }
+            
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+        
+        function openOrganizerWithMarker(orgId, row, col) {
+            // Открываем органайзер
+            const org = inventory.organizers.find(o => o.id === orgId);
+            if (!org) return;
+            
+            const nameEl = document.getElementById('selectedOrganizerName');
+            const viewEl = document.getElementById('selectedOrganizerView');
+            const listEl = document.getElementById('organizersList');
+            const resultsDiv = document.getElementById('markerSearchResults');
+            
+            if (nameEl) nameEl.innerHTML = `📦 ${org.name} (${org.rows}×${org.cols})`;
+            if (viewEl) viewEl.style.display = 'block';
+            if (listEl) listEl.style.display = 'none';
+            if (resultsDiv) resultsDiv.style.display = 'none';
+            
+            renderOrganizerGrid(org);
+            
+            // Подсвечиваем нужную ячейку
+            setTimeout(() => {
+                const cells = document.querySelectorAll('.organizer-cell');
+                const targetIndex = row * org.cols + col;
+                if (cells[targetIndex]) {
+                    cells[targetIndex].style.animation = 'highlight 1s ease-in-out 3';
+                    cells[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        }
         function getLevelProgress(branchKey, levelIndex) {
             const progress = userProgress || {};
             const progressKey = `branch_${branchKey}_level_${levelIndex}`;
@@ -4625,34 +4833,47 @@
         let currentCellRow = null;
         let currentCellCol = null;
         
-        function renderOrganizers() {
-            const container = document.getElementById('organizersList');
+        function renderOrganizerGrid(org, highlightRow = null, highlightCol = null) {
+            const container = document.getElementById('selectedOrganizerGrid');
             if (!container) return;
-            if (!inventory.organizers || inventory.organizers.length === 0) {
-                container.innerHTML = '<div class="no-results" style="padding: 20px; text-align: center;">📦 Нет органайзеров. Нажмите "Создать органайзер"</div>';
-                return;
+            
+            const scrollWrapper = document.createElement('div');
+            scrollWrapper.style.cssText = 'overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;';
+            
+            const gridContainer = document.createElement('div');
+            gridContainer.className = 'organizer-grid';
+            
+            const cellWidth = Math.min(70, Math.floor((window.innerWidth - 40) / org.cols));
+            gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, minmax(${cellWidth}px, 70px)); gap: 6px; justify-content: start;`;
+            
+            for (let row = 0; row < org.rows; row++) {
+                for (let col = 0; col < org.cols; col++) {
+                    if (!org.cells[row]) org.cells[row] = [];
+                    if (!org.cells[row][col]) org.cells[row][col] = [];
+                    
+                    const cellMarkers = org.cells[row][col];
+                    const markerCount = cellMarkers.length;
+                    const cellLabel = String.fromCharCode(65 + row) + (col + 1);
+                    
+                    const cellDiv = document.createElement('div');
+                    cellDiv.className = `organizer-cell ${markerCount > 0 ? 'filled' : ''}`;
+                    if (highlightRow === row && highlightCol === col) {
+                        cellDiv.classList.add('highlight');
+                    }
+                    cellDiv.onclick = (function(r, c) {
+                        return function() { openCellModal(org.id, r, c); };
+                    })(row, col);
+                    cellDiv.innerHTML = `
+                        <div class="organizer-cell-label">${cellLabel}</div>
+                        <div class="organizer-cell-count">${markerCount}</div>
+                    `;
+                    gridContainer.appendChild(cellDiv);
+                }
             }
+            
+            scrollWrapper.appendChild(gridContainer);
             container.innerHTML = '';
-            inventory.organizers.forEach((org) => {
-                const orgCard = document.createElement('div');
-                orgCard.style.cssText = 'background: var(--bg); border-radius: 16px; padding: 12px 16px; margin-bottom: 10px; border: 1px solid var(--border-color); cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;';
-                orgCard.onclick = () => openOrganizerView(org.id);
-                orgCard.innerHTML = `
-                    <div>
-                        <strong style="font-size: 16px;">📦 ${org.name}</strong>
-                        <div style="font-size: 12px; color: var(--text-gray); margin-top: 4px;">${org.rows}×${org.cols} | Маркеров: ${countMarkersInOrganizer(org)}</div>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="photo-upload-btn" style="padding: 6px 12px; font-size: 12px;" onclick="event.stopPropagation(); addMarkersToOrganizer('${org.id}')">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <button class="photo-upload-btn" style="padding: 6px 12px; font-size: 12px; background: var(--status-red); color: white;" onclick="event.stopPropagation(); deleteOrganizer('${org.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(orgCard);
-            });
+            container.appendChild(scrollWrapper);
         }
         
         function countMarkersInOrganizer(org) {

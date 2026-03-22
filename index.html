@@ -2832,11 +2832,10 @@
         } catch(e) {
             console.error('Failed to sync with server:', e);
         }
-        // Показываем уведомление ТОЛЬКО при первом получении
-        if (tg) {
-            tg.showAlert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!');
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        }
+        // Уведомление о статусе убрано
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
         updateUI();
         renderBranchTasks();
         return true;
@@ -2880,11 +2879,7 @@
                     updateUI();
                     renderBranchTasks();
                     
-                    // Показываем уведомление ТОЛЬКО для новых статусов (один раз)
-                    if (newlyUnlockedStatuses.length > 0 && tg) {
-                        const statusList = newlyUnlockedStatuses.join(', ');
-                        tg.showAlert(`🏆 Поздравляем!\nВы разблокировали статус: ${statusList}!`);
-                    }
+                    // Уведомление о статусе убрано - пользователь видит в приложении
                 }
             } catch (error) {
                 console.error('Error checking status unlocks:', error);

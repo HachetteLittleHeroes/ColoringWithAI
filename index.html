@@ -142,7 +142,14 @@
             opacity: 0.3;
             pointer-events: none;
         }
-
+/* Заглушка для отсутствующих изображений */
+        .achievement-item img, .showcase-slot img {
+            background: linear-gradient(135deg, var(--accent), #ff9500);
+        }
+        
+        .achievement-item img[src*="data:image"], .showcase-slot img[src*="data:image"] {
+            background: linear-gradient(135deg, var(--accent), #ff9500);
+        }
         /* ==========================================
            2. ПРОФИЛЬ И АВАТАР
            ========================================== */
@@ -2803,36 +2810,39 @@
         // ==========================================
         
         async function checkBalanceStatus() {
-            console.log('💰 Checking balance for Scrooge status...');
-            console.log('Current balance:', user.balance);
-            console.log('Has Scrooge status:', user.unlockedStatuses.includes('Скрудж'));
-            
-            if (!user.unlockedStatuses.includes('Скрудж') && user.balance >= 2500) {
-                console.log('🎉 Unlocking Scrooge status!');
-                user.unlockedStatuses.push('Скрудж');
-                if (!user.achievements.includes('scrooge')) {
-                    user.achievements.push('scrooge');
-                }
-                saveUserData();
-                try {
-                    await fetchAPI('/api/sync_status', {
-                        user_id: userId,
-                        status: 'Скрудж',
-                        action: 'unlock'
-                    });
-                } catch(e) {
-                    console.error('Failed to sync with server:', e);
-                }
-                if (tg) {
-                    tg.showAlert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!');
-                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                }
-                updateUI();
-                renderBranchTasks();
-                return true;
-            }
-            return false;
+    console.log('💰 Checking balance for Scrooge status...');
+    console.log('Current balance:', user.balance);
+    console.log('Has Scrooge status:', user.unlockedStatuses.includes('Скрудж'));
+    
+    if (!user.unlockedStatuses.includes('Скрудж') && user.balance >= 2500) {
+        console.log('🎉 Unlocking Scrooge status!');
+        user.unlockedStatuses.push('Скрудж');
+        // ДОБАВЛЯЕМ ДОСТИЖЕНИЕ
+        if (!user.achievements.includes('scrooge')) {
+            user.achievements.push('scrooge');
+            console.log('🏆 Achievement added: scrooge');
         }
+        saveUserData();
+        try {
+            await fetchAPI('/api/sync_status', {
+                user_id: userId,
+                status: 'Скрудж',
+                action: 'unlock'
+            });
+        } catch(e) {
+            console.error('Failed to sync with server:', e);
+        }
+        // Показываем уведомление ТОЛЬКО при первом получении
+        if (tg) {
+            tg.showAlert('🏆 Поздравляем!\n\nВы разблокировали статус "Скрудж"!');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        }
+        updateUI();
+        renderBranchTasks();
+        return true;
+    }
+    return false;
+}
         
         // ==========================================
         // ПРОВЕРКА РАЗБЛОКИРОВКИ СТАТУСОВ
@@ -2850,21 +2860,27 @@
                     const isCompleted = isBranchCompleted(branchKey);
                     const isUnlocked = user.unlockedStatuses.includes(rewardStatus);
                     
+                    // Только если статус НЕ разблокирован И задание выполнено
                     if (isCompleted && !isUnlocked) {
-                        console.log(`🎉 New status unlocked: ${rewardStatus}`);
-                        user.unlockedStatuses.push(rewardStatus);
-                        if (!user.achievements.includes(branchKey)) {
-                            user.achievements.push(branchKey);
-                        }
-                        newlyUnlockedStatuses.push(rewardStatus);
-                        statusUnlocked = true;
-                    }
+    console.log(`🎉 New status unlocked: ${rewardStatus}`);
+    user.unlockedStatuses.push(rewardStatus);
+    // ДОБАВЛЯЕМ ДОСТИЖЕНИЕ
+    if (!user.achievements.includes(branchKey)) {
+        user.achievements.push(branchKey);
+        console.log(`🏆 Achievement added: ${branchKey}`);
+    }
+    newlyUnlockedStatuses.push(rewardStatus);
+    statusUnlocked = true;
+}
                 }
                 
+                // Сохраняем и обновляем UI ТОЛЬКО если есть новые статусы
                 if (statusUnlocked) {
                     saveUserData();
                     updateUI();
                     renderBranchTasks();
+                    
+                    // Показываем уведомление ТОЛЬКО для новых статусов (один раз)
                     if (newlyUnlockedStatuses.length > 0 && tg) {
                         const statusList = newlyUnlockedStatuses.join(', ');
                         tg.showAlert(`🏆 Поздравляем!\nВы разблокировали статус: ${statusList}!`);
@@ -3300,31 +3316,51 @@
             if (!list) return;
             list.innerHTML = '';
             
-            const unlockedAchievements = user.achievements.filter(achId => ACHIEVEMENTS_DB[achId]);
+            // Показываем ВСЕ достижения, не только разблокированные
+            const allAchievements = Object.values(ACHIEVEMENTS_DB);
             
-            if (unlockedAchievements.length === 0) {
-                list.innerHTML = '<div class="no-results">Нет разблокированных достижений</div>';
+            if (allAchievements.length === 0) {
+                list.innerHTML = '<div class="no-results">Нет достижений</div>';
             } else {
-                unlockedAchievements.forEach(achId => {
-                    const ach = ACHIEVEMENTS_DB[achId];
-                    if (ach) {
-                        const div = document.createElement('div');
-                        div.style.cssText = 'display:flex; align-items:center; gap:10px; padding:10px; cursor:pointer; margin-bottom:8px; border-radius:12px; background:var(--card-bg);';
+                allAchievements.forEach(ach => {
+                    const isUnlocked = user.achievements.includes(ach.id);
+                    const isAlreadyInShowcase = user.showcase.includes(ach.id);
+                    const isCurrentSlot = user.showcase[slotIndex] === ach.id;
+                    
+                    const div = document.createElement('div');
+                    div.style.cssText = `display:flex; align-items:center; gap:10px; padding:10px; margin-bottom:8px; border-radius:12px; background:var(--card-bg); border:1px solid var(--border-color); ${!isUnlocked ? 'opacity:0.6;' : ''}`;
+                    
+                    if (isUnlocked) {
                         div.onclick = () => {
-                            const alreadyInShowcase = user.showcase.includes(achId);
-                            if (alreadyInShowcase && user.showcase[slotIndex] !== achId) {
-                                if (tg) tg.showAlert('Это достижение уже установлено в другой ячейке витрины');
+                            // Проверяем, не установлено ли это достижение в другой ячейке
+                            if (isAlreadyInShowcase && !isCurrentSlot) {
+                                if (tg) tg.showAlert('❌ Это достижение уже установлено в другой ячейке витрины');
                                 return;
                             }
-                            user.showcase[slotIndex] = achId;
+                            user.showcase[slotIndex] = ach.id;
                             saveUserData();
                             renderShowcase();
                             const modal = document.getElementById('showcaseSelectorModal');
                             if (modal) modal.style.display = 'none';
+                            if (tg) tg.showAlert(`✅ Достижение "${ach.name}" установлено в витрину!`);
                         };
-                        div.innerHTML = `<img src="${ach.img}" style="width:50px; height:50px; border-radius:12px; object-fit:cover;"><span style="flex:1;">${ach.name}</span>`;
-                        list.appendChild(div);
+                    } else {
+                        div.style.cursor = 'default';
                     }
+                    
+                    div.innerHTML = `
+                        <img src="${ach.img}" style="width:50px; height:50px; border-radius:12px; object-fit:cover; background:#f0f0f0;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2250%22 height=%2250%22 viewBox=%220 0 50 50%22%3E%3Crect width=%2250%22 height=%2250%22 fill=%22%23ff9500%22/%3E%3Ctext x=%2225%22 y=%2225%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22 font-size=%2220%22%3E🏆%3C/text%3E%3C/svg%3E'">
+                        <div style="flex:1;">
+                            <div style="font-weight:bold;">${ach.name}</div>
+                            <div style="font-size:11px; color:var(--text-gray);">${ach.condition}</div>
+                            ${!isUnlocked ? '<div style="font-size:10px; color:var(--status-red); margin-top:4px;"><i class="fas fa-lock"></i> Заблокировано</div>' : ''}
+                            ${isAlreadyInShowcase && !isCurrentSlot ? '<div style="font-size:10px; color:var(--status-orange); margin-top:4px;"><i class="fas fa-check-circle"></i> Уже в витрине</div>' : ''}
+                        </div>
+                        ${isUnlocked && !isAlreadyInShowcase ? '<button style="background:var(--accent); color:white; border:none; padding:6px 12px; border-radius:20px; cursor:pointer;">Выбрать</button>' : ''}
+                        ${isUnlocked && isAlreadyInShowcase && isCurrentSlot ? '<span style="color:var(--status-green);"><i class="fas fa-check"></i> Установлено</span>' : ''}
+                        ${isUnlocked && isAlreadyInShowcase && !isCurrentSlot ? '<span style="color:var(--status-orange);"><i class="fas fa-check-circle"></i> В другой ячейке</span>' : ''}
+                    `;
+                    list.appendChild(div);
                 });
             }
             
@@ -3336,7 +3372,11 @@
             const list = document.getElementById('allAchievementsList');
             if (!list) return;
             list.innerHTML = '';
-            Object.values(ACHIEVEMENTS_DB).forEach(ach => {
+            
+            // Показываем ВСЕ достижения
+            const allAchievements = Object.values(ACHIEVEMENTS_DB);
+            
+            allAchievements.forEach(ach => {
                 const isUnlocked = user.achievements.includes(ach.id);
                 const div = document.createElement('div');
                 div.className = `achievement-item ${!isUnlocked ? 'locked' : ''}`;
@@ -3352,6 +3392,7 @@
                 `;
                 list.appendChild(div);
             });
+            
             const modal = document.getElementById('achievementsGalleryModal');
             if (modal) modal.style.display = 'flex';
         }

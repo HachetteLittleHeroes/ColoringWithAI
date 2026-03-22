@@ -1173,7 +1173,7 @@
             text-align: center;
             color: var(--text);
         }
-        
+
         /* ==========================================
            14. ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ ТОМОВ
            ========================================== */
@@ -2236,6 +2236,17 @@
             </div>
         </div>
 
+        <!-- ========== ЗАДАНИЯ НА ВРЕМЯ ========== -->
+        <div class="tasks-section time-tasks-section">
+            <button class="tasks-header" onclick="toggleTimeTasks()">
+                <span>⏰ Задания на время</span>
+                <i class="fas fa-chevron-down" id="timeTasksArrow"></i>
+            </button>
+            <div id="timeTasksContent" class="tasks-content">
+                <div id="timeTasksList"></div>
+            </div>
+        </div>
+
         <div class="showcase-container">
             <h3>Витрина Топ-3</h3>
             <div class="showcase-grid">
@@ -2253,13 +2264,14 @@
                 <div class="inventory-header-right"><span class="beta-badge">Бета-Тест</span><i class="fas fa-chevron-down" id="inventoryArrow"></i></div>
             </div>
             <div id="inventoryContent" class="inventory-content">
+                <!-- ОРГАНАЙЗЕРЫ -->
                 <div class="inventory-subblock">
                     <div class="subblock-header" onclick="toggleOrganizersBlock()">
                         <div class="subblock-header-left"><i class="fas fa-layer-group"></i><span>Органайзеры</span></div>
                         <i class="fas fa-chevron-down" id="organizersArrow"></i>
                     </div>
                     <div id="organizersBlockContent" class="subblock-content">
-                        <!-- Добавляем поиск маркеров -->
+                        <!-- Поиск маркеров -->
                         <div class="search-box" style="margin-bottom: 15px;">
                             <i class="fas fa-search"></i>
                             <input type="text" id="markerSearchInOrganizers" placeholder="Поиск маркера по номеру..." oninput="searchMarkerInOrganizers()">
@@ -2275,8 +2287,9 @@
                             <div id="selectedOrganizerGrid"></div>
                         </div>
                     </div>
-                    </div>
                 </div>
+                
+                <!-- МАРКЕРЫ (отдельный подраздел) -->
                 <div class="inventory-subblock">
                     <div class="subblock-header" onclick="toggleMarkersBlock()">
                         <div class="subblock-header-left"><i class="fas fa-palette"></i><span>Маркеры</span></div>
@@ -2558,27 +2571,20 @@
         let userId = 496779756;
         let userName = 'Без имени';
         
-        // Получаем userId из URL параметров (приоритет)
         const urlParams = new URLSearchParams(window.location.search);
         const urlUserId = urlParams.get('id');
         
-        // Если есть в URL - используем его
         if (urlUserId) {
             userId = parseInt(urlUserId);
             console.log('✅ User ID from URL:', userId);
-        } 
-        // Иначе пробуем из Telegram WebApp
-        else if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
+        } else if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
             userId = window.Telegram.WebApp.initDataUnsafe.user.id;
             console.log('✅ User ID from Telegram:', userId);
-        }
-        // Иначе используем дефолтный
-        else {
+        } else {
             userId = 496779756;
             console.warn('⚠️ No user ID found, using default');
         }
         
-        // Получаем имя
         if (window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name) {
             userName = window.Telegram.WebApp.initDataUnsafe.user.first_name;
         } else if (urlParams.get('name')) {
@@ -2621,6 +2627,7 @@
         let currentVolumePages = 0;
         let touchStartX = 0;
         let touchEndX = 0;
+        
         // ==========================================
         // ДАННЫЕ ЗАДАНИЙ (ВЕТКИ)
         // ==========================================
@@ -2755,126 +2762,48 @@
                     { title: "Благодетель", maxProgress: 1, desc: "Поддержите нас", isDonation: true }
                 ]
             },
-            'anaconda': {
-        name: "Анаконда",
-        desc: "Раскрасить картинки со змеей",
-        levels: [
-            { title: "Любитель змей", maxProgress: 1, desc: "Раскрась 1 картинку со змеей" },
-            { title: "Наблюдатель", maxProgress: 3, desc: "Раскрась 3 картинки со змеей" },
-            { title: "Знаток змей", maxProgress: 3, desc: "Раскрась ещё 3 картинки со змеей" },
-            { title: "Исследователь", maxProgress: 5, desc: "Раскрась 5 картинок со змеей" },
-            { title: "Анаконда", maxProgress: 8, desc: "Раскрась 8 картинок со змеей" }
-        ]
-    },
-            'mystery': {
-        name: "Загадка",
-        desc: "Раскрасить картинки из м/ф Скуби-Ду",
-        levels: [
-            { title: "Начинающий детектив", maxProgress: 1, desc: "Раскрась 1 картинку с персонажами Скуби-Ду" },
-            { title: "Подсадная утка", maxProgress: 3, desc: "Раскрась 3 картинки с персонажами Скуби-Ду" },
-            { title: "Детектив", maxProgress: 3, desc: "Раскрась ещё 3 картинки с персонажами Скуби-Ду" },
-            { title: "Корпорация Тайна", maxProgress: 5, desc: "Раскрась 5 картинок с персонажами Скуби-Ду" },
-            { title: "Загадка", maxProgress: 8, desc: "Раскрась 8 картинок с персонажами Скуби-Ду" }
-        ]
-    }
+            mystery: {
+                name: "Загадка",
+                desc: "Раскрасить картинки из м/ф Скуби-Ду",
+                levels: [
+                    { title: "Начинающий детектив", maxProgress: 1, desc: "Раскрась 1 картинку с персонажами Скуби-Ду" },
+                    { title: "Подсадная утка", maxProgress: 3, desc: "Раскрась 3 картинки с персонажами Скуби-Ду" },
+                    { title: "Детектив", maxProgress: 3, desc: "Раскрась ещё 3 картинки с персонажами Скуби-Ду" },
+                    { title: "Корпорация Тайна", maxProgress: 5, desc: "Раскрась 5 картинок с персонажами Скуби-Ду" },
+                    { title: "Загадка", maxProgress: 8, desc: "Раскрась 8 картинок с персонажами Скуби-Ду" }
+                ]
+            },
+            anaconda: {
+                name: "Анаконда",
+                desc: "Раскрасить картинки со змеей",
+                levels: [
+                    { title: "Любитель змей", maxProgress: 1, desc: "Раскрась 1 картинку со змеей" },
+                    { title: "Наблюдатель", maxProgress: 3, desc: "Раскрась 3 картинки со змеей" },
+                    { title: "Знаток змей", maxProgress: 3, desc: "Раскрась ещё 3 картинки со змеей" },
+                    { title: "Исследователь", maxProgress: 5, desc: "Раскрась 5 картинок со змеей" },
+                    { title: "Анаконда", maxProgress: 8, desc: "Раскрась 8 картинок со змеей" }
+                ]
+            }
         };
         
         // ==========================================
-        // ДАННЫЕ ДОСТИЖЕНИЙ (названия совпадают со статусами)
+        // ДАННЫЕ ДОСТИЖЕНИЙ
         // ==========================================
         
         const ACHIEVEMENTS_DB = {
-            'trainer': { 
-                id: 'trainer', 
-                name: 'Великий тренер', 
-                img: 'assets/achievements/ach1.png', 
-                desc: 'Завершена ветка "Великий тренер"',
-                condition: 'Выполните все задания ветки "Великий тренер"'
-            },
-            'alcohol': { 
-                id: 'alcohol', 
-                name: 'Спиртесса', 
-                img: 'assets/achievements/ach2.png', 
-                desc: 'Завершена ветка "Спиртесса"',
-                condition: 'Выполните все задания ветки "Спиртесса"'
-            },
-            'shock': { 
-                id: 'shock', 
-                name: 'Шок контент', 
-                img: 'assets/achievements/ach3.png', 
-                desc: 'Завершена ветка "Шок контент"',
-                condition: 'Выполните все задания ветки "Шок контент"'
-            },
-            'lion': { 
-                id: 'lion', 
-                name: 'Королева прайда', 
-                img: 'assets/achievements/ach4.png', 
-                desc: 'Завершена ветка "Королева прайда"',
-                condition: 'Выполните все задания ветки "Королева прайда"'
-            },
-            'dragons': { 
-                id: 'dragons', 
-                name: 'Мать Драконов', 
-                img: 'assets/achievements/ach5.png', 
-                desc: 'Завершена ветка "Мать Драконов"',
-                condition: 'Выполните все задания ветки "Мать Драконов"'
-            },
-            'bear': { 
-                id: 'bear', 
-                name: 'Мишка', 
-                img: 'assets/achievements/ach6.png', 
-                desc: 'Завершена ветка "Мишка"',
-                condition: 'Выполните все задания ветки "Мишка"'
-            },
-            'fauna': { 
-                id: 'fauna', 
-                name: 'Знаток фауны', 
-                img: 'assets/achievements/ach7.png', 
-                desc: 'Завершена ветка "Знаток фауны"',
-                condition: 'Выполните все задания ветки "Знаток фауны"'
-            },
-            'sea': { 
-                id: 'sea', 
-                name: 'Царица морей', 
-                img: 'assets/achievements/ach8.png', 
-                desc: 'Завершена ветка "Царица морей"',
-                condition: 'Выполните все задания ветки "Царица морей"'
-            },
-            'queen': { 
-                id: 'queen', 
-                name: 'Злая королева', 
-                img: 'assets/achievements/ach9.png', 
-                desc: 'Завершена ветка "Злая королева"',
-                condition: 'Выполните все задания ветки "Злая королева"'
-            },
-            'scrooge': { 
-                id: 'scrooge', 
-                name: 'Скрудж', 
-                img: 'assets/achievements/ach10.png', 
-                desc: 'Накоплено 2500 ашетиков',
-                condition: 'Накопите 2500 ашетиков'
-            },
-            'benefactor': { 
-                id: 'benefactor', 
-                name: 'Благодетель', 
-                img: 'assets/achievements/ach11.png', 
-                desc: 'Поддержали проект',
-                condition: 'Поддержите нас'
-            },
-            'anaconda': { 
-        id: 'anaconda', 
-        name: 'Анаконда', 
-        img: 'assets/achievements/ach13.png', 
-        desc: 'Завершена ветка "Анаконда"',
-        condition: 'Раскрасьте 20 картинок со змеей'
-    },
-    'mystery': { 
-        id: 'mystery', 
-        name: 'Загадка', 
-        img: 'assets/achievements/ach12.png', 
-        desc: 'Завершена ветка "Загадка"',
-        condition: 'Раскрасьте 20 картинок с персонажами Скуби-Ду'
-    }
+            'trainer': { id: 'trainer', name: 'Великий тренер', img: 'assets/achievements/ach1.png', desc: 'Завершена ветка "Великий тренер"', condition: 'Выполните все задания ветки "Великий тренер"' },
+            'alcohol': { id: 'alcohol', name: 'Спиртесса', img: 'assets/achievements/ach2.png', desc: 'Завершена ветка "Спиртесса"', condition: 'Выполните все задания ветки "Спиртесса"' },
+            'shock': { id: 'shock', name: 'Шок контент', img: 'assets/achievements/ach3.png', desc: 'Завершена ветка "Шок контент"', condition: 'Выполните все задания ветки "Шок контент"' },
+            'lion': { id: 'lion', name: 'Королева прайда', img: 'assets/achievements/ach4.png', desc: 'Завершена ветка "Королева прайда"', condition: 'Выполните все задания ветки "Королева прайда"' },
+            'dragons': { id: 'dragons', name: 'Мать Драконов', img: 'assets/achievements/ach5.png', desc: 'Завершена ветка "Мать Драконов"', condition: 'Выполните все задания ветки "Мать Драконов"' },
+            'bear': { id: 'bear', name: 'Мишка', img: 'assets/achievements/ach6.png', desc: 'Завершена ветка "Мишка"', condition: 'Выполните все задания ветки "Мишка"' },
+            'fauna': { id: 'fauna', name: 'Знаток фауны', img: 'assets/achievements/ach7.png', desc: 'Завершена ветка "Знаток фауны"', condition: 'Выполните все задания ветки "Знаток фауны"' },
+            'sea': { id: 'sea', name: 'Царица морей', img: 'assets/achievements/ach8.png', desc: 'Завершена ветка "Царица морей"', condition: 'Выполните все задания ветки "Царица морей"' },
+            'queen': { id: 'queen', name: 'Злая королева', img: 'assets/achievements/ach9.png', desc: 'Завершена ветка "Злая королева"', condition: 'Выполните все задания ветки "Злая королева"' },
+            'scrooge': { id: 'scrooge', name: 'Скрудж', img: 'assets/achievements/ach10.png', desc: 'Накоплено 2500 ашетиков', condition: 'Накопите 2500 ашетиков' },
+            'benefactor': { id: 'benefactor', name: 'Благодетель', img: 'assets/achievements/ach11.png', desc: 'Поддержали проект', condition: 'Поддержите нас' },
+            'mystery': { id: 'mystery', name: 'Загадка', img: 'assets/achievements/ach12.png', desc: 'Завершена ветка "Загадка"', condition: 'Раскрасьте 20 картинок с персонажами Скуби-Ду' },
+            'anaconda': { id: 'anaconda', name: 'Анаконда', img: 'assets/achievements/ach13.png', desc: 'Завершена ветка "Анаконда"', condition: 'Раскрасьте 20 картинок со змеей' }
         };
         
         // ==========================================
@@ -2920,6 +2849,7 @@
             { name: 'InfiArt', total: 288 },
             { name: 'Tooli-Art', total: 508 }
         ];
+        
         // ==========================================
         // API ВЫЗОВЫ
         // ==========================================
@@ -3008,139 +2938,197 @@
         }
         
         // ==========================================
+        // ВРЕМЕННЫЕ ЗАДАНИЯ
+        // ==========================================
+        
+        const TIME_TASKS = [
+            {
+                id: 'time_task_1',
+                title: 'Раскрасить дом Мадригаль',
+                description: 'Раскрасьте картинку с домом Мадригаль из мультфильма "Энканто"',
+                reward: 5,
+                deadline: '2026-03-29',
+                deadlineText: 'ДО 29.03.2026',
+                completed: false
+            }
+        ];
+        
+        function loadTimeTasksStatus() {
+            const saved = localStorage.getItem('time_tasks_completed');
+            if (saved) {
+                const completed = JSON.parse(saved);
+                TIME_TASKS.forEach(task => {
+                    task.completed = completed.includes(task.id);
+                });
+            }
+        }
+        
+        function saveTimeTaskCompleted(taskId) {
+            const completed = TIME_TASKS.filter(t => t.completed).map(t => t.id);
+            localStorage.setItem('time_tasks_completed', JSON.stringify(completed));
+        }
+        
+        function markTimeTaskCompleted(taskId) {
+            const task = TIME_TASKS.find(t => t.id === taskId);
+            if (task && !task.completed) {
+                task.completed = true;
+                saveTimeTaskCompleted(taskId);
+                renderTimeTasks();
+                return true;
+            }
+            return false;
+        }
+        
+        function toggleTimeTasks() {
+            const content = document.getElementById('timeTasksContent');
+            const arrow = document.getElementById('timeTasksArrow');
+            if (!content) return;
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.display = 'block';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+                renderTimeTasks();
+            }
+        }
+        
+        function renderTimeTasks() {
+            const container = document.getElementById('timeTasksList');
+            if (!container) return;
+            container.innerHTML = '';
+            TIME_TASKS.forEach(task => {
+                const isCompleted = task.completed;
+                const today = new Date();
+                const deadline = new Date(task.deadline);
+                const isExpired = today > deadline && !isCompleted;
+                const taskCard = document.createElement('div');
+                taskCard.className = `time-task-card ${isCompleted ? 'completed' : ''}`;
+                taskCard.innerHTML = `
+                    <div class="time-badge">${task.deadlineText}</div>
+                    <div class="time-header">
+                        <h3>${task.title}</h3>
+                        <p>${task.description}</p>
+                        <div class="time-reward">🎁 Награда: +${task.reward} ашетиков</div>
+                    </div>
+                    <div class="level-card">
+                        ${!isCompleted && !isExpired ? `
+                            <button class="time-task-btn" onclick="openTimeTaskUpload('${task.id}', ${task.reward})">
+                                <i class="fas fa-camera"></i> Отправить фото на проверку
+                            </button>
+                        ` : isCompleted ? `
+                            <div style="text-align: center; padding: 12px; color: var(--status-green);">
+                                <i class="fas fa-check-circle"></i> Задание выполнено! +${task.reward} ашетиков получено
+                            </div>
+                        ` : `
+                            <div style="text-align: center; padding: 12px; color: var(--status-red);">
+                                <i class="fas fa-clock"></i> Время выполнения истекло
+                            </div>
+                        `}
+                    </div>
+                `;
+                container.appendChild(taskCard);
+            });
+        }
+        
+        let currentTimeTaskId = null;
+        let currentTimeTaskReward = null;
+        
+        function openTimeTaskUpload(taskId, reward) {
+            console.log('⏰ openTimeTaskUpload called:', taskId, reward);
+            const task = TIME_TASKS.find(t => t.id === taskId);
+            if (!task || task.completed) {
+                if (tg) tg.showAlert('Это задание уже выполнено!');
+                return;
+            }
+            const today = new Date();
+            const deadline = new Date(task.deadline);
+            if (today > deadline) {
+                if (tg) tg.showAlert('Срок выполнения задания истек!');
+                return;
+            }
+            currentTimeTaskId = taskId;
+            currentTimeTaskReward = reward;
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.multiple = true;
+            fileInput.onchange = handleTimeTaskFilesSelected;
+            fileInput.click();
+        }
+        
+        function handleTimeTaskFilesSelected(event) {
+            const files = Array.from(event.target.files);
+            if (files.length === 0) return;
+            tempPhotos = files;
+            const previewContainer = document.getElementById('taskPhotoPreviewContainer');
+            if (previewContainer) {
+                previewContainer.innerHTML = '';
+                files.forEach((file) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.cssText = 'width: 70px; height: 70px; object-fit: cover; border-radius: 12px; margin: 5px; border: 2px solid var(--accent);';
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            const modal = document.getElementById('taskUploadModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                const submitBtn = modal.querySelector('.modal-action-btn');
+                if (submitBtn) {
+                    submitBtn.onclick = () => submitTimeTaskPhoto();
+                }
+            }
+        }
+        
+        async function submitTimeTaskPhoto() {
+            console.log('=== SUBMIT TIME TASK PHOTO ===');
+            if (isUploading) return;
+            if (!tempPhotos || tempPhotos.length === 0) {
+                if (tg) tg.showAlert('❌ Выберите хотя бы одно фото');
+                return;
+            }
+            isUploading = true;
+            try {
+                const formData = new FormData();
+                formData.append('user', userId.toString());
+                formData.append('title', `Временное задание: ${TIME_TASKS.find(t => t.id === currentTimeTaskId)?.title}`);
+                formData.append('id', currentTimeTaskId);
+                formData.append('level', '1');
+                formData.append('reward', currentTimeTaskReward.toString());
+                formData.append('type', 'time_task');
+                for (let i = 0; i < tempPhotos.length; i++) {
+                    formData.append('photos', tempPhotos[i]);
+                }
+                const response = await fetch(`${SERVER_URL}/api/check_time_task`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера: ${response.status}`);
+                }
+                const result = await response.json();
+                if (result && result.status === 'ok') {
+                    if (tg) tg.showAlert('✅ Фото отправлено на проверку!');
+                    closeTaskUploadModal();
+                } else {
+                    throw new Error(result?.message || 'Ошибка отправки');
+                }
+            } catch (error) {
+                console.error('❌ Ошибка:', error);
+                if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
+            } finally {
+                isUploading = false;
+            }
+        }
+        // ==========================================
         // ФУНКЦИИ ДЛЯ РАБОТЫ С ЗАДАНИЯМИ
         // ==========================================
-        // ==========================================
-        // ПОИСК МАРКЕРОВ В ОРГАНАЙЗЕРАХ
-        // ==========================================
         
-        function searchMarkerInOrganizers() {
-            const searchInput = document.getElementById('markerSearchInOrganizers');
-            const resultsDiv = document.getElementById('markerSearchResults');
-            
-            if (!searchInput || !resultsDiv) return;
-            
-            const searchQuery = searchInput.value.trim().toLowerCase();
-            
-            if (searchQuery.length === 0) {
-                resultsDiv.style.display = 'none';
-                return;
-            }
-            
-            const results = [];
-            
-            // Ищем во всех органайзерах
-            if (inventory.organizers) {
-                inventory.organizers.forEach(org => {
-                    if (org.cells) {
-                        for (let row = 0; row < org.rows; row++) {
-                            for (let col = 0; col < org.cols; col++) {
-                                const cell = org.cells[row]?.[col];
-                                if (cell && cell.length > 0) {
-                                    cell.forEach(marker => {
-                                        const markerNumber = marker.number.toString().toLowerCase();
-                                        if (markerNumber.includes(searchQuery)) {
-                                            results.push({
-                                                orgId: org.id,
-                                                orgName: org.name,
-                                                brand: marker.brand,
-                                                number: marker.number,
-                                                count: marker.count,
-                                                row: row,
-                                                col: col,
-                                                cellLabel: String.fromCharCode(65 + row) + (col + 1)
-                                            });
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Отображаем результаты
-            if (results.length === 0) {
-                resultsDiv.innerHTML = '<div class="no-results-found">🔍 Маркер не найден</div>';
-                resultsDiv.style.display = 'block';
-                return;
-            }
-            
-            // Группируем результаты по номеру маркера
-            const groupedResults = {};
-            results.forEach(res => {
-                const key = `${res.brand}_${res.number}`;
-                if (!groupedResults[key]) {
-                    groupedResults[key] = {
-                        brand: res.brand,
-                        number: res.number,
-                        locations: []
-                    };
-                }
-                groupedResults[key].locations.push({
-                    orgName: res.orgName,
-                    cellLabel: res.cellLabel,
-                    count: res.count,
-                    orgId: res.orgId,
-                    row: res.row,
-                    col: res.col
-                });
-            });
-            
-            let html = '<div style="margin-bottom: 10px;"><strong>🔍 Найдено маркеров:</strong> ' + results.length + '</div>';
-            
-            for (const [key, marker] of Object.entries(groupedResults)) {
-                html += `
-                    <div class="marker-search-result" onclick="openOrganizerWithMarker('${marker.locations[0].orgId}', ${marker.locations[0].row}, ${marker.locations[0].col})">
-                        <div class="marker-search-result-header">
-                            <span class="marker-search-result-brand">${marker.brand}</span>
-                            <span class="marker-search-result-number">№${marker.number}</span>
-                            <span class="marker-search-result-count">${results.filter(r => r.brand === marker.brand && r.number === marker.number).reduce((sum, r) => sum + r.count, 0)} шт</span>
-                        </div>
-                `;
-                
-                marker.locations.forEach(loc => {
-                    html += `
-                        <div class="marker-search-result-location">
-                            📦 ${loc.orgName} → ячейка ${loc.cellLabel} (${loc.count} шт)
-                        </div>
-                    `;
-                });
-                
-                html += `</div>`;
-            }
-            
-            resultsDiv.innerHTML = html;
-            resultsDiv.style.display = 'block';
-        }
-        
-        function openOrganizerWithMarker(orgId, row, col) {
-            // Открываем органайзер
-            const org = inventory.organizers.find(o => o.id === orgId);
-            if (!org) return;
-            
-            const nameEl = document.getElementById('selectedOrganizerName');
-            const viewEl = document.getElementById('selectedOrganizerView');
-            const listEl = document.getElementById('organizersList');
-            const resultsDiv = document.getElementById('markerSearchResults');
-            
-            if (nameEl) nameEl.innerHTML = `📦 ${org.name} (${org.rows}×${org.cols})`;
-            if (viewEl) viewEl.style.display = 'block';
-            if (listEl) listEl.style.display = 'none';
-            if (resultsDiv) resultsDiv.style.display = 'none';
-            
-            renderOrganizerGrid(org);
-            
-            // Подсвечиваем нужную ячейку
-            setTimeout(() => {
-                const cells = document.querySelectorAll('.organizer-cell');
-                const targetIndex = row * org.cols + col;
-                if (cells[targetIndex]) {
-                    cells[targetIndex].style.animation = 'highlight 1s ease-in-out 3';
-                    cells[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 100);
-        }
         function getLevelProgress(branchKey, levelIndex) {
             const progress = userProgress || {};
             const progressKey = `branch_${branchKey}_level_${levelIndex}`;
@@ -3186,38 +3174,35 @@
         // ==========================================
         
         async function checkBalanceStatus() {
-    console.log('💰 Checking balance for Scrooge status...');
-    console.log('Current balance:', user.balance);
-    console.log('Has Scrooge status:', user.unlockedStatuses.includes('Скрудж'));
-    
-    if (!user.unlockedStatuses.includes('Скрудж') && user.balance >= 2500) {
-        console.log('🎉 Unlocking Scrooge status!');
-        user.unlockedStatuses.push('Скрудж');
-        // ДОБАВЛЯЕМ ДОСТИЖЕНИЕ
-        if (!user.achievements.includes('scrooge')) {
-            user.achievements.push('scrooge');
-            console.log('🏆 Achievement added: scrooge');
-        }
-        saveUserData();
-        try {
-            await fetchAPI('/api/sync_status', {
-                user_id: userId,
-                status: 'Скрудж',
-                action: 'unlock'
-            });
-        } catch(e) {
-            console.error('Failed to sync with server:', e);
-        }
-        // Уведомление о статусе убрано
+            console.log('💰 Checking balance for Scrooge status...');
+            console.log('Current balance:', user.balance);
+            console.log('Has Scrooge status:', user.unlockedStatuses.includes('Скрудж'));
+            
+            if (!user.unlockedStatuses.includes('Скрудж') && user.balance >= 2500) {
+                console.log('🎉 Unlocking Scrooge status!');
+                user.unlockedStatuses.push('Скрудж');
+                if (!user.achievements.includes('scrooge')) {
+                    user.achievements.push('scrooge');
+                }
+                saveUserData();
+                try {
+                    await fetchAPI('/api/sync_status', {
+                        user_id: userId,
+                        status: 'Скрудж',
+                        action: 'unlock'
+                    });
+                } catch(e) {
+                    console.error('Failed to sync with server:', e);
+                }
                 if (tg && tg.HapticFeedback) {
                     tg.HapticFeedback.notificationOccurred('success');
                 }
-        updateUI();
-        renderBranchTasks();
-        return true;
-    }
-    return false;
-}
+                updateUI();
+                renderBranchTasks();
+                return true;
+            }
+            return false;
+        }
         
         // ==========================================
         // ПРОВЕРКА РАЗБЛОКИРОВКИ СТАТУСОВ
@@ -3235,26 +3220,21 @@
                     const isCompleted = isBranchCompleted(branchKey);
                     const isUnlocked = user.unlockedStatuses.includes(rewardStatus);
                     
-                    // Только если статус НЕ разблокирован И задание выполнено
                     if (isCompleted && !isUnlocked) {
-    console.log(`🎉 New status unlocked: ${rewardStatus}`);
-    user.unlockedStatuses.push(rewardStatus);
-    // ДОБАВЛЯЕМ ДОСТИЖЕНИЕ
-    if (!user.achievements.includes(branchKey)) {
-        user.achievements.push(branchKey);
-        console.log(`🏆 Achievement added: ${branchKey}`);
-    }
-    newlyUnlockedStatuses.push(rewardStatus);
-    statusUnlocked = true;
-}
+                        console.log(`🎉 New status unlocked: ${rewardStatus}`);
+                        user.unlockedStatuses.push(rewardStatus);
+                        if (!user.achievements.includes(branchKey)) {
+                            user.achievements.push(branchKey);
+                        }
+                        newlyUnlockedStatuses.push(rewardStatus);
+                        statusUnlocked = true;
+                    }
                 }
                 
-                // Сохраняем и обновляем UI ТОЛЬКО если есть новые статусы
                 if (statusUnlocked) {
                     saveUserData();
                     updateUI();
                     renderBranchTasks();
-                    
                     // Уведомление о статусе убрано - пользователь видит в приложении
                 }
             } catch (error) {
@@ -3476,6 +3456,7 @@
             tempPhotos = [];
             isUploading = false;
         }
+        
         // ==========================================
         // ОТОБРАЖЕНИЕ ЗАДАНИЙ
         // ==========================================
@@ -3717,7 +3698,6 @@
                         };
                     }
                     
-                    // Создаем изображение с fallback
                     const img = document.createElement('img');
                     img.src = ach.img;
                     img.alt = ach.name;
@@ -3925,12 +3905,10 @@
                 const div = document.createElement('div');
                 div.style.cssText = `padding:14px 16px; margin:10px 0; border-radius:14px; background:var(--card-bg); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color);`;
                 
-                // Левая часть - название статуса
                 const leftSpan = document.createElement('span');
                 leftSpan.style.cssText = `font-weight:500; font-size:15px; color:var(--text);`;
                 leftSpan.innerText = status;
                 
-                // Правая часть - фиксированная ширина и прижатие к правому краю
                 const rightSpan = document.createElement('span');
                 rightSpan.style.cssText = `display:inline-flex; align-items:center; gap:8px; white-space:nowrap;`;
                 
@@ -4221,7 +4199,7 @@
                             </div>
                         `;
                     }
-              } else if (key.startsWith('volume_')) {
+                } else if (key.startsWith('volume_')) {
                     const volumeId = key.replace('volume_', '');
                     const volume = VOLUMES_DATA.find(v => v.id === volumeId);
                     if (volume) {
@@ -4801,6 +4779,127 @@
         }
         
         // ==========================================
+        // ПОИСК МАРКЕРОВ В ОРГАНАЙЗЕРАХ
+        // ==========================================
+        
+        function searchMarkerInOrganizers() {
+            const searchInput = document.getElementById('markerSearchInOrganizers');
+            const resultsDiv = document.getElementById('markerSearchResults');
+            
+            if (!searchInput || !resultsDiv) return;
+            
+            const searchQuery = searchInput.value.trim().toLowerCase();
+            
+            if (searchQuery.length === 0) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+            
+            const results = [];
+            
+            if (inventory.organizers) {
+                inventory.organizers.forEach(org => {
+                    if (org.cells) {
+                        for (let row = 0; row < org.rows; row++) {
+                            for (let col = 0; col < org.cols; col++) {
+                                const cell = org.cells[row]?.[col];
+                                if (cell && cell.length > 0) {
+                                    cell.forEach(marker => {
+                                        const markerNumber = marker.number.toString().toLowerCase();
+                                        if (markerNumber.includes(searchQuery)) {
+                                            results.push({
+                                                orgId: org.id,
+                                                orgName: org.name,
+                                                brand: marker.brand,
+                                                number: marker.number,
+                                                count: marker.count,
+                                                row: row,
+                                                col: col,
+                                                cellLabel: String.fromCharCode(65 + row) + (col + 1)
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div class="no-results-found">🔍 Маркер не найден</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            const groupedResults = {};
+            results.forEach(res => {
+                const key = `${res.brand}_${res.number}`;
+                if (!groupedResults[key]) {
+                    groupedResults[key] = {
+                        brand: res.brand,
+                        number: res.number,
+                        locations: []
+                    };
+                }
+                groupedResults[key].locations.push({
+                    orgName: res.orgName,
+                    cellLabel: res.cellLabel,
+                    count: res.count,
+                    orgId: res.orgId,
+                    row: res.row,
+                    col: res.col
+                });
+            });
+            
+            let html = '<div style="margin-bottom: 10px;"><strong>🔍 Найдено маркеров:</strong> ' + results.length + '</div>';
+            
+            for (const [key, marker] of Object.entries(groupedResults)) {
+                html += `
+                    <div class="marker-search-result" onclick="openOrganizerWithMarker('${marker.locations[0].orgId}', ${marker.locations[0].row}, ${marker.locations[0].col})">
+                        <div class="marker-search-result-header">
+                            <span class="marker-search-result-brand">${marker.brand}</span>
+                            <span class="marker-search-result-number">№${marker.number}</span>
+                            <span class="marker-search-result-count">${results.filter(r => r.brand === marker.brand && r.number === marker.number).reduce((sum, r) => sum + r.count, 0)} шт</span>
+                        </div>
+                `;
+                marker.locations.forEach(loc => {
+                    html += `<div class="marker-search-result-location">📦 ${loc.orgName} → ячейка ${loc.cellLabel} (${loc.count} шт)</div>`;
+                });
+                html += `</div>`;
+            }
+            
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+        
+        function openOrganizerWithMarker(orgId, row, col) {
+            const org = inventory.organizers.find(o => o.id === orgId);
+            if (!org) return;
+            
+            const nameEl = document.getElementById('selectedOrganizerName');
+            const viewEl = document.getElementById('selectedOrganizerView');
+            const listEl = document.getElementById('organizersList');
+            const resultsDiv = document.getElementById('markerSearchResults');
+            
+            if (nameEl) nameEl.innerHTML = `📦 ${org.name} (${org.rows}×${org.cols})`;
+            if (viewEl) viewEl.style.display = 'block';
+            if (listEl) listEl.style.display = 'none';
+            if (resultsDiv) resultsDiv.style.display = 'none';
+            
+            renderOrganizerGrid(org);
+            
+            setTimeout(() => {
+                const cells = document.querySelectorAll('.organizer-cell');
+                const targetIndex = row * org.cols + col;
+                if (cells[targetIndex]) {
+                    cells[targetIndex].style.animation = 'highlight 1s ease-in-out 3';
+                    cells[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        }
+        
+        // ==========================================
         // ИНВЕНТАРЬ И ОРГАНАЙЗЕРЫ
         // ==========================================
         
@@ -4833,47 +4932,34 @@
         let currentCellRow = null;
         let currentCellCol = null;
         
-        function renderOrganizerGrid(org, highlightRow = null, highlightCol = null) {
-            const container = document.getElementById('selectedOrganizerGrid');
+        function renderOrganizers() {
+            const container = document.getElementById('organizersList');
             if (!container) return;
-            
-            const scrollWrapper = document.createElement('div');
-            scrollWrapper.style.cssText = 'overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;';
-            
-            const gridContainer = document.createElement('div');
-            gridContainer.className = 'organizer-grid';
-            
-            const cellWidth = Math.min(70, Math.floor((window.innerWidth - 40) / org.cols));
-            gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, minmax(${cellWidth}px, 70px)); gap: 6px; justify-content: start;`;
-            
-            for (let row = 0; row < org.rows; row++) {
-                for (let col = 0; col < org.cols; col++) {
-                    if (!org.cells[row]) org.cells[row] = [];
-                    if (!org.cells[row][col]) org.cells[row][col] = [];
-                    
-                    const cellMarkers = org.cells[row][col];
-                    const markerCount = cellMarkers.length;
-                    const cellLabel = String.fromCharCode(65 + row) + (col + 1);
-                    
-                    const cellDiv = document.createElement('div');
-                    cellDiv.className = `organizer-cell ${markerCount > 0 ? 'filled' : ''}`;
-                    if (highlightRow === row && highlightCol === col) {
-                        cellDiv.classList.add('highlight');
-                    }
-                    cellDiv.onclick = (function(r, c) {
-                        return function() { openCellModal(org.id, r, c); };
-                    })(row, col);
-                    cellDiv.innerHTML = `
-                        <div class="organizer-cell-label">${cellLabel}</div>
-                        <div class="organizer-cell-count">${markerCount}</div>
-                    `;
-                    gridContainer.appendChild(cellDiv);
-                }
+            if (!inventory.organizers || inventory.organizers.length === 0) {
+                container.innerHTML = '<div class="no-results" style="padding: 20px; text-align: center;">📦 Нет органайзеров. Нажмите "Создать органайзер"</div>';
+                return;
             }
-            
-            scrollWrapper.appendChild(gridContainer);
             container.innerHTML = '';
-            container.appendChild(scrollWrapper);
+            inventory.organizers.forEach((org) => {
+                const orgCard = document.createElement('div');
+                orgCard.style.cssText = 'background: var(--bg); border-radius: 16px; padding: 12px 16px; margin-bottom: 10px; border: 1px solid var(--border-color); cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;';
+                orgCard.onclick = () => openOrganizerView(org.id);
+                orgCard.innerHTML = `
+                    <div>
+                        <strong style="font-size: 16px;">📦 ${org.name}</strong>
+                        <div style="font-size: 12px; color: var(--text-gray); margin-top: 4px;">${org.rows}×${org.cols} | Маркеров: ${countMarkersInOrganizer(org)}</div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="photo-upload-btn" style="padding: 6px 12px; font-size: 12px;" onclick="event.stopPropagation(); addMarkersToOrganizer('${org.id}')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="photo-upload-btn" style="padding: 6px 12px; font-size: 12px; background: var(--status-red); color: white;" onclick="event.stopPropagation(); deleteOrganizer('${org.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(orgCard);
+            });
         }
         
         function countMarkersInOrganizer(org) {
@@ -4908,9 +4994,11 @@
             const container = document.getElementById('selectedOrganizerGrid');
             if (!container) return;
             const gridWrapper = document.createElement('div');
-            gridWrapper.style.cssText = 'overflow-x: auto;';
+            gridWrapper.style.cssText = 'overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;';
             const gridContainer = document.createElement('div');
-            gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, minmax(55px, 70px)); gap: 8px; justify-content: start;`;
+            gridContainer.className = 'organizer-grid';
+            const cellWidth = Math.min(70, Math.floor((window.innerWidth - 40) / org.cols));
+            gridContainer.style.cssText = `display: grid; grid-template-columns: repeat(${org.cols}, minmax(${cellWidth}px, 70px)); gap: 6px; justify-content: start;`;
             for (let row = 0; row < org.rows; row++) {
                 for (let col = 0; col < org.cols; col++) {
                     if (!org.cells[row]) org.cells[row] = [];
@@ -4919,9 +5007,9 @@
                     const markerCount = cellMarkers.length;
                     const cellLabel = String.fromCharCode(65 + row) + (col + 1);
                     const cellDiv = document.createElement('div');
-                    cellDiv.style.cssText = `background: var(--bg); border: 2px solid ${markerCount > 0 ? 'var(--accent)' : 'var(--border-color)'}; border-radius: 12px; padding: 10px 4px; text-align: center; cursor: pointer; transition: all 0.2s ease;`;
+                    cellDiv.className = `organizer-cell ${markerCount > 0 ? 'filled' : ''}`;
                     cellDiv.onclick = (function(r, c) { return function() { openCellModal(org.id, r, c); }; })(row, col);
-                    cellDiv.innerHTML = `<div style="font-size: 11px; color: var(--text-gray); margin-bottom: 4px;">${cellLabel}</div><div style="font-size: 16px; font-weight: bold; color: var(--accent);">${markerCount}</div>`;
+                    cellDiv.innerHTML = `<div class="organizer-cell-label">${cellLabel}</div><div class="organizer-cell-count">${markerCount}</div>`;
                     gridContainer.appendChild(cellDiv);
                 }
             }
@@ -5286,11 +5374,13 @@
             await checkBalanceStatus();
             await checkAndUnlockStatuses();
             if (user.status && !user.unlockedStatuses.includes(user.status)) user.status = 'Без статуса';
+            loadTimeTasksStatus();
             const savedTheme = localStorage.getItem('app_theme');
             if (savedTheme === 'custom') applyCustomTheme(true);
             else if (savedTheme && savedTheme !== 'light') setTheme(savedTheme);
             else setTheme(user.theme || 'light');
             renderBranchTasks();
+            renderTimeTasks();
             loadMarkers();
             renderCart();
             renderVolumes();

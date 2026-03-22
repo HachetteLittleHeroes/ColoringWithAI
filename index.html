@@ -2789,48 +2789,47 @@ function getLevelProgress(branchKey, levelIndex) {
         // ==========================================
         
         function openTaskUpload(branchKey, levelIndex) {
-    console.log('📸 openTaskUpload called:', branchKey, levelIndex);
-    
-    if (!branchKey || levelIndex === undefined) {
-        console.error('Invalid parameters:', branchKey, levelIndex);
-        if (tg) tg.showAlert('Ошибка: задание не выбрано');
-        return;
-    }
-    
-    const branch = TASK_BRANCHES[branchKey];
-    if (!branch) {
-        console.error('Branch not found:', branchKey);
-        if (tg) tg.showAlert('Ошибка: ветка задания не найдена');
-        return;
-    }
-    
-    const currentLevel = getCurrentLevelIndex(branchKey);
-    if (currentLevel !== levelIndex) {
-        console.warn('Wrong level! Current:', currentLevel, 'Attempted:', levelIndex);
-        if (tg) tg.showAlert('Этот уровень уже пройден или заблокирован!');
-        return;
-    }
-    
-    currentUploadBranch = branchKey;
-    currentUploadLevel = levelIndex;
-    
-    // Создаем input для выбора файлов
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.multiple = true;
-    fileInput.style.position = 'absolute';
-    fileInput.style.opacity = '0';
-    fileInput.style.pointerEvents = 'none';
-    document.body.appendChild(fileInput);
-    
-    fileInput.onchange = function(event) {
-        handleTaskFilesSelected(event);
-        document.body.removeChild(fileInput);
-    };
-    
-    fileInput.click();
-}
+            console.log('📸 openTaskUpload called:', branchKey, levelIndex);
+            
+            if (!branchKey || levelIndex === undefined) {
+                console.error('Invalid parameters:', branchKey, levelIndex);
+                if (tg) tg.showAlert('Ошибка: задание не выбрано');
+                return;
+            }
+            
+            const branch = TASK_BRANCHES[branchKey];
+            if (!branch) {
+                console.error('Branch not found:', branchKey);
+                if (tg) tg.showAlert('Ошибка: ветка задания не найдена');
+                return;
+            }
+            
+            const currentLevel = getCurrentLevelIndex(branchKey);
+            if (currentLevel !== levelIndex) {
+                console.warn('Wrong level! Current:', currentLevel, 'Attempted:', levelIndex);
+                if (tg) tg.showAlert('Этот уровень уже пройден или заблокирован!');
+                return;
+            }
+            
+            currentUploadBranch = branchKey;
+            currentUploadLevel = levelIndex;
+            
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.multiple = true;
+            fileInput.style.position = 'absolute';
+            fileInput.style.opacity = '0';
+            fileInput.style.pointerEvents = 'none';
+            document.body.appendChild(fileInput);
+            
+            fileInput.onchange = function(event) {
+                handleTaskFilesSelected(event);
+                document.body.removeChild(fileInput);
+            };
+            
+            fileInput.click();
+        }
         
         function handleTaskFilesSelected(event) {
             const files = Array.from(event.target.files);
@@ -3045,7 +3044,7 @@ async function submitTaskPhoto(event) {
                     completedDiv.className = 'level-card';
                     completedDiv.innerHTML = `
                         <div style="text-align: center; padding: 20px;">
-                            <div class="completed-badge" style="display: inline-block; margin-bottom: 10px;">✅ Ветка завершена</div>
+                            <div class="completed-badge" style="display: inline-block; margin-bottom: 10px;">✅ Задание выполнено</div>
                             <div style="color: var(--status-green);">
                                 <i class="fas fa-trophy"></i> Получен статус: ${BRANCH_REWARDS[branchKey]}
                             </div>
@@ -3054,25 +3053,62 @@ async function submitTaskPhoto(event) {
                     branchCard.appendChild(completedDiv);
                 } else if (currentLevelIndex < levels.length) {
                     const level = levels[currentLevelIndex];
-                    const currentProgress = getLevelProgress(branchKey, currentLevelIndex);
-                    const percent = (currentProgress / level.maxProgress) * 100;
                     
-                    const levelCard = document.createElement('div');
-                    levelCard.className = 'level-card';
-                    levelCard.innerHTML = `
-                        <div class="level-header">
-                            <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
-                            <span class="level-progress">${currentProgress}/${level.maxProgress}</span>
-                        </div>
-                        <div class="level-desc">${level.desc}</div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width: ${percent}%"></div>
-                        </div>
-                        <button class="task-submit-btn" onclick="openTaskUpload('${branchKey}', ${currentLevelIndex})">
-                            <i class="fas fa-camera"></i> Отправить фото на проверку
-                        </button>
-                    `;
-                    branchCard.appendChild(levelCard);
+                    if (branchKey === 'scrooge') {
+                        const currentProgress = user.balance;
+                        const percent = (currentProgress / level.maxProgress) * 100;
+                        const levelCard = document.createElement('div');
+                        levelCard.className = 'level-card';
+                        levelCard.innerHTML = `
+                            <div class="level-header">
+                                <span class="level-title">${level.title}</span>
+                                <span class="level-progress">${currentProgress}/${level.maxProgress} ашетиков</span>
+                            </div>
+                            <div class="level-desc">${level.desc}</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: ${Math.min(percent, 100)}%"></div>
+                            </div>
+                            <div class="level-desc" style="color: var(--accent); margin-top: 10px;">
+                                <i class="fas fa-coins"></i> Текущий баланс: ${user.balance} ашетиков
+                            </div>
+                        `;
+                        branchCard.appendChild(levelCard);
+                    } else if (branchKey === 'benefactor') {
+                        const levelCard = document.createElement('div');
+                        levelCard.className = 'level-card';
+                        levelCard.innerHTML = `
+                            <div class="level-header">
+                                <span class="level-title">${level.title}</span>
+                            </div>
+                            <div class="level-desc">${level.desc}</div>
+                            <button class="task-submit-btn" onclick="openSupportForStatus()">
+                                <i class="fas fa-heart"></i> Поддержать проект
+                            </button>
+                            <div class="level-desc" style="font-size: 12px; margin-top: 10px; color: var(--text-gray);">
+                                После подтверждения пожертвования статус будет разблокирован автоматически
+                            </div>
+                        `;
+                        branchCard.appendChild(levelCard);
+                    } else {
+                        const currentProgress = getLevelProgress(branchKey, currentLevelIndex);
+                        const percent = (currentProgress / level.maxProgress) * 100;
+                        const levelCard = document.createElement('div');
+                        levelCard.className = 'level-card';
+                        levelCard.innerHTML = `
+                            <div class="level-header">
+                                <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
+                                <span class="level-progress">${currentProgress}/${level.maxProgress}</span>
+                            </div>
+                            <div class="level-desc">${level.desc}</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                            </div>
+                            <button class="task-submit-btn" onclick="openTaskUpload('${branchKey}', ${currentLevelIndex})">
+                                <i class="fas fa-camera"></i> Отправить фото на проверку
+                            </button>
+                        `;
+                        branchCard.appendChild(levelCard);
+                    }
                 }
                 
                 container.appendChild(branchCard);
@@ -3103,7 +3139,7 @@ async function submitTaskPhoto(event) {
         // Проверяем баланс для статуса Скрудж (ВАЖНО!)
         await checkBalanceStatus();
         
-        // ==========================================
+      // ==========================================
         // ПРОВЕРКА РАЗБЛОКИРОВКИ СТАТУСОВ
         // ==========================================
         

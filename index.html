@@ -2970,10 +2970,15 @@
         
         const VOLUMES_DATA = [];
         for (let i = 0; i < 47; i++) {
+            // Индекс 34 соответствует тому "Les Grands Classiques Coliector" (35-й том, индекс 34)
+            let price = 2890;
+            if (i === 34) {  // Les Grands Classiques Coliector
+                price = 3800;
+            }
             VOLUMES_DATA.push({
                 id: `t${i + 1}`,
                 name: VOLUME_NAMES[i],
-                price: 2890,
+                price: price,
                 pages: 26,
                 img: `assets/img/t${i + 1}.png`
             });

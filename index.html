@@ -2144,6 +2144,148 @@
         .organizer-cell.highlight {
             animation: highlight 1s ease-in-out 3;
         }
+        /* ==========================================
+           ЗАДАНИЯ НА ВРЕМЯ
+           ========================================== */
+        .time-tasks-section {
+            border: 2px solid var(--accent);
+            background: rgba(255,149,0,0.05);
+            margin-top: 15px;
+        }
+        
+        .time-task-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .time-task-card.completed {
+            opacity: 0.6;
+            background: var(--bg);
+        }
+        
+        .time-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--status-red);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 1;
+        }
+        
+        .time-header {
+            background: linear-gradient(135deg, var(--accent), #ff9500);
+            padding: 14px 16px;
+            color: white;
+            padding-right: 100px;
+        }
+        
+        .time-header h3 {
+            font-size: 18px;
+            margin: 0 0 4px 0;
+        }
+        
+        .time-header p {
+            font-size: 12px;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .time-reward {
+            background: var(--status-green);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        
+        .time-task-btn {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .time-task-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .time-task-btn.completed {
+            background: var(--status-green);
+            opacity: 0.7;
+            cursor: default;
+        }
+        /* ==========================================
+           СТИЛИ ДЛЯ ОРГАНАЙЗЕРОВ
+           ========================================== */
+        .organizer-grid {
+            display: grid;
+            gap: 8px;
+            justify-content: start;
+            margin: 0 auto;
+            padding: 5px;
+            overflow-x: auto;
+        }
+        
+        .organizer-cell {
+            background: var(--bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 60px;
+        }
+        
+        .organizer-cell.filled {
+            border-color: var(--accent);
+            background: radial-gradient(circle, rgba(255,149,0,0.08) 0%, transparent 80%);
+        }
+        
+        .organizer-cell-label {
+            font-size: 11px;
+            color: var(--text-gray);
+            margin-bottom: 4px;
+        }
+        
+        .organizer-cell-count {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        @media (max-width: 480px) {
+            .organizer-cell {
+                min-width: 50px;
+                padding: 8px 2px;
+            }
+            .organizer-cell-label {
+                font-size: 9px;
+            }
+            .organizer-cell-count {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -4907,6 +5049,9 @@
             const saved = localStorage.getItem('coloring_inventory');
             if (saved) {
                 inventory = JSON.parse(saved);
+                // Убедимся, что organizers - массив
+                if (!inventory.organizers) inventory.organizers = [];
+                if (!inventory.userMarkers) inventory.userMarkers = {};
             } else {
                 const defaultCells = Array(5).fill().map(() => Array(5).fill().map(() => []));
                 inventory = {
@@ -5159,19 +5304,37 @@
         }
         
         function deleteOrganizer(orgId) {
+            console.log('🗑 Deleting organizer:', orgId);
             if (tg) {
                 tg.showConfirm('Удалить органайзер? Все маркеры будут потеряны!', (confirm) => {
                     if (confirm) {
-                        inventory.organizers = inventory.organizers.filter(o => o.id !== orgId);
-                        saveInventory();
-                        renderOrganizers();
+                        const index = inventory.organizers.findIndex(o => o.id === orgId);
+                        if (index !== -1) {
+                            inventory.organizers.splice(index, 1);
+                            saveInventory();
+                            renderOrganizers();
+                            // Если удалили открытый органайзер, закрываем просмотр
+                            const viewEl = document.getElementById('selectedOrganizerView');
+                            if (viewEl && viewEl.style.display === 'block') {
+                                closeOrganizerView();
+                            }
+                            if (tg) tg.showAlert('Органайзер удален');
+                        }
                     }
                 });
             } else {
                 if (confirm('Удалить органайзер? Все маркеры будут потеряны!')) {
-                    inventory.organizers = inventory.organizers.filter(o => o.id !== orgId);
-                    saveInventory();
-                    renderOrganizers();
+                    const index = inventory.organizers.findIndex(o => o.id === orgId);
+                    if (index !== -1) {
+                        inventory.organizers.splice(index, 1);
+                        saveInventory();
+                        renderOrganizers();
+                        const viewEl = document.getElementById('selectedOrganizerView');
+                        if (viewEl && viewEl.style.display === 'block') {
+                            closeOrganizerView();
+                        }
+                        alert('Органайзер удален');
+                    }
                 }
             }
         }

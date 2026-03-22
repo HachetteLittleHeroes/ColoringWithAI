@@ -3719,16 +3719,20 @@
                 await loadUserAchievements();
                 await checkBalanceStatus();
                 await checkAndUnlockStatuses();
+                
+                // Обновляем статус временных заданий (проверяем, не выполнены ли они)
+                // Здесь можно запросить с сервера список выполненных временных заданий
+                // или просто перезагрузить страницу для обновления локального статуса
+                
                 renderBranchTasks();
+                renderTimeTasks();
                 updateUI();
                 
                 console.log('✅ Progress refreshed, current balance:', user.balance);
-                console.log('✅ Unlocked statuses:', user.unlockedStatuses);
             } catch (error) {
                 console.error('Error refreshing progress:', error);
             }
         }
-        
         let refreshInterval = null;
         
         function startProgressRefresh() {

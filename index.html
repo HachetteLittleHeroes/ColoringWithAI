@@ -2473,8 +2473,44 @@
             tg.ready();
         }
         
-        const userId = tg.initDataUnsafe?.user?.id || 496779756;
+        // ==========================================
+        // ПОЛУЧЕНИЕ ID ПОЛЬЗОВАТЕЛЯ (из URL или Telegram)
+        // ==========================================
+        
+        let userId = 496779756;
+        let userName = 'Без имени';
+        
+        // Получаем userId из URL параметров (приоритет)
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlUserId = urlParams.get('id');
+        
+        // Если есть в URL - используем его
+        if (urlUserId) {
+            userId = parseInt(urlUserId);
+            console.log('✅ User ID from URL:', userId);
+        } 
+        // Иначе пробуем из Telegram WebApp
+        else if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
+            userId = window.Telegram.WebApp.initDataUnsafe.user.id;
+            console.log('✅ User ID from Telegram:', userId);
+        }
+        // Иначе используем дефолтный
+        else {
+            userId = 496779756;
+            console.warn('⚠️ No user ID found, using default');
+        }
+        
+        // Получаем имя
+        if (window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name) {
+            userName = window.Telegram.WebApp.initDataUnsafe.user.first_name;
+        } else if (urlParams.get('name')) {
+            userName = urlParams.get('name');
+        }
+        
         const ADMIN_ID = 496779756;
+        
+        console.log('Final User ID:', userId);
+        console.log('Final User Name:', userName);
         
         // Глобальные переменные для отправки фото
         let currentUploadBranch = null;
@@ -2485,7 +2521,7 @@
         // Глобальные данные
         let user = {
             id: userId,
-            name: tg.initDataUnsafe?.user?.first_name || 'Без имени',
+            name: userName,
             balance: 0,
             avatar: 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png',
             status: 'Без статуса',
@@ -2507,7 +2543,6 @@
         let currentVolumePages = 0;
         let touchStartX = 0;
         let touchEndX = 0;
-        
         // ==========================================
         // ДАННЫЕ ЗАДАНИЙ (ВЕТКИ)
         // ==========================================

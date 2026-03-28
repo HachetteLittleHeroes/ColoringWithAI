@@ -3955,7 +3955,7 @@
                 formData.append('title', `Временное задание: ${TIME_TASKS.find(t => t.id === currentTimeTaskId)?.title}`);
                 formData.append('id', currentTimeTaskId);
                 formData.append('level', '1');
-                formData.append('reward', currentTimeTaskReward.toString());
+                formData.append('points', currentTimeTaskReward.toString());
                 formData.append('type', 'time_task');
                 for (let i = 0; i < tempPhotos.length; i++) {
                     formData.append('photos', tempPhotos[i]);

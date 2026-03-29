@@ -3803,7 +3803,7 @@
                 title: 'Цвет настроения - зеленый',
                 description: 'Раскрась любую картинку с Бризгливостью из м/ф "Головоломка"',
                 reward: 5,
-                deadline: '2026-03-29',
+                deadline: '2026-04-05',
                 deadlineText: 'ДО 05.04.2026',
                 completed: false
             }
@@ -3850,42 +3850,53 @@
         }
         
         function renderTimeTasks() {
-            const container = document.getElementById('timeTasksList');
-            if (!container) return;
-            container.innerHTML = '';
-            TIME_TASKS.forEach(task => {
-                const isCompleted = task.completed;
-                const today = new Date();
-                const deadline = new Date(task.deadline);
-                const isExpired = today > deadline && !isCompleted;
-                const taskCard = document.createElement('div');
-                taskCard.className = `time-task-card ${isCompleted ? 'completed' : ''}`;
-                taskCard.innerHTML = `
-                    <div class="time-badge">${task.deadlineText}</div>
-                    <div class="time-header">
-                        <h3>${task.title}</h3>
-                        <p>${task.description}</p>
-                        <div class="time-reward">🎁 Награда: +${task.reward} ашетиков</div>
+    const container = document.getElementById('timeTasksList');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    TIME_TASKS.forEach(task => {
+        const isCompleted = task.completed;
+        const now = new Date();
+        
+        // Устанавливаем часовой пояс Москвы (UTC+3)
+        const moscowOffset = 3 * 60 * 60 * 1000; // 3 часа в миллисекундах
+        const nowMoscow = new Date(now.getTime() + moscowOffset);
+        
+        // Парсим дату дедлайна (формат YYYY-MM-DD)
+        const [year, month, day] = task.deadline.split('-');
+        const deadlineMoscow = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+        
+        // Сравниваем: если сейчас >= дата дедлайна (00:00 следующего дня), то время истекло
+        const isExpired = nowMoscow >= deadlineMoscow;
+        
+        const taskCard = document.createElement('div');
+        taskCard.className = `time-task-card ${isCompleted ? 'completed' : ''}`;
+        taskCard.innerHTML = `
+            <div class="time-badge">${task.deadlineText}</div>
+            <div class="time-header">
+                <h3>${task.title}</h3>
+                <p>${task.description}</p>
+                <div class="time-reward">🎁 Награда: +${task.reward} ашетиков</div>
+            </div>
+            <div class="level-card">
+                ${!isCompleted && !isExpired ? `
+                    <button class="time-task-btn" onclick="openTimeTaskUpload('${task.id}', ${task.reward})">
+                        <i class="fas fa-camera"></i> Отправить фото на проверку
+                    </button>
+                ` : isCompleted ? `
+                    <div style="text-align: center; padding: 12px; color: var(--status-green);">
+                        <i class="fas fa-check-circle"></i> Задание выполнено! +${task.reward} ашетиков получено
                     </div>
-                    <div class="level-card">
-                        ${!isCompleted && !isExpired ? `
-                            <button class="time-task-btn" onclick="openTimeTaskUpload('${task.id}', ${task.reward})">
-                                <i class="fas fa-camera"></i> Отправить фото на проверку
-                            </button>
-                        ` : isCompleted ? `
-                          <div style="text-align: center; padding: 12px; color: var(--status-green);">
-    <i class="fas fa-trophy"></i> Задание выполнено! Статус "${task.rewardStatus}" и достижение получены!
-</div>
-                        ` : `
-                            <div style="text-align: center; padding: 12px; color: var(--status-red);">
-                                <i class="fas fa-clock"></i> Время выполнения истекло
-                            </div>
-                        `}
+                ` : `
+                    <div style="text-align: center; padding: 12px; color: var(--status-red);">
+                        <i class="fas fa-clock"></i> Время выполнения истекло
                     </div>
-                `;
-                container.appendChild(taskCard);
-            });
-        }
+                `}
+            </div>
+        `;
+        container.appendChild(taskCard);
+    });
+}
         
         let currentTimeTaskId = null;
         let currentTimeTaskReward = null;

@@ -3125,57 +3125,78 @@
     </div>
 
     <script>
-        // ==========================================
-        // КОНФИГУРАЦИЯ И ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-        // ==========================================
-        
-        const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io';
-        const MARKER_PRICE = 75;
-        
-        // Telegram WebApp
-        const tg = window.Telegram?.WebApp || {
-            showAlert: (msg) => alert(msg),
-            showConfirm: (msg, callback) => callback(confirm(msg)),
-            initDataUnsafe: { user: { id: 496779756, first_name: 'Без имени' } },
-            HapticFeedback: { notificationOccurred: () => {} }
-        };
-        
-        if (window.Telegram?.WebApp) {
-            tg.expand();
-            tg.ready();
-        }
-        
-        // ==========================================
-        // ПОЛУЧЕНИЕ ID ПОЛЬЗОВАТЕЛЯ (из URL или Telegram)
+   // ==========================================
+        // ПОЛУЧЕНИЕ ID ПОЛЬЗОВАТЕЛЯ (с постоянным гостеным ID)
         // ==========================================
         
-        let userId = 496779756;
+        let userId = null;
         let userName = 'Без имени';
         
         const urlParams = new URLSearchParams(window.location.search);
         const urlUserId = urlParams.get('id');
         
-        if (urlUserId) {
-            userId = parseInt(urlUserId);
-            console.log('✅ User ID from URL:', userId);
-        } else if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
-            userId = window.Telegram.WebApp.initDataUnsafe.user.id;
-            console.log('✅ User ID from Telegram:', userId);
-        } else {
-            userId = 496779756;
-            console.warn('⚠️ No user ID found, using default');
+        // Функция для генерации уникального гостевого ID
+        function generateGuestId() {
+            // Используем существующий, если есть
+            const existingId = localStorage.getItem('coloring_permanent_guest_id');
+            if (existingId) {
+                console.log('🔄 Using existing guest ID:', existingId);
+                return existingId;
+            }
+            // Создаем новый постоянный ID
+            const newId = 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+            localStorage.setItem('coloring_permanent_guest_id', newId);
+            console.log('🆕 New permanent guest ID created:', newId);
+            return newId;
         }
         
-        if (window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name) {
-            userName = window.Telegram.WebApp.initDataUnsafe.user.first_name;
-        } else if (urlParams.get('name')) {
+        // Определяем ID пользователя
+        if (urlUserId) {
+            // Приоритет 1: ID из URL (максимальный приоритет)
+            userId = urlUserId;
+            console.log('✅ User ID from URL:', userId);
+            // Сохраняем как постоянный гостевой ID, если это гостевой формат
+            if (userId.toString().startsWith('guest_')) {
+                localStorage.setItem('coloring_permanent_guest_id', userId);
+            }
+        } 
+        else if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
+            // Приоритет 2: ID из Telegram WebApp
+            userId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+            console.log('✅ User ID from Telegram:', userId);
+            // Получаем имя из Telegram
+            userName = window.Telegram.WebApp.initDataUnsafe.user.first_name || userName;
+        } 
+        else {
+            // Приоритет 3: Постоянный гостевой ID
+            userId = generateGuestId();
+            console.log('✅ Using permanent guest ID:', userId);
+        }
+        
+        // Для гостевых ID сохраняем имя в localStorage
+        if (userId && userId.toString().startsWith('guest_')) {
+            const savedName = localStorage.getItem('coloring_guest_name');
+            if (savedName) {
+                userName = savedName;
+            }
+        }
+        
+        // Сохраняем ID для будущих сессий
+        localStorage.setItem('coloring_user_id', userId);
+        
+        // Получаем имя из URL, если есть
+        if (urlParams.get('name')) {
             userName = urlParams.get('name');
+            if (userId.toString().startsWith('guest_')) {
+                localStorage.setItem('coloring_guest_name', userName);
+            }
         }
         
         const ADMIN_ID = 496779756;
         
-        console.log('Final User ID:', userId);
-        console.log('Final User Name:', userName);
+        console.log('🎯 Final User ID:', userId);
+        console.log('👤 Final User Name:', userName);
+        console.log('🔧 Is Admin:', userId == ADMIN_ID);
         
         // Глобальные переменные для отправки фото
         let currentUploadBranch = null;
@@ -3203,9 +3224,9 @@
         let markersLoading = false;
         let userProgress = {};
         let claimedSeasonRewards = {
-    free: [],
-    premium: []
-};
+            free: [],
+            premium: []
+        };
         
         // Переменные для томов
         let currentVolumeId = null;

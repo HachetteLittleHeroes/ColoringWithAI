@@ -4860,10 +4860,19 @@
         
         
         function saveUserData() {
-            localStorage.setItem('coloring_user', JSON.stringify(user));
-            localStorage.setItem('coloring_cart', JSON.stringify(cart));
-            updateUI();
+    localStorage.setItem('coloring_user', JSON.stringify(user));
+    localStorage.setItem('coloring_cart', JSON.stringify(cart));
+    
+    // Сохраняем гостевой ID, если это гость
+    if (userId && userId.toString().startsWith('guest_')) {
+        localStorage.setItem('coloring_permanent_guest_id', userId);
+        if (user.name !== 'Без имени') {
+            localStorage.setItem('coloring_guest_name', user.name);
         }
+    }
+    
+    updateUI();
+}
         // ==========================================
         // МАРКЕРЫ
         // ==========================================

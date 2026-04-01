@@ -506,19 +506,14 @@
         /* ==========================================
            7. ЗАДАНИЯ (ВЕТКИ)
            ========================================== */
-       .tasks-section {
-    background: var(--bg-header);
-    border-radius: 24px;
-    margin: 15px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-}
-
-/* Добавляем обводку цветом акцента */
-.tasks-section {
-    border: 2px solid var(--accent);
-    background: rgba(255,149,0,0.05);
-}
+        .tasks-section {
+            background: var(--bg-header);
+            border-radius: 24px;
+            margin: 15px;
+            overflow: hidden;
+            border: 2px solid var(--accent);
+            background: rgba(255,149,0,0.05);
+        }
 
         .tasks-header {
             display: flex;
@@ -594,44 +589,44 @@
             margin: 0;
         }
 
-      .level-card {
-    padding: 16px;
-    border-bottom: 1px solid var(--border-color);
-    text-align: left !important;  /* ДОБАВИТЬ */
-}
+        .level-card {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left !important;
+        }
 
-.level-card:last-child {
-    border-bottom: none;
-}
+        .level-card:last-child {
+            border-bottom: none;
+        }
 
-.level-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    text-align: left !important;  /* ДОБАВИТЬ */
-}
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            text-align: left !important;
+        }
 
-.level-title {
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--text);
-    text-align: left !important;  /* ДОБАВИТЬ */
-}
+        .level-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text);
+            text-align: left !important;
+        }
 
-.level-progress {
-    font-size: 14px;
-    color: var(--accent);
-    font-weight: 600;
-    text-align: right;  /* ОСТАВЛЯЕМ СПРАВА */
-}
+        .level-progress {
+            font-size: 14px;
+            color: var(--accent);
+            font-weight: 600;
+            text-align: right;
+        }
 
-.level-desc {
-    font-size: 13px;
-    color: var(--text-gray);
-    margin-bottom: 12px;
-    text-align: left !important;  /* ДОБАВИТЬ */
-}
+        .level-desc {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-bottom: 12px;
+            text-align: left !important;
+        }
 
         .progress-bar-container {
             background: var(--border-color);
@@ -670,57 +665,35 @@
         }
         
         /* Выравнивание текста в подзаданиях */
-.subtask-card {
-    margin-bottom: 15px;
-    padding: 10px;
-    background: var(--bg);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    text-align: left !important; /* Добавьте эту строку */
-}
+        .subtask-card {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: left !important;
+        }
 
-.subtask-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-    text-align: left; /* Добавьте эту строку */
-}
+        .subtask-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            text-align: left;
+        }
 
-.subtask-name {
-    font-weight: 600;
-    font-size: 14px;
-    color: var(--text);
-    text-align: left; /* Добавьте эту строку */
-}
+        .subtask-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+            text-align: left;
+        }
 
-.subtask-progress {
-    font-size: 12px;
-    color: var(--accent);
-    text-align: right; /* Это оставляем справа */
-}
-
-.level-desc {
-    font-size: 13px;
-    color: var(--text-gray);
-    margin-bottom: 12px;
-    text-align: left; /* Добавьте эту строку */
-}
-
-.level-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    text-align: left; /* Добавьте эту строку */
-}
-
-.level-title {
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--text);
-    text-align: left; /* Добавьте эту строку */
-}
+        .subtask-progress {
+            font-size: 12px;
+            color: var(--accent);
+            text-align: right;
+        }
         
         .subtask-btn {
             padding: 8px;
@@ -1539,7 +1512,6 @@
             font-size: 15px;
             cursor: pointer;
         }
-
         /* ==========================================
            16. ИИ ПАЛИТРА
            ========================================== */
@@ -1708,6 +1680,7 @@
             border-radius: 10px;
             font-weight: 900;
         }
+
         /* ==========================================
            18. МОДАЛЬНЫЕ ОКНА
            ========================================== */
@@ -1811,7 +1784,6 @@
             color: var(--text);
             font-size: 16px;
         }
-
         /* ==========================================
            19. ИНВЕНТАРЬ И ОРГАНАЙЗЕРЫ
            ========================================== */
@@ -2146,171 +2118,157 @@
             cursor: default;
         }
 
-/* ==========================================
-   22. ЗАДАНИЯ ОТ НАШИХ ДРУЗЕЙ
-   ========================================== */
+        /* ==========================================
+           22. ЗАДАНИЯ ОТ НАШИХ ДРУЗЕЙ
+           ========================================== */
+        .friend-tasks-section {
+            border: 2px solid var(--accent);
+            background: rgba(255,149,0,0.05);
+            margin: 15px;
+            border-radius: 24px;
+            overflow: hidden;
+        }
 
-/* Основная секция */
-.friend-tasks-section {
-    border: 2px solid var(--accent);
-    background: rgba(255,149,0,0.05);
-    margin: 15px;
-    border-radius: 24px;
-    overflow: hidden;
-}
+        .friend-tasks-section .tasks-header {
+            width: 100%;
+            background: var(--bg-header);
+            padding: 18px 20px;
+            border: none;
+            color: var(--text);
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
 
-/* Заголовок секции - как в других блоках */
-.friend-tasks-section .tasks-header {
-    width: 100%;
-    background: var(--bg-header);
-    padding: 18px 20px;
-    border: none;
-    color: var(--text);
-    font-weight: 700;
-    font-size: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-}
+        .friend-tasks-section .tasks-header span {
+            color: var(--text);
+        }
 
-.friend-tasks-section .tasks-header span {
-    color: var(--text);
-}
+        .friend-tasks-section .tasks-header i {
+            transition: transform 0.3s;
+            color: var(--text-gray);
+        }
 
-.friend-tasks-section .tasks-header i {
-    transition: transform 0.3s;
-    color: var(--text-gray);
-}
+        .friend-tasks-section .tasks-content {
+            padding: 0 20px 20px;
+            background: var(--bg-header);
+        }
 
-/* Контент секции */
-.friend-tasks-section .tasks-content {
-    padding: 0 20px 20px;
-    background: var(--bg-header);
-}
+        .friend-header {
+            background: var(--accent-gradient);
+            padding: 12px 16px;
+            color: white;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            border-radius: 20px 20px 0 0;
+        }
 
-/* Карточка задания - такой же градиент как во временных заданиях */
-.friend-header {
-    background: var(--accent-gradient);
-    padding: 12px 16px;
-    color: white;
-    width: 100%;
-    box-sizing: border-box;
-    position: relative;
-    border-radius: 20px 20px 0 0;
-}
+        .friend-task-card {
+            background: var(--card-bg);
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            transition: all 0.2s;
+            position: relative;
+        }
 
-.friend-task-card {
-    background: var(--card-bg);
-    margin-bottom: 16px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    transition: all 0.2s;
-    position: relative;
-}
+        .friend-task-card.completed {
+            opacity: 0.6;
+            background: var(--bg);
+        }
 
-.friend-task-card.completed {
-    opacity: 0.6;
-    background: var(--bg);
-}
+        .friend-header h3 {
+            font-size: 16px;
+            margin: 0 0 4px 0;
+            line-height: 1.3;
+            word-break: break-word;
+        }
 
-.friend-header h3 {
-    font-size: 16px;
-    margin: 0 0 4px 0;
-    line-height: 1.3;
-    word-break: break-word;
-}
+        .friend-header p {
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.95;
+            margin: 0 0 6px 0;
+            word-break: break-word;
+            display: block;
+            width: 100%;
+        }
 
-.friend-header p {
-    font-size: 13px;
-    font-weight: 500;
-    opacity: 0.95;
-    margin: 0 0 6px 0;
-    word-break: break-word;
-    display: block;
-    width: 100%;
-}
+        .friend-reward {
+            background: #ffd700;
+            color: #333;
+            display: block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-top: 8px;
+            font-weight: 600;
+            width: 100%;
+            box-sizing: border-box;
+            white-space: normal;
+            word-break: break-word;
+            text-align: center;
+            line-height: 1.3;
+        }
 
-.friend-reward {
-    background: #ffd700;
-    color: #333;
-    display: block;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    margin-top: 8px;
-    font-weight: 600;
-    width: 100%;
-    box-sizing: border-box;
-    white-space: normal;
-    word-break: break-word;
-    text-align: center;
-    line-height: 1.3;
-}
+        .friend-task-btn {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-.friend-task-btn {
-    width: 100%;
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 14px;
-    margin-top: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
+        .friend-task-btn:active {
+            transform: scale(0.98);
+        }
 
-.friend-task-btn:active {
-    transform: scale(0.98);
-}
+        .friend-channel-btn {
+            width: 100%;
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
 
-.friend-channel-btn {
-    width: 100%;
-    background: #ff0000;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 14px;
-    margin-top: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
-}
+        .friend-channel-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
 
-.friend-channel-btn:active {
-    transform: scale(0.98);
-    opacity: 0.9;
-}
+        .friend-task-card .level-card {
+            padding: 16px;
+            border-top: none;
+            background: var(--card-bg);
+        }
 
-.friend-task-card .level-card {
-    padding: 16px;
-    border-top: none;
-    background: var(--card-bg);
-}
-
-.level-desc {
-    font-size: 13px;
-    color: var(--text-gray);
-    margin-top: 12px;
-    text-align: center;
-}
-
-/* Убираем бейдж */
-.friend-badge {
-    display: none;
-}
-
+        .friend-badge {
+            display: none;
+        }
         /* ==========================================
            23. ОРГАНАЙЗЕРЫ
            ========================================== */
@@ -2524,6 +2482,230 @@
         .organizer-cell.highlight {
             animation: highlight 1s ease-in-out 3;
         }
+
+        /* ==========================================
+           SEASON PASS СТИЛИ
+           ========================================== */
+        .season-pass-section {
+            border: 2px solid var(--accent);
+            background: rgba(255,149,0,0.05);
+            margin: 15px;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .season-pass-premium-status {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .season-pass-premium-status i {
+            color: #ffd700;
+            margin-right: 8px;
+        }
+
+        .season-pass-premium-status .active {
+            color: #ffd700;
+        }
+        /* Заблокированные уровни */
+.sp-level-card.locked {
+    opacity: 0.6;
+    filter: blur(4px);
+    pointer-events: none;
+    position: relative;
+}
+
+.sp-level-card.locked::after {
+    content: "🔒 Уровень заблокирован";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+}
+/* Первый уровень никогда не размываем */
+.sp-level-card:first-child {
+    filter: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+.sp-level-card:first-child::after {
+    display: none;
+}
+/* Заблокированные подзадания внутри уровня */
+.sp-level-card.locked .subtask-card {
+    filter: blur(4px);
+    pointer-events: none;
+}
+
+/* Для завершенных уровней - прозрачность, но без размытия */
+.sp-level-card.completed {
+    opacity: 0.7;
+    background: var(--bg);
+}
+
+        .sp-level-rewards {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .sp-reward-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 12px;
+            background: var(--bg);
+            font-size: 12px;
+        }
+
+        .sp-reward-item.free {
+            border: 1px solid var(--accent);
+        }
+
+        .sp-reward-item.premium {
+            border: 1px solid #ffd700;
+            opacity: 0.5;
+        }
+
+        .sp-reward-item.premium.unlocked {
+            opacity: 1;
+            background: rgba(255,215,0,0.1);
+        }
+
+        .sp-reward-claimed {
+            color: var(--status-green);
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .sp-reward-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        /* ==========================================
+           SEASON PASS СПЕЦИАЛЬНЫЕ СТИЛИ
+           ========================================== */
+        .sp-level-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .sp-level-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .sp-level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .sp-level-number {
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--accent);
+        }
+
+        .sp-level-xp {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+
+        .sp-level-rewards {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .sp-reward-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            background: var(--bg);
+            font-size: 12px;
+        }
+
+        .sp-reward-item.free {
+            border: 1px solid var(--accent);
+        }
+
+        .sp-reward-item.premium {
+            border: 1px solid #ffd700;
+            opacity: 0.5;
+        }
+
+        .sp-reward-item.premium.unlocked {
+            opacity: 1;
+            background: rgba(255,215,0,0.1);
+        }
+
+        .sp-reward-claimed {
+            color: var(--status-green);
+            font-size: 10px;
+            margin-top: 8px;
+        }
+
+        .sp-reward-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .subtask-card {
+            margin-bottom: 20px;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .subtask-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .level-desc {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-bottom: 12px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -2638,16 +2820,28 @@
             </div>
         </div>
 
-       <div class="showcase-container">
-    <h3>Витрина Топ-3</h3>
-    <div class="showcase-grid">
-        <div class="showcase-slot" id="slot-0" onclick="openShowcaseSelector(0)"><i class="fas fa-plus"></i></div>
-        <div class="showcase-slot" id="slot-1" onclick="openShowcaseSelector(1)"><i class="fas fa-plus"></i></div>
-        <div class="showcase-slot" id="slot-2" onclick="openShowcaseSelector(2)"><i class="fas fa-plus"></i></div>
-    </div>
-    <div class="showcase-info" onclick="openAchievementsGallery()">Нажмите для просмотра всех достижений</div>
-</div>
+        <!-- ========== SEASON PASS ========== -->
+        <div class="tasks-section season-pass-section" id="seasonPassSection">
+            <button class="tasks-header" onclick="toggleSeasonPass()">
+                <span>🌸 Сезонный пропуск</span>
+                <i class="fas fa-chevron-down" id="seasonPassArrow"></i>
+            </button>
+            <div id="seasonPassContent" class="tasks-content" style="display: none;">
+                <!-- Блок премиум статуса скрыт -->
+<div id="seasonPassPremiumStatus" style="display: none;"></div>
+                <div id="seasonPassTasksList"></div>
+            </div>
+        </div>
 
+        <div class="showcase-container">
+            <h3>Витрина Топ-3</h3>
+            <div class="showcase-grid">
+                <div class="showcase-slot" id="slot-0" onclick="openShowcaseSelector(0)"><i class="fas fa-plus"></i></div>
+                <div class="showcase-slot" id="slot-1" onclick="openShowcaseSelector(1)"><i class="fas fa-plus"></i></div>
+                <div class="showcase-slot" id="slot-2" onclick="openShowcaseSelector(2)"><i class="fas fa-plus"></i></div>
+            </div>
+            <div class="showcase-info" onclick="openAchievementsGallery()">Нажмите для просмотра всех достижений</div>
+        </div>
         <!-- ========== МОЙ ИНВЕНТАРЬ ========== -->
         <div class="inventory-main-block">
             <div class="inventory-header" onclick="toggleInventoryBlock()">
@@ -2662,7 +2856,6 @@
                         <i class="fas fa-chevron-down" id="organizersArrow"></i>
                     </div>
                     <div id="organizersBlockContent" class="subblock-content">
-                        <!-- Поиск маркеров -->
                         <div class="search-box" style="margin-bottom: 15px;">
                             <i class="fas fa-search"></i>
                             <input type="text" id="markerSearchInOrganizers" placeholder="Поиск маркера по номеру..." oninput="searchMarkerInOrganizers()">
@@ -2719,7 +2912,6 @@
             </div>
         </div>
     </div>
-
     <!-- ========== МАРКЕРЫ ========== -->
     <div id="markers" class="page">
         <div class="header">
@@ -2788,6 +2980,7 @@
             </div>
         </div>
     </div>
+
     <!-- ========== НАВИГАЦИЯ ========== -->
     <nav class="nav">
         <button id="btn-profile" class="nav-btn active" onclick="tab('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
@@ -2796,7 +2989,6 @@
         <button id="btn-aipalette" class="nav-btn" onclick="tab('aipalette')"><i class="fas fa-magic"></i><span>ИИ Палитра</span></button>
         <button id="btn-cart" class="nav-btn" onclick="tab('cart')"><i class="fas fa-shopping-cart"></i><span>Корзина</span><span id="cartBadge" class="badge" style="display:none;">0</span></button>
     </nav>
-
     <!-- ========== МОДАЛЬНЫЕ ОКНА ========== -->
 
     <!-- Модалка изменения имени -->
@@ -2806,7 +2998,6 @@
             <input type="text" id="newNameInput" placeholder="Введите ник...">
             <button class="modal-action-btn" onclick="saveNewNickname()">Сохранить ник</button>
             <hr>
-            <button class="modal-close-btn" style="background: var(--status-red);" onclick="resetAllData()">Сбросить весь прогресс</button>
             <button class="modal-close-btn" onclick="closeNameModal()">Отмена</button>
         </div>
     </div>
@@ -2932,12 +3123,13 @@
             </div>
         </div>
     </div>
+
     <script>
         // ==========================================
         // КОНФИГУРАЦИЯ И ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
         // ==========================================
         
-        const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io';
+        const SERVER_URL = 'https://bot-hachettelittleheroes.amvera.io';
         const MARKER_PRICE = 75;
         
         // Telegram WebApp
@@ -2988,7 +3180,7 @@
         // Глобальные переменные для отправки фото
         let currentUploadBranch = null;
         let currentUploadLevel = null;
-        let currentSubtaskData = null; // Для подпунктов
+        let currentSubtaskData = null;
         let tempPhotos = [];
         let isUploading = false;
         
@@ -3010,6 +3202,10 @@
         let markersDB = [];
         let markersLoading = false;
         let userProgress = {};
+        let claimedSeasonRewards = {
+    free: [],
+    premium: []
+};
         
         // Переменные для томов
         let currentVolumeId = null;
@@ -3055,25 +3251,39 @@
         }
         
         async function loadUserProgress() {
-            try {
-                const savedProgress = localStorage.getItem(`coloring_progress_${userId}`);
-                if (savedProgress) {
-                    userProgress = JSON.parse(savedProgress);
-                }
-                
-                const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
-                const stats = await response.json();
-                console.log('📊 Loaded stats from server:', stats);
-                if (stats) {
-                    userProgress = { ...userProgress, ...stats };
-                    localStorage.setItem(`coloring_progress_${userId}`, JSON.stringify(userProgress));
-                }
-                return userProgress;
-            } catch (error) {
-                console.error('Ошибка загрузки прогресса:', error);
-                return {};
-            }
+    try {
+        const savedProgress = localStorage.getItem(`coloring_progress_${userId}`);
+        if (savedProgress) {
+            userProgress = JSON.parse(savedProgress);
         }
+        
+        const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
+        const stats = await response.json();
+        console.log('📊 Loaded stats from server:', stats);
+        
+        if (stats) {
+            // Объединяем данные с сервера с локальными
+            userProgress = { ...userProgress, ...stats };
+            
+            // Особенно важно для Season Pass — проверяем подзадания
+            for (let level = 0; level < 5; level++) {
+                for (let subtask = 0; subtask < 3; subtask++) {
+                    const serverKey = `branch_season_pass_level_${level}_subtask_${subtask}`;
+                    if (stats[serverKey] !== undefined) {
+                        userProgress[serverKey] = stats[serverKey];
+                        console.log(`📥 Загружено подзадание ${level+1}.${subtask+1}: ${stats[serverKey]}`);
+                    }
+                }
+            }
+            
+            localStorage.setItem(`coloring_progress_${userId}`, JSON.stringify(userProgress));
+        }
+        return userProgress;
+    } catch (error) {
+        console.error('Ошибка загрузки прогресса:', error);
+        return {};
+    }
+}
         
         async function loadUnlockedStatuses() {
             try {
@@ -3115,10 +3325,14 @@
         // ==========================================
         
         function getSubtaskProgress(branchKey, levelIndex, subtaskIndex) {
-            const progress = userProgress || {};
-            const subtaskKey = `branch_${branchKey}_level_${levelIndex}_subtask_${subtaskIndex}`;
-            return progress[subtaskKey] || 0;
-        }
+    const progress = userProgress || {};
+    const subtaskKey = `branch_${branchKey}_level_${levelIndex}_subtask_${subtaskIndex}`;
+    const value = progress[subtaskKey] || 0;
+    if (branchKey === 'season_pass') {
+        console.log(`[getSubtaskProgress] Уровень ${levelIndex + 1}, подзадание ${subtaskIndex + 1}: ${value}`);
+    }
+    return value;
+}
         
         function updateSubtaskProgress(branchKey, levelIndex, subtaskIndex, increment = 1) {
             const progress = userProgress || {};
@@ -3160,41 +3374,78 @@
         }
         
         function isLevelCompleted(branchKey, levelIndex) {
-            const level = TASK_BRANCHES[branchKey]?.levels[levelIndex];
-            if (!level) return false;
+    const level = TASK_BRANCHES[branchKey]?.levels[levelIndex];
+    if (!level) return false;
+    
+    // Для Season Pass всегда проверяем подзадания
+    if (branchKey === 'season_pass') {
+        if (level.subtasks && level.subtasks.length > 0) {
+            let totalCompleted = 0;
+            let totalRequired = 0;
             
-            if (level.subtasks) {
-                let totalCompleted = 0;
-                let totalRequired = 0;
-                
-                level.subtasks.forEach((subtask, subtaskIndex) => {
-                    const completed = getSubtaskProgress(branchKey, levelIndex, subtaskIndex);
-                    totalCompleted += Math.min(completed, subtask.required);
-                    totalRequired += subtask.required;
-                });
-                
-                return totalCompleted >= totalRequired;
-            }
+            level.subtasks.forEach((subtask, subtaskIndex) => {
+                const completed = getSubtaskProgress(branchKey, levelIndex, subtaskIndex);
+                totalCompleted += Math.min(completed, subtask.required);
+                totalRequired += subtask.required;
+            });
             
-            const currentProgress = getLevelProgress(branchKey, levelIndex);
-            return currentProgress >= level.maxProgress;
+            const isCompleted = totalCompleted >= totalRequired;
+            console.log(`[isLevelCompleted] Season Pass Уровень ${levelIndex + 1}: completed=${totalCompleted}, required=${totalRequired}, result=${isCompleted}`);
+            return isCompleted;
         }
+        return false;
+    }
+    
+    // Для обычных веток
+    if (level.subtasks && level.subtasks.length > 0) {
+        let totalCompleted = 0;
+        let totalRequired = 0;
         
-        function getCurrentLevelIndex(branchKey) {
-            if (branchKey === 'scrooge') {
-                return user.balance >= 2500 ? 1 : 0;
+        level.subtasks.forEach((subtask, subtaskIndex) => {
+            const completed = getSubtaskProgress(branchKey, levelIndex, subtaskIndex);
+            totalCompleted += Math.min(completed, subtask.required);
+            totalRequired += subtask.required;
+        });
+        
+        return totalCompleted >= totalRequired;
+    }
+    
+    const currentProgress = getLevelProgress(branchKey, levelIndex);
+    return currentProgress >= level.maxProgress;
+}
+        
+       function getCurrentLevelIndex(branchKey) {
+    if (branchKey === 'scrooge') {
+        return user.balance >= 2500 ? 1 : 0;
+    }
+    if (branchKey === 'benefactor') {
+        return user.unlockedStatuses.includes('Благодетель') ? 1 : 0;
+    }
+    
+    const levels = TASK_BRANCHES[branchKey].levels;
+    
+    // Для Season Pass особая логика
+    if (branchKey === 'season_pass') {
+        // Ищем первый незавершенный уровень
+        for (let i = 0; i < levels.length; i++) {
+            if (!isLevelCompleted(branchKey, i)) {
+                console.log(`[getCurrentLevelIndex] Season Pass - первый незавершенный уровень: ${i + 1}`);
+                return i;
             }
-            if (branchKey === 'benefactor') {
-                return user.unlockedStatuses.includes('Благодетель') ? 1 : 0;
-            }
-            const levels = TASK_BRANCHES[branchKey].levels;
-            for (let i = 0; i < levels.length; i++) {
-                if (!isLevelCompleted(branchKey, i)) {
-                    return i;
-                }
-            }
-            return levels.length;
         }
+        // Если все уровни завершены
+        console.log(`[getCurrentLevelIndex] Season Pass - все уровни завершены`);
+        return levels.length;
+    }
+    
+    // Для обычных веток
+    for (let i = 0; i < levels.length; i++) {
+        if (!isLevelCompleted(branchKey, i)) {
+            return i;
+        }
+    }
+    return levels.length;
+}
         
         function isBranchCompleted(branchKey) {
             if (branchKey === 'scrooge') {
@@ -3565,234 +3816,219 @@
         // ==========================================
         
         function renderBranchTasks() {
-    const container = document.getElementById('branchTasksList');
-    if (!container) {
-        console.error('Container branchTasksList not found');
-        return;
-    }
-    
-    container.innerHTML = '';
-    
-    for (const [branchKey, branch] of Object.entries(TASK_BRANCHES)) {
-        const isCompleted = isBranchCompleted(branchKey);
-        const currentLevelIndex = getCurrentLevelIndex(branchKey);
-        const levels = branch.levels;
-        
-        const branchCard = document.createElement('div');
-        branchCard.className = `branch-task-card ${isCompleted ? 'completed' : ''}`;
-        
-        branchCard.innerHTML = `
-            <div class="branch-header">
-                <h3>${branch.name}</h3>
-                <p>${branch.desc}</p>
-            </div>
-        `;
-        
-        if (isCompleted) {
-            const completedDiv = document.createElement('div');
-            completedDiv.className = 'level-card';
-            completedDiv.innerHTML = `
-                <div style="text-align: center; padding: 20px;">
-                    <div class="completed-badge" style="display: inline-block; margin-bottom: 10px;">✅ Задание выполнено</div>
-                    <div style="color: var(--status-green);">
-                        <i class="fas fa-trophy"></i> Получен статус: ${BRANCH_REWARDS[branchKey]}
-                    </div>
-                </div>
-            `;
-            branchCard.appendChild(completedDiv);
-        } else if (currentLevelIndex < levels.length) {
-            const level = levels[currentLevelIndex];
+            const container = document.getElementById('branchTasksList');
+            if (!container) {
+                console.error('Container branchTasksList not found');
+                return;
+            }
             
-            if (branchKey === 'scrooge') {
-                const currentProgress = user.balance;
-                const percent = (currentProgress / level.maxProgress) * 100;
-                const levelCard = document.createElement('div');
-                levelCard.className = 'level-card';
-                levelCard.innerHTML = `
-                    <div class="level-header">
-                        <span class="level-title">${level.title}</span>
-                        <span class="level-progress">${currentProgress}/${level.maxProgress} ашетиков</span>
-                    </div>
-                    <div class="level-desc">${level.desc}</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: ${Math.min(percent, 100)}%"></div>
-                    </div>
-                    <div class="level-desc" style="color: var(--accent); margin-top: 10px;">
-                        <i class="fas fa-coins"></i> Текущий баланс: ${user.balance} ашетиков
+            container.innerHTML = '';
+            
+            for (const [branchKey, branch] of Object.entries(TASK_BRANCHES)) {
+                const isCompleted = isBranchCompleted(branchKey);
+                const currentLevelIndex = getCurrentLevelIndex(branchKey);
+                const levels = branch.levels;
+                
+                const branchCard = document.createElement('div');
+                branchCard.className = `branch-task-card ${isCompleted ? 'completed' : ''}`;
+                
+                branchCard.innerHTML = `
+                    <div class="branch-header">
+                        <h3>${branch.name}</h3>
+                        <p>${branch.desc}</p>
                     </div>
                 `;
-                branchCard.appendChild(levelCard);
-            } else if (branchKey === 'benefactor') {
-                const levelCard = document.createElement('div');
-                levelCard.className = 'level-card';
-                levelCard.innerHTML = `
-                    <div class="level-header">
-                        <span class="level-title">${level.title}</span>
-                    </div>
-                    <div class="level-desc">${level.desc}</div>
-                    <button class="task-submit-btn" onclick="openSupportForStatus()">
-                        <i class="fas fa-heart"></i> Поддержать проект
-                    </button>
-                    <div class="level-desc" style="font-size: 12px; margin-top: 10px; color: var(--text-gray);">
-                        После подтверждения пожертвования статус будет разблокирован автоматически
-                    </div>
-                `;
-                branchCard.appendChild(levelCard);
-            } else if (level.subtasks && level.subtasks.length > 0) {
-                // Проверяем, сколько подзаданий
-                if (level.subtasks.length === 1) {
-                    // Одно подзадание - показываем как обычный уровень
-                    const subtask = level.subtasks[0];
-                    const currentProgress = getSubtaskProgress(branchKey, currentLevelIndex, 0);
-                    const isCompleted = currentProgress >= subtask.required;
-                    const percent = (currentProgress / subtask.required) * 100;
+                
+                if (isCompleted) {
+                    const completedDiv = document.createElement('div');
+                    completedDiv.className = 'level-card';
+                    completedDiv.innerHTML = `
+                        <div style="text-align: center; padding: 20px;">
+                            <div class="completed-badge" style="display: inline-block; margin-bottom: 10px;">✅ Задание выполнено</div>
+                            <div style="color: var(--status-green);">
+                                <i class="fas fa-trophy"></i> Получен статус: ${BRANCH_REWARDS[branchKey]}
+                            </div>
+                        </div>
+                    `;
+                    branchCard.appendChild(completedDiv);
+                } else if (currentLevelIndex < levels.length) {
+                    const level = levels[currentLevelIndex];
                     
-                    const levelCard = document.createElement('div');
-                    levelCard.className = 'level-card';
-                    levelCard.innerHTML = `
-                        <div class="level-header">
-                            <span class="level-title">${level.title}</span>
-                            <span class="level-progress">${currentProgress}/${subtask.required}</span>
-                        </div>
-                        <div class="level-desc">${level.desc}</div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width: ${percent}%"></div>
-                        </div>
-                        ${!isCompleted ? `
-                            <button class="task-submit-btn" onclick="openSubtaskUpload('${branchKey}', ${currentLevelIndex}, 0, '${subtask.name}')">
+                    if (branchKey === 'scrooge') {
+                        const currentProgress = user.balance;
+                        const percent = (currentProgress / level.maxProgress) * 100;
+                        const levelCard = document.createElement('div');
+                        levelCard.className = 'level-card';
+                        levelCard.innerHTML = `
+                            <div class="level-header">
+                                <span class="level-title">${level.title}</span>
+                                <span class="level-progress">${currentProgress}/${level.maxProgress} ашетиков</span>
+                            </div>
+                            <div class="level-desc">${level.desc}</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: ${Math.min(percent, 100)}%"></div>
+                            </div>
+                            <div class="level-desc" style="color: var(--accent); margin-top: 10px;">
+                                <i class="fas fa-coins"></i> Текущий баланс: ${user.balance} ашетиков
+                            </div>
+                        `;
+                        branchCard.appendChild(levelCard);
+                    } else if (branchKey === 'benefactor') {
+                        const levelCard = document.createElement('div');
+                        levelCard.className = 'level-card';
+                        levelCard.innerHTML = `
+                            <div class="level-header">
+                                <span class="level-title">${level.title}</span>
+                            </div>
+                            <div class="level-desc">${level.desc}</div>
+                            <button class="task-submit-btn" onclick="openSupportForStatus()">
+                                <i class="fas fa-heart"></i> Поддержать проект
+                            </button>
+                            <div class="level-desc" style="font-size: 12px; margin-top: 10px; color: var(--text-gray);">
+                                После подтверждения пожертвования статус будет разблокирован автоматически
+                            </div>
+                        `;
+                        branchCard.appendChild(levelCard);
+                    } else if (level.subtasks && level.subtasks.length > 0) {
+                        if (level.subtasks.length === 1) {
+                            const subtask = level.subtasks[0];
+                            const currentProgress = getSubtaskProgress(branchKey, currentLevelIndex, 0);
+                            const isCompleted = currentProgress >= subtask.required;
+                            const percent = (currentProgress / subtask.required) * 100;
+                            
+                            const levelCard = document.createElement('div');
+                            levelCard.className = 'level-card';
+                            levelCard.innerHTML = `
+                                <div class="level-header">
+                                    <span class="level-title">${level.title}</span>
+                                    <span class="level-progress">${currentProgress}/${subtask.required}</span>
+                                </div>
+                                <div class="level-desc">${level.desc}</div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                                </div>
+                                ${!isCompleted ? `
+                                    <button class="task-submit-btn" onclick="openSubtaskUpload('${branchKey}', ${currentLevelIndex}, 0, '${subtask.name}')">
+                                        <i class="fas fa-camera"></i> Отправить фото на проверку
+                                    </button>
+                                ` : `
+                                    <div style="text-align: center; padding: 12px; color: var(--status-green);">
+                                        <i class="fas fa-check-circle"></i> Задание выполнено!
+                                    </div>
+                                `}
+                            `;
+                            branchCard.appendChild(levelCard);
+                        } else {
+                            const levelCard = document.createElement('div');
+                            levelCard.className = 'level-card';
+                            
+                            let totalCompleted = 0;
+                            let totalRequired = 0;
+                            
+                            level.subtasks.forEach((subtask, idx) => {
+                                const prog = getSubtaskProgress(branchKey, currentLevelIndex, idx);
+                                totalCompleted += Math.min(prog, subtask.required);
+                                totalRequired += subtask.required;
+                            });
+                            
+                            const totalPercent = (totalCompleted / totalRequired) * 100;
+                            
+                            levelCard.innerHTML = `
+                                <div class="level-header">
+                                    <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
+                                    <span class="level-progress">${totalCompleted}/${totalRequired}</span>
+                                </div>
+                                <div class="level-desc">${level.desc}</div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width: ${totalPercent}%"></div>
+                                </div>
+                                <div style="margin-top: 15px;"></div>
+                            `;
+                            
+                            level.subtasks.forEach((subtask, idx) => {
+                                const currentProgress = getSubtaskProgress(branchKey, currentLevelIndex, idx);
+                                const isCompleted = currentProgress >= subtask.required;
+                                const subtaskPercent = (currentProgress / subtask.required) * 100;
+                                
+                                const subtaskDiv = document.createElement('div');
+                                subtaskDiv.style.cssText = 'margin-bottom: 15px; padding: 10px; background: var(--bg); border-radius: 12px;';
+                                
+                                subtaskDiv.innerHTML = `
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                        <span style="font-weight: 600; font-size: 14px;">${subtask.name}</span>
+                                        <span style="font-size: 12px; color: var(--accent);">${currentProgress}/${subtask.required}</span>
+                                    </div>
+                                    <div class="progress-bar-container" style="height: 6px; margin: 0 0 8px 0;">
+                                        <div class="progress-bar-fill" style="width: ${subtaskPercent}%; height: 100%;"></div>
+                                    </div>
+                                    ${!isCompleted ? `
+                                        <button class="task-submit-btn" style="padding: 8px; font-size: 12px; margin-top: 5px;" onclick="openSubtaskUpload('${branchKey}', ${currentLevelIndex}, ${idx}, '${subtask.name}')">
+                                            <i class="fas fa-camera"></i> Отправить фото: ${subtask.name}
+                                        </button>
+                                    ` : `
+                                        <div style="text-align: center; color: var(--status-green); font-size: 12px; margin-top: 5px;">
+                                            <i class="fas fa-check-circle"></i> Выполнено!
+                                        </div>
+                                    `}
+                                `;
+                                levelCard.appendChild(subtaskDiv);
+                            });
+                            
+                            branchCard.appendChild(levelCard);
+                        }
+                    } else {
+                        const currentProgress = getLevelProgress(branchKey, currentLevelIndex);
+                        const percent = (currentProgress / level.maxProgress) * 100;
+                        const levelCard = document.createElement('div');
+                        levelCard.className = 'level-card';
+                        levelCard.innerHTML = `
+                            <div class="level-header">
+                                <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
+                                <span class="level-progress">${currentProgress}/${level.maxProgress}</span>
+                            </div>
+                            <div class="level-desc">${level.desc}</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                            </div>
+                            <button class="task-submit-btn" onclick="openTaskUpload('${branchKey}', ${currentLevelIndex})">
                                 <i class="fas fa-camera"></i> Отправить фото на проверку
                             </button>
-                        ` : `
-                            <div style="text-align: center; padding: 12px; color: var(--status-green);">
-                                <i class="fas fa-check-circle"></i> Задание выполнено!
-                            </div>
-                        `}
-                    `;
-                    branchCard.appendChild(levelCard);
-                } else {
-                    // Несколько подзаданий
-                    const levelCard = document.createElement('div');
-                    levelCard.className = 'level-card';
-                    
-                    let totalCompleted = 0;
-                    let totalRequired = 0;
-                    
-                    level.subtasks.forEach((subtask, idx) => {
-                        const prog = getSubtaskProgress(branchKey, currentLevelIndex, idx);
-                        totalCompleted += Math.min(prog, subtask.required);
-                        totalRequired += subtask.required;
-                    });
-                    
-                    const totalPercent = (totalCompleted / totalRequired) * 100;
-                    
-                    levelCard.innerHTML = `
-                        <div class="level-header">
-                            <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
-                            <span class="level-progress">${totalCompleted}/${totalRequired}</span>
-                        </div>
-                        <div class="level-desc">${level.desc}</div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width: ${totalPercent}%"></div>
-                        </div>
-                        <div style="margin-top: 15px;"></div>
-                    `;
-                    
-                    level.subtasks.forEach((subtask, idx) => {
-                        const currentProgress = getSubtaskProgress(branchKey, currentLevelIndex, idx);
-                        const isCompleted = currentProgress >= subtask.required;
-                        const subtaskPercent = (currentProgress / subtask.required) * 100;
-                        
-                        const subtaskDiv = document.createElement('div');
-                        subtaskDiv.style.cssText = 'margin-bottom: 15px; padding: 10px; background: var(--bg); border-radius: 12px;';
-                        
-                        subtaskDiv.innerHTML = `
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <span style="font-weight: 600; font-size: 14px;">${subtask.name}</span>
-                                <span style="font-size: 12px; color: var(--accent);">${currentProgress}/${subtask.required}</span>
-                            </div>
-                            <div class="progress-bar-container" style="height: 6px; margin: 0 0 8px 0;">
-                                <div class="progress-bar-fill" style="width: ${subtaskPercent}%; height: 100%;"></div>
-                            </div>
-                            ${!isCompleted ? `
-                                <button class="task-submit-btn" style="padding: 8px; font-size: 12px; margin-top: 5px;" onclick="openSubtaskUpload('${branchKey}', ${currentLevelIndex}, ${idx}, '${subtask.name}')">
-                                    <i class="fas fa-camera"></i> Отправить фото: ${subtask.name}
-                                </button>
-                            ` : `
-                                <div style="text-align: center; color: var(--status-green); font-size: 12px; margin-top: 5px;">
-                                    <i class="fas fa-check-circle"></i> Выполнено!
-                                </div>
-                            `}
                         `;
-                        levelCard.appendChild(subtaskDiv);
-                    });
-                    
-                    branchCard.appendChild(levelCard);
+                        branchCard.appendChild(levelCard);
+                    }
                 }
-            } else {
-                // Обычный уровень без подзаданий
-                const currentProgress = getLevelProgress(branchKey, currentLevelIndex);
-                const percent = (currentProgress / level.maxProgress) * 100;
-                const levelCard = document.createElement('div');
-                levelCard.className = 'level-card';
-                levelCard.innerHTML = `
-                    <div class="level-header">
-                        <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
-                        <span class="level-progress">${currentProgress}/${level.maxProgress}</span>
-                    </div>
-                    <div class="level-desc">${level.desc}</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: ${percent}%"></div>
-                    </div>
-                    <button class="task-submit-btn" onclick="openTaskUpload('${branchKey}', ${currentLevelIndex})">
-                        <i class="fas fa-camera"></i> Отправить фото на проверку
-                    </button>
-                `;
-                branchCard.appendChild(levelCard);
+                
+                container.appendChild(branchCard);
             }
+            
+            console.log('✅ Задания отрисованы');
         }
-        
-        container.appendChild(branchCard);
-    }
-    
-    console.log('✅ Задания отрисованы');
-}
-        
         // ==========================================
         // ОБНОВЛЕНИЕ ПРОГРЕССА
         // ==========================================
         
         async function refreshUserProgress() {
-            console.log('🔄 Refreshing user progress...');
-            
-            try {
-                await loadUserBalance();
-                await loadUserProgress();
-                await loadUnlockedStatuses();
-                await loadUserAchievements();
-                await checkBalanceStatus();
-                await checkAndUnlockStatuses();
-                
-                renderBranchTasks();
-                renderTimeTasks();
-                renderFriendTasks();
-                updateUI();
-                
-                console.log('✅ Progress refreshed, current balance:', user.balance);
-            } catch (error) {
-                console.error('Error refreshing progress:', error);
-            }
-        }
+    console.log('🔄 Refreshing user progress...');
+    
+    try {
+        await loadUserBalance();
+        await loadUserProgress();
+        await loadUnlockedStatuses();
+        await loadUserAchievements();
+        await checkBalanceStatus();
+        await checkAndUnlockStatuses();
         
-        let refreshInterval = null;
+        renderBranchTasks();
+        renderTimeTasks();
+        renderFriendTasks();
+        renderSeasonPassTasks();  // ← обязательно
+        updateUI();
         
-        function startProgressRefresh() {
-            if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(() => {
-                refreshUserProgress();
-            }, 30000);
-            console.log('✅ Progress refresh started (every 30 seconds)');
-        }
-        
+        console.log('✅ Progress refreshed, current balance:', user.balance);
+    } catch (error) {
+        console.error('Error refreshing progress:', error);
+    }
+}
         // ==========================================
         // ВРЕМЕННЫЕ ЗАДАНИЯ
         // ==========================================
@@ -3850,53 +4086,50 @@
         }
         
         function renderTimeTasks() {
-    const container = document.getElementById('timeTasksList');
-    if (!container) return;
-    container.innerHTML = '';
-    
-    TIME_TASKS.forEach(task => {
-        const isCompleted = task.completed;
-        const now = new Date();
-        
-        // Устанавливаем часовой пояс Москвы (UTC+3)
-        const moscowOffset = 3 * 60 * 60 * 1000; // 3 часа в миллисекундах
-        const nowMoscow = new Date(now.getTime() + moscowOffset);
-        
-        // Парсим дату дедлайна (формат YYYY-MM-DD)
-        const [year, month, day] = task.deadline.split('-');
-        const deadlineMoscow = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
-        
-        // Сравниваем: если сейчас >= дата дедлайна (00:00 следующего дня), то время истекло
-        const isExpired = nowMoscow >= deadlineMoscow;
-        
-        const taskCard = document.createElement('div');
-        taskCard.className = `time-task-card ${isCompleted ? 'completed' : ''}`;
-        taskCard.innerHTML = `
-            <div class="time-badge">${task.deadlineText}</div>
-            <div class="time-header">
-                <h3>${task.title}</h3>
-                <p>${task.description}</p>
-                <div class="time-reward">🎁 Награда: +${task.reward} ашетиков</div>
-            </div>
-            <div class="level-card">
-                ${!isCompleted && !isExpired ? `
-                    <button class="time-task-btn" onclick="openTimeTaskUpload('${task.id}', ${task.reward})">
-                        <i class="fas fa-camera"></i> Отправить фото на проверку
-                    </button>
-                ` : isCompleted ? `
-                    <div style="text-align: center; padding: 12px; color: var(--status-green);">
-                        <i class="fas fa-check-circle"></i> Задание выполнено! +${task.reward} ашетиков получено
+            const container = document.getElementById('timeTasksList');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            TIME_TASKS.forEach(task => {
+                const isCompleted = task.completed;
+                const now = new Date();
+                
+                const moscowOffset = 3 * 60 * 60 * 1000;
+                const nowMoscow = new Date(now.getTime() + moscowOffset);
+                
+                const [year, month, day] = task.deadline.split('-');
+                const deadlineMoscow = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+                
+                const isExpired = nowMoscow >= deadlineMoscow;
+                
+                const taskCard = document.createElement('div');
+                taskCard.className = `time-task-card ${isCompleted ? 'completed' : ''}`;
+                taskCard.innerHTML = `
+                    <div class="time-badge">${task.deadlineText}</div>
+                    <div class="time-header">
+                        <h3>${task.title}</h3>
+                        <p>${task.description}</p>
+                        <div class="time-reward">🎁 Награда: +${task.reward} ашетиков</div>
                     </div>
-                ` : `
-                    <div style="text-align: center; padding: 12px; color: var(--status-red);">
-                        <i class="fas fa-clock"></i> Время выполнения истекло
+                    <div class="level-card">
+                        ${!isCompleted && !isExpired ? `
+                            <button class="time-task-btn" onclick="openTimeTaskUpload('${task.id}', ${task.reward})">
+                                <i class="fas fa-camera"></i> Отправить фото на проверку
+                            </button>
+                        ` : isCompleted ? `
+                            <div style="text-align: center; padding: 12px; color: var(--status-green);">
+                                <i class="fas fa-check-circle"></i> Задание выполнено! +${task.reward} ашетиков получено
+                            </div>
+                        ` : `
+                            <div style="text-align: center; padding: 12px; color: var(--status-red);">
+                                <i class="fas fa-clock"></i> Время выполнения истекло
+                            </div>
+                        `}
                     </div>
-                `}
-            </div>
-        `;
-        container.appendChild(taskCard);
-    });
-}
+                `;
+                container.appendChild(taskCard);
+            });
+        }
         
         let currentTimeTaskId = null;
         let currentTimeTaskReward = null;
@@ -4049,46 +4282,46 @@
         }
         
         function renderFriendTasks() {
-    const container = document.getElementById('friendTasksList');
-    if (!container) return;
-    container.innerHTML = '';
-    
-    FRIEND_TASKS.forEach(task => {
-        const isCompleted = task.completed;
-        
-        const taskCard = document.createElement('div');
-        taskCard.className = `friend-task-card ${isCompleted ? 'completed' : ''}`;
-        
-        taskCard.innerHTML = `
-            <div class="friend-header">
-                <h3>${task.title}</h3>
-                <p>${task.description}</p>
-                <div class="friend-reward">🎁 Призы: ${task.rewardTom} от Ани и статус и достижение «${task.rewardStatus}» от нас</div>
-            </div>
-            <div class="level-card">
-                ${!isCompleted ? `
-                    <button class="friend-task-btn" onclick="openFriendTaskUpload('${task.id}')">
-                        <i class="fas fa-camera"></i> Отправить подтверждение
-                    </button>
-                    <button class="friend-channel-btn" onclick="openAnnaChannel()">
-                        <i class="fab fa-youtube"></i> Канал Ани
-                    </button>
-                    <div class="level-desc" style="font-size: 12px; margin-top: 10px; color: var(--text-gray);">
-                        📌 После выполнения любой ветки заданий отправь скриншот, что ветка выполнена (кроме задания "Благодетель")
+            const container = document.getElementById('friendTasksList');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            FRIEND_TASKS.forEach(task => {
+                const isCompleted = task.completed;
+                
+                const taskCard = document.createElement('div');
+                taskCard.className = `friend-task-card ${isCompleted ? 'completed' : ''}`;
+                
+                taskCard.innerHTML = `
+                    <div class="friend-header">
+                        <h3>${task.title}</h3>
+                        <p>${task.description}</p>
+                        <div class="friend-reward">🎁 Призы: ${task.rewardTom} от Ани и статус и достижение «${task.rewardStatus}» от нас</div>
                     </div>
-                ` : `
-                    <div style="text-align: center; padding: 12px; color: var(--status-green);">
-                        <i class="fas fa-trophy"></i> Задание выполнено! Статус "${task.rewardStatus}" и достижение получены!
+                    <div class="level-card">
+                        ${!isCompleted ? `
+                            <button class="friend-task-btn" onclick="openFriendTaskUpload('${task.id}')">
+                                <i class="fas fa-camera"></i> Отправить подтверждение
+                            </button>
+                            <button class="friend-channel-btn" onclick="openAnnaChannel()">
+                                <i class="fab fa-youtube"></i> Канал Ани
+                            </button>
+                            <div class="level-desc" style="font-size: 12px; margin-top: 10px; color: var(--text-gray);">
+                                📌 После выполнения любой ветки заданий отправь скриншот, что ветка выполнена (кроме задания "Благодетель")
+                            </div>
+                        ` : `
+                            <div style="text-align: center; padding: 12px; color: var(--status-green);">
+                                <i class="fas fa-trophy"></i> Задание выполнено! Статус "${task.rewardStatus}" и достижение получены!
+                            </div>
+                            <button class="friend-channel-btn" onclick="openAnnaChannel()">
+                                <i class="fab fa-youtube"></i> Канал Ани
+                            </button>
+                        `}
                     </div>
-                    <button class="friend-channel-btn" onclick="openAnnaChannel()">
-                        <i class="fab fa-youtube"></i> Канал Ани
-                    </button>
-                `}
-            </div>
-        `;
-        container.appendChild(taskCard);
-    });
-}
+                `;
+                container.appendChild(taskCard);
+            });
+        }
         
         let currentFriendTaskId = null;
         
@@ -4143,97 +4376,85 @@
         }
         
         async function submitFriendTaskPhoto() {
-    console.log('=== SUBMIT FRIEND TASK PHOTO ===');
-    if (isUploading) return;
-    if (!tempPhotos || tempPhotos.length === 0) {
-        if (tg) tg.showAlert('❌ Выберите хотя бы одно фото');
-        return;
-    }
-    
-    isUploading = true;
-    
-    try {
-        const formData = new FormData();
-        formData.append('user', userId.toString());
-        formData.append('title', 'Задание от Colour with Anna');
-        formData.append('taskId', currentFriendTaskId);
-        formData.append('type', 'friend_task');
-        
-        for (let i = 0; i < tempPhotos.length; i++) {
-            formData.append('photos', tempPhotos[i]);
-        }
-        
-        const response = await fetch(`${SERVER_URL}/api/check_friend_task`, {
-            method: 'POST',
-            body: formData
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Ошибка сервера: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result && result.status === 'ok') {
-            // Разблокируем статус "Молния"
-            if (!user.unlockedStatuses.includes('Молния')) {
-                user.unlockedStatuses.push('Молния');
+            console.log('=== SUBMIT FRIEND TASK PHOTO ===');
+            if (isUploading) return;
+            if (!tempPhotos || tempPhotos.length === 0) {
+                if (tg) tg.showAlert('❌ Выберите хотя бы одно фото');
+                return;
             }
             
-            // Разблокируем достижение "Молния"
-            if (!user.achievements.includes('molniya')) {
-                user.achievements.push('molniya');
+            isUploading = true;
+            
+            try {
+                const formData = new FormData();
+                formData.append('user', userId.toString());
+                formData.append('title', 'Задание от Colour with Anna');
+                formData.append('taskId', currentFriendTaskId);
+                formData.append('type', 'friend_task');
+                
+                for (let i = 0; i < tempPhotos.length; i++) {
+                    formData.append('photos', tempPhotos[i]);
+                }
+                
+                const response = await fetch(`${SERVER_URL}/api/check_friend_task`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result && result.status === 'ok') {
+                    if (!user.unlockedStatuses.includes('Молния')) {
+                        user.unlockedStatuses.push('Молния');
+                    }
+                    
+                    if (!user.achievements.includes('molniya')) {
+                        user.achievements.push('molniya');
+                    }
+                    
+                    saveUserData();
+                    updateUI();
+                    markFriendTaskCompleted(currentFriendTaskId);
+                    
+                    if (tg) {
+                        tg.showAlert('✅ Задание выполнено! Получен статус "Молния" и достижение!');
+                        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    }
+                    
+                    closeTaskUploadModal();
+                    renderFriendTasks();
+                } else {
+                    throw new Error(result?.message || 'Ошибка отправки');
+                }
+            } catch (error) {
+                console.error('❌ Ошибка:', error);
+                if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
+            } finally {
+                isUploading = false;
             }
-            
-            saveUserData();
-            updateUI();
-            
-            // Обновляем статус задания
-            markFriendTaskCompleted(currentFriendTaskId);
-            
-            // Показываем уведомление
-            if (tg) {
-                tg.showAlert('✅ Задание выполнено! Получен статус "Молния" и достижение!');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            }
-            
-            closeTaskUploadModal();
-            renderFriendTasks();
-        } else {
-            throw new Error(result?.message || 'Ошибка отправки');
         }
-    } catch (error) {
-        console.error('❌ Ошибка:', error);
-        if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
-    } finally {
-        isUploading = false;
-    }
-}
         
         function openAnnaChannel() {
-    console.log('Opening Anna channel...');
-    const channelUrl = 'https://youtube.com/@colour_with_anna?si=sbSsNzagi0yj-RIi';
-    
-    // Для мобильных устройств в Telegram
-    if (window.Telegram && window.Telegram.WebApp) {
-        // Пробуем открыть через Telegram
-        try {
-            window.Telegram.WebApp.openLink(channelUrl);
-        } catch(e) {
-            console.log('openLink error:', e);
-            // Альтернативный способ
-            window.location.href = channelUrl;
+            console.log('Opening Anna channel...');
+            const channelUrl = 'https://www.youtube.com/@colour_with_anna';
+            
+            if (window.Telegram && window.Telegram.WebApp) {
+                try {
+                    window.Telegram.WebApp.openLink(channelUrl);
+                } catch(e) {
+                    console.log('openLink error:', e);
+                    window.location.href = channelUrl;
+                }
+            } else if (tg && tg.openLink) {
+                tg.openLink(channelUrl);
+            } else {
+                window.open(channelUrl, '_blank');
+            }
         }
-    } 
-    // Если есть объект tg
-    else if (tg && tg.openLink) {
-        tg.openLink(channelUrl);
-    }
-    // Для компьютера или если не Telegram
-    else {
-        window.open(channelUrl, '_blank');
-    }
-}
         // ==========================================
         // ПРОФИЛЬ И UI
         // ==========================================
@@ -4275,30 +4496,29 @@
         }
         
         function renderShowcase() {
-    for (let i = 0; i < 3; i++) {
-        const slot = document.getElementById(`slot-${i}`);
-        if (!slot) continue;
-        const achId = user.showcase && user.showcase[i] ? user.showcase[i] : null;
-        
-        // Очищаем содержимое, но onclick атрибут остается в HTML
-        slot.innerHTML = '';
-        
-        if (achId && ACHIEVEMENTS_DB[achId]) {
-            const img = document.createElement('img');
-            img.src = ACHIEVEMENTS_DB[achId].img;
-            img.alt = ACHIEVEMENTS_DB[achId].name;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'contain';
-            img.style.objectPosition = 'center';
-            slot.appendChild(img);
-            slot.classList.add('filled');
-        } else {
-            slot.innerHTML = '<i class="fas fa-plus"></i>';
-            slot.classList.remove('filled');
+            for (let i = 0; i < 3; i++) {
+                const slot = document.getElementById(`slot-${i}`);
+                if (!slot) continue;
+                const achId = user.showcase && user.showcase[i] ? user.showcase[i] : null;
+                
+                slot.innerHTML = '';
+                
+                if (achId && ACHIEVEMENTS_DB[achId]) {
+                    const img = document.createElement('img');
+                    img.src = ACHIEVEMENTS_DB[achId].img;
+                    img.alt = ACHIEVEMENTS_DB[achId].name;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'contain';
+                    img.style.objectPosition = 'center';
+                    slot.appendChild(img);
+                    slot.classList.add('filled');
+                } else {
+                    slot.innerHTML = '<i class="fas fa-plus"></i>';
+                    slot.classList.remove('filled');
+                }
+            }
         }
-    }
-}
         
         function openShowcaseSelector(slotIndex) {
             const list = document.getElementById('showcaseAchievementsList');
@@ -4513,7 +4733,6 @@
             const modal = document.getElementById('nameModal');
             if (modal) modal.style.display = 'none';
         }
-        
         // ==========================================
         // ВЫБОР СТАТУСА
         // ==========================================
@@ -4618,21 +4837,6 @@
             }
         }
         
-        function resetAllData() {
-            if (tg) {
-                tg.showConfirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?", (confirm) => {
-                    if (confirm) {
-                        localStorage.clear();
-                        window.location.reload();
-                    }
-                });
-            } else {
-                if (confirm("Вы уверены, что хотите сбросить ВЕСЬ прогресс?")) {
-                    localStorage.clear();
-                    window.location.reload();
-                }
-            }
-        }
         
         function saveUserData() {
             localStorage.setItem('coloring_user', JSON.stringify(user));
@@ -4862,7 +5066,6 @@
                 }
             }
             
-            // Расчет возможного бонуса
             let bonusAchetiki = 0;
             if (totalSum >= 10000) {
                 bonusAchetiki = 50;
@@ -4977,6 +5180,7 @@
                 if (tg) tg.showAlert('❌ Ошибка отправки заказа. Попробуйте позже.');
             }
         }
+        
         // ==========================================
         // ТОМА И ОТВЕТЫ (СВАЙПЫ)
         // ==========================================
@@ -5208,7 +5412,6 @@
                 }
             });
         }
-        
         // ==========================================
         // ИИ ПАЛИТРА
         // ==========================================
@@ -5440,6 +5643,7 @@
                 if (arrow) arrow.style.transform = 'rotate(0deg)';
             }
         }
+        
         // ==========================================
         // ТЕМЫ
         // ==========================================
@@ -5492,7 +5696,6 @@
             user.theme = 'custom';
             localStorage.setItem('app_theme', 'custom');
         }
-        
         // ==========================================
         // ПОИСК МАРКЕРОВ В ОРГАНАЙЗЕРАХ
         // ==========================================
@@ -5944,7 +6147,6 @@
                 if (arrow) arrow.style.transform = 'rotate(0deg)';
             }
         }
-        
         // ==========================================
         // БРЕНДЫ
         // ==========================================
@@ -6099,23 +6301,22 @@
                 }
             }
         }
+        
         function openAnnaChannel() {
-    const channelUrl = 'https://www.youtube.com/@colour_with_anna';
-    
-    // Проверяем, есть ли Telegram WebApp
-    if (window.Telegram && window.Telegram.WebApp) {
-        // Пытаемся открыть через Telegram
-        window.Telegram.WebApp.openLink(channelUrl);
-    } else {
-        // Обычное открытие
-        window.open(channelUrl, '_blank');
-    }
-}
-      // ==========================================
-// ДАННЫЕ ЗАДАНИЙ (ВЕТКИ) - С ПОДЗАДАНИЯМИ
-// ==========================================
-
-const BRANCH_REWARDS = {
+            const channelUrl = 'https://www.youtube.com/@colour_with_anna';
+            
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openLink(channelUrl);
+            } else {
+                window.open(channelUrl, '_blank');
+            }
+        }
+        
+        // ==========================================
+        // ДАННЫЕ ЗАДАНИЙ (ВЕТКИ) - С ПОДЗАДАНИЯМИ
+        // ==========================================
+        
+        const BRANCH_REWARDS = {
     trainer: "Великий тренер",
     alcohol: "Спиртесса",
     shock: "Шок контент",
@@ -6129,10 +6330,11 @@ const BRANCH_REWARDS = {
     benefactor: "Благодетель",
     mystery: "Загадка",
     anaconda: "Анаконда",
-    molniya: "Молния"
+    molniya: "Молния",
+    nezhnost: "Нежность"
 };
-
-const TASK_BRANCHES = {
+        
+        const TASK_BRANCHES = {
     trainer: {
         name: "Великий тренер",
         desc: "Пройди основные покемон-лиги и стань Великим тренером (фото ДО/ПОСЛЕ)",
@@ -6178,57 +6380,57 @@ const TASK_BRANCHES = {
         ]
     },
     alcohol: {
-    name: "Спиртесса",
-    desc: "Раскрасить картинки спиртовыми маркерами (фото ДО/ПОСЛЕ)",
-    levels: [
-        { title: "Новичок спирта", maxProgress: 3, desc: "Раскрась 3 картинки спиртовыми маркерами" },
-        {
-            title: "Emo girl",
-            maxProgress: 8,
-            desc: "Раскрась 4 картинки спиртовыми маркерами в ч/б и 4 картинки в розовых оттенках",
-            subtasks: [
-                { id: 'bw_spirit', name: 'Черно-белые картинки', required: 4 },
-                { id: 'pink_spirit', name: 'Розовые оттенки', required: 4 }
-            ]
-        },
-        {
-            title: "Звезда",
-            maxProgress: 12,
-            desc: "Раскрась 6 картинок спиртовыми маркерами со звёздным небом/северным сиянием и 6 картинок с солнцем",
-            subtasks: [
-                { id: 'starry_sky', name: 'Звёздное небо/северное сияние', required: 6 },
-                { id: 'sun_pictures', name: 'Картинки с солнцем', required: 6 }
-            ]
-        },
-        {
-            title: "Чародейка",
-            maxProgress: 17,
-            desc: "Раскрась 5 картинок спиртовыми маркерами с текстурой льда, 6 картинок с текстурой воды, 6 картинок с текстурой огня/лавы",
-            subtasks: [
-                { id: 'ice_texture', name: 'Текстура льда', required: 5 },
-                { id: 'water_texture', name: 'Текстура воды', required: 6 },
-                { id: 'fire_texture', name: 'Текстура огня/лавы', required: 6 }
-            ]
-        },
-        {
-            title: "Мастер спирта",
-            maxProgress: 20,
-            desc: "Выполните 10 специальных заданий",
-            subtasks: [
-                { id: 'statue_characters', name: 'Адаптируй и раскрась 2 персонажей под статуи', required: 2 },
-                { id: 'neon_pictures', name: 'Раскрась 2 картинки в неоне', required: 2 },
-                { id: 'transparency_texture', name: 'Раскрась 2 картинки с текстурой прозрачности', required: 2 },
-                { id: 'room_without_character', name: 'Раскрась 3 картинки с комнатой без персонажа', required: 3 },
-                { id: 'roof_tiles', name: 'Раскрась 1 картинку с черепицей на крыше дома', required: 1 },
-                { id: 'bird_characters', name: 'Раскрась 3 персонажей-птиц', required: 3 },
-                { id: 'glow_effect', name: 'Раскрась 2 картинки с эффектом свечения какого-либо объекта', required: 2 },
-                { id: 'moss_texture', name: 'Раскрась 2 картинки с мхом', required: 2 },
-                { id: 'marble_texture', name: 'Раскрась 1 картинку с текстурой мрамора', required: 1 },
-                { id: 'human_characters_2', name: 'Раскрась 2 картинки с персонажами-людьми', required: 2 }
-            ]
-        }
-    ]
-},
+        name: "Спиртесса",
+        desc: "Раскрасить картинки спиртовыми маркерами (фото ДО/ПОСЛЕ)",
+        levels: [
+            { title: "Новичок спирта", maxProgress: 3, desc: "Раскрась 3 картинки спиртовыми маркерами" },
+            {
+                title: "Emo girl",
+                maxProgress: 8,
+                desc: "Раскрась 4 картинки спиртовыми маркерами в ч/б и 4 картинки в розовых оттенках",
+                subtasks: [
+                    { id: 'bw_spirit', name: 'Черно-белые картинки', required: 4 },
+                    { id: 'pink_spirit', name: 'Розовые оттенки', required: 4 }
+                ]
+            },
+            {
+                title: "Звезда",
+                maxProgress: 12,
+                desc: "Раскрась 6 картинок спиртовыми маркерами со звёздным небом/северным сиянием и 6 картинок с солнцем",
+                subtasks: [
+                    { id: 'starry_sky', name: 'Звёздное небо/северное сияние', required: 6 },
+                    { id: 'sun_pictures', name: 'Картинки с солнцем', required: 6 }
+                ]
+            },
+            {
+                title: "Чародейка",
+                maxProgress: 17,
+                desc: "Раскрась 5 картинок спиртовыми маркерами с текстурой льда, 6 картинок с текстурой воды, 6 картинок с текстурой огня/лавы",
+                subtasks: [
+                    { id: 'ice_texture', name: 'Текстура льда', required: 5 },
+                    { id: 'water_texture', name: 'Текстура воды', required: 6 },
+                    { id: 'fire_texture', name: 'Текстура огня/лавы', required: 6 }
+                ]
+            },
+            {
+                title: "Мастер спирта",
+                maxProgress: 20,
+                desc: "Выполните 10 специальных заданий",
+                subtasks: [
+                    { id: 'statue_characters', name: 'Адаптируй и раскрась 2 персонажей под статуи', required: 2 },
+                    { id: 'neon_pictures', name: 'Раскрась 2 картинки в неоне', required: 2 },
+                    { id: 'transparency_texture', name: 'Раскрась 2 картинки с текстурой прозрачности', required: 2 },
+                    { id: 'room_without_character', name: 'Раскрась 3 картинки с комнатой без персонажа', required: 3 },
+                    { id: 'roof_tiles', name: 'Раскрась 1 картинку с черепицей на крыше дома', required: 1 },
+                    { id: 'bird_characters', name: 'Раскрась 3 персонажей-птиц', required: 3 },
+                    { id: 'glow_effect', name: 'Раскрась 2 картинки с эффектом свечения какого-либо объекта', required: 2 },
+                    { id: 'moss_texture', name: 'Раскрась 2 картинки с мхом', required: 2 },
+                    { id: 'marble_texture', name: 'Раскрась 1 картинку с текстурой мрамора', required: 1 },
+                    { id: 'human_characters_2', name: 'Раскрась 2 картинки с персонажами-людьми', required: 2 }
+                ]
+            }
+        ]
+    },
     shock: {
         name: "Шок контент",
         desc: "Только самые КРЕЙЗИ смогут пройти всё, но награда того стоит (фото ДО/ПОСЛЕ)",
@@ -6407,8 +6609,8 @@ const TASK_BRANCHES = {
             { title: "Знакомство с фауной", maxProgress: 1, desc: "Раскрась 1 картинку с оленем", subtasks: [{ id: 'deer_1', name: 'Олень', required: 1 }] },
             { title: "Любитель животных", maxProgress: 2, desc: "Раскрась 1 картинку с мышью (Микки Маус, Минни Маус и подобные не подходят) и 1 с медведем", subtasks: [{ id: 'mouse_1', name: 'Мышь', required: 1 }, { id: 'bear_1', name: 'Медведь', required: 1 }] },
             { title: "Друг животных", maxProgress: 3, desc: "Раскрась 1 с лисом, 1 с медведем, 1 с мышью (Микки Маус, Минни Макс и подобные не подходят)", subtasks: [{ id: 'fox_1', name: 'Лиса', required: 1 }, { id: 'bear_2', name: 'Медведь', required: 1 }, { id: 'mouse_2', name: 'Мышь', required: 1 }] },
-            { title: "Зоолог", maxProgress: 5, desc: "Раскрась 2 со скунсом, 2 картинки с зайцем, 1 картинку со львом", subtasks: [{ id: 'deer_2', name: 'Скунс', required: 2 }, { id: 'fox_2', name: 'Заяц', required: 2 }, { id: 'mouse_3', name: 'Лев', required: 1 }] },
-            { title: "Знаток фауны", maxProgress: 9, desc: "Раскрась 2 картинки с коровой, 2 картинки с волком, 3 картинки с козлом, 2 картинки с лосём", subtasks: [{ id: 'deer_3', name: 'Корова', required: 2 }, { id: 'mouse_4', name: 'Волк', required: 2 }, { id: 'bear_3', name: 'Козел', required: 3 }, { id: 'fox_3', name: 'Лось', required: 2 }] }
+            { title: "Зоолог", maxProgress: 5, desc: "Раскрась 2 со скунсом, 2 картинки с зайцем, 1 картинку со львом", subtasks: [{ id: 'skunk', name: 'Скунс', required: 2 }, { id: 'hare', name: 'Заяц', required: 2 }, { id: 'lion', name: 'Лев', required: 1 }] },
+            { title: "Знаток фауны", maxProgress: 9, desc: "Раскрась 2 картинки с коровой, 2 картинки с волком, 3 картинки с крокодилом, 2 картинки с лосём", subtasks: [{ id: 'cow', name: 'Корова', required: 2 }, { id: 'wolf', name: 'Волк', required: 2 }, { id: 'crocodile', name: 'Крокодил', required: 3 }, { id: 'moose', name: 'Лось', required: 2 }] }
         ]
     },
     sea: {
@@ -6416,7 +6618,7 @@ const TASK_BRANCHES = {
         desc: "Раскрасить картинки с морскими обитателями (фото ДО/ПОСЛЕ)",
         levels: [
             { title: "Знакомство с морем", maxProgress: 1, desc: "Раскрась 1 картинку с Дори" },
-            { title: "Юнга", maxProgress: 3, desc: "Раскрась 3 картинки с морскими млекопитающими" },
+            { title: "Юнга", maxProgress: 3, desc: "Раскрась 3 картинки с Немо" },
             { title: "Боцман", maxProgress: 3, desc: "Раскрась 3 картинки с Муренами" },
             { title: "Морской волк", maxProgress: 5, desc: "Раскрась 5 картинок с осьминогами" },
             { title: "Царица морей", maxProgress: 8, desc: "Раскрась 8 картинок с акулами" }
@@ -6514,29 +6716,808 @@ const TASK_BRANCHES = {
             { title: "Василиск", maxProgress: 5, desc: "Раскрась 5 картинок со змеей" },
             { title: "Анаконда", maxProgress: 8, desc: "Раскрась 8 картинок со змеей" }
         ]
+    },
+    season_pass: {
+        name: "🌸 Сезонный пропуск",
+        desc: "Выполняйте задания и получайте награды! Доступно до 30.04.2026",
+        levels: [
+            {
+                title: "Уровень 1 - Первые лучи солнца",
+                maxProgress: 3,
+                desc: "Весна - время, когда появляются первые лучи солнца",
+                subtasks: [
+                    { id: 'sp_1_1', name: 'Раскрась 1 картинку со снегом/подтаявшим снегом', required: 1 },
+                    { id: 'sp_1_2', name: 'Раскрась 1 разворот, где изображено солнце', required: 1 },
+                    { id: 'sp_1_3', name: 'Раскрась 1 картинку с Алисой', required: 1 }
+                ],
+                freeReward: { type: 'achetiki', amount: 10, name: '10 ашетиков' },
+                premiumReward: { type: 'achetiki', amount: 10, name: '10 ашетиков' }
+            },
+            {
+                title: "Уровень 2 - Букет цветов",
+                maxProgress: 3,
+                desc: "Собери букет цветов и получи уникальное достижение",
+                subtasks: [
+                    { id: 'sp_2_1', name: 'Раскрась 1 картинку с цветами', required: 1 },
+                    { id: 'sp_2_2', name: 'Раскрась 1 картинку, на которой изображены цветы и животные', required: 1 },
+                    { id: 'sp_2_3', name: 'Раскрась 1 картинку персонажа Цветочек из м/ф Бемби', required: 1 }
+                ],
+                freeReward: { type: 'achievement_with_achetiki', achievement: 'Цветочек', amount: 10, name: 'Достижение "Цветочек" + 10 ашетиков' },
+                premiumReward: { type: 'achievement_with_achetiki', achievement: 'Бемби', amount: 10, name: 'Достижение "Бемби" + 10 ашетиков' }
+            },
+            {
+                title: "Уровень 3 - Сочная травка",
+                maxProgress: 3,
+                desc: "Весна - это время, когда появляется первая сочная травка",
+                subtasks: [
+                    { id: 'sp_3_1', name: 'Раскрась 1 картинку с Бемби и его друзьями', required: 1 },
+                    { id: 'sp_3_2', name: 'Раскрась 1 картинку, где изображен хотя бы 1 муравей или гусеница', required: 1 },
+                    { id: 'sp_3_3', name: 'Раскрась 1 картинку с лесом', required: 1 }
+                ],
+                freeReward: { type: 'achetiki', amount: 15, name: '15 ашетиков' },
+                premiumReward: { type: 'achetiki', amount: 15, name: '15 ашетиков' }
+            },
+            {
+                title: "Уровень 4 - Трепет сердца",
+                maxProgress: 3,
+                desc: "Весной трепещет сердце",
+                subtasks: [
+                    { id: 'sp_4_1', name: 'Раскрась 1 картинку с влюбленной парой животных', required: 1 },
+                    { id: 'sp_4_2', name: 'Раскрась 1 картинку с влюбленной парой людей', required: 1 },
+                    { id: 'sp_4_3', name: 'Раскрась 1 картинку, где присутствует семья из птичек', required: 1 }
+                ],
+                freeReward: { type: 'lottery_with_achetiki', lottery: 'Билет на розыгрыш Funko Pop Винни-Пух', amount: 15, name: 'Билет на розыгрыш Funko Pop Винни-Пух + 15 ашетиков' },
+                premiumReward: { type: 'achievement_with_achetiki', achievement: 'Топотун', amount: 15, name: 'Достижение "Топотун" + 15 ашетиков' }
+            },
+            {
+                title: "Уровень 5 - Нежность",
+                maxProgress: 3,
+                desc: "Весна - это нежность",
+                subtasks: [
+                    { id: 'sp_5_1', name: 'Раскрась 1 картинку с Авророй', required: 1 },
+                    { id: 'sp_5_2', name: 'Раскрась 1 картинку с Белль', required: 1 },
+                    { id: 'sp_5_3', name: 'Раскрась 1 картинку с Жасмин', required: 1 }
+                ],
+                freeReward: { type: 'status_with_lottery', status: 'Нежность', lottery: 'Билет на розыгрыш любого тома Hachette А4', name: 'Статус "Нежность" + Билет на розыгрыш тома Hachette А4' },
+                premiumReward: { type: 'lottery', reward: 'Билет на доп. розыгрыш тома Hachette А4', name: 'Билет на доп. розыгрыш тома Hachette А4' }
+            }
+        ]
     }
+};   // ← ВАЖНО: ЗАКРЫВАЕМ TASK_BRANCHES!
+        
+        // ==========================================
+        // ДОСТИЖЕНИЯ
+        // ==========================================
+        
+        const ACHIEVEMENTS_DB = {
+            'trainer': { id: 'trainer', name: 'Великий тренер', img: 'assets/achievements/ach1.png', desc: 'Завершена ветка "Великий тренер"', condition: 'Выполните все задания ветки "Великий тренер"' },
+            'alcohol': { id: 'alcohol', name: 'Спиртесса', img: 'assets/achievements/ach2.png', desc: 'Завершена ветка "Спиртесса"', condition: 'Выполните все задания ветки "Спиртесса"' },
+            'shock': { id: 'shock', name: 'Шок контент', img: 'assets/achievements/ach3.png', desc: 'Завершена ветка "Шок контент"', condition: 'Выполните все задания ветки "Шок контент"' },
+            'lion': { id: 'lion', name: 'Королева прайда', img: 'assets/achievements/ach4.png', desc: 'Завершена ветка "Королева прайда"', condition: 'Выполните все задания ветки "Королева прайда"' },
+            'dragons': { id: 'dragons', name: 'Мать Драконов', img: 'assets/achievements/ach5.png', desc: 'Завершена ветка "Мать Драконов"', condition: 'Выполните все задания ветки "Мать Драконов"' },
+            'bear': { id: 'bear', name: 'Мишка', img: 'assets/achievements/ach6.png', desc: 'Завершена ветка "Мишка"', condition: 'Выполните все задания ветки "Мишка"' },
+            'fauna': { id: 'fauna', name: 'Знаток фауны', img: 'assets/achievements/ach7.png', desc: 'Завершена ветка "Знаток фауны"', condition: 'Выполните все задания ветки "Знаток фауны"' },
+            'sea': { id: 'sea', name: 'Царица морей', img: 'assets/achievements/ach8.png', desc: 'Завершена ветка "Царица морей"', condition: 'Выполните все задания ветки "Царица морей"' },
+            'queen': { id: 'queen', name: 'Злая королева', img: 'assets/achievements/ach9.png', desc: 'Завершена ветка "Злая королева"', condition: 'Выполните все задания ветки "Злая королева"' },
+            'scrooge': { id: 'scrooge', name: 'Скрудж', img: 'assets/achievements/ach10.png', desc: 'Накоплено 2500 ашетиков', condition: 'Накопите 2500 ашетиков' },
+            'benefactor': { id: 'benefactor', name: 'Благодетель', img: 'assets/achievements/ach11.png', desc: 'Поддержали проект', condition: 'Поддержите нас' },
+            'mystery': { id: 'mystery', name: 'Загадка', img: 'assets/achievements/ach12.png', desc: 'Завершена ветка "Загадка"', condition: 'Раскрасьте 20 картинок с персонажами Скуби-Ду' },
+            'anaconda': { id: 'anaconda', name: 'Анаконда', img: 'assets/achievements/ach13.png', desc: 'Завершена ветка "Анаконда"', condition: 'Раскрасьте 20 картинок со змеей' },
+            'molniya': { id: 'molniya', name: 'Молния', img: 'assets/achievements/ach_molniya.png', desc: 'Первым выполнил любую ветку заданий для Anna', condition: 'Быть первым, кто выполнит любую ветку заданий (кроме "Благодетель")' },
+// Новые достижения для Season Pass
+    'Цветочек': { id: 'Цветочек', name: 'Цветочек', img: 'assets/achievements/tutochek.png', desc: 'Получено за прохождение 2 уровня Season Pass', condition: 'Выполните все задания 2 уровня Season Pass' },
+    'Бемби': { id: 'Бемби', name: 'Бемби', img: 'assets/achievements/bembi.png', desc: 'Получено за прохождение 2 уровня Season Pass (Благодетель)', condition: 'Выполните все задания 2 уровня Season Pass (Благодетель)' },
+    'Топотун': { id: 'Топотун', name: 'Топотун', img: 'assets/achievements/topotun.png', desc: 'Получено за прохождение 4 уровня Season Pass (Благодетель)', condition: 'Выполните все задания 4 уровня Season Pass (Благодетель)' }
 };
+        // ==========================================
+        // SEASON PASS ФУНКЦИИ
+        // ==========================================
+        
+        let userSeasonPremium = false;
+        
+        async function loadSeasonPremiumStatus() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
+                const stats = await response.json();
+                userSeasonPremium = stats.season_premium || false;
+                updatePremiumStatusDisplay();
+            } catch (error) {
+                console.error('Error loading premium status:', error);
+            }
+        }
+        
+        function updatePremiumStatusDisplay() {
+    const statusSpan = document.getElementById('premiumStatusText');
+    if (statusSpan) {
+        // Скрываем блок с премиум статусом полностью
+        const premiumBlock = document.getElementById('seasonPassPremiumStatus');
+        if (premiumBlock) {
+            premiumBlock.style.display = 'none';
+        }
+    }
+}
+        
+        function loadClaimedRewards() {
+    const saved = localStorage.getItem(`season_rewards_${userId}`);
+    if (saved) {
+        try {
+            claimedSeasonRewards = JSON.parse(saved);
+        } catch(e) {}
+    }
+}
 
-// ==========================================
-// ДОСТИЖЕНИЯ
-// ==========================================
+function saveClaimedRewards() {
+    localStorage.setItem(`season_rewards_${userId}`, JSON.stringify(claimedSeasonRewards));
+}
 
-const ACHIEVEMENTS_DB = {
-    'trainer': { id: 'trainer', name: 'Великий тренер', img: 'assets/achievements/ach1.png', desc: 'Завершена ветка "Великий тренер"', condition: 'Выполните все задания ветки "Великий тренер"' },
-    'alcohol': { id: 'alcohol', name: 'Спиртесса', img: 'assets/achievements/ach2.png', desc: 'Завершена ветка "Спиртесса"', condition: 'Выполните все задания ветки "Спиртесса"' },
-    'shock': { id: 'shock', name: 'Шок контент', img: 'assets/achievements/ach3.png', desc: 'Завершена ветка "Шок контент"', condition: 'Выполните все задания ветки "Шок контент"' },
-    'lion': { id: 'lion', name: 'Королева прайда', img: 'assets/achievements/ach4.png', desc: 'Завершена ветка "Королева прайда"', condition: 'Выполните все задания ветки "Королева прайда"' },
-    'dragons': { id: 'dragons', name: 'Мать Драконов', img: 'assets/achievements/ach5.png', desc: 'Завершена ветка "Мать Драконов"', condition: 'Выполните все задания ветки "Мать Драконов"' },
-    'bear': { id: 'bear', name: 'Мишка', img: 'assets/achievements/ach6.png', desc: 'Завершена ветка "Мишка"', condition: 'Выполните все задания ветки "Мишка"' },
-    'fauna': { id: 'fauna', name: 'Знаток фауны', img: 'assets/achievements/ach7.png', desc: 'Завершена ветка "Знаток фауны"', condition: 'Выполните все задания ветки "Знаток фауны"' },
-    'sea': { id: 'sea', name: 'Царица морей', img: 'assets/achievements/ach8.png', desc: 'Завершена ветка "Царица морей"', condition: 'Выполните все задания ветки "Царица морей"' },
-    'queen': { id: 'queen', name: 'Злая королева', img: 'assets/achievements/ach9.png', desc: 'Завершена ветка "Злая королева"', condition: 'Выполните все задания ветки "Злая королева"' },
-    'scrooge': { id: 'scrooge', name: 'Скрудж', img: 'assets/achievements/ach10.png', desc: 'Накоплено 2500 ашетиков', condition: 'Накопите 2500 ашетиков' },
-    'benefactor': { id: 'benefactor', name: 'Благодетель', img: 'assets/achievements/ach11.png', desc: 'Поддержали проект', condition: 'Поддержите нас' },
-    'mystery': { id: 'mystery', name: 'Загадка', img: 'assets/achievements/ach12.png', desc: 'Завершена ветка "Загадка"', condition: 'Раскрасьте 20 картинок с персонажами Скуби-Ду' },
-    'anaconda': { id: 'anaconda', name: 'Анаконда', img: 'assets/achievements/ach13.png', desc: 'Завершена ветка "Анаконда"', condition: 'Раскрасьте 20 картинок со змеей' },
-    'molniya': { id: 'molniya', name: 'Молния', img: 'assets/achievements/ach_molniya.png', desc: 'Первым выполнил любую ветку заданий для Anna', condition: 'Быть первым, кто выполнит любую ветку заданий (кроме "Благодетель")' }
-};
+function toggleSeasonPass() {
+    const content = document.getElementById('seasonPassContent');
+    const arrow = document.getElementById('seasonPassArrow');
+    if (!content) return;
+    if (content.style.display === 'none' || content.style.display === '') {
+        content.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+        renderSeasonPassTasks();
+    } else {
+        content.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+}
+
+function renderSeasonPassTasks() {
+    // Получаем текущий уровень
+    const currentLevelIndex = getCurrentLevelIndex('season_pass');
+    
+    const container = document.getElementById('seasonPassTasksList');
+    if (!container) return;
+    
+    const branch = TASK_BRANCHES.season_pass;
+    if (!branch) return;
+    
+    container.innerHTML = '';
+    const levels = branch.levels;
+    
+    console.log('Season Pass - currentLevelIndex:', currentLevelIndex);
+    console.log('Season Pass - levels count:', levels.length);
+    
+    for (let i = 0; i < levels.length; i++) {
+        const level = levels[i];
+        const levelNum = i + 1;
+        
+        // Сначала вычисляем прогресс
+        let totalCompleted = 0;
+        let totalRequired = 0;
+        
+        if (level.subtasks) {
+            level.subtasks.forEach((subtask, idx) => {
+                const prog = getSubtaskProgress('season_pass', i, idx);
+                totalCompleted += Math.min(prog, subtask.required);
+                totalRequired += subtask.required;
+            });
+        }
+        
+        const totalPercent = (totalCompleted / totalRequired) * 100;
+        const allSubtasksDone = totalCompleted >= totalRequired;
+        
+        // Теперь определяем статус уровня (ПОСЛЕ объявления allSubtasksDone)
+        const isCompleted = allSubtasksDone;
+        // Первый уровень (1) никогда не блокируем
+// Текущий уровень — это индекс (0-based), поэтому:
+// уровень 2 (levelNum=2) блокируется, если currentLevelIndex < 1
+// уровень 3 (levelNum=3) блокируется, если currentLevelIndex < 2
+const isLocked = levelNum > 1 && currentLevelIndex < (levelNum - 1);
+        const isCurrent = levelNum === currentLevelIndex;
+        
+        console.log(`Уровень ${levelNum}: isCurrent=${isCurrent}, isCompleted=${isCompleted}, isLocked=${isLocked}, progress=${totalCompleted}/${totalRequired}`);
+        
+        // Если уровень пройден, добавляем достижение
+        if (allSubtasksDone && !user.achievements.includes(`season_pass_${levelNum}`)) {
+            user.achievements.push(`season_pass_${levelNum}`);
+            saveUserData();
+            
+            if (typeof fetchAPI === 'function') {
+                fetchAPI('/api/add_achievement', {
+                    user_id: userId,
+                    achievement: `season_pass_${levelNum}`
+                });
+            }
+        }
+        
+        const levelCard = document.createElement('div');
+        // Применяем класс locked ТОЛЬКО для заблокированных уровней (isLocked)
+        levelCard.className = `sp-level-card ${isLocked ? 'locked' : ''} ${isCompleted ? 'completed' : ''}`;
+        
+        let levelHtml = `
+            <div class="sp-level-header">
+                <span class="sp-level-number">Уровень ${levelNum}</span>
+                <span class="sp-level-xp">${totalCompleted}/${totalRequired}</span>
+            </div>
+            <div class="level-desc">${level.desc}</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: ${totalPercent}%"></div>
+            </div>
+            <div style="margin-top: 15px;"></div>
+        `;
+        
+        // Показываем подзадания только для текущего или пройденного уровня (не заблокированного)
+        if (!isLocked) {
+            level.subtasks.forEach((subtask, idx) => {
+                const currentProgress = getSubtaskProgress('season_pass', i, idx);
+                const isSubtaskCompleted = currentProgress >= subtask.required;
+                const subtaskPercent = (currentProgress / subtask.required) * 100;
+                
+                // Кнопка показывается, если задание не выполнено И уровень не заблокирован
+const showSubmitButton = !isSubtaskCompleted && !isLocked;
+                
+                levelHtml += `
+                    <div class="subtask-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-weight: 600; font-size: 14px;">${subtask.name}</span>
+                            <span style="font-size: 12px; color: var(--accent);">${currentProgress}/${subtask.required}</span>
+                        </div>
+                        <div class="progress-bar-container" style="height: 6px; margin: 0 0 12px 0;">
+                            <div class="progress-bar-fill" style="width: ${subtaskPercent}%; height: 100%;"></div>
+                        </div>
+                        ${showSubmitButton ? `
+                            <button class="task-submit-btn" style="padding: 10px; font-size: 13px; margin-top: 8px;" onclick="openSubtaskUpload('season_pass', ${i}, ${idx}, '${subtask.name}')">
+                                <i class="fas fa-camera"></i> Отправить фото: ${subtask.name}
+                            </button>
+                        ` : isSubtaskCompleted ? `
+                            <div style="text-align: center; color: var(--status-green); font-size: 12px; margin-top: 8px;">
+                                <i class="fas fa-check-circle"></i> Выполнено!
+                            </div>
+                        ` : !isCurrent && !isCompleted ? `
+                            <div style="text-align: center; color: var(--text-gray); font-size: 12px; margin-top: 8px;">
+                                <i class="fas fa-lock"></i> Выполните предыдущий уровень
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+        } else {
+            // Для заблокированных уровней показываем плейсхолдер
+            levelHtml += `
+                <div class="subtask-card" style="text-align: center; opacity: 0.5;">
+                    <div style="padding: 15px;">
+                        <i class="fas fa-lock" style="font-size: 24px; margin-bottom: 8px;"></i>
+                        <div>Задания скрыты</div>
+                        <div style="font-size: 12px; margin-top: 5px;">Выполните предыдущий уровень</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        const freeClaimed = claimedSeasonRewards ? claimedSeasonRewards.free.includes(levelNum) : false;
+        const premiumClaimed = claimedSeasonRewards ? claimedSeasonRewards.premium.includes(levelNum) : false;
+        
+        const canClaimFree = allSubtasksDone && !freeClaimed && !isLocked;
+        const canClaimPremium = userSeasonPremium && allSubtasksDone && !premiumClaimed && !isLocked;
+        
+        levelHtml += `
+            <div class="sp-level-rewards">
+                <div class="sp-reward-item free">
+                    <div>🎁 Награда</div>
+                    <div><strong>${level.freeReward.name}</strong></div>
+                    ${canClaimFree ? 
+                        `<button class="sp-reward-btn" onclick="claimSeasonReward(${levelNum}, 'free')">Получить</button>` : 
+                        (freeClaimed ? '<div class="sp-reward-claimed">✅ Получено</div>' : 
+                            (isLocked ? '<div class="sp-reward-claimed">🔒 Уровень заблокирован</div>' : '<div class="sp-reward-claimed">🔒 Завершите уровень</div>'))
+                    }
+                </div>
+                <div class="sp-reward-item premium ${userSeasonPremium && allSubtasksDone && !isLocked ? 'unlocked' : ''}">
+                    <div>🎁 Награда для благодетелей</div>
+                    <div><strong>${level.premiumReward.name}</strong></div>
+                    ${canClaimPremium ? 
+                        `<button class="sp-reward-btn" onclick="claimSeasonReward(${levelNum}, 'premium')">Получить</button>` : 
+                        (premiumClaimed ? '<div class="sp-reward-claimed">✅ Получено</div>' : 
+                            (!userSeasonPremium ? '<div class="sp-reward-claimed">🔒 Только для благодетелей</div>' : 
+                                (isLocked ? '<div class="sp-reward-claimed">🔒 Уровень заблокирован</div>' : '<div class="sp-reward-claimed">🔒 Завершите уровень</div>')))
+                    }
+                </div>
+            </div>
+        `;
+        
+        levelCard.innerHTML = levelHtml;
+        container.appendChild(levelCard);
+    }
+}
+function checkAndFixSeasonPassProgress() {
+    console.log('🔍 Проверка прогресса Season Pass...');
+    
+    let anyLevelUnlocked = false;
+    
+    for (let level = 0; level < 5; level++) {
+        const levelData = TASK_BRANCHES.season_pass.levels[level];
+        if (!levelData) continue;
+        
+        let allSubtasksDone = true;
+        if (levelData.subtasks) {
+            levelData.subtasks.forEach((subtask, idx) => {
+                const prog = getSubtaskProgress('season_pass', level, idx);
+                if (prog < subtask.required) {
+                    allSubtasksDone = false;
+                }
+            });
+        }
+        
+        if (allSubtasksDone && level < 4) {
+            console.log(`✅ Уровень ${level+1} пройден, разблокируем уровень ${level+2}`);
+            anyLevelUnlocked = true;
+        }
+    }
+    
+    if (anyLevelUnlocked) {
+        renderSeasonPassTasks();
+        console.log('🎉 Уровни разблокированы!');
+    }
+    
+    return anyLevelUnlocked;
+}
+
+   function claimSeasonReward(levelNum, type) {
+    const branch = TASK_BRANCHES.season_pass;
+    const levelData = branch.levels[levelNum - 1];
+    if (!levelData) return;
+    
+    // Проверяем, выполнены ли все подзадания уровня
+    let allSubtasksCompleted = true;
+    levelData.subtasks.forEach((subtask, idx) => {
+        const progress = getSubtaskProgress('season_pass', levelNum - 1, idx);
+        if (progress < subtask.required) {
+            allSubtasksCompleted = false;
+        }
+    });
+    
+    if (!allSubtasksCompleted) {
+        if (tg) tg.showAlert('❌ Сначала выполните все задания уровня');
+        return;
+    }
+    
+    if (type === 'free') {
+        if (claimedSeasonRewards.free.includes(levelNum)) {
+            if (tg) tg.showAlert('❌ Награда уже получена');
+            return;
+        }
+        
+        const reward = levelData.freeReward;
+        
+        // Обработка разных типов наград
+        if (reward.type === 'achetiki') {
+            // Отправляем запрос на сервер для начисления ашетиков
+            fetch(`${SERVER_URL}/api/add_balance`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    amount: reward.amount,
+                    reason: `Season Pass уровень ${levelNum} бесплатная награда`
+                })
+            }).then(async response => {
+                const result = await response.json();
+                if (result && result.status === 'ok') {
+                    if (result.new_balance !== undefined) {
+                        user.balance = result.new_balance;
+                    } else {
+                        user.balance += reward.amount;
+                    }
+                    saveUserData();
+                    updateUI();
+                    
+                    if (tg) tg.showAlert(`✅ Получено ${reward.amount} ашетиков!`);
+                } else {
+                    user.balance += reward.amount;
+                    saveUserData();
+                    updateUI();
+                    if (tg) tg.showAlert(`⚠️ Начислено локально: ${reward.amount} ашетиков. Синхронизация может отсутствовать.`);
+                }
+            }).catch(error => {
+                console.error('Ошибка запроса:', error);
+                user.balance += reward.amount;
+                saveUserData();
+                updateUI();
+                if (tg) tg.showAlert(`⚠️ Начислено локально: ${reward.amount} ашетиков. Проверьте подключение к интернету.`);
+            });
+        }
+        else if (reward.type === 'achievement') {
+            if (!user.achievements.includes(reward.reward)) {
+                user.achievements.push(reward.reward);
+                saveUserData();
+                fetch(`${SERVER_URL}/api/add_achievement`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, achievement: reward.reward })
+                });
+                if (tg) tg.showAlert(`✅ Получено достижение "${reward.reward}"!`);
+            }
+        }
+        else if (reward.type === 'achievement_with_achetiki') {
+            // Достижение + ашетики
+            if (!user.achievements.includes(reward.achievement)) {
+                user.achievements.push(reward.achievement);
+                saveUserData();
+                fetch(`${SERVER_URL}/api/add_achievement`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, achievement: reward.achievement })
+                });
+            }
+            fetch(`${SERVER_URL}/api/add_balance`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    amount: reward.amount,
+                    reason: `Season Pass уровень ${levelNum} награда`
+                })
+            }).then(async response => {
+                const result = await response.json();
+                if (result && result.status === 'ok') {
+                    user.balance = result.new_balance;
+                    saveUserData();
+                    updateUI();
+                    if (tg) tg.showAlert(`✅ Получено достижение "${reward.achievement}" и ${reward.amount} ашетиков!`);
+                }
+            }).catch(error => {
+                user.balance += reward.amount;
+                saveUserData();
+                updateUI();
+                if (tg) tg.showAlert(`⚠️ Начислено локально: ${reward.amount} ашетиков.`);
+            });
+        }
+        else if (reward.type === 'status') {
+            if (!user.unlockedStatuses.includes(reward.reward)) {
+                user.unlockedStatuses.push(reward.reward);
+                saveUserData();
+                fetch(`${SERVER_URL}/api/sync_status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, status: reward.reward, action: 'unlock' })
+                });
+                if (tg) tg.showAlert(`✅ Получен статус "${reward.reward}"!`);
+            }
+        }
+        else if (reward.type === 'status_with_lottery') {
+            // Статус + билет на розыгрыш
+            if (!user.unlockedStatuses.includes(reward.status)) {
+                user.unlockedStatuses.push(reward.status);
+                saveUserData();
+                fetch(`${SERVER_URL}/api/sync_status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, status: reward.status, action: 'unlock' })
+                });
+            }
+            // Сохраняем билет на розыгрыш
+            const lotteryTickets = JSON.parse(localStorage.getItem(`lottery_tickets_${userId}`) || '[]');
+            lotteryTickets.push({
+                level: levelNum,
+                type: type,
+                reward: reward.lottery,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem(`lottery_tickets_${userId}`, JSON.stringify(lotteryTickets));
+            
+            // Отправляем на сервер
+            fetch(`${SERVER_URL}/api/add_lottery_ticket`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    level: levelNum,
+                    type: type,
+                    reward: reward.lottery
+                })
+            });
+            
+            if (tg) tg.showAlert(`✅ ${reward.name}!\n\nРезультаты розыгрыша будут объявлены после окончания сезона.`);
+        }
+        else if (reward.type === 'lottery') {
+            // Билет на розыгрыш
+            const lotteryTickets = JSON.parse(localStorage.getItem(`lottery_tickets_${userId}`) || '[]');
+            lotteryTickets.push({
+                level: levelNum,
+                type: type,
+                reward: reward.reward,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem(`lottery_tickets_${userId}`, JSON.stringify(lotteryTickets));
+            
+            fetch(`${SERVER_URL}/api/add_lottery_ticket`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    level: levelNum,
+                    type: type,
+                    reward: reward.reward
+                })
+            });
+            
+            if (tg) tg.showAlert(`✅ ${reward.name}!\n\nРезультаты розыгрыша будут объявлены после окончания сезона.`);
+        }
+        else if (reward.type === 'lottery_with_achetiki') {
+            // Билет на розыгрыш + ашетики
+            fetch(`${SERVER_URL}/api/add_balance`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    amount: reward.amount,
+                    reason: `Season Pass уровень ${levelNum} награда`
+                })
+            }).then(async response => {
+                const result = await response.json();
+                if (result && result.status === 'ok') {
+                    user.balance = result.new_balance;
+                    saveUserData();
+                    updateUI();
+                }
+            }).catch(error => {
+                user.balance += reward.amount;
+                saveUserData();
+                updateUI();
+            });
+            
+            const lotteryTickets = JSON.parse(localStorage.getItem(`lottery_tickets_${userId}`) || '[]');
+            lotteryTickets.push({
+                level: levelNum,
+                type: type,
+                reward: reward.lottery,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem(`lottery_tickets_${userId}`, JSON.stringify(lotteryTickets));
+            
+            fetch(`${SERVER_URL}/api/add_lottery_ticket`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    level: levelNum,
+                    type: type,
+                    reward: reward.lottery
+                })
+            });
+            
+            if (tg) tg.showAlert(`✅ ${reward.name}!\n\nРезультаты розыгрыша будут объявлены после окончания сезона.`);
+        }
+        
+        claimedSeasonRewards.free.push(levelNum);
+        saveClaimedRewards();
+        renderSeasonPassTasks();
+        
+        // ========== РАЗБЛОКИРОВКА СЛЕДУЮЩЕГО УРОВНЯ ==========
+if (levelNum < 5) {
+    // Проверяем, что текущий уровень полностью пройден
+    const currentLevel = levelNum - 1;
+    const allCurrentSubtasksDone = levelData.subtasks.every((subtask, idx) => {
+        const prog = getSubtaskProgress('season_pass', currentLevel, idx);
+        return prog >= subtask.required;
+    });
+    
+    if (allCurrentSubtasksDone) {
+        console.log(`✅ Уровень ${levelNum} пройден, разблокируем следующий уровень ${levelNum + 1}`);
+        
+        // Принудительно обновляем userProgress
+        saveUserData();
+        
+        // Обновляем отображение
+        renderSeasonPassTasks();
+        
+        if (tg) tg.showAlert(`🎉 Уровень ${levelNum} пройден! Открыт уровень ${levelNum + 1}!`);
+    }
+}
+// ======================================================
+        
+    } else if (type === 'premium') {
+        if (!userSeasonPremium) {
+            if (tg) tg.showAlert('❌ Премиум пропуск не активен');
+            return;
+        }
+        
+        if (claimedSeasonRewards.premium.includes(levelNum)) {
+            if (tg) tg.showAlert('❌ Награда уже получена');
+            return;
+        }
+        
+        const reward = levelData.premiumReward;
+        
+        // Обработка премиум наград
+        if (reward.type === 'achetiki') {
+            fetch(`${SERVER_URL}/api/add_balance`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    amount: reward.amount,
+                    reason: `Season Pass уровень ${levelNum} премиум награда`
+                })
+            }).then(async response => {
+                const result = await response.json();
+                if (result && result.status === 'ok') {
+                    user.balance = result.new_balance;
+                    saveUserData();
+                    updateUI();
+                    if (tg) tg.showAlert(`✅ Получено ${reward.amount} ашетиков!`);
+                } else {
+                    user.balance += reward.amount;
+                    saveUserData();
+                    updateUI();
+                    if (tg) tg.showAlert(`⚠️ Начислено локально: ${reward.amount} ашетиков.`);
+                }
+            }).catch(error => {
+                user.balance += reward.amount;
+                saveUserData();
+                updateUI();
+                if (tg) tg.showAlert(`⚠️ Начислено локально: ${reward.amount} ашетиков.`);
+            });
+        }
+        else if (reward.type === 'achievement') {
+            if (!user.achievements.includes(reward.reward)) {
+                user.achievements.push(reward.reward);
+                saveUserData();
+                fetch(`${SERVER_URL}/api/add_achievement`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, achievement: reward.reward })
+                });
+                if (tg) tg.showAlert(`✅ Получено достижение "${reward.reward}"!`);
+            }
+        }
+        else if (reward.type === 'achievement_with_achetiki') {
+            if (!user.achievements.includes(reward.achievement)) {
+                user.achievements.push(reward.achievement);
+                saveUserData();
+                fetch(`${SERVER_URL}/api/add_achievement`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, achievement: reward.achievement })
+                });
+            }
+            fetch(`${SERVER_URL}/api/add_balance`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    amount: reward.amount,
+                    reason: `Season Pass уровень ${levelNum} премиум награда`
+                })
+            }).then(async response => {
+                const result = await response.json();
+                if (result && result.status === 'ok') {
+                    user.balance = result.new_balance;
+                    saveUserData();
+                    updateUI();
+                    if (tg) tg.showAlert(`✅ Получено достижение "${reward.achievement}" и ${reward.amount} ашетиков!`);
+                }
+            }).catch(error => {
+                user.balance += reward.amount;
+                saveUserData();
+                updateUI();
+                if (tg) tg.showAlert(`⚠️ Начислено локально: ${reward.amount} ашетиков.`);
+            });
+        }
+        else if (reward.type === 'status') {
+            if (!user.unlockedStatuses.includes(reward.reward)) {
+                user.unlockedStatuses.push(reward.reward);
+                saveUserData();
+                fetch(`${SERVER_URL}/api/sync_status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, status: reward.reward, action: 'unlock' })
+                });
+                if (tg) tg.showAlert(`✅ Получен статус "${reward.reward}"!`);
+            }
+        }
+        else if (reward.type === 'status_with_lottery') {
+            if (!user.unlockedStatuses.includes(reward.status)) {
+                user.unlockedStatuses.push(reward.status);
+                saveUserData();
+                fetch(`${SERVER_URL}/api/sync_status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, status: reward.status, action: 'unlock' })
+                });
+            }
+            const lotteryTickets = JSON.parse(localStorage.getItem(`lottery_tickets_${userId}`) || '[]');
+            lotteryTickets.push({
+                level: levelNum,
+                type: type,
+                reward: reward.lottery,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem(`lottery_tickets_${userId}`, JSON.stringify(lotteryTickets));
+            fetch(`${SERVER_URL}/api/add_lottery_ticket`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    level: levelNum,
+                    type: type,
+                    reward: reward.lottery
+                })
+            });
+            if (tg) tg.showAlert(`✅ ${reward.name}!\n\nРезультаты розыгрыша будут объявлены после окончания сезона.`);
+        }
+        else if (reward.type === 'lottery') {
+            const lotteryTickets = JSON.parse(localStorage.getItem(`lottery_tickets_${userId}`) || '[]');
+            lotteryTickets.push({
+                level: levelNum,
+                type: type,
+                reward: reward.reward,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem(`lottery_tickets_${userId}`, JSON.stringify(lotteryTickets));
+            fetch(`${SERVER_URL}/api/add_lottery_ticket`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    level: levelNum,
+                    type: type,
+                    reward: reward.reward
+                })
+            });
+            if (tg) tg.showAlert(`✅ ${reward.name}!\n\nРезультаты розыгрыша будут объявлены после окончания сезона.`);
+        }
+        
+        claimedSeasonRewards.premium.push(levelNum);
+        saveClaimedRewards();
+        renderSeasonPassTasks();
+        
+        // ========== РАЗБЛОКИРОВКА СЛЕДУЮЩЕГО УРОВНЯ ==========
+        if (levelNum < 5) {
+            // Проверяем, что текущий уровень полностью пройден
+            const currentLevel = levelNum - 1;
+            const allCurrentSubtasksDone = levelData.subtasks.every((subtask, idx) => {
+                const prog = getSubtaskProgress('season_pass', currentLevel, idx);
+                return prog >= subtask.required;
+            });
+            
+            if (allCurrentSubtasksDone) {
+                console.log(`✅ Уровень ${levelNum} пройден, разблокируем следующий уровень ${levelNum + 1}`);
+                // Принудительно обновляем отображение
+                renderSeasonPassTasks();
+                if (tg) tg.showAlert(`🎉 Уровень ${levelNum} пройден! Открыт уровень ${levelNum + 1}!`);
+            }
+        }
+        // ======================================================
+    }
+}
+function unlockNextLevel(currentLevel) {
+    console.log(`🔓 Разблокировка уровня ${currentLevel + 1}`);
+    
+    // Проверяем, что текущий уровень действительно пройден
+    const branch = TASK_BRANCHES.season_pass;
+    const levelData = branch.levels[currentLevel - 1];
+    
+    if (levelData) {
+        let allSubtasksDone = true;
+        levelData.subtasks.forEach((subtask, idx) => {
+            const prog = getSubtaskProgress('season_pass', currentLevel - 1, idx);
+            if (prog < subtask.required) {
+                allSubtasksDone = false;
+            }
+        });
+        
+        if (allSubtasksDone) {
+            console.log(`✅ Уровень ${currentLevel} пройден, разблокируем уровень ${currentLevel + 1}`);
+            
+            // Принудительно обновляем локальный прогресс
+            saveUserData();
+            
+            // Перерисовываем с новым currentLevelIndex
+            renderSeasonPassTasks();
+            
+            if (tg) tg.showAlert(`🎉 Уровень ${currentLevel} пройден! Открыт уровень ${currentLevel + 1}!`);
+        } else {
+            console.log(`❌ Уровень ${currentLevel} еще не пройден полностью`);
+            if (tg) tg.showAlert(`❌ Сначала выполните все задания уровня ${currentLevel}`);
+        }
+    }
+}
+        // ==========================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ==========================================
         
         window.onload = async () => {
             console.log('🚀 APP STARTING...');
@@ -6544,7 +7525,9 @@ const ACHIEVEMENTS_DB = {
             if (savedUser) Object.assign(user, JSON.parse(savedUser));
             const savedCart = localStorage.getItem('coloring_cart');
             if (savedCart) cart = JSON.parse(savedCart);
-            await loadUserBalance();
+            // После загрузки всех данных, дополнительно загружаем баланс с сервера
+await loadUserBalance();
+updateUI();
             await loadUserProgress();
             await loadUnlockedStatuses();
             await loadUserAchievements();
@@ -6560,10 +7543,13 @@ const ACHIEVEMENTS_DB = {
             renderBranchTasks();
             renderTimeTasks();
             renderFriendTasks();
+            renderSeasonPassTasks();
             loadMarkers();
             renderCart();
             renderVolumes();
             loadInventory();
+            loadSeasonPremiumStatus();
+            loadClaimedRewards();
             updateUI();
             startProgressRefresh();
             initSwipeListeners();

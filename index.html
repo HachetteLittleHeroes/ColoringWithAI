@@ -3125,8 +3125,11 @@
     </div>
 
     <script>
-    <script>
-        const SERVER_URL = 'https://bot-hachettelittleheroes.amvera.io';
+        // ==========================================
+        // КОНФИГУРАЦИЯ И ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+        // ==========================================
+        
+        const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io';
         const MARKER_PRICE = 75;
         
         // Telegram WebApp
@@ -3141,7 +3144,8 @@
             tg.expand();
             tg.ready();
         }
- // ==========================================
+        
+        // ==========================================
         // ПОЛУЧЕНИЕ ID ПОЛЬЗОВАТЕЛЯ (из URL или Telegram)
         // ==========================================
         
@@ -3199,9 +3203,9 @@
         let markersLoading = false;
         let userProgress = {};
         let claimedSeasonRewards = {
-            free: [],
-            premium: []
-        };
+    free: [],
+    premium: []
+};
         
         // Переменные для томов
         let currentVolumeId = null;
@@ -3209,6 +3213,7 @@
         let currentVolumePages = 0;
         let touchStartX = 0;
         let touchEndX = 0;
+        
         // ==========================================
         // API ВЫЗОВЫ
         // ==========================================
@@ -4834,19 +4839,10 @@
         
         
         function saveUserData() {
-    localStorage.setItem('coloring_user', JSON.stringify(user));
-    localStorage.setItem('coloring_cart', JSON.stringify(cart));
-    
-    // Сохраняем гостевой ID, если это гость
-    if (userId && userId.toString().startsWith('guest_')) {
-        localStorage.setItem('coloring_permanent_guest_id', userId);
-        if (user.name !== 'Без имени') {
-            localStorage.setItem('coloring_guest_name', user.name);
+            localStorage.setItem('coloring_user', JSON.stringify(user));
+            localStorage.setItem('coloring_cart', JSON.stringify(cart));
+            updateUI();
         }
-    }
-    
-    updateUI();
-}
         // ==========================================
         // МАРКЕРЫ
         // ==========================================
@@ -6614,7 +6610,7 @@
             { title: "Любитель животных", maxProgress: 2, desc: "Раскрась 1 картинку с мышью (Микки Маус, Минни Маус и подобные не подходят) и 1 с медведем", subtasks: [{ id: 'mouse_1', name: 'Мышь', required: 1 }, { id: 'bear_1', name: 'Медведь', required: 1 }] },
             { title: "Друг животных", maxProgress: 3, desc: "Раскрась 1 с лисом, 1 с медведем, 1 с мышью (Микки Маус, Минни Макс и подобные не подходят)", subtasks: [{ id: 'fox_1', name: 'Лиса', required: 1 }, { id: 'bear_2', name: 'Медведь', required: 1 }, { id: 'mouse_2', name: 'Мышь', required: 1 }] },
             { title: "Зоолог", maxProgress: 5, desc: "Раскрась 2 со скунсом, 2 картинки с зайцем, 1 картинку со львом", subtasks: [{ id: 'skunk', name: 'Скунс', required: 2 }, { id: 'hare', name: 'Заяц', required: 2 }, { id: 'lion', name: 'Лев', required: 1 }] },
-            { title: "Знаток фауны", maxProgress: 9, desc: "Раскрась 2 картинки с коровой, 2 картинки с волком, 3 картинки с козлами, 2 картинки с лосём", subtasks: [{ id: 'cow', name: 'Корова', required: 2 }, { id: 'wolf', name: 'Волк', required: 2 }, { id: 'crocodile', name: 'Козел', required: 3 }, { id: 'moose', name: 'Лось', required: 2 }] }
+            { title: "Знаток фауны", maxProgress: 9, desc: "Раскрась 2 картинки с коровой, 2 картинки с волком, 3 картинки с крокодилом, 2 картинки с лосём", subtasks: [{ id: 'cow', name: 'Корова', required: 2 }, { id: 'wolf', name: 'Волк', required: 2 }, { id: 'crocodile', name: 'Крокодил', required: 3 }, { id: 'moose', name: 'Лось', required: 2 }] }
         ]
     },
     sea: {

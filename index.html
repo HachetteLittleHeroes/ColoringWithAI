@@ -3125,6 +3125,22 @@
     </div>
 
     <script>
+    <script>
+        const SERVER_URL = 'https://bot-hachettelittleheroes.amvera.io';
+        const MARKER_PRICE = 75;
+        
+        // Telegram WebApp
+        const tg = window.Telegram?.WebApp || {
+            showAlert: (msg) => alert(msg),
+            showConfirm: (msg, callback) => callback(confirm(msg)),
+            initDataUnsafe: { user: { id: 496779756, first_name: 'Без имени' } },
+            HapticFeedback: { notificationOccurred: () => {} }
+        };
+        
+        if (window.Telegram?.WebApp) {
+            tg.expand();
+            tg.ready();
+        }
  // ==========================================
         // ПОЛУЧЕНИЕ ID ПОЛЬЗОВАТЕЛЯ (из URL или Telegram)
         // ==========================================

@@ -3065,11 +3065,14 @@
             </div>
         </div>
 
-        <div class="support-section" onclick="openSupport()">
-            <h3>Поддержать нас</h3>
-            <p>Помогите проекту развиваться</p>
-            <div class="support-button"><i class="fas fa-heart"></i><span>Boosty</span></div>
-        </div>
+       <div class="support-section" onclick="openSupportDialog()">
+    <h3>Поддержать нас</h3>
+    <p>Помогите проекту развиваться</p>
+    <div class="support-button"><i class="fas fa-heart"></i><span>Поддержать</span></div>
+    <p style="font-size: 12px; color: var(--text-gray); margin-top: 10px;">
+        💬 Откроется диалог, чтобы узнать как поддержать проект
+    </p>
+</div>
 
         <div class="themes-section">
             <h3>Темы оформления</h3>
@@ -5249,27 +5252,52 @@ function openPempuduProfile() {
         }
         
         function openSupport() {
-            window.open('https://boosty.to/hachettelittleheroes/donate', '_blank');
+    // Оставляем для обратной совместимости
+    openSupportDialog();
+}
+
+function openSupportDialog() {
+    const username = 'SPB_Zakharin_Sergey';
+    const message = encodeURIComponent('Здравствуйте! Хочу поддержать проект Hachette Little Heroes. Расскажите, как это сделать?');
+    
+    // Пробуем открыть через Telegram WebApp
+    if (window.Telegram && window.Telegram.WebApp) {
+        try {
+            window.Telegram.WebApp.openTelegramLink(`https://t.me/${username}?text=${message}`);
+        } catch(e) {
+            window.open(`https://t.me/${username}?text=${message}`, '_blank');
         }
+    } else if (tg && tg.openTelegramLink) {
+        tg.openTelegramLink(`https://t.me/${username}?text=${message}`);
+    } else {
+        window.open(`https://t.me/${username}?text=${message}`, '_blank');
+    }
+}
         
         function openSupportForStatus() {
-            const supportUrl = 'https://boosty.to/hachettelittleheroes/donate';
-            if (tg) {
-                tg.showConfirm(
-                    'Вы будете перенаправлены на страницу поддержки.\n\nПосле пожертвования, напишите администратору для получения статуса "Благодетель".',
-                    (confirm) => {
-                        if (confirm) {
-                            window.open(supportUrl, '_blank');
-                            if (tg) tg.showAlert('Спасибо за поддержку! После пожертвования напишите @admin для получения статуса.');
-                        }
+    const username = 'SPB_Zakharin_Sergey';
+    const message = encodeURIComponent('Здравствуйте! Хочу поддержать проект для получения статуса "Благодетель".');
+    
+    if (tg) {
+        tg.showConfirm(
+            'Вы будете перенаправлены в диалог с администратором.\n\nПосле поддержки вы получите статус "Благодетель".',
+            (confirm) => {
+                if (confirm) {
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        window.Telegram.WebApp.openTelegramLink(`https://t.me/${username}?text=${message}`);
+                    } else {
+                        window.open(`https://t.me/${username}?text=${message}`, '_blank');
                     }
-                );
-            } else {
-                if (confirm('Перейти на страницу поддержки?\n\nПосле пожертвования от 2000 рублей вы получите статус "Благодетель".')) {
-                    window.open(supportUrl, '_blank');
+                    if (tg) tg.showAlert('Спасибо за поддержку! Напишите администратору для получения статуса.');
                 }
             }
+        );
+    } else {
+        if (confirm('Перейти в диалог с администратором?\n\nПосле поддержки вы получите статус "Благодетель".')) {
+            window.open(`https://t.me/${username}?text=${message}`, '_blank');
         }
+    }
+}
         
         
         function saveUserData() {

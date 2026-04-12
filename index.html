@@ -7434,9 +7434,19 @@ function openFigureModal(figure, isUnlocked) {
         levels: [
             { title: "Знакомство с морем", maxProgress: 1, desc: "Раскрась 1 картинку с Дори" },
             { title: "Юнга", maxProgress: 3, desc: "Раскрась 3 картинки с морскими млекопитающими" },
-            { title: "Боцман", maxProgress: 3, desc: "Раскрась 3 картинки с Муренами" },
-            { title: "Морской волк", maxProgress: 5, desc: "Раскрась 5 картинок с осьминогами" },
-            { title: "Царица морей", maxProgress: 8, desc: "Раскрась 8 картинок с акулами" }
+            { title: "Боцман", maxProgress: 3, desc: "Раскрась 3 картинки с муренами" },
+            { title: "Морской волк", maxProgress: 5, desc: "Раскрась 2 картинки с дельфинами, 2 картинки с крабом, 1 картинку с полосатой рыбой", subtasks: [
+                    { id: 'dolphin', name: 'Дельфин', required: 2 },
+                    { id: 'crab', name: 'Краб', required: 2 },
+                    { id: 'fishstrip', name: 'Рыба с полосками', required: 1 }
+                ]},
+            { title: "Царица морей", maxProgress: 8, desc: "Раскрась 3 картинки с крокодилами, 1 картинку с осьминогом, 4 картинки с акулой" 
+            subtasks: [
+                    { id: 'croc', name: 'Крокодил', required: 3 },
+                    { id: 'octopus', name: 'Осьминог', required: 1 },
+                    { id: 'shark', name: 'Акула', required: 4}
+                ]
+                }
         ]
     },
     queen: {

@@ -3964,6 +3964,7 @@
     </style>
 </head>
 <body>
+    <button id="checkConfigBtn" style="position:fixed; bottom:280px; right:10px; z-index:99999; background:purple; color:white; padding:15px; border:none; border-radius:10px; cursor:pointer;">ПРОВЕРИТЬ КОНФИГ</button>
     <button id="checkProgressBtn" style="position:fixed; bottom:160px; right:10px; z-index:99999; background:blue; color:white; padding:15px; border:none; border-radius:10px; cursor:pointer;">ПРОВЕРИТЬ ПРОГРЕСС</button>
     <button onclick="showDebugInfo()" style="position:fixed; bottom:100px; right:10px; z-index:99999; background:green; color:white; padding:15px; font-size:16px;">ПОКАЗАТЬ ДАННЫЕ</button>
   <!-- ========== ПРОФИЛЬ ========== -->
@@ -14082,7 +14083,37 @@ function updateAllCategoriesProgress() {
           `Элемент на странице: ${progressEl ? progressEl.textContent : 'не найден'}\n` +
           `completed: ${progress.completed}, total: ${progress.total}`);
 });
+        document.getElementById('checkConfigBtn').addEventListener('click', function() {
+    const bookName = "Les Grands Classiques tome 13";
+    const config = BOOK_PAGES_CONFIG[bookName];
+    const defaultConfig = DEFAULT_PAGES_CONFIG;
+    
+    let info = `КНИГА: ${bookName}\n\n`;
+    info += `Найдена в BOOK_PAGES_CONFIG: ${config ? 'ДА' : 'НЕТ'}\n`;
+    
+    if (config) {
+        info += `totalPages: ${config.totalPages}\n`;
+        info += `spreads: ${JSON.stringify(config.spreads)}\n`;
+        info += `spreads.length: ${config.spreads?.length || 0}\n`;
+        info += `totalCells: ${config.totalPages - (config.spreads?.length || 0)}\n`;
+    } else {
+        info += `\nИспользуется DEFAULT_PAGES_CONFIG:\n`;
+        info += `totalPages: ${defaultConfig.totalPages}\n`;
+        info += `spreads: ${JSON.stringify(defaultConfig.spreads)}\n`;
+    }
+    
+    // Проверяем, что хранится в коллекции
+    const userBooks = userColoringBooks.paint_by_number || [];
+    const savedBook = userBooks.find(b => (typeof b === 'string' ? b : b.name) === bookName);
+    
+    info += `\n\nВ КОЛЛЕКЦИИ:\n`;
+    info += `Тип: ${typeof savedBook}\n`;
+    info += `Значение: ${JSON.stringify(savedBook)}\n`;
+    
+    alert(info);
+});
     </script>
+    
     <!-- Модалка поиска пользователей -->
 <div id="userSearchModal" class="modal-overlay">
     <div class="modal-content" style="max-width: 400px;">

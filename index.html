@@ -13823,52 +13823,43 @@ function calculateCategoryProgress(category) {
     let totalCompletedCells = 0;
     let totalCellsAll = 0;
     
-    // ✅ Для отладки — собираем информацию
-    const debugLines = [];
-    
     userBooks.forEach(book => {
         const bookName = typeof book === 'string' ? book : book.name;
         const bookKey = `${category}_${bookName}`;
         const completedPages = userCompletedPages[bookKey] || {};
+        
+        // Количество отмеченных ячеек
         const completedCount = Object.keys(completedPages).length;
         
+        // Получаем totalPages и spreads
         let totalPages = DEFAULT_PAGES_CONFIG.totalPages;
         let spreads = [];
         
-        if (typeof book === 'object') {
-            totalPages = book.totalPages || totalPages;
+        if (typeof book === 'object' && book.totalPages) {
+            totalPages = book.totalPages;
             spreads = book.spreads || [];
         } else {
-            const config = BOOK_PAGES_CONFIG[bookName] || DEFAULT_PAGES_CONFIG;
-            totalPages = config.totalPages;
-            spreads = config.spreads || [];
+            const config = BOOK_PAGES_CONFIG[bookName];
+            if (config) {
+                totalPages = config.totalPages;
+                spreads = config.spreads || [];
+            }
         }
         
+        // Количество ячеек = страницы - развороты
         const totalCells = totalPages - spreads.length;
         
         totalCompletedCells += completedCount;
         totalCellsAll += totalCells;
-        
-        // ✅ Собираем строку для каждой раскраски
-        if (completedCount > 0 || totalCells !== totalPages) {
-            debugLines.push(`${bookName.substring(0, 20)}: ${completedCount}/${totalCells} (${totalPages}стр, ${spreads.length}разв)`);
-        }
     });
     
     const percent = totalCellsAll > 0 ? Math.round((totalCompletedCells / totalCellsAll) * 100) : 0;
     
-    // ✅ ВРЕМЕННО: показываем alert
-    if (category === 'paint_by_number') {
-        alert(`Категория: ${category}\n` + 
-              `Раскрасок: ${userBooks.length}\n` +
-              debugLines.slice(0, 5).join('\n') + 
-              `\n...\nИТОГО: ${totalCompletedCells}/${totalCellsAll} = ${percent}%`);
-    }
-    
     return { percent, completed: totalCompletedCells, total: totalCellsAll };
 }
 // Обновление прогресса для всех категорий
-function updateAllCategoriesProgress() {
+
+       function updateAllCategoriesProgress() {
     const categories = ['paint_by_number', 'alcohol', 'pencil', 'custom'];
     
     categories.forEach(category => {
@@ -13879,7 +13870,7 @@ function updateAllCategoriesProgress() {
             progressEl.textContent = `${progress.percent}%`;
         }
     });
-}
+} 
         // ==========================================
 // РЕНДЕРИНГ СОДЕРЖИМОГО КАТЕГОРИИ
 // ==========================================

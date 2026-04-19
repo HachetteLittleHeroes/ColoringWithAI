@@ -3964,6 +3964,7 @@
     </style>
 </head>
 <body>
+    <button id="checkProgressBtn" style="position:fixed; bottom:160px; right:10px; z-index:99999; background:blue; color:white; padding:15px; border:none; border-radius:10px; cursor:pointer;">ПРОВЕРИТЬ ПРОГРЕСС</button>
     <button onclick="showDebugInfo()" style="position:fixed; bottom:100px; right:10px; z-index:99999; background:green; color:white; padding:15px; font-size:16px;">ПОКАЗАТЬ ДАННЫЕ</button>
   <!-- ========== ПРОФИЛЬ ========== -->
 <div id="profile" class="page active">
@@ -14073,6 +14074,14 @@ function updateAllCategoriesProgress() {
     
     alert(info);
 }
+        document.getElementById('checkProgressBtn').addEventListener('click', function() {
+    const progress = calculateCategoryProgress('paint_by_number');
+    const progressEl = document.getElementById('category-progress-paint_by_number');
+    
+    alert(`calculateCategoryProgress: ${progress.percent}%\n` +
+          `Элемент на странице: ${progressEl ? progressEl.textContent : 'не найден'}\n` +
+          `completed: ${progress.completed}, total: ${progress.total}`);
+});
     </script>
     <!-- Модалка поиска пользователей -->
 <div id="userSearchModal" class="modal-overlay">

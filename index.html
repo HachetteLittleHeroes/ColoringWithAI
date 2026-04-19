@@ -13829,11 +13829,8 @@ function calculateCategoryProgress(category) {
         const bookName = typeof book === 'string' ? book : book.name;
         const bookKey = `${category}_${bookName}`;
         const completedPages = userCompletedPages[bookKey] || {};
-        
-        // Количество отмеченных ячеек
         const completedCount = Object.keys(completedPages).length;
         
-        // Получаем totalPages и spreads
         let totalPages = DEFAULT_PAGES_CONFIG.totalPages;
         let spreads = [];
         
@@ -13845,10 +13842,13 @@ function calculateCategoryProgress(category) {
             if (config) {
                 totalPages = config.totalPages;
                 spreads = config.spreads || [];
+            } else {
+                // ✅ Если конфиг не найден — используем DEFAULT_PAGES_CONFIG
+                totalPages = DEFAULT_PAGES_CONFIG.totalPages;
+                spreads = DEFAULT_PAGES_CONFIG.spreads || [];
             }
         }
         
-        // Количество ячеек = страницы - развороты
         const totalCells = totalPages - spreads.length;
         
         totalCompletedCells += completedCount;

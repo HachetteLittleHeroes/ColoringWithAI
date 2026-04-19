@@ -13823,15 +13823,15 @@ function calculateCategoryProgress(category) {
     let totalCompletedCells = 0;
     let totalCellsAll = 0;
     
+    // ✅ Для отладки — собираем информацию
+    const debugLines = [];
+    
     userBooks.forEach(book => {
         const bookName = typeof book === 'string' ? book : book.name;
         const bookKey = `${category}_${bookName}`;
         const completedPages = userCompletedPages[bookKey] || {};
-        
-        // Количество отмеченных ячеек (работ)
         const completedCount = Object.keys(completedPages).length;
         
-        // Получаем totalPages и spreads
         let totalPages = DEFAULT_PAGES_CONFIG.totalPages;
         let spreads = [];
         
@@ -13844,14 +13844,26 @@ function calculateCategoryProgress(category) {
             spreads = config.spreads || [];
         }
         
-        // ✅ Количество ячеек (работ) = страницы - развороты
         const totalCells = totalPages - spreads.length;
         
         totalCompletedCells += completedCount;
-        totalCellsAll += totalCells;  // ✅ Суммируем ячейки, а не страницы!
+        totalCellsAll += totalCells;
+        
+        // ✅ Собираем строку для каждой раскраски
+        if (completedCount > 0 || totalCells !== totalPages) {
+            debugLines.push(`${bookName.substring(0, 20)}: ${completedCount}/${totalCells} (${totalPages}стр, ${spreads.length}разв)`);
+        }
     });
     
     const percent = totalCellsAll > 0 ? Math.round((totalCompletedCells / totalCellsAll) * 100) : 0;
+    
+    // ✅ ВРЕМЕННО: показываем alert
+    if (category === 'paint_by_number') {
+        alert(`Категория: ${category}\n` + 
+              `Раскрасок: ${userBooks.length}\n` +
+              debugLines.slice(0, 5).join('\n') + 
+              `\n...\nИТОГО: ${totalCompletedCells}/${totalCellsAll} = ${percent}%`);
+    }
     
     return { percent, completed: totalCompletedCells, total: totalCellsAll };
 }

@@ -3964,6 +3964,7 @@
     </style>
 </head>
 <body>
+    <button onclick="showDebugInfo()" style="position:fixed; bottom:100px; right:10px; z-index:99999; background:green; color:white; padding:15px; font-size:16px;">ПОКАЗАТЬ ДАННЫЕ</button>
   <!-- ========== ПРОФИЛЬ ========== -->
 <div id="profile" class="page active">
     <!-- Заголовок с кнопками -->
@@ -14027,6 +14028,50 @@ function updateAllCategoriesProgress() {
             progressEl.textContent = `${progress.percent}%`;
         }
     });
+}
+        function showDebugInfo() {
+    const category = 'paint_by_number';
+    const userBooks = userColoringBooks[category] || [];
+    
+    let info = `КАТЕГОРИЯ: ${category}\n`;
+    info += `Всего раскрасок: ${userBooks.length}\n\n`;
+    
+    let totalCompleted = 0;
+    let totalCells = 0;
+    
+    userBooks.forEach(book => {
+        const bookName = typeof book === 'string' ? book : book.name;
+        const bookKey = `${category}_${bookName}`;
+        const completed = Object.keys(userCompletedPages[bookKey] || {}).length;
+        
+        let pages = 60;
+        let spreads = [];
+        
+        if (typeof book === 'object') {
+            pages = book.totalPages || 60;
+            spreads = book.spreads || [];
+        } else {
+            const config = BOOK_PAGES_CONFIG[bookName];
+            if (config) {
+                pages = config.totalPages;
+                spreads = config.spreads || [];
+            }
+        }
+        
+        const cells = pages - spreads.length;
+        totalCompleted += completed;
+        totalCells += cells;
+        
+        // Показываем первые 10 раскрасок
+        if (userBooks.indexOf(book) < 10) {
+            info += `${bookName}: ${completed}/${cells} (${pages}стр, ${spreads.length}разв)\n`;
+        }
+    });
+    
+    const percent = totalCells > 0 ? Math.round((totalCompleted / totalCells) * 100) : 0;
+    info += `\nИТОГО: ${totalCompleted}/${totalCells} = ${percent}%`;
+    
+    alert(info);
 }
     </script>
     <!-- Модалка поиска пользователей -->

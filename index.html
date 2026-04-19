@@ -11536,6 +11536,7 @@ function openBookPagesModal(category, bookName) {
     
     document.getElementById('bookPagesCategory').innerText = infoText;
     
+    // ✅ Экранируем bookKey для безопасной передачи в renderBookPagesGrid
     renderBookPagesGrid(bookKey, config);
     
     document.getElementById('bookPagesModal').style.display = 'flex';
@@ -11545,8 +11546,10 @@ function renderBookPagesGrid(bookKey, config) {
     const grid = document.getElementById('bookPagesGrid');
     const { totalPages, spreads } = config;
     
-    // Определяем, чей профиль смотрим
     const isOwnProfile = !window.isViewOnly;
+    
+    // ✅ Функция для экранирования апострофов
+    const escapeQuotes = (str) => String(str).replace(/'/g, "\\'");
     
     let html = '';
     let page = 1;
@@ -11560,7 +11563,7 @@ function renderBookPagesGrid(bookKey, config) {
             
             if (isOwnProfile) {
                 html += `
-                    <div class="book-page-btn ${completed ? 'completed' : ''} spread" onclick="togglePageCompletion('${bookKey}', '${pageLabel}', ${totalPages})">
+                    <div class="book-page-btn ${completed ? 'completed' : ''} spread" onclick="togglePageCompletion('${escapeQuotes(bookKey)}', '${escapeQuotes(pageLabel)}', ${totalPages})">
                         ${pageLabel}
                     </div>
                 `;
@@ -11577,7 +11580,7 @@ function renderBookPagesGrid(bookKey, config) {
             
             if (isOwnProfile) {
                 html += `
-                    <div class="book-page-btn ${completed ? 'completed' : ''}" onclick="togglePageCompletion('${bookKey}', '${page}', ${totalPages})">
+                    <div class="book-page-btn ${completed ? 'completed' : ''}" onclick="togglePageCompletion('${escapeQuotes(bookKey)}', '${page}', ${totalPages})">
                         ${page}
                     </div>
                 `;

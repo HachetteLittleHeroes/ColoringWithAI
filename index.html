@@ -13830,23 +13830,10 @@ function calculateCategoryProgress(category) {
         const completedPages = userCompletedPages[bookKey] || {};
         const completedCount = Object.keys(completedPages).length;
         
-        let totalPages = DEFAULT_PAGES_CONFIG.totalPages;
-        let spreads = [];
-        
-        if (typeof book === 'object' && book.totalPages) {
-            totalPages = book.totalPages;
-            spreads = book.spreads || [];
-        } else {
-            const config = BOOK_PAGES_CONFIG[bookName];
-            if (config) {
-                totalPages = config.totalPages;
-                spreads = config.spreads || [];
-            } else {
-                // ✅ Если конфиг не найден — используем DEFAULT_PAGES_CONFIG
-                totalPages = DEFAULT_PAGES_CONFIG.totalPages;
-                spreads = DEFAULT_PAGES_CONFIG.spreads || [];
-            }
-        }
+        // ✅ ВСЕГДА берём spreads из BOOK_PAGES_CONFIG
+        const config = BOOK_PAGES_CONFIG[bookName] || DEFAULT_PAGES_CONFIG;
+        const totalPages = config.totalPages;
+        const spreads = config.spreads || [];
         
         const totalCells = totalPages - spreads.length;
         

@@ -10891,28 +10891,31 @@ function addCoverToBook(category, bookName) {
             const bookName = book.name;
             const collected = userBooks.some(b => (typeof b === 'string' ? b : b.name) === bookName);
             
-            // ✅ Получаем totalPages и spreads
+            // ✅ Получаем totalPages
             let totalPages = DEFAULT_PAGES_CONFIG.totalPages;
-            let spreads = [];
             
             const userBook = userBooks.find(b => (typeof b === 'string' ? b : b.name) === bookName);
             
-            if (userBook && typeof userBook === 'object') {
-                totalPages = userBook.totalPages || totalPages;
-                spreads = userBook.spreads || [];
+            if (userBook && typeof userBook === 'object' && userBook.totalPages) {
+                totalPages = userBook.totalPages;
             } else if (BOOK_PAGES_CONFIG[bookName]) {
                 totalPages = BOOK_PAGES_CONFIG[bookName].totalPages;
-                spreads = BOOK_PAGES_CONFIG[bookName].spreads || [];
             }
             
-            // ✅ Количество ячеек = страницы - развороты (каждый разворот = 1 ячейка вместо 2)
-            const totalCells = totalPages - spreads.length;
-            
-            // Считаем прогресс
+            // ✅ Считаем отмеченные страницы (разворот = 2 страницы)
             const bookKey = `${category}_${bookName}`;
             const completedPages = userCompletedPages[bookKey] || {};
-            const completedCount = Object.keys(completedPages).length;
-            const progressPercent = totalCells > 0 ? Math.round((completedCount / totalCells) * 100) : 0;
+            let completedCount = 0;
+            
+            for (const page in completedPages) {
+                if (page.includes('-')) {
+                    completedCount += 2; // разворот = 2 страницы
+                } else {
+                    completedCount += 1; // обычная страница
+                }
+            }
+            
+            const progressPercent = totalPages > 0 ? Math.round((completedCount / totalPages) * 100) : 0;
             
             // ✅ Правильно формируем URL обложки с параметром для кеширования
             let coverUrl = book.cover || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ff9500' rx='12'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3E📚%3C/text%3E%3C/svg%3E";
@@ -10941,7 +10944,7 @@ function addCoverToBook(category, bookName) {
                                 <div class="book-progress-bar">
                                     <div class="book-progress-fill" style="width: ${progressPercent}%;"></div>
                                 </div>
-                                <div class="book-progress-text">${completedCount}/${totalCells} (${progressPercent}%)</div>
+                                <div class="book-progress-text">${completedCount}/${totalPages} (${progressPercent}%)</div>
                             </div>
                         ` : ''}
                         ${book.custom ? '<div class="book-category">Моя раскраска</div>' : ''}
@@ -12931,25 +12934,28 @@ function renderPublicBooks(books, artworks, userId) {
             const bookKey = `${category}_${bookName}`;
             const hasArtworks = artworks[bookKey] ? Object.keys(artworks[bookKey]).length : 0;
             
-            // ✅ Получаем totalPages и spreads из сохранённой книги
+            // ✅ Получаем totalPages
             let totalPages = DEFAULT_PAGES_CONFIG.totalPages;
-            let spreads = [];
             
-            if (typeof book === 'object') {
-                totalPages = book.totalPages || totalPages;
-                spreads = book.spreads || [];
+            if (typeof book === 'object' && book.totalPages) {
+                totalPages = book.totalPages;
             } else if (BOOK_PAGES_CONFIG[bookName]) {
                 totalPages = BOOK_PAGES_CONFIG[bookName].totalPages;
-                spreads = BOOK_PAGES_CONFIG[bookName].spreads || [];
             }
             
-            // ✅ Количество ячеек = страницы - развороты
-            const totalCells = totalPages - spreads.length;
-            
-            // ✅ Считаем прогресс
+            // ✅ Считаем отмеченные страницы (разворот = 2 страницы)
             const bookCompletedPages = completedPages[bookKey] || {};
-            const completedCount = Object.keys(bookCompletedPages).length;
-            const progressPercent = totalCells > 0 ? Math.round((completedCount / totalCells) * 100) : 0;
+            let completedCount = 0;
+            
+            for (const page in bookCompletedPages) {
+                if (page.includes('-')) {
+                    completedCount += 2; // разворот = 2 страницы
+                } else {
+                    completedCount += 1; // обычная страница
+                }
+            }
+            
+            const progressPercent = totalPages > 0 ? Math.round((completedCount / totalPages) * 100) : 0;
             
             let coverUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ff9500' rx='12'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial'%3E📚%3C/text%3E%3C/svg%3E";
             
@@ -12973,7 +12979,7 @@ function renderPublicBooks(books, artworks, userId) {
                                 <div class="book-progress-fill" style="width: ${progressPercent}%; height: 100%; background: var(--accent);"></div>
                             </div>
                             <div class="book-progress-text" style="font-size: 10px; color: var(--text-gray); margin-top: 2px;">
-                                ${completedCount}/${totalCells} (${progressPercent}%)
+                                ${completedCount}/${totalPages} (${progressPercent}%)
                             </div>
                         </div>
                     </div>
@@ -13002,7 +13008,16 @@ function viewPublicBook(userId, category, bookName, hasArtworks) {
     
     const bookKey = `${category}_${bookName}`;
     const bookCompleted = completedPages[bookKey] || {};
-    const completedCount = Object.keys(bookCompleted).length;
+    
+    // ✅ Считаем отмеченные страницы (разворот = 2 страницы)
+    let completedPagesCount = 0;
+    for (const page in bookCompleted) {
+        if (page.includes('-')) {
+            completedPagesCount += 2;
+        } else {
+            completedPagesCount += 1;
+        }
+    }
     
     // ✅ Ищем книгу в коллекции пользователя
     const userBooks = profile.coloring_books?.[category] || [];
@@ -13011,7 +13026,7 @@ function viewPublicBook(userId, category, bookName, hasArtworks) {
         return name === bookName;
     });
     
-    // ✅ Получаем конфигурацию (totalPages и spreads)
+    // ✅ Получаем конфигурацию (totalPages)
     let config;
     if (savedBook && typeof savedBook === 'object') {
         config = {
@@ -13025,7 +13040,7 @@ function viewPublicBook(userId, category, bookName, hasArtworks) {
     }
     
     // ✅ Проверяем, есть ли отмеченные страницы
-    if (completedCount === 0) {
+    if (completedPagesCount === 0) {
         if (tg) tg.showAlert('У пользователя нет отмеченных страниц в этой раскраске');
         else alert('Нет отмеченных страниц');
         return;
@@ -13037,15 +13052,16 @@ function viewPublicBook(userId, category, bookName, hasArtworks) {
     currentCategory = category;
     userCompletedPages = completedPages;  // ✅ Используем completed_pages из профиля
     
-    const spreadsCount = config.spreads?.length || 0;
-    const totalCells = config.totalPages - spreadsCount;
-    
     document.getElementById('bookPagesTitle').innerText = bookName;
     
-    let infoText = `Отмечено: ${completedCount} / ${totalCells}`;
+    // ✅ Отображаем количество отмеченных страниц
+    let infoText = `Отмечено: ${completedPagesCount} / ${config.totalPages} стр.`;
+    
+    const spreadsCount = config.spreads?.length || 0;
     if (spreadsCount > 0) {
-        infoText += ` • ${config.totalPages} стр. • ${spreadsCount} разв.`;
+        infoText += ` • ${spreadsCount} разв.`;
     }
+    
     document.getElementById('bookPagesCategory').innerText = infoText;
     
     renderBookPagesGrid(bookKey, config);

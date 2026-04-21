@@ -13837,29 +13837,43 @@ function calculateCategoryProgress(category) {
         return { percent: 0, completed: 0, total: 0 };
     }
     
-    let totalCompletedCells = 0;
-    let totalCellsAll = 0;
+    let totalCompletedPages = 0;
+    let totalPagesAll = 0;
     
     userBooks.forEach(book => {
         const bookName = typeof book === 'string' ? book : book.name;
         const bookKey = `${category}_${bookName}`;
         const completedPages = userCompletedPages[bookKey] || {};
-        const completedCount = Object.keys(completedPages).length;
         
-        // ✅ ВСЕГДА берём spreads из BOOK_PAGES_CONFIG
-        const config = BOOK_PAGES_CONFIG[bookName] || DEFAULT_PAGES_CONFIG;
-        const totalPages = config.totalPages;
-        const spreads = config.spreads || [];
+        // ✅ Считаем отмеченные страницы (разворот = 2 страницы)
+        let completedCount = 0;
+        for (const page in completedPages) {
+            if (page.includes('-')) {
+                completedCount += 2; // разворот = 2 страницы
+            } else {
+                completedCount += 1; // обычная страница
+            }
+        }
         
-        const totalCells = totalPages - spreads.length;
+        // ✅ Получаем totalPages
+        let totalPages = DEFAULT_PAGES_CONFIG.totalPages;
         
-        totalCompletedCells += completedCount;
-        totalCellsAll += totalCells;
+        if (typeof book === 'object' && book.totalPages) {
+            totalPages = book.totalPages;
+        } else {
+            const config = BOOK_PAGES_CONFIG[bookName];
+            if (config) {
+                totalPages = config.totalPages;
+            }
+        }
+        
+        totalCompletedPages += completedCount;
+        totalPagesAll += totalPages;
     });
     
-    const percent = totalCellsAll > 0 ? Math.round((totalCompletedCells / totalCellsAll) * 100) : 0;
+    const percent = totalPagesAll > 0 ? Math.round((totalCompletedPages / totalPagesAll) * 100) : 0;
     
-    return { percent, completed: totalCompletedCells, total: totalCellsAll };
+    return { percent, completed: totalCompletedPages, total: totalPagesAll };
 }
 // Обновление прогресса для всех категорий
 

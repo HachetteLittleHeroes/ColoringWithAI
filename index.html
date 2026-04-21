@@ -14002,50 +14002,7 @@ function renderCategoryContent(category) {
         });
     }, 50);
 }
-        // ==========================================
-// ПРОГРЕСС КАТЕГОРИЙ
-// ==========================================
 
-function calculateCategoryProgress(category) {
-    const userBooks = userColoringBooks[category] || [];
-    
-    if (userBooks.length === 0) {
-        return { percent: 0, completed: 0, total: 0 };
-    }
-    
-    let totalCompletedPages = 0;
-    let totalPagesAll = 0;
-    
-    userBooks.forEach(book => {
-        const bookName = typeof book === 'string' ? book : book.name;
-        const bookKey = `${category}_${bookName}`;
-        const completedPages = userCompletedPages[bookKey] || {};
-        const completedCount = Object.keys(completedPages).length;
-        
-        const config = BOOK_PAGES_CONFIG[bookName] || DEFAULT_PAGES_CONFIG;
-        const totalPages = config.totalPages;
-        
-        totalCompletedPages += completedCount;
-        totalPagesAll += totalPages;
-    });
-    
-    const percent = totalPagesAll > 0 ? Math.round((totalCompletedPages / totalPagesAll) * 100) : 0;
-    
-    return { percent, completed: totalCompletedPages, total: totalPagesAll };
-}
-
-function updateAllCategoriesProgress() {
-    const categories = ['paint_by_number', 'alcohol', 'pencil', 'custom'];
-    
-    categories.forEach(category => {
-        const progress = calculateCategoryProgress(category);
-        const progressEl = document.getElementById(`category-progress-${category}`);
-        
-        if (progressEl) {
-            progressEl.textContent = `${progress.percent}%`;
-        }
-    });
-}
         function showDebugInfo() {
     const category = 'paint_by_number';
     const userBooks = userColoringBooks[category] || [];

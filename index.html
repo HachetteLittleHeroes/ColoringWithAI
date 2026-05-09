@@ -21286,24 +21286,28 @@ function filterBestiary() {
         const query = document.getElementById('bestiarySearch')?.value.toLowerCase().trim() || '';
         const cards = document.querySelectorAll('.bestiary-card');
         
-        // Если пусто — показываем все
         if (query === '') {
             cards.forEach(function(card) { card.style.display = ''; });
             return;
         }
         
-        // Фильтруем только по имени и фильму (быстро)
         cards.forEach(function(card) {
             const name = card.querySelector('.bestiary-card-name')?.innerText.toLowerCase() || '';
             const film = card.getAttribute('data-film') || '';
+            const onclick = card.getAttribute('onclick') || '';
+            const characterId = onclick.match(/'([^']+)'/)?.[1] || '';
+            const character = BESTIARY.find(function(c) { return c.id === characterId; });
             
-            if (name.includes(query) || film.includes(query)) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
+            var matches = name.includes(query) || film.includes(query);
+            if (!matches && character) {
+                matches = character.appearances.some(function(a) {
+                    return a.book.toLowerCase().includes(query);
+                });
             }
+            
+            card.style.display = matches ? '' : 'none';
         });
-    }, 150);
+    }, 300);
 }
         // ==========================================
 // УБИРАЕМ КЛАВИАТУРУ ПРИ ПОИСКЕ В БЕСТИАРИИ

@@ -11849,17 +11849,20 @@ function openPhotoEditor(file, callback) {
         var rotation = 0;
         var cropping = false;
         var startX, startY, endX, endY, dragging = false;
+        var scale = 1;
         
         // Создаём модалку
         var modal = document.createElement('div');
         modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:100004;display:flex;align-items:center;justify-content:center;flex-direction:column;';
         
         modal.innerHTML = `
-            <div style="position:relative;display:inline-block;cursor:crosshair;max-width:95%;max-height:60vh;overflow:hidden;" id="editorArea">
-                <img id="editorPhoto" src="${src}" style="max-width:100%;max-height:60vh;display:block;transform:rotate(0deg);transition:transform 0.3s;">
-                <div id="cropRect" style="display:none;position:absolute;border:2px dashed white;pointer-events:none;"></div>
+            <div style="position:relative;display:inline-block;max-width:95%;max-height:55vh;overflow:auto;" id="editorArea">
+                <img id="editorPhoto" src="${src}" style="max-width:none;max-height:none;display:block;transform:rotate(0deg);transition:transform 0.3s;width:auto;height:auto;">
+                <div id="cropRect" style="display:none;position:absolute;border:2px dashed black;pointer-events:none;"></div>
             </div>
             <div style="display:flex;gap:12px;margin-top:15px;flex-wrap:wrap;justify-content:center;">
+                <button class="editor-btn2" id="edZoomOut"><i class="fas fa-search-minus"></i></button>
+                <button class="editor-btn2" id="edZoomIn"><i class="fas fa-search-plus"></i></button>
                 <button class="editor-btn2" id="edRotateLeft"><i class="fas fa-undo"></i></button>
                 <button class="editor-btn2" id="edRotateRight"><i class="fas fa-redo"></i></button>
                 <button class="editor-btn2" id="edCrop"><i class="fas fa-crop-alt"></i></button>
@@ -11875,17 +11878,39 @@ function openPhotoEditor(file, callback) {
         var cropRect = document.getElementById('cropRect');
         var area = document.getElementById('editorArea');
         
+        // Zoom
+        document.getElementById('edZoomIn').onclick = function() {
+            scale = Math.min(3, scale + 0.2);
+            img.style.width = (img.naturalWidth * scale) + 'px';
+        };
+        
+        document.getElementById('edZoomOut').onclick = function() {
+            scale = Math.max(0.3, scale - 0.2);
+            img.style.width = (img.naturalWidth * scale) + 'px';
+        };
+        
         // Поворот влево
         document.getElementById('edRotateLeft').onclick = function() {
             rotation = (rotation - 90) % 360;
-            img.style.transform = 'rotate(' + rotation + 'deg)';
+            applyTransform();
         };
         
         // Поворот вправо
         document.getElementById('edRotateRight').onclick = function() {
             rotation = (rotation + 90) % 360;
-            img.style.transform = 'rotate(' + rotation + 'deg)';
+            applyTransform();
         };
+        
+        function applyTransform() {
+            var w = img.naturalWidth * scale;
+            img.style.width = w + 'px';
+            img.style.transform = 'rotate(' + rotation + 'deg)';
+            // При повороте меняем размеры области
+            if (rotation % 180 !== 0) {
+                img.style.maxHeight = 'none';
+                img.style.maxWidth = 'none';
+            }
+        }
         
         // Включить обрезку
         document.getElementById('edCrop').onclick = function() {
@@ -11899,59 +11924,87 @@ function openPhotoEditor(file, callback) {
         document.getElementById('edReset').onclick = function() {
             rotation = 0;
             cropping = false;
+            scale = 1;
             cropRect.style.display = 'none';
+            img.style.width = 'auto';
             img.style.transform = 'rotate(0deg)';
             document.getElementById('edCrop').style.background = '';
             document.getElementById('edCrop').style.color = '';
         };
         
-        // Мышь — начало обрезки
+        // Мышь
         area.onmousedown = function(ev) {
             if (!cropping) return;
             ev.preventDefault();
             var rect = area.getBoundingClientRect();
-            startX = ev.clientX - rect.left;
-            startY = ev.clientY - rect.top;
+            startX = ev.clientX - rect.left + area.scrollLeft;
+            startY = ev.clientY - rect.top + area.scrollTop;
             dragging = true;
         };
         
-        // Мышь — движение
         area.onmousemove = function(ev) {
             if (!dragging) return;
             ev.preventDefault();
             var rect = area.getBoundingClientRect();
-            endX = ev.clientX - rect.left;
-            endY = ev.clientY - rect.top;
+            endX = ev.clientX - rect.left + area.scrollLeft;
+            endY = ev.clientY - rect.top + area.scrollTop;
             updateCropBox(cropRect, startX, startY, endX, endY);
         };
         
-        // Мышь — конец
         area.onmouseup = function() { dragging = false; };
         
-        // Палец — начало
-        area.ontouchstart = function(ev) {
-            if (!cropping) return;
-            ev.preventDefault();
-            var touch = ev.touches[0];
-            var rect = area.getBoundingClientRect();
-            startX = touch.clientX - rect.left;
-            startY = touch.clientY - rect.top;
-            dragging = true;
-        };
-        
-        // Палец — движение
-        area.ontouchmove = function(ev) {
-            if (!dragging) return;
-            ev.preventDefault();
-            var touch = ev.touches[0];
-            var rect = area.getBoundingClientRect();
-            endX = touch.clientX - rect.left;
-            endY = touch.clientY - rect.top;
-            updateCropBox(cropRect, startX, startY, endX, endY);
-        };
-        
-        // Палец — конец
-        area.ontouchend = function() { dragging = false; };
+        // Палец
+       // Палец — поддержка зума и обрезки
+var lastDist = 0;
+
+area.ontouchstart = function(ev) {
+    if (ev.touches.length === 2) {
+        // Два пальца — zoom
+        ev.preventDefault();
+        lastDist = Math.hypot(
+            ev.touches[0].clientX - ev.touches[1].clientX,
+            ev.touches[0].clientY - ev.touches[1].clientY
+        );
+        dragging = false;
+    } else if (ev.touches.length === 1 && cropping) {
+        // Один палец — обрезка
+        ev.preventDefault();
+        var touch = ev.touches[0];
+        var rect = area.getBoundingClientRect();
+        startX = touch.clientX - rect.left + area.scrollLeft;
+        startY = touch.clientY - rect.top + area.scrollTop;
+        dragging = true;
+    }
+};
+
+area.ontouchmove = function(ev) {
+    if (ev.touches.length === 2) {
+        // Zoom
+        ev.preventDefault();
+        var dist = Math.hypot(
+            ev.touches[0].clientX - ev.touches[1].clientX,
+            ev.touches[0].clientY - ev.touches[1].clientY
+        );
+        if (lastDist > 0) {
+            scale = Math.max(0.3, Math.min(3, scale * (dist / lastDist)));
+            img.style.width = (img.naturalWidth * scale) + 'px';
+        }
+        lastDist = dist;
+    } else if (ev.touches.length === 1 && dragging && cropping) {
+        // Обрезка
+        ev.preventDefault();
+        var touch = ev.touches[0];
+        var rect = area.getBoundingClientRect();
+        endX = touch.clientX - rect.left + area.scrollLeft;
+        endY = touch.clientY - rect.top + area.scrollTop;
+        updateCropBox(cropRect, startX, startY, endX, endY);
+    }
+};
+
+area.ontouchend = function() {
+    dragging = false;
+    lastDist = 0;
+};
         
         // Готово
         document.getElementById('edDone').onclick = function() {
@@ -11963,7 +12016,6 @@ function openPhotoEditor(file, callback) {
                 var w = tempImg.width;
                 var h = tempImg.height;
                 
-                // Применяем поворот
                 if (rotation % 360 !== 0) {
                     if (rotation % 180 === 0) { canvas.width = w; canvas.height = h; }
                     else { canvas.width = h; canvas.height = w; }
@@ -11979,11 +12031,12 @@ function openPhotoEditor(file, callback) {
                     ctx.drawImage(tempImg, 0, 0);
                 }
                 
-                // Применяем обрезку
                 if (cropping && endX !== undefined && Math.abs(endX - startX) > 20) {
                     var rect = area.getBoundingClientRect();
-                    var scaleX = w / rect.width;
-                    var scaleY = h / rect.height;
+                    var displayedW = img.offsetWidth;
+                    var displayedH = img.offsetHeight;
+                    var scaleX = w / displayedW;
+                    var scaleY = h / displayedH;
                     var sx = Math.min(startX, endX) * scaleX;
                     var sy = Math.min(startY, endY) * scaleY;
                     var sw = Math.abs(endX - startX) * scaleX;
@@ -12001,7 +12054,6 @@ function openPhotoEditor(file, callback) {
             tempImg.src = src;
         };
         
-        // Отмена
         document.getElementById('edCancel').onclick = function() { modal.remove(); };
         modal.onclick = function(ev) { if (ev.target === modal) modal.remove(); };
     };
@@ -12013,7 +12065,7 @@ function updateCropBox(box, x1, y1, x2, y2) {
     var top = Math.min(y1, y2);
     var w = Math.abs(x2 - x1);
     var h = Math.abs(y2 - y1);
-    box.style.cssText = 'display:block;position:absolute;border:2px dashed white;pointer-events:none;left:' + left + 'px;top:' + top + 'px;width:' + w + 'px;height:' + h + 'px;';
+    box.style.cssText = 'display:block;position:absolute;border:2px dashed black;pointer-events:none;left:' + left + 'px;top:' + top + 'px;width:' + w + 'px;height:' + h + 'px;';
 }
 
 // Загрузка отредактированного фото

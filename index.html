@@ -11819,7 +11819,199 @@ function renderBookPagesGrid(bookKey, config) {
     
     grid.innerHTML = html;
 }
-      function uploadPageArtwork(bookKey, page) {
+        function openImageEditor(file, callback) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.style.cssText = 'z-index:100004;display:flex;align-items:center;justify-content:center;';
+        
+        var rotation = 0;
+        var cropMode = false;
+        var cropStartX, cropStartY, cropEndX, cropEndY, isDragging = false;
+        var scale = 1;
+        var lastTouchDistance = 0;
+        
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width:95%;padding:15px;text-align:center;">
+                <h4 style="margin:0 0 10px;">✂️ Редактор фото</h4>
+                <div id="editorWrap" style="position:relative;display:inline-block;max-width:100%;overflow:hidden;cursor:crosshair;touch-action:manipulation;">
+                    <img id="editorImg" src="${e.target.result}" style="max-width:100%;max-height:50vh;display:block;transform:rotate(0deg) scale(1);transform-origin:center center;transition:transform 0.15s;">
+                    <div id="cropBox" style="display:none;position:absolute;border:2px dashed white;pointer-events:none;z-index:10;"></div>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:15px;justify-content:center;flex-wrap:wrap;">
+                    <button class="editor-btn" id="btnRotateLeft"><i class="fas fa-undo"></i></button>
+                    <button class="editor-btn" id="btnRotateRight"><i class="fas fa-redo"></i></button>
+                    <button class="editor-btn" id="btnCrop"><i class="fas fa-crop-alt"></i></button>
+                    <button class="editor-btn" id="btnReset"><i class="fas fa-times"></i></button>
+                    <button class="editor-btn" id="btnDone" style="background:var(--status-green);color:white;width:auto;padding:0 20px;border-radius:25px;"><i class="fas fa-check"></i> Готово</button>
+                </div>
+                <button class="modal-close-btn" id="btnCancel" style="width:100%;margin-top:10px;">Отмена</button>
+            </div>
+        `;
+        
+        modal.onclick = function(ev) { if (ev.target === modal) modal.remove(); };
+        document.body.appendChild(modal);
+        
+        const img = document.getElementById('editorImg');
+        const cropBox = document.getElementById('cropBox');
+        const wrap = document.getElementById('editorWrap');
+        
+        function updateTransform() {
+            img.style.transform = 'rotate(' + rotation + 'deg) scale(' + scale + ')';
+        }
+        
+        // Поворот
+        document.getElementById('btnRotateLeft').onclick = function() {
+            rotation = (rotation - 90) % 360;
+            updateTransform();
+        };
+        
+        document.getElementById('btnRotateRight').onclick = function() {
+            rotation = (rotation + 90) % 360;
+            updateTransform();
+        };
+        
+        // Обрезка
+        document.getElementById('btnCrop').onclick = function() {
+            cropMode = !cropMode;
+            cropBox.style.display = cropMode ? 'block' : 'none';
+            this.style.background = cropMode ? 'var(--accent)' : '';
+            this.style.color = cropMode ? 'white' : '';
+        };
+        
+        // Сброс
+        document.getElementById('btnReset').onclick = function() {
+            rotation = 0;
+            scale = 1;
+            cropMode = false;
+            cropBox.style.display = 'none';
+            updateTransform();
+            document.getElementById('btnCrop').style.background = '';
+            document.getElementById('btnCrop').style.color = '';
+        };
+        
+        // Зум (колесо мыши)
+        wrap.onwheel = function(ev) {
+            if (cropMode) return;
+            ev.preventDefault();
+            scale = Math.max(0.5, Math.min(3, scale + (ev.deltaY > 0 ? -0.1 : 0.1)));
+            updateTransform();
+        };
+        
+        // Зум пальцами (pinch)
+        wrap.ontouchstart = function(ev) {
+            if (ev.touches.length === 2) {
+                lastTouchDistance = Math.hypot(
+                    ev.touches[0].clientX - ev.touches[1].clientX,
+                    ev.touches[0].clientY - ev.touches[1].clientY
+                );
+            }
+        };
+        
+        wrap.ontouchmove = function(ev) {
+            if (cropMode) return;
+            if (ev.touches.length === 2) {
+                ev.preventDefault();
+                const dist = Math.hypot(
+                    ev.touches[0].clientX - ev.touches[1].clientX,
+                    ev.touches[0].clientY - ev.touches[1].clientY
+                );
+                if (lastTouchDistance > 0) {
+                    scale = Math.max(0.5, Math.min(3, scale * (dist / lastTouchDistance)));
+                    updateTransform();
+                }
+                lastTouchDistance = dist;
+            }
+        };
+        
+        // Обрезка мышкой
+        wrap.onmousedown = function(ev) {
+            if (!cropMode) return;
+            ev.preventDefault();
+            const rect = wrap.getBoundingClientRect();
+            cropStartX = ev.clientX - rect.left;
+            cropStartY = ev.clientY - rect.top;
+            isDragging = true;
+        };
+        
+        wrap.onmousemove = function(ev) {
+            if (!isDragging) return;
+            ev.preventDefault();
+            const rect = wrap.getBoundingClientRect();
+            cropEndX = ev.clientX - rect.left;
+            cropEndY = ev.clientY - rect.top;
+            const x1 = Math.min(cropStartX, cropEndX);
+            const y1 = Math.min(cropStartY, cropEndY);
+            const w = Math.abs(cropEndX - cropStartX);
+            const h = Math.abs(cropEndY - cropStartY);
+            cropBox.style.cssText = 'display:block;position:absolute;border:2px dashed white;pointer-events:none;z-index:10;left:' + x1 + 'px;top:' + y1 + 'px;width:' + w + 'px;height:' + h + 'px;';
+        };
+        
+        wrap.onmouseup = function() { isDragging = false; };
+        
+        // Готово
+        document.getElementById('btnDone').onclick = function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const tempImg = new Image();
+            const imgSrc = img.src;
+            
+            tempImg.onload = function() {
+                const origW = tempImg.width;
+                const origH = tempImg.height;
+                
+                // Считаем финальные размеры с учётом поворота
+                var finalW, finalH;
+                if (rotation % 180 === 0) {
+                    finalW = origW * scale;
+                    finalH = origH * scale;
+                } else {
+                    finalW = origH * scale;
+                    finalH = origW * scale;
+                }
+                
+                canvas.width = finalW;
+                canvas.height = finalH;
+                
+                ctx.save();
+                ctx.translate(finalW / 2, finalH / 2);
+                ctx.rotate((rotation * Math.PI) / 180);
+                ctx.scale(scale, scale);
+                ctx.drawImage(tempImg, -origW / 2, -origH / 2);
+                ctx.restore();
+                
+                // Обрезка
+                if (cropMode && cropEndX !== undefined && Math.abs(cropEndX - cropStartX) > 10) {
+                    const rect = wrap.getBoundingClientRect();
+                    const displayW = rect.width;
+                    const displayH = rect.height;
+                    const scaleX = finalW / displayW;
+                    const scaleY = finalH / displayH;
+                    
+                    const sx = Math.min(cropStartX, cropEndX) * scaleX;
+                    const sy = Math.min(cropStartY, cropEndY) * scaleY;
+                    const sw = Math.abs(cropEndX - cropStartX) * scaleX;
+                    const sh = Math.abs(cropEndY - cropStartY) * scaleY;
+                    
+                    const cropCanvas = document.createElement('canvas');
+                    cropCanvas.width = sw;
+                    cropCanvas.height = sh;
+                    cropCanvas.getContext('2d').drawImage(canvas, Math.max(0, sx), Math.max(0, sy), Math.min(sw, finalW - sx), Math.min(sh, finalH - sy), 0, 0, sw, sh);
+                    cropCanvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);
+                } else {
+                    canvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);
+                }
+            };
+            tempImg.src = imgSrc;
+        };
+        
+        document.getElementById('btnCancel').onclick = function() { modal.remove(); };
+    };
+    reader.readAsDataURL(file);
+}
+        
+     function uploadPageArtwork(bookKey, page) {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -11828,10 +12020,32 @@ function renderBookPagesGrid(bookKey, config) {
         const file = e.target.files[0];
         if (!file) return;
         
-        // Открываем редактор
-        openPhotoEditor(file, function(editedBlob) {
-            // Загружаем отредактированное фото
-            uploadEditedPhoto(bookKey, page, editedBlob);
+        // ✅ Правильное имя функции редактора
+        openImageEditor(file, function(editedBlob) {
+            if (tg && tg.MainButton) tg.MainButton.setText('⏳ Загрузка...').show();
+            
+            compressImage(editedBlob, 800, 0.7).then(function(compressed) {
+                const formData = new FormData();
+                formData.append('user_id', userId.toString());
+                formData.append('book_key', bookKey);
+                formData.append('page', String(page));
+                formData.append('photo', compressed, 'artwork.jpg');
+                
+                fetch(`${SERVER_URL}/api/artworks/upload`, { method: 'POST', body: formData })
+                    .then(function(r) { return r.json(); })
+                    .then(function(result) {
+                        if (result.status === 'ok') {
+                            if (!userArtworks[bookKey]) userArtworks[bookKey] = {};
+                            userArtworks[bookKey][String(page)] = result.url;
+                            renderBookPagesGrid(bookKey, BOOK_PAGES_CONFIG[currentBook] || DEFAULT_PAGES_CONFIG);
+                            if (tg) { tg.MainButton.hide(); tg.showPopup({ message: '✅ Фото загружено!' }); }
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Ошибка:', error);
+                        if (tg) { tg.MainButton.hide(); tg.showAlert('❌ Ошибка загрузки'); }
+                    });
+            });
         });
     };
     

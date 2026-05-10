@@ -11850,14 +11850,14 @@ function openPhotoEditor(file, callback) {
         var cropping = false;
         var startX, startY, endX, endY, dragging = false;
         var scale = 1;
+        var lastDist = 0;
         
-        // Создаём модалку
         var modal = document.createElement('div');
         modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:100004;display:flex;align-items:center;justify-content:center;flex-direction:column;';
         
         modal.innerHTML = `
             <div style="position:relative;display:inline-block;max-width:95%;max-height:55vh;overflow:auto;" id="editorArea">
-                <img id="editorPhoto" src="${src}" style="max-width:none;max-height:none;display:block;transform:rotate(0deg);transition:transform 0.3s;width:auto;height:auto;">
+                <img id="editorPhoto" src="${src}" style="max-width:100%;max-height:55vh;display:block;transform:rotate(0deg);transition:transform 0.3s;object-fit:contain;">
                 <div id="cropRect" style="display:none;position:absolute;border:2px dashed black;pointer-events:none;"></div>
             </div>
             <div style="display:flex;gap:12px;margin-top:15px;flex-wrap:wrap;justify-content:center;">
@@ -11878,28 +11878,168 @@ function openPhotoEditor(file, callback) {
         var cropRect = document.getElementById('cropRect');
         var area = document.getElementById('editorArea');
         
-        // Zoom
+        // Ждём загрузку изображения, чтобы узнать его реальный размер
+        img.onload = function() {
+            // Подгоняем под экран
+            var maxW = area.clientWidth;
+            var maxH = area.clientHeight || window.innerHeight * 0.55;
+            var ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+            scale = ratio;
+            img.style.width = (img.naturalWidth * scale) + 'px';
+        };
+        
+        // Zoom кнопки
         document.getElementById('edZoomIn').onclick = function() {
-            scale = Math.min(3, scale + 0.2);
+            scale = Math.min(3, scale * 1.3);
             img.style.width = (img.naturalWidth * scale) + 'px';
         };
         
         document.getElementById('edZoomOut').onclick = function() {
-            scale = Math.max(0.3, scale - 0.2);
+            scale = Math.max(0.2, scale / 1.3);
             img.style.width = (img.naturalWidth * scale) + 'px';
         };
         
-        // Поворот влево
+        // Поворот
         document.getElementById('edRotateLeft').onclick = function() {
             rotation = (rotation - 90) % 360;
-            applyTransform();
+            img.style.transform = 'rotate(' + rotation + 'deg)';
         };
         
-        // Поворот вправо
         document.getElementById('edRotateRight').onclick = function() {
             rotation = (rotation + 90) % 360;
-            applyTransform();
+            img.style.transform = 'rotate(' + rotation + 'deg)';
         };
+        
+        // Обрезка
+        document.getElementById('edCrop').onclick = function() {
+            cropping = !cropping;
+            cropRect.style.display = cropping ? 'block' : 'none';
+            this.style.background = cropping ? 'var(--accent)' : '';
+            this.style.color = cropping ? 'white' : '';
+        };
+        
+        // Сброс
+        document.getElementById('edReset').onclick = function() {
+            rotation = 0;
+            cropping = false;
+            scale = Math.min(area.clientWidth / img.naturalWidth, (area.clientHeight || window.innerHeight * 0.55) / img.naturalHeight);
+            cropRect.style.display = 'none';
+            img.style.width = (img.naturalWidth * scale) + 'px';
+            img.style.transform = 'rotate(0deg)';
+            document.getElementById('edCrop').style.background = '';
+            document.getElementById('edCrop').style.color = '';
+        };
+        
+        // Мышь
+        area.onmousedown = function(ev) {
+            if (!cropping) return;
+            ev.preventDefault();
+            var rect = area.getBoundingClientRect();
+            startX = ev.clientX - rect.left + area.scrollLeft;
+            startY = ev.clientY - rect.top + area.scrollTop;
+            dragging = true;
+        };
+        
+        area.onmousemove = function(ev) {
+            if (!dragging) return;
+            ev.preventDefault();
+            var rect = area.getBoundingClientRect();
+            endX = ev.clientX - rect.left + area.scrollLeft;
+            endY = ev.clientY - rect.top + area.scrollTop;
+            updateCropBox(cropRect, startX, startY, endX, endY);
+        };
+        
+        area.onmouseup = function() { dragging = false; };
+        
+        // Палец (зум + обрезка)
+        area.ontouchstart = function(ev) {
+            if (ev.touches.length === 2) {
+                ev.preventDefault();
+                lastDist = Math.hypot(ev.touches[0].clientX - ev.touches[1].clientX, ev.touches[0].clientY - ev.touches[1].clientY);
+                dragging = false;
+            } else if (ev.touches.length === 1 && cropping) {
+                ev.preventDefault();
+                var touch = ev.touches[0];
+                var rect = area.getBoundingClientRect();
+                startX = touch.clientX - rect.left + area.scrollLeft;
+                startY = touch.clientY - rect.top + area.scrollTop;
+                dragging = true;
+            }
+        };
+        
+        area.ontouchmove = function(ev) {
+            if (ev.touches.length === 2) {
+                ev.preventDefault();
+                var dist = Math.hypot(ev.touches[0].clientX - ev.touches[1].clientX, ev.touches[0].clientY - ev.touches[1].clientY);
+                if (lastDist > 0) {
+                    scale = Math.max(0.2, Math.min(3, scale * (dist / lastDist)));
+                    img.style.width = (img.naturalWidth * scale) + 'px';
+                }
+                lastDist = dist;
+            } else if (ev.touches.length === 1 && dragging && cropping) {
+                ev.preventDefault();
+                var touch = ev.touches[0];
+                var rect = area.getBoundingClientRect();
+                endX = touch.clientX - rect.left + area.scrollLeft;
+                endY = touch.clientY - rect.top + area.scrollTop;
+                updateCropBox(cropRect, startX, startY, endX, endY);
+            }
+        };
+        
+        area.ontouchend = function() { dragging = false; lastDist = 0; };
+        
+        // Готово
+        document.getElementById('edDone').onclick = function() {
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            var tempImg = new Image();
+            
+            tempImg.onload = function() {
+                var w = tempImg.width;
+                var h = tempImg.height;
+                
+                if (rotation % 360 !== 0) {
+                    if (rotation % 180 === 0) { canvas.width = w; canvas.height = h; }
+                    else { canvas.width = h; canvas.height = w; }
+                    ctx.save();
+                    ctx.translate(canvas.width / 2, canvas.height / 2);
+                    ctx.rotate((rotation * Math.PI) / 180);
+                    ctx.drawImage(tempImg, -w / 2, -h / 2);
+                    ctx.restore();
+                } else {
+                    canvas.width = w;
+                    canvas.height = h;
+                    ctx.drawImage(tempImg, 0, 0);
+                }
+                
+                if (cropping && endX !== undefined && Math.abs(endX - startX) > 20) {
+                    var rect = area.getBoundingClientRect();
+                    var displayedW = img.offsetWidth;
+                    var displayedH = img.offsetHeight;
+                    var scaleX = w / displayedW;
+                    var scaleY = h / displayedH;
+                    var sx = Math.min(startX, endX) * scaleX;
+                    var sy = Math.min(startY, endY) * scaleY;
+                    var sw = Math.abs(endX - startX) * scaleX;
+                    var sh = Math.abs(endY - startY) * scaleY;
+                    
+                    var cropCanvas = document.createElement('canvas');
+                    cropCanvas.width = sw;
+                    cropCanvas.height = sh;
+                    cropCanvas.getContext('2d').drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh);
+                    cropCanvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);
+                } else {
+                    canvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);
+                }
+            };
+            tempImg.src = src;
+        };
+        
+        document.getElementById('edCancel').onclick = function() { modal.remove(); };
+        modal.onclick = function(ev) { if (ev.target === modal) modal.remove(); };
+    };
+    reader.readAsDataURL(file);
+}
         
         function applyTransform() {
             var w = img.naturalWidth * scale;
@@ -12086,7 +12226,17 @@ async function uploadEditedPhoto(bookKey, page, blob) {
         if (result.status === 'ok') {
             if (!userArtworks[bookKey]) userArtworks[bookKey] = {};
             userArtworks[bookKey][String(page)] = result.url;
+            
+            // ✅ Автоматически отмечаем страницу как раскрашенную
+            if (!userCompletedPages[bookKey]) userCompletedPages[bookKey] = {};
+            userCompletedPages[bookKey][String(page)] = true;
+            saveCompletedPages();
+            
+            // ✅ Обновляем прогресс
+            updateAllCategoriesProgress();
+            
             renderBookPagesGrid(bookKey, BOOK_PAGES_CONFIG[currentBook] || DEFAULT_PAGES_CONFIG);
+            
             if (tg) { tg.MainButton.hide(); tg.showPopup({ message: 'Фото загружено!' }); }
         }
     } catch (error) {

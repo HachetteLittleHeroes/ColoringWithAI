@@ -12023,12 +12023,23 @@ function openPhotoEditor(file, callback) {
                     ctx.drawImage(tempImg, 0, 0);
                 }
                 
-                if (cropping && endX !== undefined && Math.abs(endX - startX) > 20) {
+                             if (cropping && endX !== undefined && Math.abs(endX - startX) > 20) {
                     var rect = area.getBoundingClientRect();
                     var displayedW = img.offsetWidth;
                     var displayedH = img.offsetHeight;
-                    var scaleX = w / displayedW;
-                    var scaleY = h / displayedH;
+                    
+                    // ✅ Учитываем поворот при расчёте масштаба
+                    var naturalW, naturalH;
+                    if (rotation % 180 === 0) {
+                        naturalW = w;
+                        naturalH = h;
+                    } else {
+                        naturalW = h;
+                        naturalH = w;
+                    }
+                    
+                    var scaleX = naturalW / displayedW;
+                    var scaleY = naturalH / displayedH;
                     var sx = Math.min(startX, endX) * scaleX;
                     var sy = Math.min(startY, endY) * scaleY;
                     var sw = Math.abs(endX - startX) * scaleX;

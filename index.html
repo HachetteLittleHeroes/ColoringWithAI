@@ -4160,6 +4160,13 @@
     align-items: center;
     justify-content: center;
 }
+        .book-page-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;
+    border-radius: 10px;
+    background: var(--bg);
+}
     </style>
 </head>
 <body>
@@ -11309,7 +11316,6 @@ async function toggleColoringBook(category, bookName) {
     }
 }
 
-// Новая функция для кастомных раскрасок
 async function updateCustomBook(category, bookName, action) {
     try {
         const response = await fetch(`${SERVER_URL}/api/coloring_books`, {
@@ -11878,14 +11884,16 @@ function openPhotoEditor(file, callback) {
         var cropRect = document.getElementById('cropRect');
         var area = document.getElementById('editorArea');
         
-        // Ждём загрузку изображения, чтобы узнать его реальный размер
+        // Подгоняем под экран
         img.onload = function() {
-            // Подгоняем под экран
-            var maxW = area.clientWidth;
-            var maxH = area.clientHeight || window.innerHeight * 0.55;
+            var maxW = area.clientWidth - 20;
+            var maxH = (area.clientHeight || window.innerHeight * 0.55) - 20;
             var ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
             scale = ratio;
             img.style.width = (img.naturalWidth * scale) + 'px';
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '55vh';
+            img.style.objectFit = 'contain';
         };
         
         // Zoom кнопки
@@ -11998,9 +12006,12 @@ function openPhotoEditor(file, callback) {
                 var w = tempImg.width;
                 var h = tempImg.height;
                 
+                // Белый фон
                 if (rotation % 360 !== 0) {
                     if (rotation % 180 === 0) { canvas.width = w; canvas.height = h; }
                     else { canvas.width = h; canvas.height = w; }
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
                     ctx.save();
                     ctx.translate(canvas.width / 2, canvas.height / 2);
                     ctx.rotate((rotation * Math.PI) / 180);
@@ -12022,6 +12033,12 @@ function openPhotoEditor(file, callback) {
                     var sy = Math.min(startY, endY) * scaleY;
                     var sw = Math.abs(endX - startX) * scaleX;
                     var sh = Math.abs(endY - startY) * scaleY;
+                    
+                    // Ограничение координат
+                    sx = Math.max(0, Math.min(sx, canvas.width - 1));
+                    sy = Math.max(0, Math.min(sy, canvas.height - 1));
+                    sw = Math.min(sw, canvas.width - sx);
+                    sh = Math.min(sh, canvas.height - sy);
                     
                     var cropCanvas = document.createElement('canvas');
                     cropCanvas.width = sw;

@@ -12023,20 +12023,16 @@ function openPhotoEditor(file, callback) {
                     ctx.drawImage(tempImg, 0, 0);
                 }
                 
-                             if (cropping && endX !== undefined && Math.abs(endX - startX) > 20) {
+                                            if (cropping && endX !== undefined && Math.abs(endX - startX) > 20) {
                     var rect = area.getBoundingClientRect();
-                    var displayedW = img.offsetWidth;
-                    var displayedH = img.offsetHeight;
                     
-                    // ✅ Учитываем поворот при расчёте масштаба
-                    var naturalW, naturalH;
-                    if (rotation % 180 === 0) {
-                        naturalW = w;
-                        naturalH = h;
-                    } else {
-                        naturalW = h;
-                        naturalH = w;
-                    }
+                    // ✅ Берём реальный размер изображения на экране
+                    var displayedW = img.clientWidth;
+                    var displayedH = img.clientHeight;
+                    
+                    // ✅ Размер оригинального изображения
+                    var naturalW = tempImg.width;
+                    var naturalH = tempImg.height;
                     
                     var scaleX = naturalW / displayedW;
                     var scaleY = naturalH / displayedH;
@@ -12046,15 +12042,15 @@ function openPhotoEditor(file, callback) {
                     var sh = Math.abs(endY - startY) * scaleY;
                     
                     // Ограничение координат
-                    sx = Math.max(0, Math.min(sx, canvas.width - 1));
-                    sy = Math.max(0, Math.min(sy, canvas.height - 1));
-                    sw = Math.min(sw, canvas.width - sx);
-                    sh = Math.min(sh, canvas.height - sy);
+                    sx = Math.max(0, sx);
+                    sy = Math.max(0, sy);
+                    sw = Math.min(sw, naturalW - sx);
+                    sh = Math.min(sh, naturalH - sy);
                     
                     var cropCanvas = document.createElement('canvas');
                     cropCanvas.width = sw;
                     cropCanvas.height = sh;
-                    cropCanvas.getContext('2d').drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh);
+                    cropCanvas.getContext('2d').drawImage(tempImg, sx, sy, sw, sh, 0, 0, sw, sh);
                     cropCanvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);
                 } else {
                     canvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);

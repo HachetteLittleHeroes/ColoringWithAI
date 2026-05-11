@@ -19607,6 +19607,16 @@ function viewArtwork(bookKey, page) {
     
     document.body.appendChild(modal);
 }
+        function closeBookPagesModal() {
+    document.getElementById('bookPagesModal').style.display = 'none';
+    currentBook = null;
+    currentCategory = null;
+    currentPage = null;
+    window.isViewOnly = false;
+    
+    var profileModal = document.getElementById('publicProfileModal');
+    if (profileModal) profileModal.style.opacity = '1';
+}
 function changeMarkerCount(idx, delta) {
     const org = inventory.organizers.find(o => o.id === currentOrganizerId);
     if (!org || currentCellRow === null || currentCellCol === null) return;

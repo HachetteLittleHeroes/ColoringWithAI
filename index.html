@@ -12023,34 +12023,56 @@ function openPhotoEditor(file, callback) {
                     ctx.drawImage(tempImg, 0, 0);
                 }
                 
-                                            if (cropping && endX !== undefined && Math.abs(endX - startX) > 20) {
-                    var rect = area.getBoundingClientRect();
-                    
-                    // ✅ Берём реальный размер изображения на экране
+                     if (cropping && endX !== undefined && Math.abs(endX - startX) > 20) {
                     var displayedW = img.clientWidth;
                     var displayedH = img.clientHeight;
-                    
-                    // ✅ Размер оригинального изображения
                     var naturalW = tempImg.width;
                     var naturalH = tempImg.height;
                     
-                    var scaleX = naturalW / displayedW;
-                    var scaleY = naturalH / displayedH;
+                    // ✅ Сначала применяем поворот
+                    var rotatedCanvas = document.createElement('canvas');
+                    var rotatedCtx = rotatedCanvas.getContext('2d');
+                    
+                    if (rotation % 360 !== 0) {
+                        if (rotation % 180 === 0) {
+                            rotatedCanvas.width = naturalW;
+                            rotatedCanvas.height = naturalH;
+                        } else {
+                            rotatedCanvas.width = naturalH;
+                            rotatedCanvas.height = naturalW;
+                        }
+                        rotatedCtx.fillStyle = '#ffffff';
+                        rotatedCtx.fillRect(0, 0, rotatedCanvas.width, rotatedCanvas.height);
+                        rotatedCtx.save();
+                        rotatedCtx.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
+                        rotatedCtx.rotate((rotation * Math.PI) / 180);
+                        rotatedCtx.drawImage(tempImg, -naturalW / 2, -naturalH / 2);
+                        rotatedCtx.restore();
+                    } else {
+                        rotatedCanvas.width = naturalW;
+                        rotatedCanvas.height = naturalH;
+                        rotatedCtx.drawImage(tempImg, 0, 0);
+                    }
+                    
+                    // ✅ Потом обрезаем повёрнутое
+                    var rotW = rotatedCanvas.width;
+                    var rotH = rotatedCanvas.height;
+                    var scaleX = rotW / displayedW;
+                    var scaleY = rotH / displayedH;
                     var sx = Math.min(startX, endX) * scaleX;
                     var sy = Math.min(startY, endY) * scaleY;
                     var sw = Math.abs(endX - startX) * scaleX;
                     var sh = Math.abs(endY - startY) * scaleY;
                     
-                    // Ограничение координат
-                    sx = Math.max(0, sx);
-                    sy = Math.max(0, sy);
-                    sw = Math.min(sw, naturalW - sx);
-                    sh = Math.min(sh, naturalH - sy);
+                    sx = Math.max(0, Math.min(sx, rotW - 1));
+                    sy = Math.max(0, Math.min(sy, rotH - 1));
+                    sw = Math.min(sw, rotW - sx);
+                    sh = Math.min(sh, rotH - sy);
                     
                     var cropCanvas = document.createElement('canvas');
                     cropCanvas.width = sw;
                     cropCanvas.height = sh;
-                    cropCanvas.getContext('2d').drawImage(tempImg, sx, sy, sw, sh, 0, 0, sw, sh);
+                    cropCanvas.getContext('2d').drawImage(rotatedCanvas, sx, sy, sw, sh, 0, 0, sw, sh);
                     cropCanvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);
                 } else {
                     canvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);

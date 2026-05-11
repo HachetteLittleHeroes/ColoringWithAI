@@ -12051,16 +12051,13 @@ function openPhotoEditor(file, callback) {
                     canvas.height = natH;
                     ctx.drawImage(tempImg, 0, 0);
                 }
-                
-                                                // Обрезка
+                                // Обрезка
                 if (crop.active && crop.w > 30 && crop.h > 30) {
-                    var imgW = img.clientWidth;
-                    var imgH = img.clientHeight;
+                    // ✅ Используем getBoundingClientRect — он учитывает реальный размер после transform!
+                    var imgRect = img.getBoundingClientRect();
+                    var imgW = imgRect.width;
+                    var imgH = imgRect.height;
                     
-                    // ✅ Сначала поворачиваем (как уже сделано выше)
-                    // canvas уже содержит повёрнутое изображение
-                    
-                    // ✅ Масштаб: повёрнутый холст / экран
                     var scX = canvas.width / imgW;
                     var scY = canvas.height / imgH;
                     
@@ -12074,7 +12071,6 @@ function openPhotoEditor(file, callback) {
                     sw = Math.min(sw, canvas.width - sx);
                     sh = Math.min(sh, canvas.height - sy);
                     
-                    // ✅ Обрезаем из ПОВЁРНУТОГО canvas
                     var cropCanvas = document.createElement('canvas');
                     cropCanvas.width = sw;
                     cropCanvas.height = sh;

@@ -11914,26 +11914,37 @@ function openPhotoEditor(file, callback) {
         }
         
         // Инициализация обрезки (30% от краёв)
-        function initCrop() {
-            var imgW = img.clientWidth;
-            var imgH = img.clientHeight;
-            crop.x = imgW * 0.15;
-            crop.y = imgH * 0.15;
-            crop.w = imgW * 0.7;
-            crop.h = imgH * 0.7;
-            crop.active = true;
-            overlay.style.display = 'block';
-            updateCropUI();
-        }
+function initCrop() {
+    var imgRect = img.getBoundingClientRect();
+    var imgW = imgRect.width;
+    var imgH = imgRect.height;
+    crop.x = imgW * 0.15;
+    crop.y = imgH * 0.15;
+    crop.w = imgW * 0.7;
+    crop.h = imgH * 0.7;
+    crop.active = true;
+    overlay.style.display = 'block';
+    updateCropUI();
+}
         
         // Зум
         document.getElementById('edZoomIn').onclick = function() { scale = Math.min(3, scale * 1.3); updateTransform(); };
         document.getElementById('edZoomOut').onclick = function() { scale = Math.max(0.2, scale / 1.3); updateTransform(); };
         
-        // Поворот
-        document.getElementById('edRotateLeft').onclick = function() { rotation = (rotation - 90) % 360; updateTransform(); };
-        document.getElementById('edRotateRight').onclick = function() { rotation = (rotation + 90) % 360; updateTransform(); };
-        
+        /// Поворот
+document.getElementById('edRotateLeft').onclick = function() {
+    rotation = (rotation - 90) % 360;
+    updateTransform();
+    // ✅ Сброс рамки при повороте (если активна)
+    if (crop.active) initCrop();
+};
+
+document.getElementById('edRotateRight').onclick = function() {
+    rotation = (rotation + 90) % 360;
+    updateTransform();
+    // ✅ Сброс рамки при повороте
+    if (crop.active) initCrop();
+};
         // Включить обрезку
         document.getElementById('edCrop').onclick = function() {
             if (crop.active) {

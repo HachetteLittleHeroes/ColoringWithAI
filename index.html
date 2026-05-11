@@ -12052,28 +12052,55 @@ function openPhotoEditor(file, callback) {
                     ctx.drawImage(tempImg, 0, 0);
                 }
                 
-                // Обрезка
+                                // Обрезка
                 if (crop.active && crop.w > 30 && crop.h > 30) {
                     var imgW = img.clientWidth;
                     var imgH = img.clientHeight;
-                    var scX = canvas.width / imgW;
-                    var scY = canvas.height / imgH;
+                    
+                    // ✅ Масштаб: оригинал / экран (без учёта поворота)
+                    var scX = natW / imgW;
+                    var scY = natH / imgH;
                     
                     var sx = crop.x * scX;
                     var sy = crop.y * scY;
                     var sw = crop.w * scX;
                     var sh = crop.h * scY;
                     
-                    sx = Math.max(0, Math.min(sx, canvas.width - 1));
-                    sy = Math.max(0, Math.min(sy, canvas.height - 1));
-                    sw = Math.min(sw, canvas.width - sx);
-                    sh = Math.min(sh, canvas.height - sy);
+                    sx = Math.max(0, Math.min(sx, natW - 1));
+                    sy = Math.max(0, Math.min(sy, natH - 1));
+                    sw = Math.min(sw, natW - sx);
+                    sh = Math.min(sh, natH - sy);
                     
+                    // ✅ Сначала обрезаем ОРИГИНАЛ
                     var cropCanvas = document.createElement('canvas');
                     cropCanvas.width = sw;
                     cropCanvas.height = sh;
-                    cropCanvas.getContext('2d').drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh);
-                    cropCanvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);
+                    cropCanvas.getContext('2d').drawImage(tempImg, sx, sy, sw, sh, 0, 0, sw, sh);
+                    
+                    // ✅ Потом поворачиваем обрезанное
+                    var finalCanvas = document.createElement('canvas');
+                    var finalCtx = finalCanvas.getContext('2d');
+                    
+                    if (rotation % 360 !== 0) {
+                        if (rotation % 180 === 0) {
+                            finalCanvas.width = sw;
+                            finalCanvas.height = sh;
+                        } else {
+                            finalCanvas.width = sh;
+                            finalCanvas.height = sw;
+                        }
+                        finalCtx.fillStyle = '#ffffff';
+                        finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+                        finalCtx.save();
+                        finalCtx.translate(finalCanvas.width / 2, finalCanvas.height / 2);
+                        finalCtx.rotate((rotation * Math.PI) / 180);
+                        finalCtx.drawImage(cropCanvas, -sw / 2, -sh / 2);
+                        finalCtx.restore();
+                    } else {
+                        finalCanvas = cropCanvas;
+                    }
+                    
+                    finalCanvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);
                 } else {
                     canvas.toBlob(function(blob) { modal.remove(); callback(blob); }, 'image/jpeg', 0.85);
                 }

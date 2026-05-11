@@ -11802,7 +11802,7 @@ function renderBookPagesGrid(bookKey, config) {
             html += `
                 <div class="book-page-btn ${completed ? 'completed' : ''} ${hasArtwork ? 'uploaded' : ''}" 
                      onclick="togglePageCompletion('${escapeQuotes(bookKey)}', '${pageLabel}', ${totalPages})">
-                   ${hasArtwork ? `<img src="${hasArtwork}" alt="стр. ${pageLabel}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" onclick="event.stopPropagation(); viewArtwork('${escapeQuotes(bookKey)}', '${pageLabel}')">` : pageLabel}
+    ${hasArtwork ? `<img src="${hasArtwork}" alt="стр. ${pageLabel}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" onclick="event.stopPropagation(); viewArtwork('${escapeQuotes(bookKey)}', '${pageLabel}')">` : pageLabel}
                     <button class="upload-page-btn" 
                             onclick="event.stopPropagation(); uploadPageArtwork('${escapeQuotes(bookKey)}', '${pageLabel}')"
                             title="Загрузить фото">

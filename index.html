@@ -11825,6 +11825,36 @@ function renderBookPagesGrid(bookKey, config) {
     
     grid.innerHTML = html;
 }
+        function compressImage(file, maxWidth, quality) {
+    maxWidth = maxWidth || 800;
+    quality = quality || 0.7;
+    
+    return new Promise(function(resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var img = new Image();
+            img.onload = function() {
+                var canvas = document.createElement('canvas');
+                var scale = maxWidth / img.width;
+                canvas.width = maxWidth;
+                canvas.height = img.height * scale;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob(function(blob) {
+                    if (blob) {
+                        resolve(blob);
+                    } else {
+                        reject(new Error('Не удалось сжать фото'));
+                    }
+                }, 'image/jpeg', quality);
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
     function uploadPageArtwork(bookKey, page) {
     const input = document.createElement('input');
     input.type = 'file';

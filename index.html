@@ -11800,8 +11800,8 @@ function renderBookPagesGrid(bookKey, config) {
             html += `
                 <div class="book-page-btn ${completed ? 'completed' : ''} ${hasArtwork ? 'uploaded' : ''}" 
                      style="position:relative;overflow:hidden;">
-                    ${hasArtwork ? `<img src="${hasArtwork}" alt="стр. ${pageLabel}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:10px;" onclick="event.stopPropagation(); viewArtwork('${escapeQuotes(bookKey)}', '${pageLabel}')">` : ''}
-                    <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;${hasArtwork ? 'pointer-events:none;' : ''}" onclick="${hasArtwork ? '' : `togglePageCompletion('${escapeQuotes(bookKey)}', '${pageLabel}', ${totalPages})`}">
+                    ${hasArtwork ? `<img src="${hasArtwork}" alt="стр. ${pageLabel}" style="position:absolute;top:-2px;l;object-fit:cover;border-radius:10px;" onclick="event.stopPropagation(); viewArtwork('${escapeQuotes(bookKey)}', '${pageLabel}')">` : ''}
+                    <div style="position:absolute;top:-2px;l;display:flex;align-items:center;justify-content:center;${hasArtwork ? 'pointer-events:none;' : ''}" onclick="${hasArtwork ? '' : `togglePageCompletion('${escapeQuotes(bookKey)}', '${pageLabel}', ${totalPages})`}">
                         ${hasArtwork ? '' : pageLabel}
                     </div>
                     <button class="upload-page-btn" 
@@ -11816,7 +11816,7 @@ function renderBookPagesGrid(bookKey, config) {
                 <div class="book-page-btn ${completed ? 'completed' : ''} ${hasArtwork ? 'uploaded' : ''}" 
                      style="position:relative;overflow:hidden;" 
                      onclick="${hasArtwork ? `viewArtwork('${escapeQuotes(bookKey)}', '${pageLabel}')` : ''}">
-                    ${hasArtwork ? `<img src="${hasArtwork}" alt="стр. ${pageLabel}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:10px;">` : pageLabel}
+                    ${hasArtwork ? `<img src="${hasArtwork}" alt="стр. ${pageLabel}" style="position:absolute;top:-2px;l;object-fit:cover;border-radius:10px;">` : pageLabel}
                 </div>
             `;
         }

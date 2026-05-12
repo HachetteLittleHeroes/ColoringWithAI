@@ -3369,16 +3369,12 @@
     width: 100%;
 }
 /* Страницы в модалке раскраски */
-/* Страницы в модалке раскраски */
+
 .book-page-btn {
     aspect-ratio: 1 / 1;
     background: var(--bg);
     border: 2px solid var(--border-color);
     border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     font-size: 16px;
     font-weight: 700;
     color: var(--text);
@@ -3389,19 +3385,22 @@
     position: relative;
     width: 100%;
     height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Убираем рамку и фон для загруженных страниц */
 .book-page-btn.uploaded {
-    border: none;
-    background: transparent;
-    padding: 0;
+    display: block;
 }
 
 .book-page-btn img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover !important;
+    object-fit: cover;
     border-radius: 10px;
 }
 

@@ -20113,6 +20113,56 @@ function toggleFiguresCollectionBlock() {
         arrow.style.transform = 'rotate(0deg)';
     }
 }
+        function togglePageCompletion(bookKey, page, totalPages) {
+    if (!userCompletedPages[bookKey]) {
+        userCompletedPages[bookKey] = {};
+    }
+    
+    const isCompleted = userCompletedPages[bookKey][String(page)];
+    
+    if (isCompleted) {
+        if (tg) {
+            tg.showConfirm(`Снять отметку со страницы ${page}?`, (confirm) => {
+                if (confirm) {
+                    delete userCompletedPages[bookKey][String(page)];
+                    if (window.completedPagesDates) {
+                        delete window.completedPagesDates[bookKey + '|' + page];
+                        localStorage.setItem('completed_pages_dates_' + userId, JSON.stringify(window.completedPagesDates));
+                    }
+                    saveCompletedPages();
+                    updateAllCategoriesProgress();
+                    renderBookPagesGrid(bookKey, BOOK_PAGES_CONFIG[currentBook] || DEFAULT_PAGES_CONFIG);
+                }
+            });
+        } else {
+            if (confirm(`Снять отметку со страницы ${page}?`)) {
+                delete userCompletedPages[bookKey][String(page)];
+                if (window.completedPagesDates) {
+                    delete window.completedPagesDates[bookKey + '|' + page];
+                    localStorage.setItem('completed_pages_dates_' + userId, JSON.stringify(window.completedPagesDates));
+                }
+                saveCompletedPages();
+                updateAllCategoriesProgress();
+                renderBookPagesGrid(bookKey, BOOK_PAGES_CONFIG[currentBook] || DEFAULT_PAGES_CONFIG);
+            }
+        }
+    } else {
+        userCompletedPages[bookKey][String(page)] = true;
+        if (!window.completedPagesDates) window.completedPagesDates = {};
+        window.completedPagesDates[bookKey + '|' + page] = Date.now();
+        localStorage.setItem('completed_pages_dates_' + userId, JSON.stringify(window.completedPagesDates));
+        
+        saveCompletedPages();
+        updateAllCategoriesProgress();
+        renderBookPagesGrid(bookKey, BOOK_PAGES_CONFIG[currentBook] || DEFAULT_PAGES_CONFIG);
+        
+        const completedCount = Object.keys(userCompletedPages[bookKey]).length;
+        if (completedCount === totalPages) {
+            if (tg) tg.showAlert(`🎉 Поздравляем! Вы раскрасили всю раскраску «${currentBook}»!`);
+            else alert(`🎉 Поздравляем! Вы раскрасили всю раскраску «${currentBook}»!`);
+        }
+    }
+}
         function isPageCompleted(bookKey, page) {
     return userCompletedPages[bookKey]?.hasOwnProperty(String(page)) || false;
 }

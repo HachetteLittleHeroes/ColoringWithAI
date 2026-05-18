@@ -20110,6 +20110,9 @@ function toggleFiguresCollectionBlock() {
         arrow.style.transform = 'rotate(0deg)';
     }
 }
+        function isPageCompleted(bookKey, page) {
+    return userCompletedPages[bookKey]?.hasOwnProperty(String(page)) || false;
+}
 function getPageArtwork(bookKey, page) {
     const url = userArtworks[bookKey]?.[String(page)];
     if (!url) return null;

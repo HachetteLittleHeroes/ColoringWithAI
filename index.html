@@ -7375,20 +7375,23 @@ function openSupportDialog() {
                 }
             }
         }
+        
         let currentStatusFilter = 'all';
-        function toggleTasks() {
-            const content = document.getElementById('tasksContent');
-            const arrow = document.getElementById('tasksArrow');
-            if (!content) return;
-            if (content.style.display === 'block') {
-                content.style.display = 'none';
-                if (arrow) arrow.style.transform = 'rotate(0deg)';
-            } else {
-                content.style.display = 'block';
-                if (arrow) arrow.style.transform = 'rotate(180deg)';
-                renderBranchTasks();
-            }
-        }
+        
+      function toggleTasks() {
+    const content = document.getElementById('tasksContent');
+    const arrow = document.getElementById('tasksArrow');
+    if (!content) return;
+    if (content.style.display === 'block') {
+        content.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    } else {
+        content.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+        renderBranchTasks();
+        renderStatusFilters();  // ← добавить
+    }
+}
         
         function toggleInventoryBlock() {
             const content = document.getElementById('inventoryContent');
@@ -23044,20 +23047,6 @@ function openBookPageFromBestiary(category, bookName, page) {
     });
     document.getElementById('themeModal').style.display = 'flex';
 }
-        function toggleTasks() {
-    const content = document.getElementById('tasksContent');
-    const arrow = document.getElementById('tasksArrow');
-    if (!content) return;
-    if (content.style.display === 'block') {
-        content.style.display = 'none';
-        if (arrow) arrow.style.transform = 'rotate(0deg)';
-    } else {
-        content.style.display = 'block';
-        if (arrow) arrow.style.transform = 'rotate(180deg)';
-        renderBranchTasks();
-        renderStatusFilters();  // ← добавить
-    }
-}
 
 function renderStatusFilters() {
     let container = document.getElementById('statusFilters');
@@ -23083,8 +23072,6 @@ function renderStatusFilters() {
         </button>
     `;
 }
-
-let currentStatusFilter = 'all';
 
 function filterBranchTasks(filter) {
     currentStatusFilter = filter;

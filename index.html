@@ -21782,7 +21782,6 @@ const Wishlist = {
             </div>
         `;
         
-        // Кнопка «Добавить в коллекцию»
         const addBtn = document.createElement('button');
         addBtn.className = 'remove-btn';
         addBtn.innerHTML = '<i class="fas fa-plus"></i>';
@@ -21812,14 +21811,12 @@ const Wishlist = {
             const data = await response.json();
             
             if (data.status === 'ok') {
-                this.showNotification('✅ Добавлено в список желаний!');
                 this.updateHeartButton(bookId, true);
                 await this.load();
                 return true;
             }
         } catch (error) {
             console.error('Ошибка добавления:', error);
-            this.showNotification('❌ Ошибка', 'error');
         }
         return false;
     },
@@ -21837,7 +21834,6 @@ const Wishlist = {
             const data = await response.json();
             
             if (data.status === 'ok') {
-                this.showNotification('🗑️ Удалено из списка желаний');
                 this.updateHeartButton(bookId, false);
                 await this.load();
             }
@@ -21876,12 +21872,12 @@ const Wishlist = {
     },
     
     showNotification(message, type = 'success') {
-        if (typeof tg !== 'undefined' && tg.showPopup) {
-            tg.showPopup({ message: message });
-        } else {
-            alert(message);
-        }
-    }
+        try {
+            if (typeof tg !== 'undefined' && tg.showAlert) {
+                tg.showAlert(message);
+            }
+        } catch(e) {}
+    },
 };
 
 // Функция переключения блока вишлиста

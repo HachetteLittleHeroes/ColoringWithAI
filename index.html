@@ -9269,7 +9269,7 @@ function openFigureModal(figure, isUnlocked) {
             }
         }
         
-        / // ==========================================
+        // ==========================================
         // ДАННЫЕ ЗАДАНИЙ (ВЕТКИ) - С ПОДЗАДАНИЯМИ
         // ==========================================
         
@@ -11876,8 +11876,9 @@ window.onload = async () => {
     
     await loadCollection();
     
-    setInterval(async () => { await checkCollectionUpdates(); }, 120000);
-    setInterval(async () => { await loadFriendProgressFromServer(); }, 300000);
+    // Периодическая проверка обновлений (каждые 30 секунд)
+    setInterval(async () => { await checkCollectionUpdates(); }, 30000);
+    setInterval(async () => { await loadFriendProgressFromServer(); }, 30000);
     
     updateUI();
     startProgressRefresh();

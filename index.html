@@ -11829,7 +11829,6 @@ window.onload = async () => {
         window.completedPagesDates = {};
     }
     
-    // Загружаем баланс с сервера
     await loadUserBalance();
     updateUI();
     
@@ -11843,6 +11842,18 @@ window.onload = async () => {
     await loadMyFriends();
     await loadCompletedPages();
     
+    try {
+        const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
+        const stats = await response.json();
+        if (stats && stats.avatar) {
+            user.avatar = stats.avatar;
+            document.getElementById('user-avatar').src = user.avatar;
+            localStorage.setItem('coloring_user', JSON.stringify(user));
+        }
+    } catch (error) {
+        console.error('❌ Ошибка загрузки аватара:', error);
+    }
+    
     if (user.status && !user.unlockedStatuses.includes(user.status)) {
         user.status = 'Без статуса';
     }
@@ -11851,7 +11862,6 @@ window.onload = async () => {
     loadFriendTasksStatus();
     await loadFriendProgressFromServer();
     
-    // Загрузка темы (как раньше)
     const savedTheme = localStorage.getItem('app_theme');
     if (savedTheme === 'custom') {
         applyCustomTheme(true);
@@ -11861,14 +11871,16 @@ window.onload = async () => {
         setTheme(user.theme || 'light');
     }
     
-    // Рендерим задания
     renderBranchTasks();
     renderTimeTasks();
     renderFriendTasks();
     renderSeasonPassTasks();
     
+    loadMarkers();
     renderCart();
     renderVolumes();
+    loadInventory();
+    loadUserArtworks();
     loadWishlistCount();
     
     loadSeasonPremiumStatus();
@@ -11876,7 +11888,6 @@ window.onload = async () => {
     
     await loadCollection();
     
-    // Периодическая проверка обновлений (каждые 30 секунд)
     setInterval(async () => { await checkCollectionUpdates(); }, 30000);
     setInterval(async () => { await loadFriendProgressFromServer(); }, 30000);
     

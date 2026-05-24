@@ -11815,14 +11815,6 @@ function openPhotoEditor(file, callback) {
 window.onload = async () => {
     console.log('🚀 APP STARTING...');
     
-    // ✅ ТЕМА ПРИМЕНЯЕТСЯ МГНОВЕННО, ДО ВСЕХ ЗАПРОСОВ
-    const savedTheme = localStorage.getItem('app_theme');
-    if (savedTheme === 'custom') {
-        applyCustomTheme(true);
-    } else if (savedTheme && savedTheme !== 'light') {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-    
     const savedUser = localStorage.getItem('coloring_user');
     if (savedUser) Object.assign(user, JSON.parse(savedUser));
     
@@ -11851,8 +11843,6 @@ window.onload = async () => {
     await loadMyFriends();
     await loadCompletedPages();
     
-    // Аватар уже в loadUserProgress, дубликат убран
-    
     if (user.status && !user.unlockedStatuses.includes(user.status)) {
         user.status = 'Без статуса';
     }
@@ -11861,23 +11851,26 @@ window.onload = async () => {
     loadFriendTasksStatus();
     await loadFriendProgressFromServer();
     
+    // Загрузка темы (как раньше)
+    const savedTheme = localStorage.getItem('app_theme');
+    if (savedTheme === 'custom') {
+        applyCustomTheme(true);
+    } else if (savedTheme && savedTheme !== 'light') {
+        setTheme(savedTheme);
+    } else {
+        setTheme(user.theme || 'light');
+    }
+    
     // Рендерим задания
     renderBranchTasks();
     renderTimeTasks();
     renderFriendTasks();
     renderSeasonPassTasks();
     
-    // Только то, что нужно сразу
     renderCart();
     renderVolumes();
     loadWishlistCount();
     
-    // Ленивая загрузка — при открытии вкладок
-    // loadMarkers() — в tab('markers')
-    // loadInventory() — в tab('collection')
-    // loadUserArtworks() — в tab('collection')
-    
-    // Season Pass
     loadSeasonPremiumStatus();
     loadClaimedRewards();
     

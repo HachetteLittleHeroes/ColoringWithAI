@@ -20614,28 +20614,15 @@ const MARKER_SETS = [
 let userMarkersCollection = {};
 
 async function loadMarkersCollection() {
-    try {
-        const response = await fetch(`${SERVER_URL}/api/markers_collection?user_id=${userId}`);
-        const data = await response.json();
-        
-        if (data && typeof data === 'object') {
-            userMarkersCollection = data;
-        } else {
+    const saved = localStorage.getItem(`markers_${userId}`);
+    if (saved) {
+        try {
+            userMarkersCollection = JSON.parse(saved);
+        } catch(e) {
             userMarkersCollection = {};
         }
-    } catch (error) {
-        console.error('Error loading markers collection:', error);
-        // Пробуем загрузить из localStorage
-        const saved = localStorage.getItem(`markers_${userId}`);
-        if (saved) {
-            try {
-                userMarkersCollection = JSON.parse(saved);
-            } catch(e) {
-                userMarkersCollection = {};
-            }
-        } else {
-            userMarkersCollection = {};
-        }
+    } else {
+        userMarkersCollection = {};
     }
     updateMarkersCollectionStats();
 }

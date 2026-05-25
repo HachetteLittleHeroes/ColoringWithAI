@@ -20616,16 +20616,25 @@ const MARKER_SETS = [
 let userMarkersCollection = {};
 
 async function loadMarkersCollection() {
+    // Сначала из localStorage
     const saved = localStorage.getItem(`markers_${userId}`);
     if (saved) {
-        try {
-            userMarkersCollection = JSON.parse(saved);
-        } catch(e) {
-            userMarkersCollection = {};
-        }
+        try { userMarkersCollection = JSON.parse(saved); }
+        catch(e) { userMarkersCollection = {}; }
     } else {
         userMarkersCollection = {};
     }
+    
+    // Потом с сервера (объединяем)
+    try {
+        const response = await fetch(`${SERVER_URL}/api/markers_collection?user_id=${userId}`);
+        const data = await response.json();
+        if (data && typeof data === 'object') {
+            userMarkersCollection = { ...userMarkersCollection, ...data };
+        }
+    } catch(e) {}
+    
+    localStorage.setItem(`markers_${userId}`, JSON.stringify(userMarkersCollection));
     updateMarkersCollectionStats();
 }
 
@@ -20650,6 +20659,19 @@ async function updateMarkerInCollection(brand, number, action, subcategory = '')
     localStorage.setItem(`markers_${userId}`, JSON.stringify(userMarkersCollection));
     updateMarkersCollectionStats();
     renderMarkersCollection();
+    
+    // ✅ Синхронизация с сервером
+    fetch(`${SERVER_URL}/api/markers_collection`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            user_id: userId,
+            brand: brand,
+            number: number,
+            subcategory: subcategory || '',
+            action: action
+        })
+    }).catch(e => console.error('Sync error:', e));
 }
 async function addAllBrand(brand, subcategory, numbers) {
     console.log('📦 addAllBrand вызвана:', brand, subcategory, numbers.length);

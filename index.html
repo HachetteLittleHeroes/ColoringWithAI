@@ -20639,7 +20639,6 @@ async function updateMarkerInCollection(brand, number, action, subcategory = '')
         action = userMarkersCollection[key] ? 'remove' : 'add';
     }
     
-    // Обновляем локально
     if (action === 'add') {
         userMarkersCollection[key] = true;
     } else {
@@ -20649,41 +20648,6 @@ async function updateMarkerInCollection(brand, number, action, subcategory = '')
     localStorage.setItem(`markers_${userId}`, JSON.stringify(userMarkersCollection));
     updateMarkersCollectionStats();
     renderMarkersCollection();
-    
-    // ✅ ОТПРАВЛЯЕМ НА СЕРВЕР (только для Tooli-Art с подкатегорией)
-    if (brand === 'Tooli-Art' && subcategory) {
-        try {
-            await fetch(`${SERVER_URL}/api/markers_collection`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: userId,
-                    brand: brand,
-                    number: number,
-                    subcategory: subcategory,
-                    action: action
-                })
-            });
-        } catch (error) {
-            console.error('Error syncing Tooli-Art to server:', error);
-        }
-    } else {
-        // Для остальных брендов — старая логика
-        try {
-            await fetch(`${SERVER_URL}/api/markers_collection`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: userId,
-                    brand: brand,
-                    number: number,
-                    action: action
-                })
-            });
-        } catch (error) {
-            console.error('Error syncing to server:', error);
-        }
-    }
 }
 async function addAllBrand(brand, subcategory, numbers) {
     console.log('📦 addAllBrand вызвана:', brand, subcategory, numbers.length);

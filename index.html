@@ -23658,6 +23658,25 @@ function openBookPageFromBestiary(category, bookName, page) {
         renderStatusFilters();  // ← добавить
     }
 }
+      async function loadClaimedRewards() {
+    try {
+        const response = await fetch(`${SERVER_URL}/api/season_rewards?user_id=${userId}`);
+        const data = await response.json();
+        claimedSeasonRewards = data || { free: [], premium: [] };
+    } catch(e) {
+        const saved = localStorage.getItem(`season_rewards_${userId}`);
+        claimedSeasonRewards = saved ? JSON.parse(saved) : { free: [], premium: [] };
+    }
+}
+
+function saveClaimedRewards() {
+    localStorage.setItem(`season_rewards_${userId}`, JSON.stringify(claimedSeasonRewards));
+    fetch(`${SERVER_URL}/api/season_rewards`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, rewards: claimedSeasonRewards })
+    }).catch(e => console.error('Save rewards error:', e));
+}  
     </script>
     
     <!-- Модалка поиска пользователей -->

@@ -11809,6 +11809,9 @@ window.onload = async () => {
         window.completedPagesDates = {};
     }
     
+    // ✅ Загружаем коллекцию маркеров из localStorage ДО всего
+    loadMarkersCollection();
+    
     await loadUserBalance();
     updateUI();
     
@@ -11817,7 +11820,6 @@ window.onload = async () => {
     await loadUserAchievements();
     await checkBalanceStatus();
     await checkAndUnlockStatuses();
-    await loadMarkersCollection();
     await loadColoringBooks();
     await loadMyFriends();
     await loadCompletedPages();

@@ -4184,15 +4184,12 @@
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px 0;">
         <div class="header" style="padding: 0;">Профиль</div>
         <div style="display: flex; gap: 10px;">
-            <!-- Кнопка поддержки -->
             <button onclick="openSupportDialog()" style="background: var(--accent); color: white; border: none; padding: 8px 14px; border-radius: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <i class="fas fa-heart" style="margin-right: 5px;"></i>Поддержать
             </button>
-            <!-- Кнопка друзья + поиск -->
             <button onclick="openFriendsList()" style="background: var(--accent); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <i class="fas fa-address-book"></i>
             </button>
-            <!-- Кнопка выбора темы -->
             <button onclick="openThemeModal()" style="background: var(--accent); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <i class="fas fa-palette"></i>
             </button>
@@ -4276,217 +4273,142 @@
             <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 10 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+50</span><i class="fas fa-book-open gold-book"></i></div></div>
         </div>
     </div>
-<!-- ========== ЗАДАНИЯ НА СТАТУСЫ ========== -->
-<div class="tasks-section">
-    <button class="tasks-header" onclick="toggleTasks()">
-        <span>🏅 Задания на статусы</span>
-        <i class="fas fa-chevron-down" id="tasksArrow"></i>
-    </button>
-    <div id="tasksContent" class="tasks-content">
-        <div id="branchTasksList"></div>
-    </div>
-</div>
 
-<!-- ========== ЗАДАНИЯ НА ВРЕМЯ ========== -->
-<div class="tasks-section time-tasks-section">
-    <button class="tasks-header" onclick="toggleTimeTasks()">
-        <span>⏰ Задания на время</span>
-        <i class="fas fa-chevron-down" id="timeTasksArrow"></i>
-    </button>
-    <div id="timeTasksContent" class="tasks-content">
-        <div id="timeTasksList"></div>
+    <!-- ========== ЗАДАНИЯ НА СТАТУСЫ ========== -->
+    <div class="tasks-section">
+        <button class="tasks-header" onclick="toggleTasks()">
+            <span>🏅 Задания на статусы</span>
+            <i class="fas fa-chevron-down" id="tasksArrow"></i>
+        </button>
+        <div id="tasksContent" class="tasks-content">
+            <div id="branchTasksList"></div>
+        </div>
     </div>
-</div>
 
-<!-- ========== ЗАДАНИЯ ОТ НАШИХ ДРУЗЕЙ ========== -->
-<div class="tasks-section friend-tasks-section">
-    <button class="tasks-header" onclick="toggleFriendTasks()">
-        <span>🤝 Задания от наших друзей</span>
-        <i class="fas fa-chevron-down" id="friendTasksArrow"></i>
-    </button>
-    <div id="friendTasksContent" class="tasks-content">
-        <div id="friendTasksList"></div>
+    <!-- ========== ЗАДАНИЯ НА ВРЕМЯ ========== -->
+    <div class="tasks-section time-tasks-section">
+        <button class="tasks-header" onclick="toggleTimeTasks()">
+            <span>⏰ Задания на время</span>
+            <i class="fas fa-chevron-down" id="timeTasksArrow"></i>
+        </button>
+        <div id="timeTasksContent" class="tasks-content">
+            <div id="timeTasksList"></div>
+        </div>
     </div>
-</div>
 
-<!-- ========== SEASON PASS ========== -->
-<div class="tasks-section season-pass-section" id="seasonPassSection">
-    <button class="tasks-header" onclick="toggleSeasonPass()">
-        <span>🌸 Сезонный пропуск</span>
-        <i class="fas fa-chevron-down" id="seasonPassArrow"></i>
-    </button>
-    <div id="seasonPassContent" class="tasks-content" style="display: none;">
-        <div style="text-align: center; padding: 20px;">
-            <div style="font-size: 48px;">🌸</div>
-            <h3>Сезонный пропуск завершён!</h3>
-            <p style="color: var(--text-gray); margin: 15px 0;">Вы можете принять участие в других активностях</p>
+    <!-- ========== ЗАДАНИЯ ОТ НАШИХ ДРУЗЕЙ ========== -->
+    <div class="tasks-section friend-tasks-section">
+        <button class="tasks-header" onclick="toggleFriendTasks()">
+            <span>🤝 Задания от наших друзей</span>
+            <i class="fas fa-chevron-down" id="friendTasksArrow"></i>
+        </button>
+        <div id="friendTasksContent" class="tasks-content">
+            <div id="friendTasksList"></div>
+        </div>
+    </div>
+
+    <!-- ========== SEASON PASS ========== -->
+    <div class="tasks-section season-pass-section" id="seasonPassSection">
+        <button class="tasks-header" onclick="toggleSeasonPass()">
+            <span>🌸 Сезонный пропуск</span>
+            <i class="fas fa-chevron-down" id="seasonPassArrow"></i>
+        </button>
+        <div id="seasonPassContent" class="tasks-content" style="display: none;">
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 48px;">🌸</div>
+                <h3>Сезонный пропуск завершён!</h3>
+                <p style="color: var(--text-gray); margin: 15px 0;">Вы можете принять участие в других активностях</p>
+            </div>
         </div>
     </div>
 </div>
-   
+
 <!-- ========== КОЛЛЕКЦИЯ ========== -->
 <div id="collection" class="page">
     <div class="header">Коллекция</div>
     
-   <!-- ========== КОЛЛЕКЦИЯ ПЕРСОНАЖЕЙ ========== -->
     <div class="inventory-main-block">
         <div class="inventory-header" onclick="toggleFiguresCollectionBlock()">
-            <div class="inventory-header-left">
-                <i class="fas fa-users"></i>
-                <span>Коллекция персонажей</span>
-            </div>
-            <div class="inventory-header-right">
-                <span id="collectionStats" class="collection-badge">0/50</span>
-                <i class="fas fa-chevron-down" id="figuresCollectionArrow"></i>
-            </div>
+            <div class="inventory-header-left"><i class="fas fa-users"></i><span>Коллекция персонажей</span></div>
+            <div class="inventory-header-right"><span id="collectionStats" class="collection-badge">0/50</span><i class="fas fa-chevron-down" id="figuresCollectionArrow"></i></div>
         </div>
         <div id="figuresCollectionContent" class="inventory-content" style="display: none;">
             <div id="collectionGrid" class="collection-grid"></div>
         </div>
     </div>
     
-    <!-- ========== КОЛЛЕКЦИЯ МАРКЕРОВ ========== -->
     <div class="inventory-main-block" style="margin-top: 15px;">
         <div class="inventory-header" onclick="toggleMarkersCollectionBlock()">
-            <div class="inventory-header-left">
-                <i class="fas fa-paint-brush"></i>
-                <span>Моя коллекция маркеров</span>
-            </div>
-            <div class="inventory-header-right">
-               <span id="markersCollectionStats" class="collection-badge">0</span>
-                <i class="fas fa-chevron-down" id="markersCollectionArrow"></i>
-            </div>
+            <div class="inventory-header-left"><i class="fas fa-paint-brush"></i><span>Моя коллекция маркеров</span></div>
+            <div class="inventory-header-right"><span id="markersCollectionStats" class="collection-badge">0</span><i class="fas fa-chevron-down" id="markersCollectionArrow"></i></div>
         </div>
         <div id="markersCollectionContent" class="inventory-content" style="display: none;">
-            <div class="search-box" style="margin-bottom: 15px;">
-                <i class="fas fa-search"></i>
-                <input type="text" id="markersCollectionSearch" placeholder="Поиск маркера" oninput="filterMarkersCollection()">
-            </div>
+            <div class="search-box" style="margin-bottom: 15px;"><i class="fas fa-search"></i><input type="text" id="markersCollectionSearch" placeholder="Поиск маркера" oninput="filterMarkersCollection()"></div>
             <div id="markersCollectionList"></div>
         </div>
     </div>
     
-    <!-- ========== КОЛЛЕКЦИЯ РАСКРАСОК ========== -->
     <div class="inventory-main-block" style="margin-top: 15px;">
         <div class="inventory-header" onclick="toggleColoringBooksBlock()">
-            <div class="inventory-header-left">
-                <i class="fas fa-book"></i>
-                <span>Моя коллекция раскрасок</span>
-            </div>
-            <div class="inventory-header-right">
-              <span id="coloringBooksStats" class="collection-badge">0</span>
-                <i class="fas fa-chevron-down" id="coloringBooksArrow"></i>
-            </div>
+            <div class="inventory-header-left"><i class="fas fa-book"></i><span>Моя коллекция раскрасок</span></div>
+            <div class="inventory-header-right"><span id="coloringBooksStats" class="collection-badge">0</span><i class="fas fa-chevron-down" id="coloringBooksArrow"></i></div>
         </div>
         <div id="coloringBooksContent" class="inventory-content" style="display: none;">
-            <div class="search-box" style="margin-bottom: 15px;">
-                <i class="fas fa-search"></i>
-                <input type="text" id="coloringBooksSearch" placeholder="Поиск по названию раскраски..." oninput="filterColoringBooks()">
-            </div>
-            
+            <div class="search-box" style="margin-bottom: 15px;"><i class="fas fa-search"></i><input type="text" id="coloringBooksSearch" placeholder="Поиск по названию раскраски..." oninput="filterColoringBooks()"></div>
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button class="filter-btn active" id="filterAllBooks" onclick="setBooksFilter('all')">
-                    <i class="fas fa-list"></i> Все раскраски
-                </button>
-                <button class="filter-btn" id="filterCollectedBooks" onclick="setBooksFilter('collected')">
-                    <i class="fas fa-check-circle"></i> В коллекции
-                </button>
+                <button class="filter-btn active" id="filterAllBooks" onclick="setBooksFilter('all')"><i class="fas fa-list"></i> Все раскраски</button>
+                <button class="filter-btn" id="filterCollectedBooks" onclick="setBooksFilter('collected')"><i class="fas fa-check-circle"></i> В коллекции</button>
             </div>
-            
             <div class="coloring-category-wrapper">
                 <div class="category-header" onclick="toggleCategory('paint_by_number')">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-border-all"></i>
-                        <span>Раскраски по номерам</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span id="category-progress-paint_by_number" class="category-progress">0%</span>
-                        <span id="category-count-paint_by_number" class="category-count">0</span>
-                        <i class="fas fa-chevron-down category-arrow" id="arrow-paint_by_number"></i>
-                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-border-all"></i><span>Раскраски по номерам</span></div>
+                    <div style="display: flex; align-items: center; gap: 10px;"><span id="category-progress-paint_by_number" class="category-progress">0%</span><span id="category-count-paint_by_number" class="category-count">0</span><i class="fas fa-chevron-down category-arrow" id="arrow-paint_by_number"></i></div>
                 </div>
                 <div id="category-paint_by_number" class="category-items category-content" style="display: none;"></div>
             </div>
-            
             <div class="coloring-category-wrapper">
                 <div class="category-header" onclick="toggleCategory('alcohol')">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-wine-bottle"></i>
-                        <span>Спиртовые раскраски</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span id="category-progress-alcohol" class="category-progress">0%</span>
-                        <span id="category-count-alcohol" class="category-count">0</span>
-                        <i class="fas fa-chevron-down category-arrow" id="arrow-alcohol"></i>
-                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-wine-bottle"></i><span>Спиртовые раскраски</span></div>
+                    <div style="display: flex; align-items: center; gap: 10px;"><span id="category-progress-alcohol" class="category-progress">0%</span><span id="category-count-alcohol" class="category-count">0</span><i class="fas fa-chevron-down category-arrow" id="arrow-alcohol"></i></div>
                 </div>
                 <div id="category-alcohol" class="category-items category-content" style="display: none;"></div>
             </div>
-            
             <div class="coloring-category-wrapper">
                 <div class="category-header" onclick="toggleCategory('pencil')">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-pencil-alt"></i>
-                        <span>Раскраски для карандашей</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span id="category-progress-pencil" class="category-progress">0%</span>
-                        <span id="category-count-pencil" class="category-count">0</span>
-                        <i class="fas fa-chevron-down category-arrow" id="arrow-pencil"></i>
-                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-pencil-alt"></i><span>Раскраски для карандашей</span></div>
+                    <div style="display: flex; align-items: center; gap: 10px;"><span id="category-progress-pencil" class="category-progress">0%</span><span id="category-count-pencil" class="category-count">0</span><i class="fas fa-chevron-down category-arrow" id="arrow-pencil"></i></div>
                 </div>
                 <div id="category-pencil" class="category-items category-content" style="display: none;"></div>
             </div>
-            
             <div class="coloring-category-wrapper">
                 <div class="category-header" onclick="toggleCategory('custom')">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-star"></i>
-                        <span>Другие</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span id="category-progress-custom" class="category-progress">0%</span>
-                        <span id="category-count-custom" class="category-count">0</span>
-                        <i class="fas fa-chevron-down category-arrow" id="arrow-custom"></i>
-                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-star"></i><span>Другие</span></div>
+                    <div style="display: flex; align-items: center; gap: 10px;"><span id="category-progress-custom" class="category-progress">0%</span><span id="category-count-custom" class="category-count">0</span><i class="fas fa-chevron-down category-arrow" id="arrow-custom"></i></div>
                 </div>
                 <div id="category-custom" class="category-items category-content" style="display: none;"></div>
             </div>
         </div>
     </div>
 
-        <!-- ========== БЕСТИАРИЙ ========== -->
     <div class="inventory-main-block" style="margin-top: 15px;">
         <div class="inventory-header" onclick="toggleBestiaryBlock()">
-            <div class="inventory-header-left">
-                <i class="fas fa-dragon"></i>
-                <span>Бестиарий</span>
-            </div>
-            <div class="inventory-header-right">
-                <span id="bestiaryStats" class="collection-badge">0</span>
-                <i class="fas fa-chevron-down" id="bestiaryArrow"></i>
-            </div>
+            <div class="inventory-header-left"><i class="fas fa-dragon"></i><span>Бестиарий</span></div>
+            <div class="inventory-header-right"><span id="bestiaryStats" class="collection-badge">0</span><i class="fas fa-chevron-down" id="bestiaryArrow"></i></div>
         </div>
-              <div id="bestiaryContent" class="inventory-content" style="display: none;">
-    <div class="search-box" style="margin-bottom: 15px; display: flex; gap: 8px; align-items: center;">
-        <i class="fas fa-search"></i>
-        <input type="text" id="bestiarySearch" placeholder="Поиск персонажа..." oninput="filterBestiary()" enterkeyhint="done" inputmode="search" style="flex: 1;">
-        <button id="hideKeyboardBtn" style="background: var(--accent); color: white; border: none; padding: 8px 14px; border-radius: 10px; font-size: 13px; white-space: nowrap; cursor: pointer;">Готово</button>
+        <div id="bestiaryContent" class="inventory-content" style="display: none;">
+            <div class="search-box" style="margin-bottom: 15px; display: flex; gap: 8px; align-items: center;">
+                <i class="fas fa-search"></i>
+                <input type="text" id="bestiarySearch" placeholder="Поиск персонажа..." oninput="filterBestiary()" enterkeyhint="done" inputmode="search" style="flex: 1;">
+                <button id="hideKeyboardBtn" style="background: var(--accent); color: white; border: none; padding: 8px 14px; border-radius: 10px; font-size: 13px; white-space: nowrap; cursor: pointer;">Готово</button>
+            </div>
+            <div id="bestiaryGrid" class="collection-grid" style="grid-template-columns: repeat(3, 1fr);"></div>
+        </div>
     </div>
-    <div id="bestiaryGrid" class="collection-grid" style="grid-template-columns: repeat(3, 1fr);"></div>
-</div>
-</div>
-    <!-- ========== СПИСОК ЖЕЛАНИЙ ========== -->
+
     <div class="inventory-main-block" style="margin-top: 15px;">
         <div class="inventory-header" onclick="toggleWishlistBlock()">
-            <div class="inventory-header-left">
-                <i class="fas fa-heart"></i>
-                <span>Список желаний</span>
-            </div>
-            <div class="inventory-header-right">
-                <span id="wishlistCount" class="collection-badge">0</span>
-                <i class="fas fa-chevron-down" id="wishlistArrow"></i>
-            </div>
+            <div class="inventory-header-left"><i class="fas fa-heart"></i><span>Список желаний</span></div>
+            <div class="inventory-header-right"><span id="wishlistCount" class="collection-badge">0</span><i class="fas fa-chevron-down" id="wishlistArrow"></i></div>
         </div>
         <div id="wishlistContent" class="inventory-content" style="display: none;">
             <div id="wishlistGrid" class="category-items" style="grid-template-columns: repeat(2, 1fr);"></div>
@@ -4498,26 +4420,15 @@
         </div>
     </div>
     
-    <!-- ========== ОРГАНАЙЗЕРЫ ========== -->
     <div class="inventory-main-block" style="margin-top: 15px;">
         <div class="inventory-header" onclick="toggleInventoryBlock()">
-            <div class="inventory-header-left">
-                <i class="fas fa-boxes"></i>
-                <span>Органайзеры</span>
-            </div>
-            <div class="inventory-header-right">
-                <i class="fas fa-chevron-down" id="inventoryArrow"></i>
-            </div>
+            <div class="inventory-header-left"><i class="fas fa-boxes"></i><span>Органайзеры</span></div>
+            <div class="inventory-header-right"><i class="fas fa-chevron-down" id="inventoryArrow"></i></div>
         </div>
         <div id="inventoryContent" class="inventory-content">
-            <div class="search-box" style="margin: 15px 0;">
-                <i class="fas fa-search"></i>
-                <input type="text" id="markerSearchInOrganizers" placeholder="Поиск маркера по номеру или бренду..." oninput="searchMarkerInOrganizers()">
-            </div>
+            <div class="search-box" style="margin: 15px 0;"><i class="fas fa-search"></i><input type="text" id="markerSearchInOrganizers" placeholder="Поиск маркера по номеру или бренду..." oninput="searchMarkerInOrganizers()"></div>
             <div id="markerSearchResults" style="display: none; margin-bottom: 15px; padding: 10px; background: var(--bg); border-radius: 12px;"></div>
-            <button class="create-organizer-btn" onclick="openOrganizerCreator()">
-                <i class="fas fa-plus"></i> Создать органайзер
-            </button>
+            <button class="create-organizer-btn" onclick="openOrganizerCreator()"><i class="fas fa-plus"></i> Создать органайзер</button>
             <div id="organizersList"></div>
             <div id="selectedOrganizerView" style="display: none; margin-top: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -4529,82 +4440,28 @@
         </div>
     </div>
 </div>
+
 <!-- ========== СТАТИСТИКА ========== -->
 <div id="stats" class="page">
     <div class="header">Статистика</div>
-    <div class="inventory-main-block">
-        <div class="inventory-header" onclick="openStatsBlock('paint_by_number')">
-            <div class="inventory-header-left">
-                <i class="fas fa-border-all"></i>
-                <span>Раскраски по номерам</span>
-            </div>
-            <i class="fas fa-chevron-down" id="arrow-stats-paint_by_number"></i>
-        </div>
-        <div id="stats-content-paint_by_number" class="inventory-content" style="display: none;"></div>
-    </div>
-    <div class="inventory-main-block" style="margin-top: 10px;">
-        <div class="inventory-header" onclick="openStatsBlock('alcohol')">
-            <div class="inventory-header-left">
-                <i class="fas fa-wine-bottle"></i>
-                <span>Спиртовые раскраски</span>
-            </div>
-            <i class="fas fa-chevron-down" id="arrow-stats-alcohol"></i>
-        </div>
-        <div id="stats-content-alcohol" class="inventory-content" style="display: none;"></div>
-    </div>
-    <div class="inventory-main-block" style="margin-top: 10px;">
-        <div class="inventory-header" onclick="openStatsBlock('bestiary')">
-            <div class="inventory-header-left">
-                <i class="fas fa-dragon"></i>
-                <span>Персонажи</span>
-            </div>
-            <i class="fas fa-chevron-down" id="arrow-stats-bestiary"></i>
-        </div>
-        <div id="stats-content-bestiary" class="inventory-content" style="display: none;"></div>
-    </div>
-    <div class="inventory-main-block" style="margin-top: 10px;">
-        <div class="inventory-header" onclick="openStatsBlock('chart')">
-            <div class="inventory-header-left">
-                <i class="fas fa-chart-line"></i>
-                <span>Прогресс по месяцам</span>
-            </div>
-            <i class="fas fa-chevron-down" id="arrow-stats-chart"></i>
-        </div>
-        <div id="stats-content-chart" class="inventory-content" style="display: none;"></div>
-    </div>
+    <div class="inventory-main-block"><div class="inventory-header" onclick="openStatsBlock('paint_by_number')"><div class="inventory-header-left"><i class="fas fa-border-all"></i><span>Раскраски по номерам</span></div><i class="fas fa-chevron-down" id="arrow-stats-paint_by_number"></i></div><div id="stats-content-paint_by_number" class="inventory-content" style="display: none;"></div></div>
+    <div class="inventory-main-block" style="margin-top: 10px;"><div class="inventory-header" onclick="openStatsBlock('alcohol')"><div class="inventory-header-left"><i class="fas fa-wine-bottle"></i><span>Спиртовые раскраски</span></div><i class="fas fa-chevron-down" id="arrow-stats-alcohol"></i></div><div id="stats-content-alcohol" class="inventory-content" style="display: none;"></div></div>
+    <div class="inventory-main-block" style="margin-top: 10px;"><div class="inventory-header" onclick="openStatsBlock('bestiary')"><div class="inventory-header-left"><i class="fas fa-dragon"></i><span>Персонажи</span></div><i class="fas fa-chevron-down" id="arrow-stats-bestiary"></i></div><div id="stats-content-bestiary" class="inventory-content" style="display: none;"></div></div>
+    <div class="inventory-main-block" style="margin-top: 10px;"><div class="inventory-header" onclick="openStatsBlock('chart')"><div class="inventory-header-left"><i class="fas fa-chart-line"></i><span>Прогресс по месяцам</span></div><i class="fas fa-chevron-down" id="arrow-stats-chart"></i></div><div id="stats-content-chart" class="inventory-content" style="display: none;"></div></div>
 </div>
 
 <!-- ========== МАРКЕРЫ ========== -->
 <div id="markers" class="page">
-    <div class="header">
-        Маркеры
-        <button onclick="loadMarkers()" style="float: right; background: var(--accent); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">
-            <i class="fas fa-sync-alt"></i> Обновить
-        </button>
-    </div>
-    <div class="search-container">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="searchMarkers()">
-        </div>
-    </div>
-    <div class="markers-section">
-        <div id="markersList"></div>
-    </div>
+    <div class="header">Маркеры <button onclick="loadMarkers()" style="float: right; background: var(--accent); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;"><i class="fas fa-sync-alt"></i> Обновить</button></div>
+    <div class="search-container"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="markerSearch" placeholder="Поиск по номеру..." oninput="searchMarkers()"></div></div>
+    <div class="markers-section"><div id="markersList"></div></div>
 </div>
 
 <!-- ========== ОТВЕТЫ И ТОМА ========== -->
 <div id="answers" class="page">
     <div class="header">Ответы и Тома</div>
-    <div class="search-container">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="volumeSearch" placeholder="Поиск по названию тома..." oninput="searchVolumes()">
-        </div>
-    </div>
-    <div class="books-section">
-        <div id="volumesContainer" class="books-grid"></div>
-    </div>
+    <div class="search-container"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="volumeSearch" placeholder="Поиск по названию тома..." oninput="searchVolumes()"></div></div>
+    <div class="books-section"><div id="volumesContainer" class="books-grid"></div></div>
 </div>
 
 <!-- ========== КОРЗИНА ========== -->
@@ -4612,198 +4469,32 @@
     <div class="header">Корзина</div>
     <div class="cart-wrapper">
         <div id="cartItemsList" class="cart-items"></div>
-        <div class="cart-footer">
-            <div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div>
-            <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
-        </div>
+        <div class="cart-footer"><div class="cart-total">Итого: <span id="cartTotalSum">0</span> ₽</div><button class="checkout-btn" onclick="checkout()">Оформить заказ</button></div>
     </div>
 </div>
-    <!-- ========== НАВИГАЦИЯ ========== -->
-    <nav class="nav">
-       <button id="btn-profile" class="nav-btn active" onclick="tab('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
-<button id="btn-stats" class="nav-btn" onclick="tab('stats')"><i class="fas fa-chart-bar"></i><span>Статистика</span></button>
-        <button id="btn-collection" class="nav-btn" onclick="tab('collection')"><i class="fas fa-gem"></i><span>Коллекция</span></button>
-        <button id="btn-answers" class="nav-btn" onclick="tab('answers')"><i class="fas fa-book"></i><span>Ответы</span></button>
+
+<!-- ========== НАВИГАЦИЯ ========== -->
+<nav class="nav">
+    <button id="btn-profile" class="nav-btn active" onclick="tab('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
+    <button id="btn-stats" class="nav-btn" onclick="tab('stats')"><i class="fas fa-chart-bar"></i><span>Статистика</span></button>
+    <button id="btn-collection" class="nav-btn" onclick="tab('collection')"><i class="fas fa-gem"></i><span>Коллекция</span></button>
+    <button id="btn-answers" class="nav-btn" onclick="tab('answers')"><i class="fas fa-book"></i><span>Ответы</span></button>
     <button id="btn-markers" class="nav-btn" onclick="tab('markers')"><i class="fas fa-pen"></i><span>Маркеры</span></button>
-        <button id="btn-cart" class="nav-btn" onclick="tab('cart')"><i class="fas fa-shopping-cart"></i><span>Корзина</span><span id="cartBadge" class="badge" style="display:none;">0</span></button>
-    </nav>
-    <!-- ========== МОДАЛЬНЫЕ ОКНА ========== -->
+    <button id="btn-cart" class="nav-btn" onclick="tab('cart')"><i class="fas fa-shopping-cart"></i><span>Корзина</span><span id="cartBadge" class="badge" style="display:none;">0</span></button>
+</nav>
 
-    <!-- Модалка изменения имени -->
-    <div id="nameModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Настройки профиля</h3>
-            <input type="text" id="newNameInput" placeholder="Введите ник...">
-            <button class="modal-action-btn" onclick="saveNewNickname()">Сохранить ник</button>
-            <hr>
-            <button class="modal-close-btn" onclick="closeNameModal()">Отмена</button>
-        </div>
-    </div>
-
-    <!-- Модалка выбора статуса -->
-    <div id="statusSelectModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Выберите статус</h3>
-            <div id="availableStatusesList"></div>
-            <button class="modal-close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">Отмена</button>
-        </div>
-    </div>
-
-    <!-- Модалка галереи достижений -->
-    <div id="achievementsGalleryModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Все достижения</h3>
-            <div id="allAchievementsList" class="achievements-grid"></div>
-            <button class="modal-close-btn" onclick="document.getElementById('achievementsGalleryModal').style.display='none'">Закрыть</button>
-        </div>
-    </div>
-
-    <!-- Модалка информации о достижении -->
-    <div id="achInfoModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 id="achInfoTitle"></h3>
-            <img id="achInfoImg" style="width:100px; margin:10px auto; display:block;">
-            <p id="achInfoDesc"></p>
-            <p id="achInfoCondition" style="color:var(--accent);"></p>
-            <button class="modal-close-btn" onclick="closeAchievementInfo()">Закрыть</button>
-        </div>
-    </div>
-
-    <!-- Модалка отправки задания -->
-    <div id="taskUploadModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Отправка на проверку</h3>
-            <div id="taskPhotoPreviewContainer" class="photo-preview-container"></div>
-            <div class="modal-buttons-row">
-                <button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button>
-                <button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модалка создания органайзера -->
-    <div id="organizerModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Создать органайзер</h3>
-            <input type="text" id="organizerName" placeholder="Название органайзера">
-            <div class="form-group">
-                <label>Количество столбцов:</label>
-                <input type="number" id="organizerCols" value="3" min="1" max="10">
-            </div>
-            <div class="form-group">
-                <label>Количество строк:</label>
-                <input type="number" id="organizerRows" value="3" min="1" max="10">
-            </div>
-            <button class="modal-action-btn" onclick="createOrganizer()">Создать</button>
-            <button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button>
-        </div>
-    </div>
-
-  <!-- Модалка добавления маркера -->
-<div id="addMarkerModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>➕ Добавить маркер</h3>
-        <div class="form-group">
-            <label>Бренд:</label>
-            <select id="addMarkerBrand" onchange="toggleSubcategorySelect()">
-                <option value="GuangNa">GuangNa</option>
-                <option value="Languo">Languo</option>
-                <option value="Zibeef">Zibeef</option>
-                <option value="Grasp">Grasp</option>
-                <option value="InfiArt">InfiArt</option>
-                <option value="Tooli-Art">Tooli-Art</option>
-            </select>
-        </div>
-        
-        <!-- ✅ ВЫБОР ПОДКАТЕГОРИИ ДЛЯ TOOLI-ART -->
-        <div class="form-group" id="subcategoryGroup" style="display: none;">
-            <label>Набор:</label>
-            <select id="addMarkerSubcategory">
-                <option value="pastel">Pastel (24)</option>
-                <option value="jewel">Jewel (24)</option>
-                <option value="confetti">Confetti (24)</option>
-                <option value="metallic">Metallic (24)</option>
-                <option value="neon">Neon (24)</option>
-                <option value="glitter">Glitter (24)</option>
-                <option value="brown">Brown (22)</option>
-                <option value="purple">Purple (22)</option>
-                <option value="pink">Pink (22)</option>
-                <option value="skin">Skin (22)</option>
-                <option value="green">Green (22)</option>
-                <option value="gray">Gray (22)</option>
-                <option value="orange">Orange (22)</option>
-                <option value="redpink">Red&Pink (22)</option>
-                <option value="bluepurple">Blue&Purple (22)</option>
-                <option value="southwest">Southwest (28)</option>
-                <option value="wildflower">Wildflower (24)</option>
-                <option value="nocturnal">Nocturnal (28)</option>
-                <option value="essential">Essential (28)</option>
-                <option value="earth">Earth (36)</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label>Номер маркера:</label>
-            <input type="text" id="addMarkerNumber" placeholder="Например: 101">
-        </div>
-        <div class="form-group">
-            <label>Количество:</label>
-            <input type="number" id="addMarkerCount" value="1" min="1" max="100">
-        </div>
-        <button class="modal-action-btn" onclick="confirmAddMarker()" style="cursor:pointer;">✅ Добавить</button>
-        <button class="modal-close-btn" onclick="closeAddMarkerModal()" style="cursor:pointer;">❌ Отмена</button>
-    </div>
-</div>
-
-    <!-- Модалка выбора достижения для витрины -->
-    <div id="showcaseSelectorModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Выберите достижение</h3>
-            <div id="showcaseAchievementsList" class="achievements-grid"></div>
-            <button class="modal-close-btn" onclick="document.getElementById('showcaseSelectorModal').style.display='none'">Отмена</button>
-        </div>
-    </div>
-
-    <!-- Модалка уведомления о достижении -->
-    <div id="achievementAlert" class="modal-overlay">
-        <div class="modal-content">
-            <h3>🏆 Новое достижение!</h3>
-            <img id="alertAchImg" style="width:80px; margin:10px auto; display:none;">
-            <p id="alertAchText"></p>
-            <button class="modal-close-btn" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button>
-        </div>
-    </div>
-
-    <!-- Модалка просмотра ответов (свайпы) -->
-    <div id="answersViewerModal" class="modal-overlay">
-        <div class="modal-content answers-viewer-modal">
-            <h3 id="answersViewerTitle">Просмотр ответов</h3>
-            <div class="answers-viewer-content">
-                <img id="answersViewerImage" class="answers-viewer-image" src="" alt="Ответ">
-                <div class="answers-nav">
-                    <button id="answersPrevBtn" onclick="prevAnswerPage()" disabled>‹</button>
-                    <span id="answersPageInfo" class="answers-page-info">1 / 1</span>
-                    <button id="answersNextBtn" onclick="nextAnswerPage()" disabled>›</button>
-                </div>
-                <button class="answers-close-btn" onclick="closeAnswersViewer()">Закрыть</button>
-            </div>
-        </div>
-    </div>
-    <!-- Модалка страниц раскраски -->
-<div id="bookPagesModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 400px;">
-        <h3 id="bookPagesTitle">Название раскраски</h3>
-        <p style="color: var(--text-gray); font-size: 13px; margin-bottom: 15px;" id="bookPagesCategory"></p>
-        
-        <!-- Сетка страниц -->
-        <div id="bookPagesGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0;"></div>
-        
-        <!-- Загрузка фото -->
-        <input type="file" id="bookPageUploadInput" accept="image/*" style="display: none;">
-        
-        <button class="modal-close-btn" onclick="closeBookPagesModal()" style="margin-top: 15px;">Закрыть</button>
-    </div>
-</div>
+<!-- ========== МОДАЛЬНЫЕ ОКНА ========== -->
+<div id="nameModal" class="modal-overlay"><div class="modal-content"><h3>Настройки профиля</h3><input type="text" id="newNameInput" placeholder="Введите ник..."><button class="modal-action-btn" onclick="saveNewNickname()">Сохранить ник</button><hr><button class="modal-close-btn" onclick="closeNameModal()">Отмена</button></div></div>
+<div id="statusSelectModal" class="modal-overlay"><div class="modal-content"><h3>Выберите статус</h3><div id="availableStatusesList"></div><button class="modal-close-btn" onclick="document.getElementById('statusSelectModal').style.display='none'">Отмена</button></div></div>
+<div id="achievementsGalleryModal" class="modal-overlay"><div class="modal-content"><h3>Все достижения</h3><div id="allAchievementsList" class="achievements-grid"></div><button class="modal-close-btn" onclick="document.getElementById('achievementsGalleryModal').style.display='none'">Закрыть</button></div></div>
+<div id="achInfoModal" class="modal-overlay"><div class="modal-content"><h3 id="achInfoTitle"></h3><img id="achInfoImg" style="width:100px; margin:10px auto; display:block;"><p id="achInfoDesc"></p><p id="achInfoCondition" style="color:var(--accent);"></p><button class="modal-close-btn" onclick="closeAchievementInfo()">Закрыть</button></div></div>
+<div id="taskUploadModal" class="modal-overlay"><div class="modal-content"><h3>Отправка на проверку</h3><div id="taskPhotoPreviewContainer" class="photo-preview-container"></div><div class="modal-buttons-row"><button class="modal-close-btn" onclick="closeTaskUploadModal()">Отмена</button><button class="modal-action-btn" onclick="submitTaskPhoto()">Отправить</button></div></div></div>
+<div id="organizerModal" class="modal-overlay"><div class="modal-content"><h3>Создать органайзер</h3><input type="text" id="organizerName" placeholder="Название органайзера"><div class="form-group"><label>Количество столбцов:</label><input type="number" id="organizerCols" value="3" min="1" max="10"></div><div class="form-group"><label>Количество строк:</label><input type="number" id="organizerRows" value="3" min="1" max="10"></div><button class="modal-action-btn" onclick="createOrganizer()">Создать</button><button class="modal-close-btn" onclick="closeOrganizerModal()">Отмена</button></div></div>
+<div id="addMarkerModal" class="modal-overlay"><div class="modal-content"><h3>➕ Добавить маркер</h3><div class="form-group"><label>Бренд:</label><select id="addMarkerBrand" onchange="toggleSubcategorySelect()"><option value="GuangNa">GuangNa</option><option value="Languo">Languo</option><option value="Zibeef">Zibeef</option><option value="Grasp">Grasp</option><option value="InfiArt">InfiArt</option><option value="Tooli-Art">Tooli-Art</option></select></div><div class="form-group" id="subcategoryGroup" style="display: none;"><label>Набор:</label><select id="addMarkerSubcategory"><option value="pastel">Pastel (24)</option><option value="jewel">Jewel (24)</option><option value="confetti">Confetti (24)</option><option value="metallic">Metallic (24)</option><option value="neon">Neon (24)</option><option value="glitter">Glitter (24)</option><option value="brown">Brown (22)</option><option value="purple">Purple (22)</option><option value="pink">Pink (22)</option><option value="skin">Skin (22)</option><option value="green">Green (22)</option><option value="gray">Gray (22)</option><option value="orange">Orange (22)</option><option value="redpink">Red&Pink (22)</option><option value="bluepurple">Blue&Purple (22)</option><option value="southwest">Southwest (28)</option><option value="wildflower">Wildflower (24)</option><option value="nocturnal">Nocturnal (28)</option><option value="essential">Essential (28)</option><option value="earth">Earth (36)</option></select></div><div class="form-group"><label>Номер маркера:</label><input type="text" id="addMarkerNumber" placeholder="Например: 101"></div><div class="form-group"><label>Количество:</label><input type="number" id="addMarkerCount" value="1" min="1" max="100"></div><button class="modal-action-btn" onclick="confirmAddMarker()" style="cursor:pointer;">✅ Добавить</button><button class="modal-close-btn" onclick="closeAddMarkerModal()" style="cursor:pointer;">❌ Отмена</button></div></div>
+<div id="showcaseSelectorModal" class="modal-overlay"><div class="modal-content"><h3>Выберите достижение</h3><div id="showcaseAchievementsList" class="achievements-grid"></div><button class="modal-close-btn" onclick="document.getElementById('showcaseSelectorModal').style.display='none'">Отмена</button></div></div>
+<div id="achievementAlert" class="modal-overlay"><div class="modal-content"><h3>🏆 Новое достижение!</h3><img id="alertAchImg" style="width:80px; margin:10px auto; display:none;"><p id="alertAchText"></p><button class="modal-close-btn" onclick="document.getElementById('achievementAlert').style.display='none'">Круто!</button></div></div>
+<div id="answersViewerModal" class="modal-overlay"><div class="modal-content answers-viewer-modal"><h3 id="answersViewerTitle">Просмотр ответов</h3><div class="answers-viewer-content"><img id="answersViewerImage" class="answers-viewer-image" src="" alt="Ответ"><div class="answers-nav"><button id="answersPrevBtn" onclick="prevAnswerPage()" disabled>‹</button><span id="answersPageInfo" class="answers-page-info">1 / 1</span><button id="answersNextBtn" onclick="nextAnswerPage()" disabled>›</button></div><button class="answers-close-btn" onclick="closeAnswersViewer()">Закрыть</button></div></div></div>
+<div id="bookPagesModal" class="modal-overlay"><div class="modal-content" style="max-width: 400px;"><h3 id="bookPagesTitle">Название раскраски</h3><p style="color: var(--text-gray); font-size: 13px; margin-bottom: 15px;" id="bookPagesCategory"></p><div id="bookPagesGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0;"></div><input type="file" id="bookPageUploadInput" accept="image/*" style="display: none;"><button class="modal-close-btn" onclick="closeBookPagesModal()" style="margin-top: 15px;">Закрыть</button></div></div>
 
     <script>
         // ==========================================

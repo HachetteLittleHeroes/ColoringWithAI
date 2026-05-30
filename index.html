@@ -7454,7 +7454,11 @@ function openSupportDialog() {
     loadCollection();
     loadMarkersCollection();
     loadColoringBooks();
+   try {
     loadInventory();
+} catch(e) {
+    console.error('loadInventory error:', e);
+}
     renderBestiary();
     break;
     break;

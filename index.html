@@ -6262,10 +6262,6 @@ body:not([data-theme]) .modal-content,
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px 0;">
         <div class="header" style="padding: 0;">Профиль</div>
         <div style="display: flex; gap: 10px;">
-            <!-- НОВАЯ КНОПКА ПОДЕЛИТЬСЯ СТАТИСТИКОЙ -->
-            <button onclick="shareProfileStats()" style="background: var(--accent); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" title="Поделиться статистикой">
-                <i class="fas fa-chart-line"></i>
-            </button>
             <!-- Кнопка поддержки -->
             <button onclick="openSupportDialog()" style="background: var(--accent); color: white; border: none; padding: 8px 14px; border-radius: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <i class="fas fa-heart" style="margin-right: 5px;"></i>Поддержать
@@ -6304,14 +6300,18 @@ body:not([data-theme]) .modal-content,
         <button class="upload-photo-btn" onclick="document.getElementById('customAvatarInput').click()"><i class="fas fa-camera"></i> Загрузить фото</button>
     </div>
 
-    <div class="balance-card">
-        <p class="balance-label">ВАШ БАЛАНС</p>
-        <div class="balance-main"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
-        <div class="balance-controls">
-            <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🏆</button>
-            <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
-        </div>
+   <div class="balance-card">
+    <p class="balance-label">ВАШ БАЛАНС</p>
+    <div class="balance-main"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
+    <div class="balance-controls">
+        <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🏆</button>
+        <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
+        <!-- НОВАЯ КНОПКА СТАТИСТИКИ -->
+        <button class="balance-btn" onclick="shareProfileStats()" style="background: var(--accent); margin-top: 10px;">
+            <i class="fas fa-chart-line"></i> 📊 Поделиться статистикой
+        </button>
     </div>
+</div>
 
     <div id="rewards-section" class="rewards-section">
         <h3>Товары за ашетики</h3>

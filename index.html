@@ -30176,13 +30176,12 @@ function showBooksList(category, period) {
     var weekAgo = now.getTime() - 7 * 24 * 60 * 60 * 1000;
     var monthAgo = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
     var currentYear = now.getFullYear();
-    var monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
     
     var listContainer = document.getElementById('stats-books-' + category);
     var html = '';
     var hasBooks = false;
     
-    // ✅ Топ-5 (компактный блок с процентом)
+    // ✅ Топ-5
     var topBooks = [];
     for (var bookName in booksStats) {
         var stat = booksStats[bookName];
@@ -30200,10 +30199,13 @@ function showBooksList(category, period) {
             filteredWorks = stat.works;
         }
         if (filteredWorks.length > 0) {
-            topBooks.push({ name: bookName, count: filteredWorks.length, works: filteredWorks, bookKey: stat.bookKey });
+            // ✅ Считаем страницы (разворот = 2)
+            var pagesCount = 0;
+            filteredWorks.forEach(function(w) { pagesCount += (String(w.page).includes('-') ? 2 : 1); });
+            topBooks.push({ name: bookName, pages: pagesCount, works: filteredWorks, bookKey: stat.bookKey });
         }
     }
-    topBooks.sort(function(a, b) { return b.count - a.count; });
+    topBooks.sort(function(a, b) { return b.pages - a.pages; });
     var top5 = topBooks.slice(0, 5);
     
     if (top5.length > 0) {
@@ -30212,7 +30214,6 @@ function showBooksList(category, period) {
         for (var i = 0; i < top5.length; i++) {
             var coverUrl = DEFAULT_COVERS[top5[i].name] || '';
             
-            // Считаем общий процент выполнения раскраски
             var bookTotalPages = BOOK_PAGES_CONFIG[top5[i].name]?.totalPages || DEFAULT_PAGES_CONFIG.totalPages;
             var bookCompletedCount = 0;
             var bookCompletedPages = userCompletedPages[top5[i].bookKey] || {};
@@ -30225,14 +30226,14 @@ function showBooksList(category, period) {
             html += '<span style="font-size: 14px; font-weight: 600; width: 20px; color: var(--text-gray);">' + (i + 1) + '.</span>';
             if (coverUrl) html += '<img src="' + coverUrl + '" style="width: 30px; height: 40px; object-fit: cover; border-radius: 4px;" onerror="this.style.display=\'none\'">';
             html += '<span style="flex: 1; font-size: 13px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + top5[i].name + '</span>';
-            html += '<span style="font-weight: 600; color: var(--accent); white-space: nowrap;">' + top5[i].count + '</span>';
+            html += '<span style="font-weight: 600; color: var(--accent); white-space: nowrap;">' + top5[i].pages + ' стр.</span>';
             html += '<span style="font-size: 11px; color: var(--text-gray); white-space: nowrap;">' + bookPercent + '%</span>';
             html += '</div>';
         }
         html += '</div>';
     }
     
-    // ✅ Все раскраски (разворачиваемые)
+    // ✅ Все раскраски
     html += '<div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">📚 Все раскраски</div>';
     
     for (var bookName in booksStats) {
@@ -30254,6 +30255,10 @@ function showBooksList(category, period) {
         if (filteredWorks.length === 0) continue;
         hasBooks = true;
         
+        // ✅ Считаем страницы
+        var pagesCount = 0;
+        filteredWorks.forEach(function(w) { pagesCount += (String(w.page).includes('-') ? 2 : 1); });
+        
         html += '<div class="inventory-subblock" style="margin-bottom:10px;background:var(--bg);border-radius:12px;border:1px solid var(--border-color);overflow:hidden;">';
         html += '<div class="subblock-header" onclick="toggleStatsBook(this)" style="display:flex;justify-content:space-between;align-items:center;padding:12px 15px;cursor:pointer;">';
         
@@ -30267,7 +30272,7 @@ function showBooksList(category, period) {
         
         html += '<div style="display:flex;align-items:center;gap:10px;">';
         if (coverUrl) html += '<img src="' + coverUrl + '" style="width:40px;height:53px;object-fit:cover;border-radius:6px;" onerror="this.style.display=\'none\'">';
-        html += '<div><strong>' + bookName + '</strong><span style="margin-left:10px;font-size:13px;color:var(--text-gray);">' + filteredWorks.length + ' работ</span></div>';
+        html += '<div><strong>' + bookName + '</strong><span style="margin-left:10px;font-size:13px;color:var(--text-gray);">' + pagesCount + ' стр.</span></div>';
         html += '</div>';
         html += '<i class="fas fa-chevron-down" style="color:var(--text-gray);transition:transform 0.3s;"></i>';
         html += '</div>';

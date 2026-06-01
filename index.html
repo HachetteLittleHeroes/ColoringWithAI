@@ -31024,6 +31024,46 @@ function saveClaimedRewards() {
     }, 300);
 })();
         // ==========================================
+// ПРИНУДИТЕЛЬНОЕ ДОБАВЛЕНИЕ КНОПКИ СТАТИСТИКИ
+// ==========================================
+
+function addStatsButton() {
+    // Ищем блок с кнопками в профиле
+    const headerDiv = document.querySelector('#profile > div:first-child > div:last-child');
+    
+    if (headerDiv) {
+        // Проверяем, нет ли уже такой кнопки
+        if (document.getElementById('statsShareBtn')) return;
+        
+        // Создаём новую кнопку
+        const statsBtn = document.createElement('button');
+        statsBtn.id = 'statsShareBtn';
+        statsBtn.onclick = shareProfileStats;
+        statsBtn.title = 'Поделиться статистикой';
+        statsBtn.style.cssText = 'background: var(--accent); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);';
+        statsBtn.innerHTML = '<i class="fas fa-chart-line"></i>';
+        
+        // Добавляем ПЕРВОЙ кнопкой
+        headerDiv.insertBefore(statsBtn, headerDiv.firstChild);
+        
+        console.log('✅ Кнопка статистики добавлена!');
+    } else {
+        // Если не нашли — пробуем добавить в баланс
+        const balanceControls = document.querySelector('.balance-controls');
+        if (balanceControls && !document.getElementById('statsShareBtnBalance')) {
+            const statsBtnBalance = document.createElement('button');
+            statsBtnBalance.id = 'statsShareBtnBalance';
+            statsBtnBalance.onclick = shareProfileStats;
+            statsBtnBalance.className = 'balance-btn';
+            statsBtnBalance.style.cssText = 'background: var(--accent); margin-top: 10px;';
+            statsBtnBalance.innerHTML = '<i class="fas fa-chart-line"></i> 📊 Поделиться статистикой';
+            balanceControls.appendChild(statsBtnBalance);
+            console.log('✅ Кнопка статистики добавлена в баланс!');
+        }
+    }
+}
+
+// ==========================================
 // ПОДЕЛИТЬСЯ СТАТИСТИКОЙ
 // ==========================================
 
@@ -31059,7 +31099,6 @@ async function shareProfileStats() {
                 caption: `📊 Моя статистика`
             }));
         } else {
-            // Для тестирования в браузере
             const a = document.createElement('a');
             a.href = url;
             a.download = `stats_${userId}.png`;
@@ -31074,8 +31113,8 @@ async function shareProfileStats() {
     }
 }
 
-// Проверка, что функция загрузилась
-console.log('✅ shareProfileStats function loaded');
+// Запускаем добавление кнопки после загрузки страницы
+setTimeout(addStatsButton, 1000);
 </script>
     
 <!-- Модалка поиска пользователей -->

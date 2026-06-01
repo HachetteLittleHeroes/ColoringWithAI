@@ -6262,6 +6262,10 @@ body:not([data-theme]) .modal-content,
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px 0;">
         <div class="header" style="padding: 0;">Профиль</div>
         <div style="display: flex; gap: 10px;">
+            <!-- Кнопка поделиться статистикой -->
+            <button onclick="shareProfileStats()" style="background: var(--accent); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" title="Поделиться статистикой">
+                <i class="fas fa-share-alt"></i>
+            </button>
             <!-- Кнопка поддержки -->
             <button onclick="openSupportDialog()" style="background: var(--accent); color: white; border: none; padding: 8px 14px; border-radius: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <i class="fas fa-heart" style="margin-right: 5px;"></i>Поддержать
@@ -6277,21 +6281,21 @@ body:not([data-theme]) .modal-content,
         </div>
     </div>
 
-  <!-- Блок с аватаркой, именем и статусом -->
-<div class="profile-header-block">
-    <div class="avatar-wrapper" onclick="toggleAvatarEditor()">
-        <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png">
-        <div class="avatar-edit-icon"><i class="fas fa-pencil-alt"></i></div>
-    </div>
-    <div class="profile-info">
-        <div class="name-row" onclick="changeNickname()">
-            <h2 id="displayUsername">Без имени</h2>
-            <i class="fas fa-pencil-alt" style="color: var(--text-gray); font-size: 14px;"></i>
+    <!-- Блок с аватаркой, именем и статусом -->
+    <div class="profile-header-block">
+        <div class="avatar-wrapper" onclick="toggleAvatarEditor()">
+            <img id="user-avatar" src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av2.png">
+            <div class="avatar-edit-icon"><i class="fas fa-pencil-alt"></i></div>
         </div>
-       <button id="currentStatus" class="status-badge" onclick="openStatusInfo()">Без статуса</button>
-        <div id="userLevelDisplay" style="margin-top: 8px;"></div>
+        <div class="profile-info">
+            <div class="name-row" onclick="changeNickname()">
+                <h2 id="displayUsername">Без имени</h2>
+                <i class="fas fa-pencil-alt" style="color: var(--text-gray); font-size: 14px;"></i>
+            </div>
+            <button id="currentStatus" class="status-badge" onclick="openStatusInfo()">Без статуса</button>
+            <div id="userLevelDisplay" style="margin-top: 8px;"></div>
+        </div>
     </div>
-</div>
 
     <div id="avatarEditor" class="avatar-editor">
         <p>Выберите аватарку:</p>
@@ -18471,6 +18475,78 @@ function confirmSkipTask() {
                 }
             });
         });
+}
+        // ==========================================
+// ПОДЕЛИТЬСЯ СТАТИСТИКОЙ (КАРТОЧКА)
+// ==========================================
+
+async function shareProfileStats() {
+    try {
+        if (tg) tg.showAlert('🔄 Формирование статистики...');
+        
+        // Показываем индикатор загрузки
+        const btn = event?.currentTarget;
+        const originalHtml = btn?.innerHTML;
+        if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i>';
+        
+        // Получаем статистику с сервера
+        const statsResponse = await fetch(`${SERVER_URL}/api/get_stats_for_card?user_id=${userId}`);
+        const statsData = await statsResponse.json();
+        
+        if (statsData.status !== 'ok') {
+            throw new Error('Ошибка получения статистики');
+        }
+        
+        // Отправляем данные для генерации карточки
+        const response = await fetch(`${SERVER_URL}/api/share_stats_card`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(statsData)
+        });
+        
+        if (!response.ok) throw new Error('Ошибка генерации карточки');
+        
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        
+        // Отправляем в Telegram
+        if (tg) {
+            // Сначала показываем превью и спрашиваем куда отправить
+            tg.showPopup({
+                title: '📊 Статистика готова',
+                message: 'Хотите поделиться статистикой в чате?',
+                buttons: [
+                    { type: 'default', text: '📤 Отправить', id: 'send' },
+                    { type: 'cancel', text: '❌ Отмена', id: 'cancel' }
+                ]
+            }, (buttonId) => {
+                if (buttonId === 'send') {
+                    // Отправляем через WebApp
+                    tg.sendData(JSON.stringify({
+                        action: 'share_stats_card',
+                        image_url: url,
+                        caption: `📊 Моя статистика @${statsData.name.replace(/\s/g, '')}`
+                    }));
+                }
+                URL.revokeObjectURL(url);
+            });
+        } else {
+            // Для тестирования в браузере — скачиваем
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `stats_${userId}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('Статистика сохранена!');
+        }
+        
+        if (btn) btn.innerHTML = originalHtml;
+        
+    } catch (error) {
+        console.error('Ошибка:', error);
+        if (tg) tg.showAlert('❌ Ошибка формирования статистики');
+        if (btn) btn.innerHTML = originalHtml;
+    }
 }
 // ==========================================
 // ИНИЦИАЛИЗАЦИЯ

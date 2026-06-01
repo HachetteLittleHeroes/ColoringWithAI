@@ -28119,9 +28119,16 @@ function viewArtwork(bookKey, page) {
     const artwork = getPageArtwork(bookKey, page);
     if (!artwork) return;
     
-    // ✅ Правильная проверка: показываем кнопку удаления ТОЛЬКО если это НЕ просмотр чужого профиля
-    const isViewOnly = window.isViewOnly === true;
-    const isOwnProfile = !isViewOnly && !currentPublicUserId;
+    // ✅ Жесткая проверка: если открыт чужой профиль или режим просмотра - не показываем удаление
+    const isOwnProfile = !currentPublicUserId && !window.isViewOnly;
+    
+    console.log('viewArtwork вызвана:', {
+        bookKey,
+        page,
+        currentPublicUserId,
+        isViewOnly: window.isViewOnly,
+        isOwnProfile
+    });
     
     const modal = document.createElement('div');
     modal.className = 'artwork-viewer-modal';
@@ -28354,6 +28361,7 @@ function searchUsers() {
 // Публичный профиль
 async function openPublicProfile(userId) {
     currentPublicUserId = userId;
+    window.isViewOnly = true; // ✅ Блокируем кнопки удаления при просмотре чужого профиля
     
     closeUserSearch();
     
@@ -28384,9 +28392,9 @@ async function openPublicProfile(userId) {
 function closePublicProfile() {
     document.getElementById('publicProfileModal').style.display = 'none';
     currentPublicUserId = null;
-    window.isViewOnly = false;
+    window.isViewOnly = false; // ✅ Возвращаем возможность удаления в своем профиле
     
-    // Восстанавливаем свои работы
+    // ✅ Восстанавливаем свои работы
     loadUserArtworks();
 }
 function renderPublicProfile(profile) {

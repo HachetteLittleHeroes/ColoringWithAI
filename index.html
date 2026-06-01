@@ -6306,10 +6306,6 @@ body:not([data-theme]) .modal-content,
     <div class="balance-controls">
         <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🏆</button>
         <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
-        <!-- НОВАЯ КНОПКА СТАТИСТИКИ -->
-        <button class="balance-btn" onclick="shareProfileStats()" style="background: var(--accent); margin-top: 10px;">
-            <i class="fas fa-chart-line"></i> 📊 Поделиться статистикой
-        </button>
     </div>
 </div>
 
@@ -31063,58 +31059,6 @@ function addStatsButton() {
     }
 }
 
-// ==========================================
-// ПОДЕЛИТЬСЯ СТАТИСТИКОЙ
-// ==========================================
-
-async function shareProfileStats() {
-    try {
-        if (tg) tg.showAlert('🔄 Формирование статистики...');
-        
-        // Получаем статистику с сервера
-        const statsResponse = await fetch(`${SERVER_URL}/api/get_stats_for_card?user_id=${userId}`);
-        const statsData = await statsResponse.json();
-        
-        if (statsData.status !== 'ok') {
-            throw new Error('Ошибка получения статистики');
-        }
-        
-        // Отправляем данные для генерации карточки
-        const response = await fetch(`${SERVER_URL}/api/share_stats_card`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(statsData)
-        });
-        
-        if (!response.ok) throw new Error('Ошибка генерации карточки');
-        
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        
-        // Отправляем в Telegram
-        if (tg) {
-            tg.sendData(JSON.stringify({
-                action: 'share_stats_card',
-                image_url: url,
-                caption: `📊 Моя статистика`
-            }));
-        } else {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `stats_${userId}.png`;
-            a.click();
-        }
-        
-        URL.revokeObjectURL(url);
-        
-    } catch (error) {
-        console.error('Ошибка:', error);
-        if (tg) tg.showAlert('❌ Ошибка формирования статистики');
-    }
-}
-
-// Запускаем добавление кнопки после загрузки страницы
-setTimeout(addStatsButton, 1000);
 </script>
     
 <!-- Модалка поиска пользователей -->

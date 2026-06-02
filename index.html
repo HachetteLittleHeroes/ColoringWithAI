@@ -6363,13 +6363,13 @@ body:not([data-theme]) .modal-content,
     </button>
     <div id="tasksContent" class="tasks-content">
         <!-- Фильтр по сложности (звёзды) -->
-        <div class="difficulty-filters" style="display: flex; gap: 8px; margin-bottom: 15px; margin-top: 10px; overflow-x: auto; white-space: nowrap; padding: 0 15px;">
-            <button class="filter-btn active" data-difficulty="all" onclick="filterTasksByDifficulty('all')">Все</button>
-            <button class="filter-btn" data-difficulty="1" onclick="filterTasksByDifficulty(1)">⭐</button>
-            <button class="filter-btn" data-difficulty="2" onclick="filterTasksByDifficulty(2)">⭐⭐</button>
-            <button class="filter-btn" data-difficulty="3" onclick="filterTasksByDifficulty(3)">⭐⭐⭐</button>
-            <button class="filter-btn" data-difficulty="4" onclick="filterTasksByDifficulty(4)">⭐⭐⭐⭐</button>
-        </div>
+       <div class="difficulty-filters" style="display: flex; gap: 8px; margin-bottom: 15px; margin-top: 10px; overflow-x: auto; white-space: nowrap; padding: 0;">
+    <button class="filter-btn active" data-difficulty="all" onclick="filterTasksByDifficulty('all')">Все</button>
+    <button class="filter-btn" data-difficulty="1" onclick="filterTasksByDifficulty(1)">⭐</button>
+    <button class="filter-btn" data-difficulty="2" onclick="filterTasksByDifficulty(2)">⭐⭐</button>
+    <button class="filter-btn" data-difficulty="3" onclick="filterTasksByDifficulty(3)">⭐⭐⭐</button>
+    <button class="filter-btn" data-difficulty="4" onclick="filterTasksByDifficulty(4)">⭐⭐⭐⭐</button>
+</div>
         
         <div id="branchTasksList"></div>
     </div>
@@ -8048,9 +8048,9 @@ function renderBranchTasks() {
         const currentLevelIndex = getCurrentLevelIndex(branchKey);
         const levels = branch.levels;
         
-        // Получаем сложность ветки (по умолчанию 1 звезда)
-        const difficulty = TASK_DIFFICULTY[branchKey] || 1;
-        const starsHtml = renderStars(difficulty);
+       // Получаем сложность ветки (по умолчанию 1 звезда)
+const difficulty = TASK_DIFFICULTY[branchKey] || 1;
+const starsHtml = '<span class="stars" data-difficulty="' + difficulty + '" style="display: inline-flex; align-items: center; gap: 2px; margin-left: 8px;">' + renderStars(difficulty) + '</span>';
         
         const branchCard = document.createElement('div');
         branchCard.className = `branch-task-card ${isCompleted ? 'completed' : ''}`;
@@ -31453,45 +31453,63 @@ function addStatsButton() {
     }
 }
 function renderStars(difficulty) {
-    let html = '<span class="stars" data-difficulty="' + difficulty + '" style="display: inline-flex; align-items: center; gap: 2px; margin-left: 8px;">';
+    let html = '';
     for (let i = 0; i < difficulty; i++) {
         html += '<i class="fas fa-star" style="color: #ffd700; font-size: 12px;"></i>';
     }
     for (let i = difficulty; i < 4; i++) {
         html += '<i class="far fa-star" style="color: #ffd700; font-size: 12px;"></i>';
     }
-    html += '</span>';
     return html;
 }
        
 
 function filterTasksByDifficulty(difficulty) {
-    // ✅ Просто присваиваем значение, НЕ объявляем новую переменную
+    console.log('🔍 Фильтр по звёздам, выбрано:', difficulty);
+    
     currentDifficultyFilter = difficulty;
     
     const cards = document.querySelectorAll('#branchTasksList .branch-task-card');
+    console.log('📊 Найдено карточек:', cards.length);
+    
+    let visibleCount = 0;
+    
     cards.forEach(card => {
-        const starsSpan = card.querySelector('.stars');
-        if (!starsSpan) return;
+        // Пробуем найти звёзды разными способами
+        let starsSpan = card.querySelector('.stars');
+        if (!starsSpan) {
+            // Если нет .stars, ищем в заголовке
+            starsSpan = card.querySelector('.branch-header .stars');
+        }
+        if (!starsSpan) {
+            // Если всё равно нет — пропускаем
+            card.style.display = '';
+            return;
+        }
         
-        const cardDifficulty = parseInt(starsSpan.dataset.difficulty);
+        const cardDifficulty = parseInt(starsSpan.getAttribute('data-difficulty'));
+        console.log(`Карточка: ${cardDifficulty} звезд, выбрано: ${difficulty}`);
         
         if (difficulty === 'all' || cardDifficulty === difficulty) {
             card.style.display = '';
+            visibleCount++;
         } else {
             card.style.display = 'none';
         }
     });
     
+    console.log(`✅ Показано ${visibleCount} карточек`);
+    
     // Обновляем активное состояние кнопок
     document.querySelectorAll('.difficulty-filters .filter-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (btn.dataset.difficulty == difficulty) {
+        if (btn.getAttribute('data-difficulty') == difficulty || 
+            (difficulty === 'all' && btn.getAttribute('data-difficulty') === 'all')) {
             btn.classList.add('active');
         }
     });
     
-    // Применяем остальные фильтры (категории, статус)
+    // Применяем остальные фильтры
     if (typeof applyAllFilters === 'function') {
         applyAllFilters();
     }

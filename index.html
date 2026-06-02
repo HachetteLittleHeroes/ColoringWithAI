@@ -7699,78 +7699,93 @@ body:not([data-theme]) .modal-content,
             }
         }
         
-        async function submitTaskPhoto(event) {
-            if (event) event.preventDefault();
-            
-            console.log('=== НАЧАЛО ОТПРАВКИ ЗАДАНИЯ ===');
-            
-            if (isUploading) return;
-            if (!tempPhotos || tempPhotos.length === 0) {
-                if (tg) tg.showAlert('❌ Выберите хотя бы одно фото');
-                return;
-            }
-            
-            isUploading = true;
-            
-            if (tg && tg.MainButton) {
-                tg.MainButton.setText("⏳ ОТПРАВКА ФОТО...").show();
-                tg.MainButton.showProgress();
-            }
-            
-            try {
-                const formData = new FormData();
-                formData.append('user', userId.toString());
-                if (currentSubtaskData) {
-                    formData.append('branchKey', currentSubtaskData.branchKey);
-                    formData.append('levelIndex', currentSubtaskData.levelIndex.toString());
-                    formData.append('subtaskIndex', currentSubtaskData.subtaskIndex.toString());
-                    formData.append('subtaskName', currentSubtaskData.subtaskName);
-                    formData.append('type', 'subtask');
-                } else {
-                    formData.append('branchKey', currentUploadBranch);
-                    formData.append('levelIndex', currentUploadLevel.toString());
-                    formData.append('type', 'regular');
-                }
-                
-                for (let i = 0; i < tempPhotos.length; i++) {
-                    formData.append('photos', tempPhotos[i]);
-                }
-                
-                const endpoint = currentSubtaskData ? '/api/check_subtask' : '/api/check_achievement';
-                const response = await fetch(`${SERVER_URL}${endpoint}`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
-                }
-                
-                const text = await response.text();
-                const result = JSON.parse(text);
-                
-                if (result && result.status === 'ok') {
-                    if (tg) {
-                        tg.showAlert('✅ Фото успешно отправлено на проверку!');
-                        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                    }
-                    await refreshUserProgress();
-                    closeTaskUploadModal();
-                } else {
-                    throw new Error(result?.message || 'Сервер вернул ошибку');
-                }
-                
-            } catch (error) {
-                console.error('❌ Ошибка при отправке:', error);
-                if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
-            } finally {
-                isUploading = false;
-                if (tg && tg.MainButton) {
-                    tg.MainButton.hideProgress();
-                    tg.MainButton.hide();
-                }
-            }
+      // ==========================================
+// ОТПРАВКА ФОТО В ОБЫЧНЫЕ ЗАДАНИЯ (С СЖАТИЕМ)
+// ==========================================
+
+async function submitTaskPhoto(event) {
+    if (event) event.preventDefault();
+    
+    console.log('=== SUBMIT TASK PHOTO ===');
+    
+    if (!tempPhotos || tempPhotos.length === 0) {
+        if (tg) tg.showAlert('❌ Выберите хотя бы одно фото');
+        return;
+    }
+    
+    if (isUploading) return;
+    isUploading = true;
+    
+    if (tg && tg.MainButton) {
+        tg.MainButton.setText("⏳ ОТПРАВКА ФОТО...").show();
+        tg.MainButton.showProgress();
+    }
+    
+    try {
+        // ✅ СЖИМАЕМ ФОТО
+        const compressedPhotos = await compressImages(tempPhotos, 1200, 0.7);
+        
+        const formData = new FormData();
+        formData.append('user', userId.toString());
+        if (currentSubtaskData) {
+            formData.append('branchKey', currentSubtaskData.branchKey);
+            formData.append('levelIndex', currentSubtaskData.levelIndex.toString());
+            formData.append('subtaskIndex', currentSubtaskData.subtaskIndex.toString());
+            formData.append('subtaskName', currentSubtaskData.subtaskName);
+            formData.append('type', 'subtask');
+        } else {
+            formData.append('branchKey', currentUploadBranch);
+            formData.append('levelIndex', currentUploadLevel.toString());
+            formData.append('type', 'regular');
         }
+        
+        for (let i = 0; i < compressedPhotos.length; i++) {
+            formData.append('photos', compressedPhotos[i]);
+        }
+        
+        // ✅ УВЕЛИЧЕННЫЙ ТАЙМАУТ
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+        
+        const endpoint = currentSubtaskData ? '/api/check_subtask' : '/api/check_achievement';
+        const response = await fetch(`${SERVER_URL}${endpoint}`, {
+            method: 'POST',
+            body: formData,
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            throw new Error(`Ошибка сервера: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result && result.status === 'ok') {
+            if (tg) {
+                tg.showAlert('✅ Фото отправлено на проверку!');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+            closeTaskUploadModal();
+        } else {
+            throw new Error(result?.message || 'Сервер вернул ошибку');
+        }
+    } catch (error) {
+        console.error('❌ Ошибка:', error);
+        if (error.name === 'AbortError') {
+            if (tg) tg.showAlert('❌ Превышено время ожидания. Попробуйте отправить меньше фото.');
+        } else {
+            if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
+        }
+    } finally {
+        isUploading = false;
+        if (tg && tg.MainButton) {
+            tg.MainButton.hideProgress();
+            tg.MainButton.hide();
+        }
+    }
+}
         
       function closeTaskUploadModal() {
     console.log('🔒 Закрытие модального окна');
@@ -14553,32 +14568,70 @@ function openCommunityTaskUpload(subtaskIdx) {
     fileInput.click();
 }
 
+// ==========================================
+// ОТПРАВКА ФОТО В ИСПЫТАНИЕ СООБЩЕСТВА (С СЖАТИЕМ)
+// ==========================================
+
 async function submitCommunityTaskPhoto() {
+    console.log('=== SUBMIT COMMUNITY TASK PHOTO ===');
+    console.log('currentCommunitySubtask:', currentCommunitySubtask);
+    console.log('tempPhotos length:', tempPhotos?.length);
+    
     if (!tempPhotos || tempPhotos.length === 0) {
         if (tg) tg.showAlert('❌ Выберите хотя бы одно фото');
         return;
     }
     
+    // Логируем размеры оригиналов
+    tempPhotos.forEach((file, i) => {
+        console.log(`📸 Оригинал ${i + 1}: ${Math.round(file.size / 1024)}KB, тип: ${file.type}`);
+    });
+    
     if (isUploading) return;
     isUploading = true;
     
+    // Показываем индикатор загрузки
+    if (tg && tg.MainButton) {
+        tg.MainButton.setText("⏳ ОТПРАВКА ФОТО...").show();
+        tg.MainButton.showProgress();
+    }
+    
     try {
+        // ✅ СЖИМАЕМ ФОТО ПЕРЕД ОТПРАВКОЙ
+        const compressedPhotos = await compressImages(tempPhotos, 1200, 0.7);
+        
         const formData = new FormData();
         formData.append('user', userId.toString());
         formData.append('subtask', currentCommunitySubtask?.toString() || '0');
         
-        for (let i = 0; i < tempPhotos.length; i++) {
-            formData.append('photos', tempPhotos[i]);
+        for (let i = 0; i < compressedPhotos.length; i++) {
+            formData.append('photos', compressedPhotos[i]);
         }
+        
+        // ✅ УВЕЛИЧЕННЫЙ ТАЙМАУТ (60 секунд)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+        
+        console.log('📤 Отправка запроса на /api/check_community_task');
+        const startTime = Date.now();
         
         const response = await fetch(`${SERVER_URL}/api/check_community_task`, {
             method: 'POST',
-            body: formData
+            body: formData,
+            signal: controller.signal
         });
         
-        if (!response.ok) throw new Error(`Ошибка сервера: ${response.status}`);
+        clearTimeout(timeoutId);
+        const endTime = Date.now();
+        
+        console.log(`📥 Статус ответа: ${response.status} (${endTime - startTime}ms)`);
+        
+        if (!response.ok) {
+            throw new Error(`Ошибка сервера: ${response.status}`);
+        }
         
         const result = await response.json();
+        console.log('📥 Результат:', result);
         
         if (result && result.status === 'ok') {
             if (tg) {
@@ -14591,11 +14644,80 @@ async function submitCommunityTaskPhoto() {
         }
     } catch (error) {
         console.error('❌ Ошибка:', error);
-        if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
+        if (error.name === 'AbortError') {
+            if (tg) tg.showAlert('❌ Превышено время ожидания. Файлы слишком большие, попробуйте отправить меньше фото или скриншоты.');
+        } else {
+            if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
+        }
     } finally {
         isUploading = false;
         tempPhotos = [];
+        if (tg && tg.MainButton) {
+            tg.MainButton.hideProgress();
+            tg.MainButton.hide();
+        }
     }
+}
+        // ==========================================
+// СЖАТИЕ ИЗОБРАЖЕНИЙ ПЕРЕД ОТПРАВКОЙ
+// ==========================================
+
+async function compressImage(file, maxWidth = 1200, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+        // Если файл меньше 1MB — не сжимаем
+        if (file.size < 1024 * 1024) {
+            resolve(file);
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > maxWidth) {
+                    height = (height * maxWidth) / width;
+                    width = maxWidth;
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                canvas.toBlob((blob) => {
+                    const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.jpg'), { 
+                        type: 'image/jpeg',
+                        lastModified: Date.now()
+                    });
+                    console.log(`📦 Сжатие: ${Math.round(file.size / 1024)}KB → ${Math.round(compressedFile.size / 1024)}KB`);
+                    resolve(compressedFile);
+                }, 'image/jpeg', quality);
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// Сжатие нескольких файлов
+async function compressImages(files, maxWidth = 1200, quality = 0.7) {
+    const compressed = [];
+    for (const file of files) {
+        try {
+            const compressedFile = await compressImage(file, maxWidth, quality);
+            compressed.push(compressedFile);
+        } catch (error) {
+            console.error('Ошибка сжатия файла:', error);
+            compressed.push(file);
+        }
+    }
+    return compressed;
 }
      function calculateUserXP() {
     return userProgress.xp || 0;

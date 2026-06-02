@@ -6362,6 +6362,13 @@ body:not([data-theme]) .modal-content,
         <i class="fas fa-chevron-down" id="tasksArrow"></i>
     </button>
     <div id="tasksContent" class="tasks-content">
+        <div class="difficulty-filters" style="display: flex; gap: 10px; margin-bottom: 15px; padding: 0 15px; flex-wrap: wrap;">
+    <button class="filter-btn active" data-difficulty="all" onclick="filterTasksByDifficulty('all')">📋 Все</button>
+    <button class="filter-btn" data-difficulty="1" onclick="filterTasksByDifficulty(1)">⭐ Лёгкие</button>
+    <button class="filter-btn" data-difficulty="2" onclick="filterTasksByDifficulty(2)">⭐⭐ Средние</button>
+    <button class="filter-btn" data-difficulty="3" onclick="filterTasksByDifficulty(3)">⭐⭐⭐ Сложные</button>
+    <button class="filter-btn" data-difficulty="4" onclick="filterTasksByDifficulty(4)">⭐⭐⭐⭐ Экстра</button>
+</div>
         <div id="branchTasksList"></div>
     </div>
 </div>
@@ -7152,6 +7159,36 @@ body:not([data-theme]) .modal-content,
         
         const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io';
         const MARKER_PRICE = 75;
+        // ==========================================
+// СЛОЖНОСТЬ ЗАДАНИЙ (звёзды)
+// ==========================================
+
+const TASK_DIFFICULTY = {
+    // ⭐ ЛЁГКИЕ (1 звезда)
+    'mystery': 1,
+    'queen': 1,
+    'lion': 1,
+    'sirena': 1,
+    'trainer': 1,
+    
+    // ⭐⭐ СРЕДНИЕ (2 звезды)
+    'bear': 2,
+    'alcohol': 2,
+    
+    // ⭐⭐⭐ СЛОЖНЫЕ (3 звезды)
+    'anaconda': 3,
+    'fauna': 3,
+    'sea': 3,
+    'dragons': 3,
+    'krasavica': 3,
+    'rapuncelprincessa': 3,
+    'agraba': 3,
+    'lubitelfentesi': 3,
+    
+    // ⭐⭐⭐⭐ ЭКСТРА-СЛОЖНЫЕ (4 звезды)
+    'shock': 4,
+    'pempudu': 4
+};
         
         // Telegram WebApp
         const tg = window.Telegram?.WebApp || {
@@ -7998,19 +8035,28 @@ function renderBranchTasks() {
     container.innerHTML = '';
     
     for (const [branchKey, branch] of Object.entries(TASK_BRANCHES)) {
+        // Пропускаем сезонный пропуск
         if (branchKey === 'season_pass') continue;
+        
+        // ✅ Пропускаем Скруджа и Благодетеля (не показываем в заданиях на статусы)
+        if (branchKey === 'scrooge' || branchKey === 'benefactor') continue;
         
         const isCompleted = isBranchCompleted(branchKey);
         const currentLevelIndex = getCurrentLevelIndex(branchKey);
         const levels = branch.levels;
         
+        // ✅ Получаем сложность ветки (по умолчанию 1 звезда)
+        const difficulty = TASK_DIFFICULTY[branchKey] || 1;
+        const starsHtml = renderStars(difficulty);
+        
         const branchCard = document.createElement('div');
         branchCard.className = `branch-task-card ${isCompleted ? 'completed' : ''}`;
         branchCard.setAttribute('data-branch-key', branchKey);
         
+        // ✅ Добавляем звёзды в заголовок
         branchCard.innerHTML = `
             <div class="branch-header">
-                <h3>${branch.name}</h3>
+                <h3>${branch.name} ${starsHtml}</h3>
                 <p>${branch.desc}</p>
             </div>
         `;
@@ -8030,42 +8076,7 @@ function renderBranchTasks() {
         } else if (currentLevelIndex < levels.length) {
             const level = levels[currentLevelIndex];
             
-            if (branchKey === 'scrooge') {
-                const currentProgress = user.balance;
-                const percent = (currentProgress / level.maxProgress) * 100;
-                const levelCard = document.createElement('div');
-                levelCard.className = 'level-card';
-                levelCard.innerHTML = `
-                    <div class="level-header">
-                        <span class="level-title">${level.title}</span>
-                        <span class="level-progress">${currentProgress}/${level.maxProgress} ашетиков</span>
-                    </div>
-                    <div class="level-desc">${level.desc}</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: ${Math.min(percent, 100)}%"></div>
-                    </div>
-                    <div class="level-desc" style="color: var(--accent); margin-top: 10px;">
-                        <i class="fas fa-coins"></i> Текущий баланс: ${user.balance} ашетиков
-                    </div>
-                `;
-                branchCard.appendChild(levelCard);
-            } else if (branchKey === 'benefactor') {
-                const levelCard = document.createElement('div');
-                levelCard.className = 'level-card';
-                levelCard.innerHTML = `
-                    <div class="level-header">
-                        <span class="level-title">${level.title}</span>
-                    </div>
-                    <div class="level-desc">${level.desc}</div>
-                    <button class="task-submit-btn" onclick="openSupportForStatus()">
-                        <i class="fas fa-heart"></i> Поддержать проект
-                    </button>
-                    <div class="level-desc" style="font-size: 12px; margin-top: 10px; color: var(--text-gray);">
-                        После подтверждения пожертвования статус будет разблокирован автоматически
-                    </div>
-                `;
-                branchCard.appendChild(levelCard);
-            } else if (level.subtasks && level.subtasks.length > 0) {
+            if (level.subtasks && level.subtasks.length > 0) {
                 if (level.subtasks.length === 1) {
                     const subtask = level.subtasks[0];
                     const currentProgress = getSubtaskProgress(branchKey, currentLevelIndex, 0);
@@ -31438,7 +31449,44 @@ function addStatsButton() {
         }
     }
 }
+function renderStars(difficulty) {
+    let html = '<span class="stars" data-difficulty="' + difficulty + '" style="display: inline-flex; align-items: center; gap: 2px; margin-left: 8px;">';
+    for (let i = 0; i < difficulty; i++) {
+        html += '<i class="fas fa-star" style="color: #ffd700; font-size: 12px;"></i>';
+    }
+    for (let i = difficulty; i < 4; i++) {
+        html += '<i class="far fa-star" style="color: #ffd700; font-size: 12px;"></i>';
+    }
+    html += '</span>';
+    return html;
+}
+        let currentDifficultyFilter = 'all';
 
+function filterTasksByDifficulty(difficulty) {
+    currentDifficultyFilter = difficulty;
+    const cards = document.querySelectorAll('#branchTasksList .branch-task-card');
+    
+    cards.forEach(card => {
+        const starsSpan = card.querySelector('.stars');
+        if (!starsSpan) return;
+        
+        const cardDifficulty = parseInt(starsSpan.dataset.difficulty);
+        
+        if (difficulty === 'all' || cardDifficulty === difficulty) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Обновляем активные кнопки
+    document.querySelectorAll('.difficulty-filters .filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.difficulty == difficulty) {
+            btn.classList.add('active');
+        }
+    });
+}
 </script>
     
 <!-- Модалка поиска пользователей -->

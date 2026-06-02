@@ -7155,6 +7155,7 @@ body:not([data-theme]) .modal-content,
 </div>
 
     <script>
+         let currentDifficultyFilter = 'all';
         // ==========================================
         // КОНФИГУРАЦИЯ И ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
         // ==========================================
@@ -31462,7 +31463,7 @@ function renderStars(difficulty) {
     html += '</span>';
     return html;
 }
-        let currentDifficultyFilter = 'all';
+       
 
 function filterTasksByDifficulty(difficulty) {
     currentDifficultyFilter = difficulty;

@@ -8004,27 +8004,40 @@ function applyAllFilters() {
         const branchKey = card.getAttribute('data-branch-key');
         const isCompleted = card.classList.contains('completed');
         
+        // 1. Фильтр по категориям
         let showByCategory = currentCategoryFilter === 'all';
         if (!showByCategory && STATUS_CATEGORIES[currentCategoryFilter]) {
             showByCategory = STATUS_CATEGORIES[currentCategoryFilter].keys.includes(branchKey);
         }
         
+        // 2. Фильтр по статусу (начатые/не начатые)
         let showByStatus = true;
         if (currentStatusFilter === 'started') {
-            // Ветка начата: не завершена И (есть прогресс ИЛИ пройден хотя бы первый уровень)
             const progressBar = card.querySelector('.progress-bar-fill');
             const hasProgress = progressBar && progressBar.style.width && progressBar.style.width !== '0%';
             const currentLevel = getCurrentLevelIndex(branchKey);
             showByStatus = !isCompleted && (hasProgress || currentLevel > 0);
         } else if (currentStatusFilter === 'notStarted') {
-            // Ветка не начата: не завершена И нет прогресса И не пройден первый уровень
             const progressBar = card.querySelector('.progress-bar-fill');
             const hasProgress = progressBar && progressBar.style.width && progressBar.style.width !== '0%';
             const currentLevel = getCurrentLevelIndex(branchKey);
             showByStatus = !isCompleted && !hasProgress && currentLevel === 0;
         }
         
-        card.style.display = showByCategory && showByStatus ? '' : 'none';
+        // 3. ✅ НОВЫЙ ФИЛЬТР ПО СЛОЖНОСТИ (звёзды)
+        let showByDifficulty = true;
+        if (currentDifficultyFilter !== 'all') {
+            const starsSpan = card.querySelector('.stars');
+            if (starsSpan) {
+                const cardDifficulty = parseInt(starsSpan.getAttribute('data-difficulty'));
+                if (cardDifficulty !== currentDifficultyFilter) {
+                    showByDifficulty = false;
+                }
+            }
+        }
+        
+        // Применяем все фильтры
+        card.style.display = (showByCategory && showByStatus && showByDifficulty) ? '' : 'none';
     });
 }
 
@@ -31463,7 +31476,6 @@ function renderStars(difficulty) {
     return html;
 }
        
-
 function filterTasksByDifficulty(difficulty) {
     console.log('🔍 Фильтр по звёздам, выбрано:', difficulty);
     
@@ -31475,20 +31487,16 @@ function filterTasksByDifficulty(difficulty) {
     let visibleCount = 0;
     
     cards.forEach(card => {
-        // Пробуем найти звёзды разными способами
         let starsSpan = card.querySelector('.stars');
         if (!starsSpan) {
-            // Если нет .stars, ищем в заголовке
             starsSpan = card.querySelector('.branch-header .stars');
         }
         if (!starsSpan) {
-            // Если всё равно нет — пропускаем
             card.style.display = '';
             return;
         }
         
         const cardDifficulty = parseInt(starsSpan.getAttribute('data-difficulty'));
-        console.log(`Карточка: ${cardDifficulty} звезд, выбрано: ${difficulty}`);
         
         if (difficulty === 'all' || cardDifficulty === difficulty) {
             card.style.display = '';
@@ -31509,9 +31517,9 @@ function filterTasksByDifficulty(difficulty) {
         }
     });
     
-    // Применяем остальные фильтры
+    // ✅ ПЕРЕДАЁМ ФИЛЬТР СЛОЖНОСТИ В applyAllFilters
     if (typeof applyAllFilters === 'function') {
-        applyAllFilters();
+        applyAllFilters(currentDifficultyFilter);
     }
 }
 </script>

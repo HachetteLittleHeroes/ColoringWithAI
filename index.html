@@ -31464,8 +31464,6 @@ function renderStars(difficulty) {
 }
         let currentDifficultyFilter = 'all';
 
-let currentDifficultyFilter = 'all';
-
 function filterTasksByDifficulty(difficulty) {
     currentDifficultyFilter = difficulty;
     
@@ -31491,7 +31489,7 @@ function filterTasksByDifficulty(difficulty) {
         }
     });
     
-    // Применяем остальные фильтры (категории, статус)
+    // Применяем остальные фильтры
     if (typeof applyAllFilters === 'function') {
         applyAllFilters();
     }

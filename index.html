@@ -28862,32 +28862,52 @@ function searchUsers() {
 
 // Публичный профиль
 async function openPublicProfile(userId) {
-    currentPublicUserId = userId;
-    window.isViewOnly = true; // ✅ Блокируем кнопки удаления при просмотре чужого профиля
+    if (!userId) {
+        console.error('❌ openPublicProfile: userId не передан');
+        return;
+    }
     
-    closeUserSearch();
+    console.log('🔵 Открываем публичный профиль:', userId);
+    
+    currentPublicUserId = userId;
+    window.isViewOnly = true;
+    
+    closeUserSearch();  // Закрываем поиск если открыт
     
     const modal = document.getElementById('publicProfileModal');
-    modal.style.display = 'flex';
-    modal.className = 'modal-overlay';
-    
     const container = document.getElementById('publicProfileContent');
+    
+    modal.style.display = 'flex';
     container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка профиля...</div>';
     
     try {
-        const artworksResponse = await fetch(`${SERVER_URL}/api/artworks?user_id=${userId}`);
-        userArtworks = await artworksResponse.json();
-        
+        // Загружаем профиль
         const response = await fetch(`${SERVER_URL}/api/public_profile?user_id=${userId}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
         const profile = await response.json();
         
-        console.log('profile loaded, calling renderPublicProfile');
+        if (profile.status === 'error') {
+            throw new Error(profile.message || 'Ошибка загрузки');
+        }
+        
+        console.log('✅ Профиль загружен:', profile);
+        
+        // Загружаем работы пользователя
+        const artworksResponse = await fetch(`${SERVER_URL}/api/artworks?user_id=${userId}`);
+        if (artworksResponse.ok) {
+            userArtworks = await artworksResponse.json();
+            profile.artworks = userArtworks;
+        }
+        
         renderPublicProfile(profile);
-        console.log('renderPublicProfile done');
         
     } catch (error) {
-        console.error('❌ Ошибка:', error);
-        container.innerHTML = '<div class="no-results">❌ Ошибка загрузки</div>';
+        console.error('❌ Ошибка загрузки профиля:', error);
+        container.innerHTML = `<div class="no-results" style="padding: 20px;">❌ Ошибка загрузки профиля: ${error.message}</div>`;
     }
 }
 
@@ -28900,140 +28920,177 @@ function closePublicProfile() {
     loadUserArtworks();
 }
 function renderPublicProfile(profile) {
+    console.log('🔵 renderPublicProfile вызвана с профилем:', profile);
+    
     const container = document.getElementById('publicProfileContent');
+    if (!container) {
+        console.error('❌ container не найден');
+        return;
+    }
     
+    // Проверяем, что профиль содержит данные
+    if (!profile || profile.status === 'error') {
+        container.innerHTML = '<div class="no-results">❌ Профиль не найден</div>';
+        return;
+    }
+    
+    const userId = profile.user_id || currentPublicUserId;
     const avatarUrl = profile.avatar || 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png';
-    const userName = profile.name || 'Пользователь';
+    const userName = profile.name || profile.username || 'Пользователь';
     const userStatus = profile.status || 'Без статуса';
-    const figuresCount = profile.figures?.length || 0;
-    const booksCount = countColoringBooks(profile.coloring_books);
-    const wishlistCount = profile.wishlist?.length || 0;
+    
+    // Получаем коллекции
+    const figures = profile.figures || [];
+    const figuresCount = figures.length;
+    
+    const coloringBooks = profile.coloring_books || { paint_by_number: [], alcohol: [], pencil: [], custom: [] };
+    let booksCount = 0;
+    for (const cat in coloringBooks) {
+        booksCount += coloringBooks[cat]?.length || 0;
+    }
+    
+    const wishlist = profile.wishlist || [];
+    const wishlistCount = wishlist.length;
+    
+    // Проверяем, друг ли это
     const isOwnProfile = (String(profile.user_id) === String(userId));
-    const isFriend = myFriends.some(f => String(f.user_id) === String(profile.user_id));
-    const pubUserId = profile.user_id;
+    const isFriend = myFriends.some(f => String(f.user_id) === String(profile.user_id) || String(f.id) === String(profile.user_id));
     
-    var totalWorks = 0, lastMonthWorks = 0, monthWorks = 0;
-    var now = new Date();
-    var lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime();
-    var lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59).getTime();
-    var monthAgo = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    // Считаем статистику
+    const completedPages = profile.completed_pages || {};
+    const completedPagesDates = profile.completed_pages_dates || {};
+    const artworks = profile.artworks || {};
     
-    // ✅ Сохраняем временные метки для использования в renderPublicStatsBooks
-    container._lastMonthStart = lastMonthStart;
-    container._lastMonthEnd = lastMonthEnd;
-    container._monthAgo = monthAgo;
+    let totalWorks = 0, monthWorks = 0, lastMonthWorks = 0;
+    const now = new Date();
+    const monthAgo = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime();
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59).getTime();
     
-    console.log('📅 Текущая дата:', now);
-    console.log('📅 Прошлый месяц: с', new Date(lastMonthStart), 'по', new Date(lastMonthEnd));
-    console.log('📅 Текущий месяц с:', new Date(monthAgo));
-    
-    var profileCompletedPages = profile.completed_pages || {};
-    var profileCompletedDates = profile.completed_pages_dates || {};
-    var profileArtworks = profile.artworks || {};
-    var booksStats = {};
-
-    for (var bk in profileCompletedPages) {
-        for (var pg in profileCompletedPages[bk]) {
+    for (const bookKey in completedPages) {
+        for (const page in completedPages[bookKey]) {
             totalWorks++;
-            var dt = profileCompletedDates[bk + '|' + pg] || 0;
-            if (dt >= monthAgo) monthWorks++;
-            if (dt >= lastMonthStart && dt <= lastMonthEnd) lastMonthWorks++;
-
-            var cat;
-            if (bk.startsWith('paint_by_number_')) cat = 'paint_by_number';
-            else if (bk.startsWith('alcohol_')) cat = 'alcohol';
-            else if (bk.startsWith('pencil_')) cat = 'pencil';
-            else cat = 'custom';
-
-            var bname = bk.substring(cat.length + 1);
-            if (!booksStats[bname]) booksStats[bname] = { lastmonth: 0, month: 0, total: 0, cat: cat, works: [] };
-            
-            booksStats[bname].total++;
-            if (dt >= monthAgo) booksStats[bname].month++;
-            if (dt >= lastMonthStart && dt <= lastMonthEnd) booksStats[bname].lastmonth++;
-            
-            var artworkUrl = '';
-            if (profileArtworks[bk] && profileArtworks[bk][pg]) {
-                artworkUrl = profileArtworks[bk][pg];
-            }
-            
-            booksStats[bname].works.push({
-                page: pg,
-                date: dt,
-                artwork: artworkUrl,
-                bookKey: bk
-            });
+            const date = completedPagesDates[bookKey + '|' + page] || 0;
+            if (date >= monthAgo) monthWorks++;
+            if (date >= lastMonthStart && date <= lastMonthEnd) lastMonthWorks++;
         }
     }
     
-    console.log('📊 Статистика: всего=', totalWorks, 'за месяц=', monthWorks, 'за прошлый месяц=', lastMonthWorks);
-    
-    let html = `
+    const html = `
         <div class="profile-header-block" style="margin: 0; padding: 15px;">
-            <div class="avatar-wrapper"><img src="${avatarUrl}" onerror="this.src='https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png'"></div>
+            <div class="avatar-wrapper">
+                <img src="${avatarUrl}" onerror="this.src='https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png'">
+            </div>
             <div class="profile-info">
-                <div class="name-row"><h2>${userName}</h2></div>
-              <div class="status-badge">${userStatus}</div>
+                <div class="name-row"><h2>${escapeHtml(userName)}</h2></div>
+                <div class="status-badge">${escapeHtml(userStatus)}</div>
                 <div id="publicUserLevel" style="margin-top: 8px;"></div>
-                ${!isOwnProfile ? (isFriend ? `<button class="already-friend-btn" disabled><i class="fas fa-check"></i> В друзьях</button>` : `<button class="add-friend-btn" onclick="addFriend('${pubUserId}')"><i class="fas fa-user-plus"></i> Добавить в друзья</button>`) : ''}
+                ${!isOwnProfile ? (isFriend ? 
+                    `<button class="already-friend-btn" disabled><i class="fas fa-check"></i> В друзьях</button>` : 
+                    `<button class="add-friend-btn" onclick="addFriend('${userId}')"><i class="fas fa-user-plus"></i> Добавить в друзья</button>`) : ''}
             </div>
         </div>
         
         <div class="inventory-main-block" style="margin-top: 10px;">
-            <div class="inventory-header" onclick="toggleBlock('modalStatsContent', 'modalStatsArrow')"><div class="inventory-header-left"><i class="fas fa-chart-bar"></i><span>Статистика</span></div><i class="fas fa-chevron-down" id="modalStatsArrow" style="transform: rotate(180deg);"></i></div>
+            <div class="inventory-header" onclick="toggleBlock('modalStatsContent', 'modalStatsArrow')">
+                <div class="inventory-header-left"><i class="fas fa-chart-bar"></i><span>Статистика</span></div>
+                <i class="fas fa-chevron-down" id="modalStatsArrow" style="transform: rotate(180deg);"></i>
+            </div>
             <div id="modalStatsContent" class="inventory-content" style="display: block;">
                 <div class="stats-numbers" style="margin-bottom:15px;">
-                    <div class="stats-number-card active" id="pubCardLastMonth" onclick="switchPublicStats('lastmonth')"><div class="number">${lastMonthWorks}</div><div class="label">За прошлый месяц</div></div>
-                    <div class="stats-number-card" id="pubCardMonth" onclick="switchPublicStats('month')"><div class="number">${monthWorks}</div><div class="label">За месяц</div></div>
-                    <div class="stats-number-card" id="pubCardTotal" onclick="switchPublicStats('total')"><div class="number">${totalWorks}</div><div class="label">Всего</div></div>
+                    <div class="stats-number-card active" id="pubCardLastMonth" onclick="switchPublicStats('lastmonth')">
+                        <div class="number">${lastMonthWorks}</div>
+                        <div class="label">За прошлый месяц</div>
+                    </div>
+                    <div class="stats-number-card" id="pubCardMonth" onclick="switchPublicStats('month')">
+                        <div class="number">${monthWorks}</div>
+                        <div class="label">За месяц</div>
+                    </div>
+                    <div class="stats-number-card" id="pubCardTotal" onclick="switchPublicStats('total')">
+                        <div class="number">${totalWorks}</div>
+                        <div class="label">Всего</div>
+                    </div>
                 </div>
                 <div id="pubStatsBooksList"></div>
             </div>
         </div>
         
         <div class="inventory-main-block" style="margin-top: 10px;">
-            <div class="inventory-header" onclick="toggleBlock('modalFiguresContent', 'modalFiguresArrow')"><div class="inventory-header-left"><i class="fas fa-users"></i><span>Коллекция персонажей</span></div><div class="inventory-header-right"><span class="collection-badge">${figuresCount}/50</span><i class="fas fa-chevron-down" id="modalFiguresArrow"></i></div></div>
-            <div id="modalFiguresContent" class="inventory-content" style="display: none;"><div id="modalFiguresGrid" class="collection-grid"></div></div>
+            <div class="inventory-header" onclick="toggleBlock('modalFiguresContent', 'modalFiguresArrow')">
+                <div class="inventory-header-left"><i class="fas fa-users"></i><span>Коллекция персонажей</span></div>
+                <div class="inventory-header-right"><span class="collection-badge">${figuresCount}/50</span><i class="fas fa-chevron-down" id="modalFiguresArrow"></i></div>
+            </div>
+            <div id="modalFiguresContent" class="inventory-content" style="display: none;">
+                <div id="modalFiguresGrid" class="collection-grid"></div>
+            </div>
         </div>
         
         <div class="inventory-main-block" style="margin-top: 10px;">
-            <div class="inventory-header" onclick="toggleBlock('modalBooksContent', 'modalBooksArrow')"><div class="inventory-header-left"><i class="fas fa-book"></i><span>Коллекция раскрасок</span></div><div class="inventory-header-right"><span class="collection-badge">${booksCount}</span><i class="fas fa-chevron-down" id="modalBooksArrow"></i></div></div>
-            <div id="modalBooksContent" class="inventory-content" style="display: none;"><div id="modalBooksList"></div></div>
+            <div class="inventory-header" onclick="toggleBlock('modalBooksContent', 'modalBooksArrow')">
+                <div class="inventory-header-left"><i class="fas fa-book"></i><span>Коллекция раскрасок</span></div>
+                <div class="inventory-header-right"><span class="collection-badge">${booksCount}</span><i class="fas fa-chevron-down" id="modalBooksArrow"></i></div>
+            </div>
+            <div id="modalBooksContent" class="inventory-content" style="display: none;">
+                <div id="modalBooksList"></div>
+            </div>
         </div>
         
         <div class="inventory-main-block" style="margin-top: 10px;">
-            <div class="inventory-header" onclick="toggleBlock('modalWishlistContent', 'modalWishlistArrow')"><div class="inventory-header-left"><i class="fas fa-heart"></i><span>Список желаний</span></div><div class="inventory-header-right"><span class="collection-badge">${wishlistCount}</span><i class="fas fa-chevron-down" id="modalWishlistArrow"></i></div></div>
-            <div id="modalWishlistContent" class="inventory-content" style="display: none;"><div id="modalWishlistGrid" class="category-items" style="grid-template-columns: repeat(2, 1fr);"></div></div>
+            <div class="inventory-header" onclick="toggleBlock('modalWishlistContent', 'modalWishlistArrow')">
+                <div class="inventory-header-left"><i class="fas fa-heart"></i><span>Список желаний</span></div>
+                <div class="inventory-header-right"><span class="collection-badge">${wishlistCount}</span><i class="fas fa-chevron-down" id="modalWishlistArrow"></i></div>
+            </div>
+            <div id="modalWishlistContent" class="inventory-content" style="display: none;">
+                <div id="modalWishlistGrid" class="category-items" style="grid-template-columns: repeat(2, 1fr);"></div>
+            </div>
         </div>
     `;
     
-    // ✅ Сначала свойства, потом innerHTML
-    container._pubBooksStats = booksStats;
-    container._pubPeriod = 'lastmonth';
-    container._pubUserId = profile.user_id;
-    container.dataset.profile = JSON.stringify(profile);
-    
-    console.log('🔵 Перед innerHTML');
     container.innerHTML = html;
-    console.log('🔵 После innerHTML');
     
-    console.log('🔵 Перед вызовом renderPublicStatsBooks');
-    console.log('🔵 Тип renderPublicStatsBooks:', typeof renderPublicStatsBooks);
-    
-    if (typeof renderPublicStatsBooks === 'function') {
-        console.log('🔵 Вызываю renderPublicStatsBooks...');
-        renderPublicStatsBooks();
-        console.log('🔵 renderPublicStatsBooks выполнен');
-    } else {
-        console.error('❌ renderPublicStatsBooks не является функцией!');
+    // Сохраняем данные для статистики
+    const booksStats = {};
+    for (const bookKey in completedPages) {
+        let category = 'paint_by_number';
+        if (bookKey.startsWith('alcohol_')) category = 'alcohol';
+        else if (bookKey.startsWith('pencil_')) category = 'pencil';
+        else if (bookKey.startsWith('custom_')) category = 'custom';
+        
+        const bookName = bookKey.substring(category.length + 1);
+        if (!booksStats[bookName]) {
+            booksStats[bookName] = { works: [], cat: category };
+        }
+        
+        for (const page in completedPages[bookKey]) {
+            const date = completedPagesDates[bookKey + '|' + page] || 0;
+            const artworkUrl = artworks[bookKey]?.[page] || '';
+            booksStats[bookName].works.push({
+                page: page,
+                date: date,
+                artwork: artworkUrl,
+                bookKey: bookKey
+            });
+        }
     }
     
+    container._pubBooksStats = booksStats;
+    container._pubPeriod = 'lastmonth';
+    container._pubUserId = userId;
+    container._lastMonthStart = lastMonthStart;
+    container._lastMonthEnd = lastMonthEnd;
+    container._monthAgo = monthAgo;
+    container.dataset.profile = JSON.stringify(profile);
+    
+    // Рендерим статистику
+    renderPublicStatsBooks();
+    
+    // Рендерим уровень
     setTimeout(() => {
-       const xp = profile.xp || 0;
+        const xp = profile.xp || 0;
         const levelInfo = getUserLevelInfo(xp);
-        const el = document.getElementById('publicUserLevel');
-        if (el) {
-            el.innerHTML = `
+        const levelEl = document.getElementById('publicUserLevel');
+        if (levelEl) {
+            levelEl.innerHTML = `
                 <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 4px;">${levelInfo.name}</div>
                 <div class="progress-bar-container" style="height: 4px;">
                     <div class="progress-bar-fill" style="width: ${levelInfo.progress}%;"></div>
@@ -29041,7 +29098,26 @@ function renderPublicProfile(profile) {
                 <div style="font-size: 10px; color: var(--text-gray); margin-top: 2px;">${levelInfo.xp} / ${levelInfo.nextXP} XP</div>
             `;
         }
+        
+        // Рендерим фигурки
+        const figuresContainer = document.getElementById('modalFiguresGrid');
+        if (figuresContainer) {
+            renderPublicFigures(figures);
+        }
+        
+        // Рендерим раскраски
+        const booksContainer = document.getElementById('modalBooksList');
+        if (booksContainer) {
+            renderPublicBooks(coloringBooks, artworks, userId);
+        }
+        
+        // Рендерим вишлист
+        const wishlistContainer = document.getElementById('modalWishlistGrid');
+        if (wishlistContainer) {
+            renderPublicWishlist(wishlist);
+        }
     }, 100);
+}
     
     console.log('renderPublicProfile done');
 }
@@ -29569,8 +29645,8 @@ function closeFriendsList() {
 }
 
 function viewFriendProfile(friendId) {
-    closeFriendsList();
-    openPublicProfile(friendId);
+    closeFriendsList();  // Закрываем список друзей
+    openPublicProfile(friendId);  // Открываем профиль друга
 }
 
 function confirmRemoveFriend(friendId, friendName) {
@@ -29612,28 +29688,35 @@ async function removeFriend(friendId) {
 
 async function addFriend(friendId) {
     try {
-        await fetch(`${SERVER_URL}/api/friends/add`, {
+        const response = await fetch(`${SERVER_URL}/api/friends/add`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId, friend_id: friendId })
         });
         
-        await loadMyFriends();
+        const result = await response.json();
         
-        if (currentPublicUserId === friendId) {
-            const container = document.getElementById('publicProfileContent');
-            if (container && container.dataset.profile) {
-                const profile = JSON.parse(container.dataset.profile);
-                renderPublicProfile(profile);
+        if (result.status === 'ok') {
+            await loadMyFriends();
+            
+            // Обновляем публичный профиль если он открыт
+            if (currentPublicUserId === friendId) {
+                const container = document.getElementById('publicProfileContent');
+                if (container && container.dataset.profile) {
+                    const profile = JSON.parse(container.dataset.profile);
+                    renderPublicProfile(profile);
+                }
             }
+            
+            if (tg) tg.showAlert('✅ Добавлено в друзья!');
+        } else {
+            throw new Error(result.message || 'Ошибка');
         }
-        
-        if (tg) tg.showAlert('✅ Добавлено в друзья!');
     } catch (error) {
-        if (tg) tg.showAlert('❌ Ошибка');
+        console.error('Ошибка добавления в друзья:', error);
+        if (tg) tg.showAlert('❌ Ошибка при добавлении в друзья');
     }
 }
-
 async function loadMyFriends() {
     try {
         const response = await fetch(`${SERVER_URL}/api/friends?user_id=${userId}`);

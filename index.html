@@ -29581,19 +29581,23 @@ function renderFriendsListInner() {
     }
     
     let html = '<h4 style="margin-bottom: 10px;">Мои друзья</h4>';
-    myFriends.forEach(friend => {
+    myFriends.forEach(function(friend) {
+        // Убеждаемся, что у друга есть user_id
+        const friendUserId = friend.user_id || friend.id;
+        console.log('Друг:', friend.name, 'ID:', friendUserId);
+        
         html += `
             <div class="friend-card">
                 <img src="${friend.avatar}" class="friend-avatar" onerror="this.src='https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png'">
                 <div class="friend-info">
-                    <div class="friend-name">${friend.name}</div>
-                    <div class="friend-username">${friend.username}</div>
+                    <div class="friend-name">${escapeHtml(friend.name)}</div>
+                    <div class="friend-username">${escapeHtml(friend.username)}</div>
                 </div>
                 <div style="display: flex; gap: 5px;">
-                    <button class="friend-view-btn" onclick="viewFriendProfile('${friend.user_id}')">
+                    <button class="friend-view-btn" onclick="viewFriendProfile('${friendUserId}')">
                         <i class="fas fa-user"></i>
                     </button>
-                    <button class="friend-remove-btn" onclick="confirmRemoveFriend('${friend.user_id}', '${friend.name.replace(/'/g, "\\'")}')">
+                    <button class="friend-remove-btn" onclick="confirmRemoveFriend('${friendUserId}', '${escapeHtml(friend.name).replace(/'/g, "\\'")}')">
                         <i class="fas fa-user-minus"></i>
                     </button>
                 </div>
@@ -29664,8 +29668,13 @@ function closeFriendsList() {
 }
 
 function viewFriendProfile(friendId) {
-    closeFriendsList();  // Закрываем список друзей
-    openPublicProfile(friendId);  // Открываем профиль друга
+    console.log('🔵 viewFriendProfile вызвана с friendId:', friendId);
+    closeFriendsList();
+    if (friendId) {
+        openPublicProfile(friendId);
+    } else {
+        console.error('❌ friendId не передан');
+    }
 }
 
 function confirmRemoveFriend(friendId, friendName) {
@@ -29681,31 +29690,45 @@ function confirmRemoveFriend(friendId, friendName) {
 }
 
 async function removeFriend(friendId) {
+    console.log('🔵 removeFriend вызвана с friendId:', friendId);
+    
     try {
-        await fetch(`${SERVER_URL}/api/friends/remove`, {
+        const response = await fetch(`${SERVER_URL}/api/friends/remove`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId, friend_id: friendId })
         });
         
-        await loadMyFriends();
-        openFriendsList();
-        
-        if (currentPublicUserId === friendId) {
-            const container = document.getElementById('publicProfileContent');
-            if (container && container.dataset.profile) {
-                const profile = JSON.parse(container.dataset.profile);
-                renderPublicProfile(profile);
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
         }
         
-        if (tg) tg.showAlert('❌ Удалено из друзей');
+        const result = await response.json();
+        console.log('📡 Результат удаления друга:', result);
+        
+        if (result.status === 'ok') {
+            await loadMyFriends();
+            await openFriendsList(); // Обновляем список
+            
+            if (currentPublicUserId === friendId) {
+                const container = document.getElementById('publicProfileContent');
+                if (container && container.dataset.profile) {
+                    const profile = JSON.parse(container.dataset.profile);
+                    renderPublicProfile(profile);
+                }
+            }
+            
+            if (tg) tg.showAlert('❌ Удалено из друзей');
+        }
     } catch (error) {
-        if (tg) tg.showAlert('❌ Ошибка');
+        console.error('❌ Ошибка удаления из друзей:', error);
+        if (tg) tg.showAlert('❌ Ошибка при удалении из друзей');
     }
 }
 
 async function addFriend(friendId) {
+    console.log('🔵 addFriend вызвана с friendId:', friendId);
+    
     try {
         const response = await fetch(`${SERVER_URL}/api/friends/add`, {
             method: 'POST',
@@ -29713,7 +29736,12 @@ async function addFriend(friendId) {
             body: JSON.stringify({ user_id: userId, friend_id: friendId })
         });
         
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
         const result = await response.json();
+        console.log('📡 Результат добавления друга:', result);
         
         if (result.status === 'ok') {
             await loadMyFriends();
@@ -29727,19 +29755,42 @@ async function addFriend(friendId) {
                 }
             }
             
+            // Обновляем кнопку в профиле
+            const addFriendBtn = document.querySelector('.add-friend-btn');
+            if (addFriendBtn) {
+                addFriendBtn.outerHTML = '<button class="already-friend-btn" disabled><i class="fas fa-check"></i> В друзьях</button>';
+            }
+            
             if (tg) tg.showAlert('✅ Добавлено в друзья!');
         } else {
             throw new Error(result.message || 'Ошибка');
         }
     } catch (error) {
-        console.error('Ошибка добавления в друзья:', error);
+        console.error('❌ Ошибка добавления в друзья:', error);
         if (tg) tg.showAlert('❌ Ошибка при добавлении в друзья');
     }
 }
 async function loadMyFriends() {
     try {
         const response = await fetch(`${SERVER_URL}/api/friends?user_id=${userId}`);
-        myFriends = await response.json();
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('📡 Загружены друзья:', data);
+        
+        // Убеждаемся, что каждый друг имеет user_id
+        myFriends = (data || []).map(function(friend) {
+            return {
+                user_id: friend.user_id || friend.id,
+                id: friend.id || friend.user_id,
+                name: friend.name || friend.username || 'Пользователь',
+                username: friend.username || '',
+                avatar: friend.avatar || 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png'
+            };
+        });
+        
+        console.log('✅ Обработанные друзья:', myFriends);
     } catch (error) {
         console.error('Ошибка загрузки друзей:', error);
         myFriends = [];

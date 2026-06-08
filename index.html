@@ -28946,7 +28946,9 @@ function renderPublicProfile(profile) {
     const coloringBooks = profile.coloring_books || { paint_by_number: [], alcohol: [], pencil: [], custom: [] };
     let booksCount = 0;
     for (const cat in coloringBooks) {
-        booksCount += coloringBooks[cat]?.length || 0;
+        if (coloringBooks[cat]) {
+            booksCount += coloringBooks[cat].length || 0;
+        }
     }
     
     const wishlist = profile.wishlist || [];
@@ -28954,7 +28956,9 @@ function renderPublicProfile(profile) {
     
     // Проверяем, друг ли это
     const isOwnProfile = (String(profile.user_id) === String(userId));
-    const isFriend = myFriends.some(f => String(f.user_id) === String(profile.user_id) || String(f.id) === String(profile.user_id));
+    const isFriend = myFriends.some(function(f) { 
+        return String(f.user_id) === String(profile.user_id) || String(f.id) === String(profile.user_id); 
+    });
     
     // Считаем статистику
     const completedPages = profile.completed_pages || {};
@@ -28968,13 +28972,25 @@ function renderPublicProfile(profile) {
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59).getTime();
     
     for (const bookKey in completedPages) {
-        for (const page in completedPages[bookKey]) {
-            totalWorks++;
-            const date = completedPagesDates[bookKey + '|' + page] || 0;
-            if (date >= monthAgo) monthWorks++;
-            if (date >= lastMonthStart && date <= lastMonthEnd) lastMonthWorks++;
+        if (completedPages.hasOwnProperty(bookKey)) {
+            for (const page in completedPages[bookKey]) {
+                if (completedPages[bookKey].hasOwnProperty(page)) {
+                    totalWorks++;
+                    const date = completedPagesDates[bookKey + '|' + page] || 0;
+                    if (date >= monthAgo) monthWorks++;
+                    if (date >= lastMonthStart && date <= lastMonthEnd) lastMonthWorks++;
+                }
+            }
         }
     }
+    
+    const friendButtonHtml = (function() {
+        if (isOwnProfile) return '';
+        if (isFriend) {
+            return '<button class="already-friend-btn" disabled><i class="fas fa-check"></i> В друзьях</button>';
+        }
+        return '<button class="add-friend-btn" onclick="addFriend(\'' + userId + '\')"><i class="fas fa-user-plus"></i> Добавить в друзья</button>';
+    })();
     
     const html = `
         <div class="profile-header-block" style="margin: 0; padding: 15px;">
@@ -28985,9 +29001,7 @@ function renderPublicProfile(profile) {
                 <div class="name-row"><h2>${escapeHtml(userName)}</h2></div>
                 <div class="status-badge">${escapeHtml(userStatus)}</div>
                 <div id="publicUserLevel" style="margin-top: 8px;"></div>
-                ${!isOwnProfile ? (isFriend ? 
-                    `<button class="already-friend-btn" disabled><i class="fas fa-check"></i> В друзьях</button>` : 
-                    `<button class="add-friend-btn" onclick="addFriend('${userId}')"><i class="fas fa-user-plus"></i> Добавить в друзья</button>`) : ''}
+                ${friendButtonHtml}
             </div>
         </div>
         
@@ -29051,25 +29065,29 @@ function renderPublicProfile(profile) {
     // Сохраняем данные для статистики
     const booksStats = {};
     for (const bookKey in completedPages) {
-        let category = 'paint_by_number';
-        if (bookKey.startsWith('alcohol_')) category = 'alcohol';
-        else if (bookKey.startsWith('pencil_')) category = 'pencil';
-        else if (bookKey.startsWith('custom_')) category = 'custom';
-        
-        const bookName = bookKey.substring(category.length + 1);
-        if (!booksStats[bookName]) {
-            booksStats[bookName] = { works: [], cat: category };
-        }
-        
-        for (const page in completedPages[bookKey]) {
-            const date = completedPagesDates[bookKey + '|' + page] || 0;
-            const artworkUrl = artworks[bookKey]?.[page] || '';
-            booksStats[bookName].works.push({
-                page: page,
-                date: date,
-                artwork: artworkUrl,
-                bookKey: bookKey
-            });
+        if (completedPages.hasOwnProperty(bookKey)) {
+            let category = 'paint_by_number';
+            if (bookKey.startsWith('alcohol_')) category = 'alcohol';
+            else if (bookKey.startsWith('pencil_')) category = 'pencil';
+            else if (bookKey.startsWith('custom_')) category = 'custom';
+            
+            const bookName = bookKey.substring(category.length + 1);
+            if (!booksStats[bookName]) {
+                booksStats[bookName] = { works: [], cat: category };
+            }
+            
+            for (const page in completedPages[bookKey]) {
+                if (completedPages[bookKey].hasOwnProperty(page)) {
+                    const date = completedPagesDates[bookKey + '|' + page] || 0;
+                    const artworkUrl = (artworks[bookKey] && artworks[bookKey][page]) || '';
+                    booksStats[bookName].works.push({
+                        page: page,
+                        date: date,
+                        artwork: artworkUrl,
+                        bookKey: bookKey
+                    });
+                }
+            }
         }
     }
     
@@ -29082,10 +29100,12 @@ function renderPublicProfile(profile) {
     container.dataset.profile = JSON.stringify(profile);
     
     // Рендерим статистику
-    renderPublicStatsBooks();
+    if (typeof renderPublicStatsBooks === 'function') {
+        renderPublicStatsBooks();
+    }
     
     // Рендерим уровень
-    setTimeout(() => {
+    setTimeout(function() {
         const xp = profile.xp || 0;
         const levelInfo = getUserLevelInfo(xp);
         const levelEl = document.getElementById('publicUserLevel');
@@ -29101,19 +29121,19 @@ function renderPublicProfile(profile) {
         
         // Рендерим фигурки
         const figuresContainer = document.getElementById('modalFiguresGrid');
-        if (figuresContainer) {
+        if (figuresContainer && typeof renderPublicFigures === 'function') {
             renderPublicFigures(figures);
         }
         
         // Рендерим раскраски
         const booksContainer = document.getElementById('modalBooksList');
-        if (booksContainer) {
+        if (booksContainer && typeof renderPublicBooks === 'function') {
             renderPublicBooks(coloringBooks, artworks, userId);
         }
         
         // Рендерим вишлист
         const wishlistContainer = document.getElementById('modalWishlistGrid');
-        if (wishlistContainer) {
+        if (wishlistContainer && typeof renderPublicWishlist === 'function') {
             renderPublicWishlist(wishlist);
         }
     }, 100);

@@ -29582,22 +29582,34 @@ function renderFriendsListInner() {
     
     let html = '<h4 style="margin-bottom: 10px;">Мои друзья</h4>';
     myFriends.forEach(function(friend) {
-        // Убеждаемся, что у друга есть user_id
-        const friendUserId = friend.user_id || friend.id;
-        console.log('Друг:', friend.name, 'ID:', friendUserId);
+        const friendUserId = friend.user_id;
+        
+        // ✅ Формируем отображаемое имя (без дублирования)
+        let displayName = friend.name || 'Пользователь';
+        let displayUsername = '';
+        
+        // Если username есть и он не совпадает с именем
+        if (friend.username && friend.username !== displayName) {
+            displayUsername = friend.username;
+        }
+        
+        // ✅ Аватар: если есть URL — используем его, иначе дефолтный
+        const avatarUrl = friend.avatar && friend.avatar !== '' 
+            ? friend.avatar 
+            : 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png';
         
         html += `
             <div class="friend-card">
-                <img src="${friend.avatar}" class="friend-avatar" onerror="this.src='https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png'">
+                <img src="${avatarUrl}" class="friend-avatar" onerror="this.src='https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png'">
                 <div class="friend-info">
-                    <div class="friend-name">${escapeHtml(friend.name)}</div>
-                    <div class="friend-username">${escapeHtml(friend.username)}</div>
+                    <div class="friend-name">${escapeHtml(displayName)}</div>
+                    ${displayUsername ? `<div class="friend-username">${escapeHtml(displayUsername)}</div>` : ''}
                 </div>
                 <div style="display: flex; gap: 5px;">
                     <button class="friend-view-btn" onclick="viewFriendProfile('${friendUserId}')">
                         <i class="fas fa-user"></i>
                     </button>
-                    <button class="friend-remove-btn" onclick="confirmRemoveFriend('${friendUserId}', '${escapeHtml(friend.name).replace(/'/g, "\\'")}')">
+                    <button class="friend-remove-btn" onclick="confirmRemoveFriend('${friendUserId}', '${escapeHtml(displayName).replace(/'/g, "\\'")}')">
                         <i class="fas fa-user-minus"></i>
                     </button>
                 </div>
@@ -29779,14 +29791,14 @@ async function loadMyFriends() {
         const data = await response.json();
         console.log('📡 Загружены друзья:', data);
         
-        // Убеждаемся, что каждый друг имеет user_id
+        // ✅ Сохраняем данные как есть, с аватарами
         myFriends = (data || []).map(function(friend) {
             return {
-                user_id: friend.user_id || friend.id,
+                user_id: friend.user_id,
                 id: friend.id || friend.user_id,
                 name: friend.name || friend.username || 'Пользователь',
                 username: friend.username || '',
-                avatar: friend.avatar || 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png'
+                avatar: friend.avatar || ''  // ← сохраняем пустым, если нет
             };
         });
         

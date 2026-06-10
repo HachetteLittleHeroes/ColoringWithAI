@@ -6281,6 +6281,135 @@ body:not([data-theme]) .modal-content,
 .difficulty-option:hover {
     background: rgba(255, 149, 0, 0.1);
 }
+        /* Стили для магазина статусов */
+.status-common { box-shadow: 0 0 5px rgba(255,255,255,0.3); }
+.status-rare { box-shadow: 0 0 8px #6b5b95; }
+.status-epic { box-shadow: 0 0 12px #ffd700; }
+.status-legendary { box-shadow: 0 0 15px #9400d3; }
+.status-mythic { box-shadow: 0 0 20px #ff69b4; animation: mythicPulse 2s infinite; }
+
+@keyframes mythicPulse {
+    0% { box-shadow: 0 0 5px #ff69b4; }
+    50% { box-shadow: 0 0 20px #ff69b4; }
+    100% { box-shadow: 0 0 5px #ff69b4; }
+}
+
+.reward-card.owned {
+    opacity: 0.8;
+    filter: grayscale(0.2);
+}
+        /* Стили для разных статусов в профиле */
+.status-badge[data-status="🌈 Мастер радуги"] {
+    background: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+    color: white;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+    animation: rainbow 3s linear infinite;
+}
+
+.status-badge[data-status="🌙 Ночной страж"] {
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    color: #c4d0ff;
+    border: 1px solid #4a6fa5;
+    box-shadow: 0 0 10px rgba(74, 111, 165, 0.5);
+}
+
+.status-badge[data-status="✨ Ткач звёздной пыли"] {
+    background: linear-gradient(135deg, #2d1b4e, #1a0f2e);
+    color: #ffd700;
+    border: 1px solid #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    animation: starGlow 2s ease-in-out infinite;
+}
+
+.status-badge[data-status="🔥 Вечное пламя"] {
+    background: linear-gradient(135deg, #ff4500, #ff0000, #8b0000);
+    color: #ffeb99;
+    border: 1px solid #ff6600;
+    box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+}
+
+.status-badge[data-status="💎 Хрустальный мечтатель"] {
+    background: linear-gradient(135deg, #00ced1, #20b2aa, #008b8b);
+    color: #e0ffff;
+    border: 1px solid #00ffff;
+    box-shadow: 0 0 15px rgba(0, 206, 209, 0.5);
+}
+
+.status-badge[data-status="🌌 Путешественник пустоты"] {
+    background: linear-gradient(135deg, #4b0082, #2e0047, #1a0030);
+    color: #dda0dd;
+    border: 1px solid #9400d3;
+    box-shadow: 0 0 15px rgba(148, 0, 211, 0.5);
+}
+
+.status-badge[data-status="🎨 Космический художник"] {
+    background: linear-gradient(135deg, #ff69b4, #ff1493, #c71585);
+    color: #ffe4f3;
+    border: 1px solid #ff69b4;
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+    animation: mythicPulse 3s ease-in-out infinite;
+}
+
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes starGlow {
+    0% { box-shadow: 0 0 5px #ffd700; }
+    50% { box-shadow: 0 0 20px #ffd700, 0 0 5px #ffd700; }
+    100% { box-shadow: 0 0 5px #ffd700; }
+}
+
+@keyframes mythicPulse {
+    0% { box-shadow: 0 0 5px #ff69b4; }
+    50% { box-shadow: 0 0 30px #ff69b4, 0 0 10px #ff1493; }
+    100% { box-shadow: 0 0 5px #ff69b4; }
+}
+        /* Простые стили для статусов */
+.status-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: rgba(0,0,0,0.05);
+    color: var(--text-gray);
+    font-size: 13px;
+    font-weight: 600;
+}
+        /* Контейнер для кнопок в подзадании */
+.subtask-card .task-submit-btn {
+    display: inline-flex !important;
+    width: auto !important;
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+    margin-top: 8px !important;
+    margin-right: 8px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+}
+
+/* Контейнер для кнопок — в одну строку */
+.subtask-card .task-buttons-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+/* Кнопка отправки фото — основная */
+.subtask-card .task-submit-btn.send-photo-btn {
+    background: var(--accent);
+    flex: 1;
+    min-width: 120px;
+}
+
+/* Кнопка пропуска — компактная */
+.subtask-card .task-submit-btn.skip-btn {
+    background: #ff9800;
+    flex-shrink: 0;
+}
     </style>
 </head>
 <body>
@@ -6329,61 +6458,60 @@ body:not([data-theme]) .modal-content,
         <button class="upload-photo-btn" onclick="document.getElementById('customAvatarInput').click()"><i class="fas fa-camera"></i> Загрузить фото</button>
     </div>
 
-   <div class="balance-card">
+<!-- Объединённый блок скипов и бустов -->
+<div style="background: linear-gradient(135deg, rgba(255,149,0,0.25), rgba(255,149,0,0.1)); border-radius: 20px; padding: 12px 15px; margin: 10px 15px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,149,0,0.4);">
+    <div style="flex: 1; display: flex; align-items: center; gap: 8px; padding-left: 10px;">
+        <i class="fas fa-forward" style="color: var(--accent); font-size: 18px;"></i>
+        <span style="font-size: 13px; color: var(--text);">Скипы:</span>
+        <span id="skipCountDisplay" style="font-weight: 700; color: var(--accent); font-size: 16px;">0</span>
+    </div>
+    <div style="width: 1px; height: 30px; background: rgba(255,149,0,0.3);"></div>
+    <div id="boostStatusContainer" style="flex: 1; display: flex; align-items: center; gap: 8px; padding-left: 5px;">
+        <i class="fas fa-rocket" style="color: var(--text-gray); font-size: 16px;"></i>
+        <span style="font-size: 13px; color: var(--text-gray);">Нет активных бустов</span>
+    </div>
+</div>
+
+<div class="balance-card">
     <p class="balance-label">ВАШ БАЛАНС</p>
     <div class="balance-main"><span id="userBalance">0</span> <i class="fas fa-book-open gold-book"></i></div>
     <div class="balance-controls">
         <button class="balance-btn" onclick="toggleSection('rewards-section')">Потратить ашетики 🏆</button>
-        <button class="balance-btn" onclick="toggleSection('earn-section')">Заработать ашетики 💰</button>
     </div>
 </div>
 
-    <div id="rewards-section" class="rewards-section">
-        <h3>Товары за ашетики</h3>
-        <div class="rewards-grid">
-            <div class="reward-card" onclick="buyItem('bookmark')">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b1.png" class="reward-img">
-                <h4>Книжная закладка Hachette</h4>
-                <div class="reward-price"><span class="price-amount">750</span> <i class="fas fa-book-open gold-book"></i></div>
-                <button class="reward-buy-btn">Приобрести</button>
-            </div>
-            <div class="reward-card" onclick="buyItem('petites')">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b2.png" class="reward-img">
-                <h4>Petites Poupees</h4>
-                <div class="reward-price"><span class="price-amount">950</span> <i class="fas fa-book-open gold-book"></i></div>
-                <button class="reward-buy-btn">Приобрести</button>
-            </div>
-            <div class="reward-card" onclick="buyItem('tracker')">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b3.png" class="reward-img">
-                <h4>Трекер от Hachette</h4>
-                <div class="reward-price"><span class="price-amount">950</span> <i class="fas fa-book-open gold-book"></i></div>
-                <button class="reward-buy-btn">Приобрести</button>
-            </div>
-            <div class="reward-card" onclick="buyItem('alcohol')">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b4.png" class="reward-img">
-                <h4>Спиртовая раскраска</h4>
-                <div class="reward-price"><span class="price-amount">1250</span> <i class="fas fa-book-open gold-book"></i></div>
-                <button class="reward-buy-btn">Приобрести</button>
-            </div>
-            <div class="reward-card" onclick="buyItem('coloriages')">
-                <img src="https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/bonusi/b5.png" class="reward-img">
-                <h4>Hachette Coloriages (А4 том)</h4>
-                <div class="reward-price"><span class="price-amount">1500</span> <i class="fas fa-book-open gold-book"></i></div>
-                <button class="reward-buy-btn">Приобрести</button>
-            </div>
-        </div>
+<div id="rewards-section" class="rewards-section">
+    <h3>💰 Магазин</h3>
+    
+    <!-- Вкладки -->
+    <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+        <button class="shop-tab active" data-tab="statuses" onclick="switchShopTab('statuses')">
+            <i class="fas fa-crown"></i> Статусы
+        </button>
+        <button class="shop-tab" data-tab="skips" onclick="switchShopTab('skips')">
+            <i class="fas fa-forward"></i> Скипы
+        </button>
+        <button class="shop-tab" data-tab="boosts" onclick="switchShopTab('boosts')">
+            <i class="fas fa-rocket"></i> Бусты XP
+        </button>
     </div>
+    
+    <!-- Статусы -->
+    <div id="shop-statuses" class="shop-tab-content active">
+        <div class="rewards-grid" id="statusShopGrid"></div>
+    </div>
+    
+    <!-- Скипы -->
+    <div id="shop-skips" class="shop-tab-content" style="display: none;">
+        <div class="rewards-grid" id="skipShopGrid"></div>
+    </div>
+    
+    <!-- Бусты -->
+    <div id="shop-boosts" class="shop-tab-content" style="display: none;">
+        <div class="rewards-grid" id="boostShopGrid"></div>
+    </div>
+</div>
 
-    <div id="earn-section" class="rewards-section" style="display:none;">
-        <h3>Как получить ашетики</h3>
-        <div class="earn-list">
-            <div class="earn-item"><div class="earn-left"><i class="fas fa-star"></i><span>За отзыв</span></div><div class="earn-right"><span class="earn-amount">+25</span><i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 3 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+20</span><i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 5 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+30</span><i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 7 500 ₽</span></div><div class="earn-right"><span class="earn-amount">+40</span><i class="fas fa-book-open gold-book"></i></div></div>
-            <div class="earn-item"><div class="earn-left"><i class="fas fa-shopping-cart"></i><span>За покупку от 10 000 ₽</span></div><div class="earn-right"><span class="earn-amount">+50</span><i class="fas fa-book-open gold-book"></i></div></div>
-        </div>
-    </div>
  <!-- ========== ЗАДАНИЯ НА СТАТУСЫ ========== -->
 <div class="tasks-section">
     <button class="tasks-header" onclick="toggleTasks()">
@@ -6725,6 +6853,92 @@ body:not([data-theme]) .modal-content,
     font-size: 24px;
     cursor: pointer;
     color: #888;
+}
+    /* Вкладки магазина */
+.shop-tab {
+    background: none;
+    border: none;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-gray);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 8px 8px 0 0;
+}
+
+.shop-tab.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+}
+
+.shop-tab:hover {
+    color: var(--accent);
+}
+
+.shop-tab-content {
+    animation: fadeIn 0.2s ease;
+}
+
+/* Карточки товаров */
+.shop-item-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.shop-item-card.owned {
+    opacity: 0.7;
+    background: var(--bg);
+}
+
+.shop-item-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.shop-item-desc {
+    font-size: 12px;
+    color: var(--text-gray);
+    margin-bottom: 12px;
+}
+
+.shop-item-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.shop-item-btn {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.shop-item-btn:active {
+    transform: scale(0.96);
+}
+
+.shop-item-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 </style>
         
@@ -7219,12 +7433,16 @@ body:not([data-theme]) .modal-content,
 
     <script>
          let currentDifficultyFilter = 'all';
+       
         // ==========================================
         // КОНФИГУРАЦИЯ И ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
         // ==========================================
         
         const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io';
         const MARKER_PRICE = 75;
+        // Хранилище
+let userBoosts = { active: false, remainingWorks: 0 };
+let userSkips = 0;
         // ==========================================
 // СЛОЖНОСТЬ ЗАДАНИЙ (звёзды)
 // ==========================================
@@ -8093,7 +8311,238 @@ function applyAllFilters() {
         card.style.display = (showByStatus && showByCategory && showByDifficulty) ? '' : 'none';
     });
 }
+// ==========================================
+// ПРОПУСК ЗАДАНИЙ И БУСТЫ XP
+// ==========================================
 
+// Функция для добавления XP с учётом буста
+async function addXPWithBoost(amount, reason) {
+    // ✅ Буст тратится ТОЛЬКО на бекенде при одобрении админом
+    // Здесь мы НЕ трогаем userBoosts
+    
+    console.log(`📊 addXPWithBoost: отправка XP = ${amount}, reason = ${reason}`);
+    
+    try {
+        const response = await fetch(`${SERVER_URL}/api/add_xp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                amount: amount,
+                reason: reason
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'ok') {
+            if (typeof renderUserLevel === 'function') {
+                renderUserLevel();
+            }
+            console.log(`✅ XP добавлено: ${amount}`);
+            return amount;
+        } else {
+            console.error('Ошибка сервера:', result);
+            return amount;
+        }
+    } catch (error) {
+        console.error('Ошибка добавления XP:', error);
+        return amount;
+    }
+}
+// Функция пропуска задания
+async function addProgressWithoutPhoto(branchKey, levelIndex) {
+    let skips = parseInt(localStorage.getItem(`user_skips_${userId}`) || '0');
+    if (skips <= 0) {
+        alert('❌ Нет пропусков! Купите в магазине.');
+        return false;
+    }
+    
+    try {
+        const response = await fetch(`${SERVER_URL}/api/add_progress`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                branch_key: branchKey,
+                level_index: levelIndex,
+                amount: 1
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'ok') {
+            skips--;
+            localStorage.setItem(`user_skips_${userId}`, skips);
+            updateSkipCounter();
+            
+            // Добавляем XP с бустом
+            await addXPWithBoost(5, `Пропуск задания в ветке ${branchKey}`);
+            
+            alert('✅ Задание пропущено! Прогресс и XP зачислены.');
+            
+            await refreshUserProgress();
+            renderBranchTasks();
+            
+            return true;
+        } else {
+            alert('❌ Ошибка: ' + (result.message || 'Неизвестная ошибка'));
+            return false;
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('❌ Ошибка при пропуске задания');
+        return false;
+    }
+}
+
+// Функция обновления счетчика пропусков
+function updateSkipCounter() {
+    const skips = parseInt(localStorage.getItem(`user_skips_${userId}`) || '0');
+    const display = document.getElementById('skipCountDisplay');
+    if (display) {
+        display.innerText = skips;
+    }
+}
+
+// Функция отображения статуса буста
+function renderBoostStatus() {
+    const container = document.getElementById('boostStatusContainer');
+    if (!container) return;
+    
+    if (userBoosts && userBoosts.active && userBoosts.remainingWorks > 0) {
+        container.innerHTML = `
+            <div style="background: linear-gradient(135deg, rgba(255,149,0,0.2), rgba(255,149,0,0.05)); border-radius: 20px; padding: 8px 15px; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,149,0,0.3);">
+                <i class="fas fa-rocket" style="color: var(--accent);"></i>
+                <span style="color: var(--accent); font-weight: 600;">x2 буст активен!</span>
+            <span style="color: var(--text-gray);">Осталось: 0</span>
+            </div>
+        `;
+    } else {
+        container.innerHTML = '';
+    }
+}
+
+// Функция проверки возможности пропуска (для кнопки в задании)
+function canUseSkipForTask(branchKey) {
+    if (branchKey === 'shock') {
+        if (tg) tg.showAlert('⚠️ Шок контент нельзя пропускать!');
+        return false;
+    }
+    
+    let skips = parseInt(localStorage.getItem(`user_skips_${userId}`) || '0');
+    if (skips <= 0) {
+        if (tg) tg.showAlert('❌ Нет пропусков! Купите в магазине.');
+        return false;
+    }
+    
+    return confirm('Использовать пропуск для выполнения этого задания?');
+}
+         // ==========================================
+// МАГАЗИН - ПРОПУСКИ И БУСТЫ
+// ==========================================
+
+
+
+// Загрузка данных
+function loadBoostData() {
+    const saved = localStorage.getItem(`user_boosts_${userId}`);
+    if (saved) {
+        try { userBoosts = JSON.parse(saved); } catch(e) {}
+    }
+    const savedSkips = localStorage.getItem(`user_skips_${userId}`);
+    if (savedSkips) {
+        userSkips = parseInt(savedSkips) || 0;
+    }
+}
+
+// Сохранение буста
+function saveBoostData() {
+    localStorage.setItem(`user_boosts_${userId}`, JSON.stringify(userBoosts));
+}
+
+// Сохранение пропусков
+function saveSkipData() {
+    localStorage.setItem(`user_skips_${userId}`, userSkips);
+}
+
+// Обновление отображения
+function updateSkipDisplay() {
+    const display = document.getElementById('skipCountDisplay');
+    if (display) {
+        display.innerText = userSkips;
+        display.style.color = 'var(--accent)';
+    }
+}
+
+async function updateBoostDisplay() {
+    try {
+        const response = await fetch(`${SERVER_URL}/api/get_boost_status?user_id=${userId}`);
+        const boost = await response.json();
+        userBoosts = {
+            active: boost.active || false,
+            remainingWorks: boost.remaining || 0
+        };
+        localStorage.setItem(`user_boosts_${userId}`, JSON.stringify(userBoosts));
+    } catch (error) {
+        console.error('Ошибка загрузки буста:', error);
+    }
+    
+    const container = document.getElementById('boostStatusContainer');
+    if (!container) return;
+    
+    if (userBoosts.active && userBoosts.remainingWorks > 0) {
+        container.innerHTML = `
+            <i class="fas fa-rocket" style="color: var(--accent); font-size: 18px;"></i>
+            <span style="font-size: 13px; color: var(--text);">Буст x2:</span>
+            <span style="font-weight: 700; color: var(--accent); font-size: 16px;">${userBoosts.remainingWorks}</span>
+        `;
+    } else {
+        container.innerHTML = `
+            <i class="fas fa-rocket" style="color: var(--text-gray); font-size: 18px;"></i>
+            <span style="font-size: 13px; color: var(--text-gray);">Буст x2:</span>
+            <span style="font-weight: 700; color: var(--text-gray); font-size: 16px;">—</span>
+        `;
+    }
+}
+
+// Функция применения буста (уже есть, но добавим логирование)
+function applyBoost(xpAmount) {
+    if (userBoosts.active && userBoosts.remainingWorks > 0) {
+        userBoosts.remainingWorks--;
+        if (userBoosts.remainingWorks === 0) {
+            userBoosts.active = false;
+            console.log('🔥 Буст закончился!');
+        }
+        localStorage.setItem(`user_boosts_${userId}`, JSON.stringify(userBoosts));
+        
+        // Обновляем отображение буста в магазине
+        if (currentShopTab === 'boosts') {
+            renderBoostShop();
+        }
+        
+        return xpAmount * 2;
+    }
+    return xpAmount;
+}
+
+// Обновление отображения буста (добавить в профиль)
+function renderBoostStatus() {
+    const boostContainer = document.getElementById('boostStatusContainer');
+    if (!boostContainer) return;
+    
+    if (userBoosts.active && userBoosts.remainingWorks > 0) {
+        boostContainer.innerHTML = `
+            <div style="background: rgba(255,149,0,0.2); border-radius: 12px; padding: 8px 12px; margin: 5px 15px; text-align: center;">
+                <i class="fas fa-fire" style="color: var(--accent);"></i>
+                <span style="color: var(--accent); font-weight: 600;">x2 буст активен! Осталось: ${userBoosts.remainingWorks} работ</span>
+            </div>
+        `;
+    } else {
+        boostContainer.innerHTML = '';
+    }
+}
 function renderBranchTasks() {
     const container = document.getElementById('branchTasksList');
     if (!container) {
@@ -8104,25 +8553,20 @@ function renderBranchTasks() {
     container.innerHTML = '';
     
     for (const [branchKey, branch] of Object.entries(TASK_BRANCHES)) {
-        // Пропускаем сезонный пропуск
         if (branchKey === 'season_pass') continue;
-        
-        // Пропускаем Скруджа и Благодетеля (не показываем в заданиях на статусы)
         if (branchKey === 'scrooge' || branchKey === 'benefactor') continue;
         
         const isCompleted = isBranchCompleted(branchKey);
         const currentLevelIndex = getCurrentLevelIndex(branchKey);
         const levels = branch.levels;
         
-       // Получаем сложность ветки (по умолчанию 1 звезда)
-const difficulty = TASK_DIFFICULTY[branchKey] || 1;
-const starsHtml = '<span class="stars" data-difficulty="' + difficulty + '" style="display: inline-flex; align-items: center; gap: 2px; margin-left: 8px;">' + renderStars(difficulty) + '</span>';
+        const difficulty = TASK_DIFFICULTY[branchKey] || 1;
+        const starsHtml = '<span class="stars" data-difficulty="' + difficulty + '" style="display: inline-flex; align-items: center; gap: 2px; margin-left: 8px;">' + renderStars(difficulty) + '</span>';
         
         const branchCard = document.createElement('div');
         branchCard.className = `branch-task-card ${isCompleted ? 'completed' : ''}`;
         branchCard.setAttribute('data-branch-key', branchKey);
         
-        // Добавляем звёзды в заголовок
         branchCard.innerHTML = `
             <div class="branch-header">
                 <h3>${branch.name} ${starsHtml}</h3>
@@ -8146,97 +8590,153 @@ const starsHtml = '<span class="stars" data-difficulty="' + difficulty + '" styl
             const level = levels[currentLevelIndex];
             
             if (level.subtasks && level.subtasks.length > 0) {
-                if (level.subtasks.length === 1) {
-                    const subtask = level.subtasks[0];
-                    const currentProgress = getSubtaskProgress(branchKey, currentLevelIndex, 0);
+                const levelCard = document.createElement('div');
+                levelCard.className = 'level-card';
+                levelCard.setAttribute('data-level-index', currentLevelIndex);
+                
+                let totalCompleted = 0;
+                let totalRequired = 0;
+                
+                level.subtasks.forEach((subtask, idx) => {
+                    const prog = getSubtaskProgress(branchKey, currentLevelIndex, idx);
+                    totalCompleted += Math.min(prog, subtask.required);
+                    totalRequired += subtask.required;
+                });
+                
+                const totalPercent = (totalCompleted / totalRequired) * 100;
+                
+                levelCard.innerHTML = `
+                    <div class="level-header">
+                        <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
+                        <span class="level-progress">${totalCompleted}/${totalRequired}</span>
+                    </div>
+                    <div class="level-desc">${level.desc}</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${totalPercent}%"></div>
+                    </div>
+                    <div style="margin-top: 15px;"></div>
+                `;
+                
+                level.subtasks.forEach((subtask, idx) => {
+                    const currentProgress = getSubtaskProgress(branchKey, currentLevelIndex, idx);
                     const isSubtaskCompleted = currentProgress >= subtask.required;
-                    const percent = (currentProgress / subtask.required) * 100;
+                    const subtaskPercent = (currentProgress / subtask.required) * 100;
+                    const subtaskName = subtask.name;
                     
-                    const levelCard = document.createElement('div');
-                    levelCard.className = 'level-card';
-                    levelCard.innerHTML = `
-                        <div class="level-header">
-                            <span class="level-title">${level.title}</span>
-                            <span class="level-progress">${currentProgress}/${subtask.required}</span>
+                    const subtaskDiv = document.createElement('div');
+                    subtaskDiv.style.cssText = 'margin-bottom: 15px; padding: 10px; background: var(--bg); border-radius: 12px;';
+                    
+                    subtaskDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-weight: 600; font-size: 14px;">${subtask.name}</span>
+                            <span style="font-size: 12px; color: var(--accent);">${currentProgress}/${subtask.required}</span>
                         </div>
-                        <div class="level-desc">${level.desc}</div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                        <div class="progress-bar-container" style="height: 6px; margin: 0 0 8px 0;">
+                            <div class="progress-bar-fill" style="width: ${subtaskPercent}%; height: 100%;"></div>
                         </div>
-                        ${!isSubtaskCompleted ? `
-                            <button class="task-submit-btn" onclick="openSubtaskUpload('${branchKey}', ${currentLevelIndex}, 0, '${subtask.name}')">
-                                <i class="fas fa-camera"></i> Отправить фото на проверку
-                            </button>
-                        ` : `
-                            <div style="text-align: center; padding: 12px; color: var(--status-green);">
-                                <i class="fas fa-check-circle"></i> Задание выполнено!
-                            </div>
-                        `}
-                    `;
-                    branchCard.appendChild(levelCard);
-                } else {
-                    const levelCard = document.createElement('div');
-                    levelCard.className = 'level-card';
-                    
-                    let totalCompleted = 0;
-                    let totalRequired = 0;
-                    
-                    level.subtasks.forEach((subtask, idx) => {
-                        const prog = getSubtaskProgress(branchKey, currentLevelIndex, idx);
-                        totalCompleted += Math.min(prog, subtask.required);
-                        totalRequired += subtask.required;
-                    });
-                    
-                    const totalPercent = (totalCompleted / totalRequired) * 100;
-                    
-                    levelCard.innerHTML = `
-                        <div class="level-header">
-                            <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
-                            <span class="level-progress">${totalCompleted}/${totalRequired}</span>
-                        </div>
-                        <div class="level-desc">${level.desc}</div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width: ${totalPercent}%"></div>
-                        </div>
-                        <div style="margin-top: 15px;"></div>
                     `;
                     
-                    level.subtasks.forEach((subtask, idx) => {
-                        const currentProgress = getSubtaskProgress(branchKey, currentLevelIndex, idx);
-                        const isSubtaskCompleted = currentProgress >= subtask.required;
-                        const subtaskPercent = (currentProgress / subtask.required) * 100;
+                    if (!isSubtaskCompleted) {
+                        const buttonsRow = document.createElement('div');
+                        buttonsRow.style.cssText = 'display: flex; gap: 6px; align-items: stretch; margin-top: 8px; width: 100%;';
                         
-                        const subtaskDiv = document.createElement('div');
-                        subtaskDiv.style.cssText = 'margin-bottom: 15px; padding: 10px; background: var(--bg); border-radius: 12px;';
+                        const uploadBtn = document.createElement('button');
+                        uploadBtn.className = 'task-submit-btn';
+                        uploadBtn.style.cssText = 'padding: 10px 8px; font-size: 13px; flex: 7; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 4px;';
+                        uploadBtn.innerHTML = '<i class="fas fa-camera"></i> Отправить фото';
+                        uploadBtn.onclick = function() {
+                            openSubtaskUpload(branchKey, currentLevelIndex, idx, subtaskName);
+                        };
+                        buttonsRow.appendChild(uploadBtn);
                         
-                        subtaskDiv.innerHTML = `
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <span style="font-weight: 600; font-size: 14px;">${subtask.name}</span>
-                                <span style="font-size: 12px; color: var(--accent);">${currentProgress}/${subtask.required}</span>
+                        if (branchKey !== 'shock') {
+                            const skipBtn = document.createElement('button');
+                            skipBtn.className = 'task-submit-btn';
+                            skipBtn.style.cssText = 'background: #ff9800; padding: 10px 4px; font-size: 12px; flex: 3; min-width: 0; white-space: nowrap; display: flex; align-items: center; justify-content: center;';
+                            skipBtn.innerHTML = '<i class="fas fa-forward"></i> Скип';
+                            skipBtn.onclick = (function(b, l, s, cp, req, sn) {
+                                return async function() {
+                                    await useSkipForSubtask(b, l, s, cp, req, sn);
+                                };
+                            })(branchKey, currentLevelIndex, idx, currentProgress, subtask.required, subtaskName);
+                            buttonsRow.appendChild(skipBtn);
+                        }
+                        
+                        subtaskDiv.appendChild(buttonsRow);
+                    } else {
+                        subtaskDiv.innerHTML += `
+                            <div style="text-align: center; color: var(--status-green); font-size: 12px; margin-top: 5px;">
+                                <i class="fas fa-check-circle"></i> Выполнено!
                             </div>
-                            <div class="progress-bar-container" style="height: 6px; margin: 0 0 8px 0;">
-                                <div class="progress-bar-fill" style="width: ${subtaskPercent}%; height: 100%;"></div>
-                            </div>
-                            ${!isSubtaskCompleted ? `
-                                <button class="task-submit-btn" style="padding: 8px; font-size: 12px; margin-top: 5px;" onclick="openSubtaskUpload('${branchKey}', ${currentLevelIndex}, ${idx}, '${subtask.name}')">
-                                    <i class="fas fa-camera"></i> Отправить фото: ${subtask.name}
-                                </button>
-                            ` : `
-                                <div style="text-align: center; color: var(--status-green); font-size: 12px; margin-top: 5px;">
-                                    <i class="fas fa-check-circle"></i> Выполнено!
-                                </div>
-                            `}
                         `;
-                        levelCard.appendChild(subtaskDiv);
-                    });
+                    }
                     
-                    branchCard.appendChild(levelCard);
+                    levelCard.appendChild(subtaskDiv);
+                });
+                
+                branchCard.appendChild(levelCard);
+            } else if (level.subtasks && level.subtasks.length === 1) {
+                const subtask = level.subtasks[0];
+                const currentProgress = getSubtaskProgress(branchKey, currentLevelIndex, 0);
+                const isSubtaskCompleted = currentProgress >= subtask.required;
+                const percent = (currentProgress / subtask.required) * 100;
+                
+                const levelCard = document.createElement('div');
+                levelCard.className = 'level-card';
+                levelCard.setAttribute('data-level-index', currentLevelIndex);
+                levelCard.innerHTML = `
+                    <div class="level-header">
+                        <span class="level-title">${level.title}</span>
+                        <span class="level-progress">${currentProgress}/${subtask.required}</span>
+                    </div>
+                    <div class="level-desc">${level.desc}</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                    </div>
+                `;
+                
+                if (!isSubtaskCompleted) {
+                    const buttonsRow = document.createElement('div');
+                    buttonsRow.style.cssText = 'display: flex; gap: 6px; align-items: stretch; margin-top: 10px; width: 100%;';
+                    
+                    const uploadBtn = document.createElement('button');
+                    uploadBtn.className = 'task-submit-btn';
+                    uploadBtn.style.cssText = 'padding: 10px 8px; font-size: 13px; flex: 7; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 4px;';
+                    uploadBtn.innerHTML = '<i class="fas fa-camera"></i> Отправить фото';
+                    uploadBtn.onclick = function() {
+                        openSubtaskUpload(branchKey, currentLevelIndex, 0, subtask.name);
+                    };
+                    buttonsRow.appendChild(uploadBtn);
+                    
+                    if (branchKey !== 'shock') {
+                        const skipBtn = document.createElement('button');
+                        skipBtn.className = 'task-submit-btn';
+                        skipBtn.style.cssText = 'background: #ff9800; padding: 10px 4px; font-size: 12px; flex: 3; min-width: 0; white-space: nowrap; display: flex; align-items: center; justify-content: center;';
+                        skipBtn.innerHTML = '<i class="fas fa-forward"></i> Скип';
+                        skipBtn.onclick = (function(b, l, s, cp, req, sn) {
+                            return async function() {
+                                await useSkipForSubtask(b, l, s, cp, req, sn);
+                            };
+                        })(branchKey, currentLevelIndex, 0, currentProgress, subtask.required, subtask.name);
+                        buttonsRow.appendChild(skipBtn);
+                    }
+                    
+                    levelCard.appendChild(buttonsRow);
+                } else {
+                    levelCard.innerHTML += `
+                        <div style="text-align: center; padding: 12px; color: var(--status-green); margin-top: 10px;">
+                            <i class="fas fa-check-circle"></i> Задание выполнено!
+                        </div>
+                    `;
                 }
+                
+                branchCard.appendChild(levelCard);
             } else {
                 const currentProgress = getLevelProgress(branchKey, currentLevelIndex);
                 const percent = (currentProgress / level.maxProgress) * 100;
                 const levelCard = document.createElement('div');
                 levelCard.className = 'level-card';
+                levelCard.setAttribute('data-level-index', currentLevelIndex);
                 levelCard.innerHTML = `
                     <div class="level-header">
                         <span class="level-title">Уровень ${currentLevelIndex + 1}: ${level.title}</span>
@@ -8246,10 +8746,43 @@ const starsHtml = '<span class="stars" data-difficulty="' + difficulty + '" styl
                     <div class="progress-bar-container">
                         <div class="progress-bar-fill" style="width: ${percent}%"></div>
                     </div>
-                    <button class="task-submit-btn" onclick="openTaskUpload('${branchKey}', ${currentLevelIndex})">
-                        <i class="fas fa-camera"></i> Отправить фото на проверку
-                    </button>
                 `;
+                
+                const buttonsRow = document.createElement('div');
+                buttonsRow.style.cssText = 'display: flex; gap: 6px; align-items: stretch; margin-top: 10px; width: 100%;';
+                
+                const uploadBtn = document.createElement('button');
+                uploadBtn.className = 'task-submit-btn';
+                uploadBtn.style.cssText = 'padding: 10px 8px; font-size: 13px; flex: 7; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 4px;';
+                uploadBtn.innerHTML = '<i class="fas fa-camera"></i> Отправить фото';
+                uploadBtn.onclick = function() {
+                    openTaskUpload(branchKey, currentLevelIndex);
+                };
+                buttonsRow.appendChild(uploadBtn);
+                
+                if (branchKey !== 'shock' && currentProgress < level.maxProgress) {
+                    const skipBtn = document.createElement('button');
+                    skipBtn.className = 'task-submit-btn';
+                    skipBtn.style.cssText = 'background: #ff9800; padding: 10px 4px; font-size: 12px; flex: 3; min-width: 0; white-space: nowrap; display: flex; align-items: center; justify-content: center;';
+                    skipBtn.innerHTML = '<i class="fas fa-forward"></i> Скип';
+                    skipBtn.onclick = async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        let skips = parseInt(localStorage.getItem(`user_skips_${userId}`) || '0');
+                        if (skips <= 0) {
+                            alert('❌ Нет скипов! Купите в магазине.');
+                            return;
+                        }
+                        
+                        if (confirm(`Использовать скип для этого задания? Осталось скипов: ${skips}`)) {
+                            await addProgressWithoutPhoto(branchKey, currentLevelIndex);
+                        }
+                    };
+                    buttonsRow.appendChild(skipBtn);
+                }
+                
+                levelCard.appendChild(buttonsRow);
                 branchCard.appendChild(levelCard);
             }
         }
@@ -8260,6 +8793,75 @@ const starsHtml = '<span class="stars" data-difficulty="' + difficulty + '" styl
     renderStatusFilters();
     applyAllFilters();
     console.log('✅ Задания отрисованы');
+}
+      async function useSkipForSubtask(branchKey, levelIndex, subtaskIndex, currentProgress, required, subtaskName) {
+    // Проверка: Шок контент нельзя пропускать
+    if (branchKey === 'shock') {
+        alert('⚠️ Задания ветки "Шок контент" нельзя пропускать!');
+        return false;
+    }
+    
+    // Проверка наличия скипов
+    let skips = parseInt(localStorage.getItem(`user_skips_${userId}`) || '0');
+    if (skips <= 0) {
+        alert('❌ Нет скипов! Купите в магазине.');
+        return false;
+    }
+    
+    // Проверка что подзадание ещё не выполнено
+    if (currentProgress >= required) {
+        alert('✅ Это подзадание уже выполнено!');
+        return false;
+    }
+    
+    if (!confirm(`Использовать скип для подзадания "${subtaskName}"? (1 скип = +1 очко). Осталось скипов: ${skips}`)) {
+        return false;
+    }
+    
+    try {
+        const response = await fetch(`${SERVER_URL}/api/add_progress`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                branch_key: branchKey,
+                level_index: levelIndex,
+                subtask_index: subtaskIndex,
+                amount: 1
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'ok') {
+            // Списываем скип
+            skips--;
+            localStorage.setItem(`user_skips_${userId}`, skips);
+            if (typeof updateSkipDisplay === 'function') updateSkipDisplay();
+            
+            // Добавляем XP за скип (2 XP, с бустом 4 XP)
+            if (typeof addXPWithBoost === 'function') {
+                await addXPWithBoost(2, `Скип подзадания "${subtaskName}" в ветке ${branchKey}`);
+            }
+            
+            alert(`✅ Подзадание пропущено! +1 очко. Осталось скипов: ${skips}`);
+            
+            // Обновляем прогресс
+            if (typeof refreshUserProgress === 'function') {
+                await refreshUserProgress();
+            }
+            renderBranchTasks();
+            
+            return true;
+        } else {
+            alert('❌ Ошибка: ' + (result.message || 'Неизвестная ошибка'));
+            return false;
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('❌ Ошибка при пропуске задания');
+        return false;
+    }
 }
         // ==========================================
         // ОБНОВЛЕНИЕ ПРОГРЕССА
@@ -8979,7 +9581,7 @@ function approveNadyaTask() {
         // ПРОФИЛЬ И UI
         // ==========================================
         
-       function updateUI() {
+     function updateUI() {
     const nameEl = document.getElementById('displayUsername');
     const avatarEl = document.getElementById('user-avatar');
     const balanceEl = document.getElementById('userBalance');
@@ -8988,7 +9590,11 @@ function approveNadyaTask() {
     if (nameEl) nameEl.innerText = user.name;
     if (avatarEl) avatarEl.src = user.avatar;
     if (balanceEl) balanceEl.innerText = user.balance;
-    if (statusBadge) statusBadge.innerText = user.status || 'Без статуса';
+    if (statusBadge) {
+        statusBadge.innerText = user.status || 'Без статуса';
+        // ✅ Добавляем data-status для применения стилей
+        statusBadge.setAttribute('data-status', user.status || 'Без статуса');
+    }
     
     renderUserLevel();
     
@@ -9179,7 +9785,6 @@ async function saveAvatarToServer(avatarUrl) {
         
        function openStatusInfo() {
     console.log('openStatusInfo called');
-    console.log('user.unlockedStatuses:', user.unlockedStatuses);
     
     const list = document.getElementById('availableStatusesList');
     if (!list) {
@@ -9189,7 +9794,15 @@ async function saveAvatarToServer(avatarUrl) {
     
     list.innerHTML = '';
     
-    const allStatuses = ['Без статуса', ...Object.values(BRANCH_REWARDS), 'Феечка'];
+    // Собираем все статусы из BRANCH_REWARDS
+    const branchStatuses = Object.values(BRANCH_REWARDS);
+    
+    // Добавляем статусы из магазина
+    const shopStatuses = STATUS_SHOP.map(s => s.name);
+    
+    // Объединяем все статусы
+    const allStatuses = ['Без статуса', ...branchStatuses, 'Феечка', ...shopStatuses];
+    
     console.log('allStatuses:', allStatuses);
     
     allStatuses.forEach(status => {
@@ -9212,14 +9825,21 @@ async function saveAvatarToServer(avatarUrl) {
             } else {
                 const btn = document.createElement('button');
                 btn.innerText = 'Выбрать';
-                btn.style.cssText = `background:var(--accent); color:white; border:none; padding:6px 16px; border-radius:20px; font-size:13px; font-weight:500; cursor:pointer; transition:all 0.2s; white-space:nowrap;`;
+                btn.style.cssText = `background:var(--accent); color:white; border:none; padding:6px 16px; border-radius:20px; font-size:13px; font-weight:500; cursor:pointer;`;
                 btn.onclick = (function(s) {
                     return function() { selectStatus(s); };
                 })(status);
                 rightSpan.appendChild(btn);
             }
         } else {
-            rightSpan.innerHTML = `<span style="color:var(--text-gray); font-size:12px; white-space:nowrap;"><i class="fas fa-lock"></i> Выполните все уровни ветки</span>`;
+            // Проверяем, статус из магазина или из веток
+            const isShopStatus = shopStatuses.includes(status);
+            if (isShopStatus) {
+                const shopStatus = STATUS_SHOP.find(s => s.name === status);
+                rightSpan.innerHTML = `<span style="color:var(--text-gray); font-size:12px;"><i class="fas fa-shopping-cart"></i> ${shopStatus.price} 🪙</span>`;
+            } else {
+                rightSpan.innerHTML = `<span style="color:var(--text-gray); font-size:12px;"><i class="fas fa-lock"></i> Выполните все уровни ветки</span>`;
+            }
         }
         
         div.appendChild(leftSpan);
@@ -9230,11 +9850,10 @@ async function saveAvatarToServer(avatarUrl) {
     const modal = document.getElementById('statusSelectModal');
     if (modal) {
         modal.style.display = 'flex';
-        console.log('Status modal opened');
     }
 }
         
-        function selectStatus(statusName) {
+       function selectStatus(statusName) {
     console.log('selectStatus called with:', statusName);
     
     if (!user.unlockedStatuses.includes(statusName)) {
@@ -9260,6 +9879,19 @@ async function saveAvatarToServer(avatarUrl) {
     if (modal) modal.style.display = 'none';
     
     updateUI();
+    
+    // ✅ Дополнительно обновляем стиль статус-бейджа
+    const statusBadge = document.getElementById('currentStatus');
+    if (statusBadge) {
+        statusBadge.setAttribute('data-status', statusName);
+        
+        // Находим статус в магазине для применения градиента
+        const shopStatus = STATUS_SHOP.find(s => s.name === statusName);
+        if (shopStatus && shopStatus.gradient) {
+            statusBadge.style.background = shopStatus.gradient;
+            statusBadge.style.border = 'none';
+        }
+    }
     
     if (tg) tg.showAlert(`✅ Статус изменен на "${statusName}"`);
 }
@@ -14467,13 +15099,14 @@ function renderCommunityEvent() {
     const userPoints = data.user_points || 0;
     const userLeague = data.user_league;
     const isDonater = data.is_donater || false;
-    const targetPoints = data.target_points || 2500;
+    const targetPoints = data.target_points || 2000;
     const tasks = data.tasks || [];
     const tasksProgress = data.tasks_progress || {};
     const rewards = data.rewards || {};
     
     // Данные о раундах
     const currentRound = data.current_round || 1;
+    const roundKey = String(currentRound);  // ✅ ПРИВОДИМ К СТРОКЕ
     const currentRoundName = data.current_round_name || "🏁 Стартовый раунд";
     const roundPoints = data.round_points || 0;
     const pointsToNextRound = data.points_to_next_round || 500;
@@ -14516,7 +15149,8 @@ function renderCommunityEvent() {
     
     currentRoundTasks.forEach((task, idx) => {
         const taskPoints = task.points || 50;
-        const currentTaskPoints = (tasksProgress[currentRound] && tasksProgress[currentRound][idx]) || 0;
+        // ✅ ИСПОЛЬЗУЕМ roundKey (строка) вместо currentRound (число)
+        const currentTaskPoints = (tasksProgress[roundKey] && tasksProgress[roundKey][idx]) || 0;
         const isTaskDone = currentTaskPoints >= taskPoints;
         const taskPercent = Math.min(100, Math.round((currentTaskPoints / taskPoints) * 100));
         
@@ -14573,35 +15207,34 @@ function renderCommunityEvent() {
         </div>
     `;
     
- // ========== БЛОК: АЛМАЗНАЯ ЛИГА (ГАРМОНИЧНЫЙ) ==========
-let platinumBlockHtml = `
-    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 12px 15px; margin-bottom: 15px; text-align: center;">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 5px;">
-            <span style="font-size: 20px;">💎</span>
-            <span style="font-weight: 700; font-size: 15px; color: var(--accent);">Алмазная лига</span>
-        </div>
-        <div style="font-size: 12px; color: var(--text-gray); margin: 5px 0;">🎁 Награда: Набор маркеров InfiArt 288 шт.</div>
-`;
-
-if (!isDonater) {
-    platinumBlockHtml += `
-        <div style="font-size: 11px; color: var(--text-gray); margin-top: 6px;">✨ Чтобы попасть в Алмазную лигу, необходимо стать спонсором проекта</div>
-        <button onclick="openSupportDialog()" style="background: var(--accent); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 12px; margin-top: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-            <i class="fas fa-heart"></i> Поддержать
-        </button>
+    // ========== БЛОК: АЛМАЗНАЯ ЛИГА ==========
+    let platinumBlockHtml = `
+        <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 12px 15px; margin-bottom: 15px; text-align: center;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 5px;">
+                <span style="font-size: 20px;">💎</span>
+                <span style="font-weight: 700; font-size: 15px; color: var(--accent);">Алмазная лига</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-gray); margin: 5px 0;">🎁 Награда: Набор маркеров InfiArt 288 шт.</div>
     `;
-} else {
-    platinumBlockHtml += `
-        <div style="font-size: 11px; color: var(--status-green); margin-top: 6px;">✅ Спасибо за поддержку! Алмазная лига доступна</div>
-    `;
-}
 
-platinumBlockHtml += `</div>`;
+    if (!isDonater) {
+        platinumBlockHtml += `
+            <div style="font-size: 11px; color: var(--text-gray); margin-top: 6px;">✨ Чтобы попасть в Алмазную лигу, необходимо стать спонсором проекта</div>
+            <button onclick="openSupportDialog()" style="background: var(--accent); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 12px; margin-top: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fas fa-heart"></i> Поддержать
+            </button>
+        `;
+    } else {
+        platinumBlockHtml += `
+            <div style="font-size: 11px; color: var(--status-green); margin-top: 6px;">✅ Спасибо за поддержку! Алмазная лига доступна</div>
+        `;
+    }
+
+    platinumBlockHtml += `</div>`;
     
-    // Добавляем блок с алмазной лигой
     html += platinumBlockHtml;
     
-    // Кнопки лиг (Алмазная показывается всем, но счётчик только для донатеров)
+    // Кнопки лиг
     html += `
         <div style="display: flex; gap: 10px; margin-bottom: 10px; overflow-x: auto;">
             <button class="filter-btn ${userLeague === 'bronze' ? 'active' : ''}" onclick="showLeagueLeaderboard('bronze')">
@@ -14751,22 +15384,15 @@ async function submitCommunityTaskPhoto() {
         return;
     }
     
-    // Логируем размеры оригиналов
-    tempPhotos.forEach((file, i) => {
-        console.log(`📸 Оригинал ${i + 1}: ${Math.round(file.size / 1024)}KB, тип: ${file.type}`);
-    });
-    
     if (isUploading) return;
     isUploading = true;
     
-    // Показываем индикатор загрузки
     if (tg && tg.MainButton) {
         tg.MainButton.setText("⏳ ОТПРАВКА ФОТО...").show();
         tg.MainButton.showProgress();
     }
     
     try {
-        // ✅ СЖИМАЕМ ФОТО ПЕРЕД ОТПРАВКОЙ
         const compressedPhotos = await compressImages(tempPhotos, 1200, 0.7);
         
         const formData = new FormData();
@@ -14777,12 +15403,10 @@ async function submitCommunityTaskPhoto() {
             formData.append('photos', compressedPhotos[i]);
         }
         
-        // ✅ УВЕЛИЧЕННЫЙ ТАЙМАУТ (60 секунд)
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000);
         
         console.log('📤 Отправка запроса на /api/check_community_task');
-        const startTime = Date.now();
         
         const response = await fetch(`${SERVER_URL}/api/check_community_task`, {
             method: 'POST',
@@ -14791,9 +15415,8 @@ async function submitCommunityTaskPhoto() {
         });
         
         clearTimeout(timeoutId);
-        const endTime = Date.now();
         
-        console.log(`📥 Статус ответа: ${response.status} (${endTime - startTime}ms)`);
+        console.log(`📥 Статус ответа: ${response.status}`);
         
         if (!response.ok) {
             throw new Error(`Ошибка сервера: ${response.status}`);
@@ -14803,6 +15426,8 @@ async function submitCommunityTaskPhoto() {
         console.log('📥 Результат:', result);
         
         if (result && result.status === 'ok') {
+            // ✅ XP начисляется ТОЛЬКО при одобрении админом, не здесь!
+            
             if (tg) {
                 tg.showAlert('✅ Фото отправлено на проверку!');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -14814,7 +15439,7 @@ async function submitCommunityTaskPhoto() {
     } catch (error) {
         console.error('❌ Ошибка:', error);
         if (error.name === 'AbortError') {
-            if (tg) tg.showAlert('❌ Превышено время ожидания. Файлы слишком большие, попробуйте отправить меньше фото или скриншоты.');
+            if (tg) tg.showAlert('❌ Превышено время ожидания. Попробуйте отправить меньше фото.');
         } else {
             if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
         }
@@ -14939,6 +15564,332 @@ function renderUserLevel() {
     
     return xp;
 }
+       // ==========================================
+// МАГАЗИН
+// ==========================================
+
+let currentShopTab = 'statuses';
+
+const STATUS_SHOP = [
+    { id: 'offline', name: 'Оффлайн', price: 150 },
+    { id: 'on_relax', name: 'На релаксе', price: 200 },
+    { id: 'other_dimension', name: 'Из другого измерения', price: 200 },
+    { id: 'madman', name: 'Безумец', price: 250 },
+    { id: 'spender', name: 'Транжира', price: 250 },
+    { id: 'best_of_paris', name: 'Как в лучших томах Парижа', price: 300 },
+    { id: 'in_flow', name: 'В потоке', price: 300 },
+    { id: 'understood_genius', name: 'Недопонятый гений', price: 300 }
+];
+
+const SKIP_SHOP = [
+    { id: 'skip_1', name: 'Скип на 1 очко', desc: 'Пропустить одно задание (кроме Шок контент)', price: 50, amount: 1 },
+    { id: 'skip_3', name: 'Скип на 3 очка', desc: 'Пропустить три задания (кроме Шок контент)', price: 125, amount: 3 },
+    { id: 'skip_5', name: 'Скип на 5 очков', desc: 'Пропустить пять заданий (кроме Шок контент)', price: 200, amount: 5 }
+];
+
+const BOOST_SHOP = [
+    { id: 'boost_5', name: 'x2 буст (5 работ)', desc: 'Удвоение опыта за 5 работ', price: 100, duration: 5 },
+    { id: 'boost_10', name: 'x2 буст (10 работ)', desc: 'Удвоение опыта за 10 работ', price: 175, duration: 10 },
+    { id: 'boost_15', name: 'x2 буст (15 работ)', desc: 'Удвоение опыта за 15 работ', price: 250, duration: 15 },
+    { id: 'boost_30', name: 'x2 буст (30 работ)', desc: 'Удвоение опыта за 30 работ', price: 400, duration: 30 }
+];
+
+function switchShopTab(tab) {
+    currentShopTab = tab;
+    document.querySelectorAll('.shop-tab').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.tab === tab) btn.classList.add('active');
+    });
+    document.getElementById('shop-statuses').style.display = tab === 'statuses' ? 'block' : 'none';
+    document.getElementById('shop-skips').style.display = tab === 'skips' ? 'block' : 'none';
+    document.getElementById('shop-boosts').style.display = tab === 'boosts' ? 'block' : 'none';
+    if (tab === 'statuses') renderStatusShop();
+    if (tab === 'skips') renderSkipShop();
+    if (tab === 'boosts') renderBoostShop();
+}
+
+function renderStatusShop() {
+    const container = document.getElementById('statusShopGrid');
+    if (!container) return;
+    container.innerHTML = '';
+    STATUS_SHOP.forEach(s => {
+        const owned = user.unlockedStatuses && user.unlockedStatuses.includes(s.name);
+        const canBuy = !owned && user.balance >= s.price;
+        container.innerHTML += `
+            <div class="shop-item-card ${owned ? 'owned' : ''}">
+                <div class="shop-item-title">${s.name}</div>
+                <div class="shop-item-price">${s.price} <i class="fas fa-book-open gold-book"></i></div>
+                ${owned ? '<div style="color:green;font-size:12px;">✅ Уже открыт</div>' : 
+                    `<button class="shop-item-btn" onclick="buyStatus('${s.id}', '${s.name}', ${s.price})" ${!canBuy ? 'disabled' : ''}>${canBuy ? '🔓 Открыть' : '❌ Недостаточно'}</button>`}
+            </div>
+        `;
+    });
+}
+
+function renderSkipShop() {
+    const container = document.getElementById('skipShopGrid');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    SKIP_SHOP.forEach(s => {
+        const canBuy = user.balance >= s.price;
+        container.innerHTML += `
+            <div class="shop-item-card">
+                <div class="shop-item-title">🎫 ${s.name}</div>
+                <div class="shop-item-desc">${s.desc}</div>
+                <div class="shop-item-price">${s.price} <i class="fas fa-book-open gold-book"></i></div>
+                <button class="shop-item-btn" onclick="buySkip(${s.amount}, ${s.price})" ${!canBuy ? 'disabled' : ''}>${canBuy ? '🎫 Купить скип' : '❌ Недостаточно'}</button>
+            </div>
+        `;
+    });
+}
+
+function renderBoostShop() {
+    const container = document.getElementById('boostShopGrid');
+    if (!container) return;
+    container.innerHTML = '';
+    if (userBoosts.active && userBoosts.remainingWorks > 0) {
+        container.innerHTML += `
+            <div class="shop-item-card" style="border-color:var(--accent);background:rgba(255,149,0,0.1);">
+                <div class="shop-item-title">🔥 Активный буст x2</div>
+                <div class="shop-item-desc">Осталось работ: ${userBoosts.remainingWorks}</div>
+            </div>
+        `;
+    }
+    BOOST_SHOP.forEach(b => {
+        const canBuy = user.balance >= b.price;
+        container.innerHTML += `
+            <div class="shop-item-card">
+                <div class="shop-item-title">${b.name}</div>
+                <div class="shop-item-desc">${b.desc}</div>
+                <div class="shop-item-price">${b.price} <i class="fas fa-book-open gold-book"></i></div>
+                <button class="shop-item-btn" onclick="buyBoost(${b.duration}, ${b.price})" ${!canBuy ? 'disabled' : ''}>${canBuy ? '⚡ Активировать' : '❌ Недостаточно'}</button>
+            </div>
+        `;
+    });
+}
+
+async function buyStatus(id, name, price) {
+    if (user.balance < price) return tg.showAlert(`❌ Нужно ${price} ашетиков`);
+    if (!confirm(`Купить статус "${name}" за ${price} ашетиков?`)) return;
+    try {
+        let r = await fetch(`${SERVER_URL}/api/add_balance`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: userId, amount: -price, reason: `Покупка статуса "${name}"` }) });
+        let res = await r.json();
+        if (res.status === 'ok') {
+            await fetch(`${SERVER_URL}/api/sync_status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: userId, status: name, action: 'unlock' }) });
+            user.balance = res.new_balance;
+            if (!user.unlockedStatuses) user.unlockedStatuses = [];
+            if (!user.unlockedStatuses.includes(name)) user.unlockedStatuses.push(name);
+            saveUserData(); updateUI(); renderStatusShop();
+            tg.showAlert(`✅ Статус "${name}" приобретён!`);
+        }
+    } catch(e) { tg.showAlert('❌ Ошибка'); }
+}
+
+// Покупка пропуска
+async function buySkip(amount, price) {
+    if (user.balance < price) {
+        alert(`❌ Недостаточно ашетиков! Нужно ${price}`);
+        return;
+    }
+    if (!confirm(`Купить пропуск на ${amount} очк(а) за ${price} ашетиков?`)) return;
+    
+    try {
+        let r = await fetch(`${SERVER_URL}/api/add_balance`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ user_id: userId, amount: -price, reason: `Покупка пропуска на ${amount} очков` }) 
+        });
+        let res = await r.json();
+        if (res.status === 'ok') {
+            userSkips += amount;
+            saveSkipData();
+            updateSkipDisplay();
+            user.balance = res.new_balance;
+            saveUserData(); 
+            updateUI();
+            alert(`✅ Куплено пропусков: ${amount}! Всего: ${userSkips}`);
+        } else {
+            alert('❌ Ошибка при покупке');
+        }
+    } catch(e) { 
+        console.error(e);
+        alert('❌ Ошибка при покупке');
+    }
+}
+
+// Покупка буста
+async function buyBoost(duration, price) {
+    if (user.balance < price) {
+        alert(`❌ Недостаточно ашетиков! Нужно ${price}`);
+        return;
+    }
+    if (!confirm(`Активировать x2 буст на ${duration} работ за ${price} ашетиков?`)) return;
+    
+    try {
+        let r = await fetch(`${SERVER_URL}/api/buy_boost`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ user_id: userId, duration: duration, price: price }) 
+        });
+        let res = await r.json();
+        if (res.status === 'ok') {
+            user.balance = res.new_balance;
+            userBoosts = res.boost;
+            saveUserData();
+            updateUI();
+            if (typeof renderBoostShop === 'function') renderBoostShop();
+            if (typeof updateBoostDisplay === 'function') updateBoostDisplay();
+            alert(`✅ x2 буст активирован на ${duration} работ!`);
+        } else {
+            alert('❌ Ошибка: ' + (res.message || 'Неизвестная ошибка'));
+        }
+    } catch(e) { 
+        console.error(e);
+        alert('❌ Ошибка при покупке');
+    }
+}
+        async function loadBoostStatus() {
+    try {
+        const response = await fetch(`${SERVER_URL}/api/get_boost_status?user_id=${userId}`);
+        const boost = await response.json();
+        userBoosts = boost;
+        if (typeof updateBoostDisplay === 'function') updateBoostDisplay();
+    } catch (error) {
+        console.error('Ошибка загрузки буста:', error);
+    }
+}
+        async function useSkipForTask(branchKey, levelIndex, subtaskIndex, currentProgress, required) {
+    // Проверка: Шок контент нельзя пропускать
+    if (branchKey === 'shock') {
+        alert('⚠️ Задания ветки "Шок контент" нельзя пропускать!');
+        return false;
+    }
+    
+    // Проверка наличия пропусков
+    if (userSkips <= 0) {
+        alert('❌ Нет пропусков! Купите в магазине.');
+        return false;
+    }
+    
+    // Проверка что задание ещё не выполнено
+    if (currentProgress >= required) {
+        alert('✅ Это задание уже выполнено!');
+        return false;
+    }
+    
+    if (!confirm(`Использовать пропуск? (1 пропуск = +1 очко). Осталось пропусков: ${userSkips}`)) {
+        return false;
+    }
+    
+    try {
+        // Отправляем запрос на добавление прогресса
+        const response = await fetch(`${SERVER_URL}/api/add_progress`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                branch_key: branchKey,
+                level_index: levelIndex,
+                subtask_index: subtaskIndex,
+                amount: 1
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'ok') {
+            // Списываем пропуск
+            userSkips--;
+            saveSkipData();
+            updateSkipDisplay();
+            
+            alert(`✅ Задание пропущено! +1 очко. Осталось пропусков: ${userSkips}`);
+            
+            // Обновляем прогресс
+            await refreshUserProgress();
+            renderBranchTasks();
+            
+            return true;
+        } else {
+            alert('❌ Ошибка: ' + (result.message || 'Неизвестная ошибка'));
+            return false;
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('❌ Ошибка при пропуске задания');
+        return false;
+    }
+}
+// Функция добавления кнопки пропуска в карточку задания
+function addSkipButtonToTask(taskCard, branchKey, levelIndex) {
+    // Не добавляем для Шок контент
+    if (branchKey === 'shock') return;
+    
+    // Проверяем, есть ли уже кнопка
+    if (taskCard.querySelector('.skip-task-btn')) return;
+    
+    const levelCard = taskCard.querySelector('.level-card');
+    if (!levelCard) return;
+    
+    const existingBtn = levelCard.querySelector('.task-submit-btn');
+    if (!existingBtn) return;
+    
+    const skipBtn = document.createElement('button');
+    skipBtn.className = 'task-submit-btn skip-task-btn';
+    skipBtn.style.cssText = 'background: #ff9800; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;';
+    skipBtn.innerHTML = '<i class="fas fa-skip-forward"></i> Пропустить (1 очко)';
+    
+    skipBtn.onclick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        let skips = parseInt(localStorage.getItem(`user_skips_${userId}`) || '0');
+        if (skips <= 0) {
+            alert('❌ Нет пропусков! Купите в магазине.');
+            return;
+        }
+        
+        if (confirm(`Использовать пропуск для этого задания? Осталось пропусков: ${skips}`)) {
+            await addProgressWithoutPhoto(branchKey, levelIndex);
+        }
+    };
+    
+    existingBtn.parentNode.insertBefore(skipBtn, existingBtn.nextSibling);
+} 
+
+function loadUserBoosts() {
+    let saved = localStorage.getItem(`user_boosts_${userId}`);
+    if (saved) { try { userBoosts = JSON.parse(saved); } catch(e) {} }
+}
+
+function applyBoost(xp) {
+    if (userBoosts.active && userBoosts.remainingWorks > 0) {
+        userBoosts.remainingWorks--;
+        if (userBoosts.remainingWorks === 0) userBoosts.active = false;
+        localStorage.setItem(`user_boosts_${userId}`, JSON.stringify(userBoosts));
+        return xp * 2;
+    }
+    return xp;
+}
+
+function canUseSkip(branchKey) {
+    if (branchKey === 'shock') { alert('⚠️ Шок контент нельзя пропускать!'); return false; }
+    let skips = parseInt(localStorage.getItem(`user_skips_${userId}`) || '0');
+    if (skips <= 0) { alert('❌ Нет пропусков! Купите в магазине.'); return false; }
+    if (confirm('Использовать пропуск?')) {
+        localStorage.setItem(`user_skips_${userId}`, skips - 1);
+        return true;
+    }
+    return false;
+}
+
+const originalToggleSection = toggleSection;
+toggleSection = function(sectionId) {
+    originalToggleSection(sectionId);
+    if (sectionId === 'rewards-section') { loadUserBoosts(); renderStatusShop(); }
+};
      
 var teamPollingInterval = null;
 var approvalPollingInterval = null;
@@ -19076,7 +20027,86 @@ window.onload = async () => {
         });
     };
     
-      console.log('✅ APP READY');
+    // ✅ ЗАГРУЖАЕМ БУСТ С СЕРВЕРА (вместо localStorage)
+    try {
+        const boostResponse = await fetch(`${SERVER_URL}/api/get_boost_status?user_id=${userId}`);
+        const boostData = await boostResponse.json();
+        userBoosts = {
+            active: boostData.active || false,
+            remainingWorks: boostData.remaining || 0
+        };
+        console.log('📊 Буст загружен с сервера:', userBoosts);
+    } catch (e) {
+        console.error('❌ Ошибка загрузки буста с сервера:', e);
+        // Fallback на localStorage
+        const savedBoosts = localStorage.getItem(`user_boosts_${userId}`);
+        if (savedBoosts) {
+            try { userBoosts = JSON.parse(savedBoosts); } catch(e) {}
+        }
+    }
+    
+    // ✅ ЗАГРУЖАЕМ СКИПЫ (из localStorage)
+    const savedSkips = localStorage.getItem(`user_skips_${userId}`);
+    if (savedSkips) {
+        userSkips = parseInt(savedSkips) || 0;
+    }
+    
+    // ✅ ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ СКИПОВ
+    if (typeof updateSkipDisplay === 'function') {
+        updateSkipDisplay();
+    } else {
+        const skipDisplay = document.getElementById('skipCountDisplay');
+        if (skipDisplay) {
+            skipDisplay.innerText = userSkips || 0;
+        }
+    }
+    
+    // ✅ ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ БУСТА
+    if (typeof updateBoostDisplay === 'function') {
+        updateBoostDisplay();
+    } else {
+        const boostContainer = document.getElementById('boostStatusContainer');
+        if (boostContainer) {
+            if (userBoosts && userBoosts.active && userBoosts.remainingWorks > 0) {
+                boostContainer.innerHTML = `
+                    <i class="fas fa-rocket" style="color: var(--accent); font-size: 18px;"></i>
+                    <span style="font-size: 13px; color: var(--text);">Буст x2:</span>
+                    <span style="font-weight: 700; color: var(--accent); font-size: 16px;">${userBoosts.remainingWorks} работ</span>
+                `;
+            } else {
+                boostContainer.innerHTML = `
+                    <i class="fas fa-rocket" style="color: var(--text-gray); font-size: 18px;"></i>
+                    <span style="font-size: 13px; color: var(--text-gray);">Буст x2:</span>
+                    <span style="font-weight: 700; color: var(--text-gray); font-size: 16px;">—</span>
+                `;
+            }
+        }
+    }
+    
+    // ✅ ПЕРИОДИЧЕСКАЯ СИНХРОНИЗАЦИЯ БУСТА С СЕРВЕРОМ (каждые 30 секунд)
+    setInterval(async () => {
+        try {
+            const response = await fetch(`${SERVER_URL}/api/get_boost_status?user_id=${userId}`);
+            const boost = await response.json();
+            const newBoost = {
+                active: boost.active || false,
+                remainingWorks: boost.remaining || 0
+            };
+            
+            // Обновляем только если изменилось
+            if (JSON.stringify(userBoosts) !== JSON.stringify(newBoost)) {
+                userBoosts = newBoost;
+                if (typeof updateBoostDisplay === 'function') {
+                    updateBoostDisplay();
+                }
+                console.log('🔄 Буст синхронизирован с сервера:', userBoosts);
+            }
+        } catch (e) {
+            // Тихо игнорируем ошибки
+        }
+    }, 30000);
+    
+    console.log('✅ APP READY');
     
     // ✅ D&D: авто-восстановление при загрузке (только если оплачено)
     setTimeout(function() {

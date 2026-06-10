@@ -8652,7 +8652,7 @@ function renderBranchTasks() {
                         if (branchKey !== 'shock') {
                             const skipBtn = document.createElement('button');
                             skipBtn.className = 'task-submit-btn';
-                            skipBtn.style.cssText = 'background: #ff9800; padding: 10px 4px; font-size: 12px; flex: 3; min-width: 0; white-space: nowrap; display: flex; align-items: center; justify-content: center;';
+                            skipBtn.style.cssText = 'background: linear-gradient(135deg, rgba(255,149,0,0.25), rgba(255,149,0,0.1)); border: 1px solid rgba(255,149,0,0.4); color: var(--accent); padding: 10px 4px; font-size: 12px; flex: 3; min-width: 0; white-space: nowrap; display: flex; align-items: center; justify-content: center;';
                             skipBtn.innerHTML = '<i class="fas fa-forward"></i> Скип';
                             skipBtn.onclick = (function(b, l, s, cp, req, sn) {
                                 return async function() {
@@ -8711,7 +8711,7 @@ function renderBranchTasks() {
                     if (branchKey !== 'shock') {
                         const skipBtn = document.createElement('button');
                         skipBtn.className = 'task-submit-btn';
-                        skipBtn.style.cssText = 'background: #ff9800; padding: 10px 4px; font-size: 12px; flex: 3; min-width: 0; white-space: nowrap; display: flex; align-items: center; justify-content: center;';
+                        skipBtn.style.cssText = 'background: linear-gradient(135deg, rgba(255,149,0,0.25), rgba(255,149,0,0.1)); border: 1px solid rgba(255,149,0,0.4); color: var(--accent); padding: 10px 4px; font-size: 12px; flex: 3; min-width: 0; white-space: nowrap; display: flex; align-items: center; justify-content: center;';
                         skipBtn.innerHTML = '<i class="fas fa-forward"></i> Скип';
                         skipBtn.onclick = (function(b, l, s, cp, req, sn) {
                             return async function() {
@@ -8763,7 +8763,7 @@ function renderBranchTasks() {
                 if (branchKey !== 'shock' && currentProgress < level.maxProgress) {
                     const skipBtn = document.createElement('button');
                     skipBtn.className = 'task-submit-btn';
-                    skipBtn.style.cssText = 'background: #ff9800; padding: 10px 4px; font-size: 12px; flex: 3; min-width: 0; white-space: nowrap; display: flex; align-items: center; justify-content: center;';
+                    skipBtn.style.cssText = 'background: linear-gradient(135deg, rgba(255,149,0,0.25), rgba(255,149,0,0.1)); border: 1px solid rgba(255,149,0,0.4); color: var(--accent); padding: 10px 4px; font-size: 12px; flex: 3; min-width: 0; white-space: nowrap; display: flex; align-items: center; justify-content: center;';
                     skipBtn.innerHTML = '<i class="fas fa-forward"></i> Скип';
                     skipBtn.onclick = async (e) => {
                         e.preventDefault();

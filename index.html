@@ -6511,7 +6511,25 @@ body:not([data-theme]) .modal-content,
         <div class="rewards-grid" id="boostShopGrid"></div>
     </div>
 </div>
-
+<!-- ========== КУДА ЖМЯТЬ ========== -->
+<div class="tasks-section" style="margin-top: 15px;">
+    <button class="tasks-header" onclick="toggleWhereToPress()">
+        <span>🤔 Куда жмякать</span>
+        <i class="fas fa-chevron-down" id="whereToPressArrow"></i>
+    </button>
+    <div id="whereToPressContent" class="tasks-content" style="display: none;">
+        <div style="padding: 15px; text-align: center;">
+            <p style="color: var(--text); font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+                Специально для новых пользователей, чтобы им было проще ориентироваться в нашем приложении, мы записали видеоролик с правилами загрузки работ, а также рассказали о всех функциях приложения!
+            </p>
+            <button onclick="window.open('https://www.youtube.com/watch?v=VQIJaie9tFw&t=1s', '_blank')" 
+                    style="background: #ff0000; color: white; border: none; padding: 14px 24px; border-radius: 30px; font-weight: 700; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(255,0,0,0.3);">
+                <i class="fab fa-youtube" style="font-size: 22px;"></i>
+                Как пользоваться приложением
+            </button>
+        </div>
+    </div>
+</div>
  <!-- ========== ЗАДАНИЯ НА СТАТУСЫ ========== -->
 <div class="tasks-section">
     <button class="tasks-header" onclick="toggleTasks()">
@@ -10686,6 +10704,18 @@ function openSupportDialog() {
                 renderBranchTasks();
             }
         }
+        function toggleWhereToPress() {
+    const content = document.getElementById('whereToPressContent');
+    const arrow = document.getElementById('whereToPressArrow');
+    if (!content) return;
+    if (content.style.display === 'block') {
+        content.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    } else {
+        content.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+    }
+}
         
         function toggleInventoryBlock() {
             const content = document.getElementById('inventoryContent');

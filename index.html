@@ -6511,21 +6511,32 @@ body:not([data-theme]) .modal-content,
         <div class="rewards-grid" id="boostShopGrid"></div>
     </div>
 </div>
-<!-- ========== КУДА ЖМЯТЬ ========== -->
+<!-- ========== КУДА ЖМЯКАТЬ ========== -->
 <div class="tasks-section" style="margin-top: 15px;">
     <button class="tasks-header" onclick="toggleWhereToPress()">
-        <span>🤔 Куда жмять</span>
+        <span>🤔 Куда жмякать</span>
         <i class="fas fa-chevron-down" id="whereToPressArrow"></i>
     </button>
     <div id="whereToPressContent" class="tasks-content" style="display: none;">
         <div style="padding: 15px; text-align: center;">
             <p style="color: var(--text); font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
-                Специально для новых пользователей, чтобы им было проще ориентироваться в нашем приложении, мы записали видеоролик с правилами загрузки работ, а также рассказали о всех функциях приложения!
+                Специально для новых пользователей, чтобы им было проще ориентироваться в нашем приложении, мы записали видеоролик с правилами загрузки работ, а также рассказали о всех функциях приложения.
             </p>
             <button onclick="window.open('https://www.youtube.com/watch?v=VQIJaie9tFw&t=1s', '_blank')" 
-                    style="background: #ff0000; color: white; border: none; padding: 14px 24px; border-radius: 30px; font-weight: 700; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(255,0,0,0.3);">
+                    style="background: #ff0000; color: white; border: none; padding: 14px 24px; border-radius: 30px; font-weight: 700; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(255,0,0,0.3); margin-bottom: 12px;">
                 <i class="fab fa-youtube" style="font-size: 22px;"></i>
                 Как пользоваться приложением
+            </button>
+            
+            <div style="width: 80%; height: 1px; background: var(--border-color); margin: 20px auto;"></div>
+            
+            <p style="color: var(--text); font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+                Присоединяйся к нам в группу! Там ты найдёшь друзей по раскраскам, сможешь делиться работами, участвовать в обсуждениях и быть в курсе всех новостей!
+            </p>
+            <button onclick="openTgGroup()" 
+                    style="background: #0088cc; color: white; border: none; padding: 14px 24px; border-radius: 30px; font-weight: 700; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,136,204,0.3);">
+                <i class="fab fa-telegram-plane" style="font-size: 22px;"></i>
+                Присоединиться к группе
             </button>
         </div>
     </div>
@@ -10704,7 +10715,7 @@ function openSupportDialog() {
                 renderBranchTasks();
             }
         }
-        function toggleWhereToPress() {
+       function toggleWhereToPress() {
     const content = document.getElementById('whereToPressContent');
     const arrow = document.getElementById('whereToPressArrow');
     if (!content) return;
@@ -10714,6 +10725,18 @@ function openSupportDialog() {
     } else {
         content.style.display = 'block';
         if (arrow) arrow.style.transform = 'rotate(180deg)';
+    }
+}
+
+function openTgGroup() {
+    const groupUrl = 'https://t.me/hachettelittleheroes';
+    
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.openTelegramLink(groupUrl);
+    } else if (tg && tg.openTelegramLink) {
+        tg.openTelegramLink(groupUrl);
+    } else {
+        window.open(groupUrl, '_blank');
     }
 }
         

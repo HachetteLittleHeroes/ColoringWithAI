@@ -21141,6 +21141,12 @@ window.onload = async () => {
             // Бусты
             userBoosts = initData.boost || { active: false, remaining: 0 };
             
+            // Скипы — из /api/init
+            if (initData.skips !== undefined) {
+                userSkips = initData.skips;
+                localStorage.setItem(`user_skips_${userId}`, userSkips);
+            }
+            
             // Season Pass
             claimedSeasonRewards = initData.season_rewards || { free: [], premium: [] };
             window._seasonRewardsLoaded = true;
@@ -21231,6 +21237,7 @@ window.onload = async () => {
     updateUI();
     
     // Проверяем имя и аватар (если не загрузились через /api/init)
+    // ❗ Без повторной загрузки подложек — они уже в /api/init
     try {
         const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
         const stats = await response.json();
@@ -21303,21 +21310,19 @@ window.onload = async () => {
         });
     };
     
-    // Буст уже загружен через /api/init, но проверяем для надёжности
-    if (!userBoosts || !userBoosts.active) {
-        try {
-            const boostResponse = await fetch(`${SERVER_URL}/api/get_boost_status?user_id=${userId}`);
-            const boostData = await boostResponse.json();
-            userBoosts = {
-                active: boostData.active || false,
-                remainingWorks: boostData.remaining || 0
-            };
-        } catch (e) {}
+    // Буст уже загружен через /api/init
+    if (!userBoosts) {
+        userBoosts = { active: false, remainingWorks: 0 };
     }
     
-    const savedSkips = localStorage.getItem(`user_skips_${userId}`);
-    if (savedSkips) {
-        userSkips = parseInt(savedSkips) || 0;
+    // Скипы — загружаем из localStorage если не из /api/init
+    if (userSkips === undefined || userSkips === null) {
+        const savedSkips = localStorage.getItem(`user_skips_${userId}`);
+        if (savedSkips) {
+            userSkips = parseInt(savedSkips) || 0;
+        } else {
+            userSkips = 0;
+        }
     }
     
     if (typeof updateSkipDisplay === 'function') {
@@ -21366,23 +21371,6 @@ window.onload = async () => {
             }
         } catch (e) {}
     }, 30000);
-    
-    // Повторно применяем подложки после полной загрузки (на случай если DOM не был готов)
-    setTimeout(() => {
-        fetch(`${SERVER_URL}/api/stats?user_id=${userId}`)
-            .then(r => r.json())
-            .then(stats => {
-                if (stats.sponsor_background) {
-                    applySponsorBackground(stats.sponsor_background, stats.sponsor_background_id);
-                }
-                if (stats.status_background) {
-                    applyStatusBackground(stats.status_background);
-                }
-                if (stats.avatar_border) {
-                    applyAvatarBorder(stats.avatar_border);
-                }
-            });
-    }, 300);
     
     console.log('✅ APP READY');
     

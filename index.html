@@ -21177,18 +21177,16 @@ window.onload = async () => {
                 user.avatar = initData.avatar;
             }
             
-            // Подложки — с задержкой, чтобы тема точно применилась
-            setTimeout(() => {
-                if (initData.sponsor_background) {
-                    applySponsorBackground(initData.sponsor_background, initData.sponsor_background_id);
-                }
-                if (initData.status_background) {
-                    applyStatusBackground(initData.status_background);
-                }
-                if (initData.avatar_border) {
-                    applyAvatarBorder(initData.avatar_border);
-                }
-            }, 100);
+            // Подложки — применяем сразу
+            if (initData.sponsor_background) {
+                applySponsorBackground(initData.sponsor_background, initData.sponsor_background_id);
+            }
+            if (initData.status_background) {
+                applyStatusBackground(initData.status_background);
+            }
+            if (initData.avatar_border) {
+                applyAvatarBorder(initData.avatar_border);
+            }
             
             // Completed pages
             if (initData.stats?.completed_pages) {
@@ -21233,7 +21231,6 @@ window.onload = async () => {
     updateUI();
     
     // Проверяем имя и аватар (если не загрузились через /api/init)
-    // ❗ Подложки здесь НЕ применяем — они уже из /api/init
     try {
         const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
         const stats = await response.json();
@@ -21369,6 +21366,23 @@ window.onload = async () => {
             }
         } catch (e) {}
     }, 30000);
+    
+    // Повторно применяем подложки после полной загрузки (на случай если DOM не был готов)
+    setTimeout(() => {
+        fetch(`${SERVER_URL}/api/stats?user_id=${userId}`)
+            .then(r => r.json())
+            .then(stats => {
+                if (stats.sponsor_background) {
+                    applySponsorBackground(stats.sponsor_background, stats.sponsor_background_id);
+                }
+                if (stats.status_background) {
+                    applyStatusBackground(stats.status_background);
+                }
+                if (stats.avatar_border) {
+                    applyAvatarBorder(stats.avatar_border);
+                }
+            });
+    }, 300);
     
     console.log('✅ APP READY');
     

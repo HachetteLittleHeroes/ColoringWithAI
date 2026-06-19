@@ -7378,14 +7378,29 @@ const TASK_DIFFICULTY = {
         // ФУНКЦИИ ДЛЯ РАБОТЫ С ПОДПУНКТАМИ ЗАДАНИЙ
         // ==========================================
         
-        function getSubtaskProgress(branchKey, levelIndex, subtaskIndex) {
+      function getSubtaskProgress(branchKey, levelIndex, subtaskIndex) {
     const progress = userProgress || {};
+    
+    // Обычный ключ
     const subtaskKey = `branch_${branchKey}_level_${levelIndex}_subtask_${subtaskIndex}`;
-    const value = progress[subtaskKey] || 0;
-    if (branchKey === 'season_pass') {
-        console.log(`[getSubtaskProgress] Уровень ${levelIndex + 1}, подзадание ${subtaskIndex + 1}: ${value}`);
+    if (progress[subtaskKey] !== undefined) {
+        return progress[subtaskKey] || 0;
     }
-    return value;
+    
+    // Для pempudu — проверяем friend_progress
+    if (branchKey === 'pempudu' && progress.friend_progress) {
+        const friendKey = `friend_level_${levelIndex}_subtask_${subtaskIndex}`;
+        if (progress.friend_progress[friendKey] !== undefined) {
+            return progress.friend_progress[friendKey] || 0;
+        }
+    }
+    
+    // Для Season Pass — логируем
+    if (branchKey === 'season_pass') {
+        console.log(`[getSubtaskProgress] Уровень ${levelIndex + 1}, подзадание ${subtaskIndex + 1}: ${progress[subtaskKey] || 0}`);
+    }
+    
+    return progress[subtaskKey] || 0;
 }
         
         function updateSubtaskProgress(branchKey, levelIndex, subtaskIndex, increment = 1) {
@@ -7427,9 +7442,24 @@ const TASK_DIFFICULTY = {
             return progress[progressKey] || 0;
         }
         
-        function isLevelCompleted(branchKey, levelIndex) {
+      function isLevelCompleted(branchKey, levelIndex) {
     const level = TASK_BRANCHES[branchKey]?.levels[levelIndex];
     if (!level) return false;
+    
+    // Для Pempudu — проверяем подзадания через friend_progress
+    if (branchKey === 'pempudu') {
+        if (level.subtasks && level.subtasks.length > 0) {
+            let totalCompleted = 0;
+            let totalRequired = 0;
+            level.subtasks.forEach((subtask, subtaskIndex) => {
+                const completed = getSubtaskProgress(branchKey, levelIndex, subtaskIndex);
+                totalCompleted += Math.min(completed, subtask.required);
+                totalRequired += subtask.required;
+            });
+            return totalCompleted >= totalRequired;
+        }
+        return false;
+    }
     
     // Для Season Pass всегда проверяем подзадания
     if (branchKey === 'season_pass') {

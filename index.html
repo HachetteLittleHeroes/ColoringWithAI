@@ -7760,18 +7760,32 @@ async function submitTaskPhoto(event) {
     }
     
     try {
-        // ✅ СЖИМАЕМ ФОТО
+        // Сжимаем фото
         const compressedPhotos = await compressImages(tempPhotos, 1200, 0.7);
         
         const formData = new FormData();
         formData.append('user', userId.toString());
+        
+        // Определяем тип отправки
         if (currentSubtaskData) {
+            // Обычное подзадание
             formData.append('branchKey', currentSubtaskData.branchKey);
             formData.append('levelIndex', currentSubtaskData.levelIndex.toString());
             formData.append('subtaskIndex', currentSubtaskData.subtaskIndex.toString());
             formData.append('subtaskName', currentSubtaskData.subtaskName);
             formData.append('type', 'subtask');
+        } else if (currentFriendTaskIdx !== null && currentFriendLevelIdx !== null && currentFriendSubtaskIdx !== null) {
+            // Задание от друзей
+            const task = FRIEND_TASKS[currentFriendTaskIdx];
+            const level = task.levels[currentFriendLevelIdx];
+            const subtask = level.subtasks[currentFriendSubtaskIdx];
+            formData.append('taskId', task.id);
+            formData.append('levelIdx', currentFriendLevelIdx.toString());
+            formData.append('subtaskIdx', currentFriendSubtaskIdx.toString());
+            formData.append('subtaskName', subtask.name);
+            formData.append('type', 'friend_subtask');
         } else {
+            // Обычное задание
             formData.append('branchKey', currentUploadBranch);
             formData.append('levelIndex', currentUploadLevel.toString());
             formData.append('type', 'regular');
@@ -7781,11 +7795,19 @@ async function submitTaskPhoto(event) {
             formData.append('photos', compressedPhotos[i]);
         }
         
-        // ✅ УВЕЛИЧЕННЫЙ ТАЙМАУТ
+        // Определяем endpoint
+        let endpoint;
+        if (currentSubtaskData) {
+            endpoint = '/api/check_subtask';
+        } else if (currentFriendTaskIdx !== null) {
+            endpoint = '/api/check_friend_subtask';
+        } else {
+            endpoint = '/api/check_achievement';
+        }
+        
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000);
         
-        const endpoint = currentSubtaskData ? '/api/check_subtask' : '/api/check_achievement';
         const response = await fetch(`${SERVER_URL}${endpoint}`, {
             method: 'POST',
             body: formData,
@@ -9462,103 +9484,12 @@ function openFriendSubtaskUpload(taskIdx, levelIdx, subtaskIdx, subtaskName) {
     fileInput.click();
 }
 function handleFriendSubtaskFilesSelected(event) {
-    const files = Array.from(event.target.files);
-    if (files.length === 0) return;
-    tempPhotos = files;
-    
-    const previewContainer = document.getElementById('taskPhotoPreviewContainer');
-    if (previewContainer) {
-        previewContainer.innerHTML = '';
-        files.forEach((file) => {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.style.cssText = 'width: 70px; height: 70px; object-fit: cover; border-radius: 12px; margin: 5px; border: 2px solid var(--accent);';
-                previewContainer.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        });
-    }
-    
-    const modal = document.getElementById('taskUploadModal');
-    if (modal) {
-        modal.style.display = 'flex';
-        const titleEl = modal.querySelector('h3');
-        if (titleEl) titleEl.innerText = `Отправка фото: ${currentFriendSubtaskName}`;
-        
-        const submitBtn = modal.querySelector('.modal-action-btn');
-        if (submitBtn) {
-            const newBtn = submitBtn.cloneNode(true);
-            submitBtn.parentNode.replaceChild(newBtn, submitBtn);
-            newBtn.onclick = (e) => {
-                e.preventDefault();
-                submitFriendSubtaskPhoto();
-            };
-        }
-    }
+    handleTaskFilesSelected(event);
 }
 
 async function submitFriendSubtaskPhoto() {
-    console.log('=== SUBMIT FRIEND SUBTASK PHOTO ===');
-    
-    if (!tempPhotos || tempPhotos.length === 0) {
-        if (tg) tg.showAlert('❌ Выберите хотя бы одно фото');
-        return;
-    }
-    
-    if (isUploading) return;
-    isUploading = true;
-    
-    const task = FRIEND_TASKS[currentFriendTaskIdx];
-    const level = task.levels[currentFriendLevelIdx];
-    const subtask = level.subtasks[currentFriendSubtaskIdx];
-    
-    try {
-        const formData = new FormData();
-        formData.append('user', userId.toString());
-        formData.append('taskId', task.id);
-        formData.append('levelIdx', currentFriendLevelIdx.toString());
-        formData.append('subtaskIdx', currentFriendSubtaskIdx.toString());
-        formData.append('subtaskName', subtask.name);
-        formData.append('type', 'friend_subtask');
-        
-        for (let i = 0; i < tempPhotos.length; i++) {
-            formData.append('photos', tempPhotos[i]);
-        }
-        
-        const response = await fetch(`${SERVER_URL}/api/check_friend_subtask`, {
-            method: 'POST',
-            body: formData
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Ошибка сервера: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result && result.status === 'ok') {
-            if (tg) {
-                tg.showAlert('✅ Фото отправлено на проверку!');
-            }
-            closeTaskUploadModal();
-            
-            // ✅ ПЕРЕЗАГРУЖАЕМ ПРОГРЕСС С СЕРВЕРА
-            setTimeout(async () => {
-                await forceSyncFriendProgress();
-                renderFriendTasks();
-            }, 3000);
-        } else {
-            throw new Error(result?.message || 'Ошибка отправки');
-        }
-    } catch (error) {
-        console.error('❌ Ошибка:', error);
-        if (tg) tg.showAlert(`❌ Ошибка: ${error.message}`);
-    } finally {
-        isUploading = false;
-        tempPhotos = [];
-    }
+    // Используем ту же функцию, что и для статусов
+    return submitTaskPhoto();
 }
         async function forceSyncFriendProgress() {
     console.log('🔄 Принудительная синхронизация прогресса...');

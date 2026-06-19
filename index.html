@@ -9434,31 +9434,12 @@ let currentFriendSubtaskName = null;
 
 function openFriendSubtaskUpload(taskIdx, levelIdx, subtaskIdx, subtaskName) {
     console.log('📸 openFriendSubtaskUpload called:', taskIdx, levelIdx, subtaskIdx, subtaskName);
-    // ✅ Сбрасываем глобальные переменные
+    
+    // Сбрасываем ВСЕ переменные
     currentSubtaskData = null;
     currentUploadBranch = null;
     currentUploadLevel = null;
-    currentFriendTaskIdx = null;
-    currentFriendLevelIdx = null;
-    currentFriendSubtaskIdx = null;
-    const task = FRIEND_TASKS[taskIdx];
-    if (!task) return;
-    
-    // ✅ Убираем проверку уровня — для задания с одним уровнем она не нужна
-    // const currentLevel = getCurrentFriendLevelIndex(taskIdx);
-    // if (currentLevel !== levelIdx) {
-    //     if (tg) tg.showAlert('Этот уровень ещё не доступен! Выполните предыдущий уровень.');
-    //     return;
-    // }
-    
-    const progress = getFriendSubtaskProgress(taskIdx, levelIdx, subtaskIdx);
-    const subtask = task.levels[levelIdx].subtasks[subtaskIdx];
-    
-    if (progress >= subtask.required) {
-        if (tg) tg.showAlert(`✅ Подзадание "${subtaskName}" уже выполнено!`);
-        return;
-    }
-    
+    currentCommunitySubtask = null;
     currentFriendTaskIdx = taskIdx;
     currentFriendLevelIdx = levelIdx;
     currentFriendSubtaskIdx = subtaskIdx;
@@ -9468,7 +9449,16 @@ function openFriendSubtaskUpload(taskIdx, levelIdx, subtaskIdx, subtaskName) {
     fileInput.type = 'file';
     fileInput.accept = 'image/*';
     fileInput.multiple = true;
-    fileInput.onchange = handleFriendSubtaskFilesSelected;
+    fileInput.style.position = 'absolute';
+    fileInput.style.opacity = '0';
+    fileInput.style.pointerEvents = 'none';
+    document.body.appendChild(fileInput);
+    
+    fileInput.onchange = function(event) {
+        handleFriendSubtaskFilesSelected(event);
+        document.body.removeChild(fileInput);
+    };
+    
     fileInput.click();
 }
 function handleFriendSubtaskFilesSelected(event) {

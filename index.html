@@ -21089,14 +21089,21 @@ window.onload = async () => {
             // Достижения
             user.achievements = initData.achievements || [];
             
-            // Бусты
-            userBoosts = initData.boost || { active: false, remaining: 0 };
-            
-            // Скипы — из /api/init
-            if (initData.skips !== undefined) {
-                userSkips = initData.skips;
-                localStorage.setItem(`user_skips_${userId}`, userSkips);
+            // Бусты — берём большее из /api/init и localStorage
+            const savedBoosts = JSON.parse(localStorage.getItem(`user_boosts_${userId}`) || '{}');
+            const apiBoost = initData.boost || { active: false, remaining: 0 };
+            if (savedBoosts.active && savedBoosts.remaining > apiBoost.remaining) {
+                userBoosts = { active: savedBoosts.active, remainingWorks: savedBoosts.remaining };
+            } else {
+                userBoosts = { active: apiBoost.active, remainingWorks: apiBoost.remaining || 0 };
+                localStorage.setItem(`user_boosts_${userId}`, JSON.stringify({ active: apiBoost.active, remaining: apiBoost.remaining || 0 }));
             }
+            
+            // Скипы — берём большее из /api/init и localStorage
+            const savedSkipsLocal = parseInt(localStorage.getItem(`user_skips_${userId}`) || '0');
+            const apiSkips = initData.skips || 0;
+            userSkips = Math.max(apiSkips, savedSkipsLocal);
+            localStorage.setItem(`user_skips_${userId}`, userSkips);
             
             // Season Pass
             claimedSeasonRewards = initData.season_rewards || { free: [], premium: [] };
@@ -21188,7 +21195,6 @@ window.onload = async () => {
     updateUI();
     
     // Проверяем имя и аватар (если не загрузились через /api/init)
-    // ❗ Без повторной загрузки подложек — они уже в /api/init
     try {
         const response = await fetch(`${SERVER_URL}/api/stats?user_id=${userId}`);
         const stats = await response.json();
@@ -21261,18 +21267,21 @@ window.onload = async () => {
         });
     };
     
-    // Буст уже загружен через /api/init
-    if (!userBoosts) {
-        userBoosts = { active: false, remainingWorks: 0 };
+    // Буст уже загружен через /api/init (с учётом localStorage)
+    if (!userBoosts || !userBoosts.active) {
+        const savedBoostsCheck = JSON.parse(localStorage.getItem(`user_boosts_${userId}`) || '{}');
+        if (savedBoostsCheck.active && savedBoostsCheck.remaining > 0) {
+            userBoosts = { active: true, remainingWorks: savedBoostsCheck.remaining };
+        } else {
+            userBoosts = userBoosts || { active: false, remainingWorks: 0 };
+        }
     }
     
-    // Скипы — загружаем из localStorage если не из /api/init
-    if (userSkips === undefined || userSkips === null) {
-        const savedSkips = localStorage.getItem(`user_skips_${userId}`);
-        if (savedSkips) {
-            userSkips = parseInt(savedSkips) || 0;
-        } else {
-            userSkips = 0;
+    // Скипы — финальная проверка
+    if (userSkips === undefined || userSkips === null || userSkips === 0) {
+        const savedSkipsCheck = parseInt(localStorage.getItem(`user_skips_${userId}`) || '0');
+        if (savedSkipsCheck > 0) {
+            userSkips = savedSkipsCheck;
         }
     }
     

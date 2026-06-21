@@ -7585,38 +7585,42 @@ const TASK_DIFFICULTY = {
         // ПРОВЕРКА РАЗБЛОКИРОВКИ СТАТУСОВ
         // ==========================================
         
-        async function checkAndUnlockStatuses() {
-            try {
-                console.log('Checking status unlocks...');
-                let statusUnlocked = false;
-                let newlyUnlockedStatuses = [];
-                
-                for (const [branchKey, rewardStatus] of Object.entries(BRANCH_REWARDS)) {
-                    if (branchKey === 'scrooge' || branchKey === 'benefactor') continue;
-                    
-                    const isCompleted = isBranchCompleted(branchKey);
-                    const isUnlocked = user.unlockedStatuses.includes(rewardStatus);
-                    
-                    if (isCompleted && !isUnlocked) {
-                        console.log(`🎉 New status unlocked: ${rewardStatus}`);
-                        user.unlockedStatuses.push(rewardStatus);
-                        if (!user.achievements.includes(branchKey)) {
-                            user.achievements.push(branchKey);
-                        }
-                        newlyUnlockedStatuses.push(rewardStatus);
-                        statusUnlocked = true;
-                    }
+     async function checkAndUnlockStatuses() {
+    try {
+        console.log('Checking status unlocks...');
+        let statusUnlocked = false;
+        
+        for (const [branchKey, rewardStatus] of Object.entries(BRANCH_REWARDS)) {
+            if (branchKey === 'scrooge' || branchKey === 'benefactor') continue;
+            
+            // ✅ Проверяем что ветка существует в TASK_BRANCHES
+            if (!TASK_BRANCHES[branchKey]) {
+                console.log(`⚠️ Ветка ${branchKey} не найдена в TASK_BRANCHES`);
+                continue;
+            }
+            
+            const isCompleted = isBranchCompleted(branchKey);
+            const isUnlocked = user.unlockedStatuses.includes(rewardStatus);
+            
+            if (isCompleted && !isUnlocked) {
+                console.log(`🎉 New status unlocked: ${rewardStatus}`);
+                user.unlockedStatuses.push(rewardStatus);
+                if (!user.achievements.includes(branchKey)) {
+                    user.achievements.push(branchKey);
                 }
-                
-                if (statusUnlocked) {
-                    saveUserData();
-                    updateUI();
-                    renderBranchTasks();
-                }
-            } catch (error) {
-                console.error('Error checking status unlocks:', error);
+                statusUnlocked = true;
             }
         }
+        
+        if (statusUnlocked) {
+            saveUserData();
+            updateUI();
+            renderBranchTasks();
+        }
+    } catch (error) {
+        console.error('Error checking status unlocks:', error);
+    }
+}
         // ==========================================
         // ОТПРАВКА ФОТО НА ПРОВЕРКУ (ОБЫЧНЫЕ ЗАДАНИЯ)
         // ==========================================

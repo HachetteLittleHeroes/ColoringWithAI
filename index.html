@@ -33097,7 +33097,7 @@ function renderCategoryContent(category) {
     }, 50);
 }
 
-        function showDebugInfo() {
+      function showDebugInfo() {
     const category = 'paint_by_number';
     const userBooks = userColoringBooks[category] || [];
     
@@ -33130,7 +33130,6 @@ function renderCategoryContent(category) {
         totalCompleted += completed;
         totalCells += cells;
         
-        // Показываем первые 10 раскрасок
         if (userBooks.indexOf(book) < 10) {
             info += `${bookName}: ${completed}/${cells} (${pages}стр, ${spreads.length}разв)\n`;
         }
@@ -33141,43 +33140,6 @@ function renderCategoryContent(category) {
     
     alert(info);
 }
-        document.getElementById('checkProgressBtn').addEventListener('click', function() {
-    const progress = calculateCategoryProgress('paint_by_number');
-    const progressEl = document.getElementById('category-progress-paint_by_number');
-    
-    alert(`calculateCategoryProgress: ${progress.percent}%\n` +
-          `Элемент на странице: ${progressEl ? progressEl.textContent : 'не найден'}\n` +
-          `completed: ${progress.completed}, total: ${progress.total}`);
-});
-        document.getElementById('checkConfigBtn').addEventListener('click', function() {
-    const bookName = "Les Grands Classiques tome 13";
-    const config = BOOK_PAGES_CONFIG[bookName];
-    const defaultConfig = DEFAULT_PAGES_CONFIG;
-    
-    let info = `КНИГА: ${bookName}\n\n`;
-    info += `Найдена в BOOK_PAGES_CONFIG: ${config ? 'ДА' : 'НЕТ'}\n`;
-    
-    if (config) {
-        info += `totalPages: ${config.totalPages}\n`;
-        info += `spreads: ${JSON.stringify(config.spreads)}\n`;
-        info += `spreads.length: ${config.spreads?.length || 0}\n`;
-        info += `totalCells: ${config.totalPages - (config.spreads?.length || 0)}\n`;
-    } else {
-        info += `\nИспользуется DEFAULT_PAGES_CONFIG:\n`;
-        info += `totalPages: ${defaultConfig.totalPages}\n`;
-        info += `spreads: ${JSON.stringify(defaultConfig.spreads)}\n`;
-    }
-    
-    // Проверяем, что хранится в коллекции
-    const userBooks = userColoringBooks.paint_by_number || [];
-    const savedBook = userBooks.find(b => (typeof b === 'string' ? b : b.name) === bookName);
-    
-    info += `\n\nВ КОЛЛЕКЦИИ:\n`;
-    info += `Тип: ${typeof savedBook}\n`;
-    info += `Значение: ${JSON.stringify(savedBook)}\n`;
-    
-    alert(info);
-});
         // ==========================================
 // БЕСТИАРИЙ
 // ==========================================

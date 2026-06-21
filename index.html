@@ -2998,7 +2998,6 @@
     border: 1px solid var(--border-color);
     transition: all 0.15s;
 }
-
 .user-search-card:active {
     transform: scale(0.98);
     background: var(--bg);
@@ -7122,7 +7121,7 @@ body:not([data-theme]) .modal-content,
         // КОНФИГУРАЦИЯ И ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
         // ==========================================
         
-        const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io';
+        const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io/';
         const MARKER_PRICE = 75;
         let currentGiftBundle = null;
 let currentGiftPrice = null;
@@ -8867,7 +8866,7 @@ function getWeeklyTask() {
     const weekNumber = Math.floor(moscowNow.getTime() / (7 * 24 * 60 * 60 * 1000));
     
     // Фиксированное задание с сержантом Тибсом (17.06.2026 — 21.06.2026)
-    if (moscowNow >= new Date('2026-06-17T00:00:00+03:00') && moscowNow < new Date('2026-06-22T00:00:00+03:00')) {
+    if (moscowNow >= new Date('2026-06-17T00:00:00+03:00') && moscowNow < new Date('2026-06-21T00:00:00+03:00')) {
         return {
             id: 'weekly_task',
             title: 'Персонаж недели: Сержант Тибс',
@@ -9522,7 +9521,7 @@ function approveNadyaTask() {
         // ПРОФИЛЬ И UI
         // ==========================================
         
-     function updateUI() {
+   function updateUI() {
     const nameEl = document.getElementById('displayUsername');
     const avatarEl = document.getElementById('user-avatar');
     const balanceEl = document.getElementById('userBalance');
@@ -9533,8 +9532,8 @@ function approveNadyaTask() {
     if (balanceEl) balanceEl.innerText = user.balance;
     if (statusBadge) {
         statusBadge.innerText = user.status || 'Без статуса';
-        // ✅ Добавляем data-status для применения стилей
         statusBadge.setAttribute('data-status', user.status || 'Без статуса');
+        // Не сбрасываем цвет и фон — их устанавливает applySponsorBackground
     }
     
     renderUserLevel();
@@ -15353,25 +15352,40 @@ function showLeagueLeaderboard(league) {
         const avatarUrl = user.avatar || 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png';
         const placeIcon = user.place <= 3 ? ['🥇','🥈','🥉'][user.place - 1] : `#${user.place}`;
         
+        // Определяем цвет текста по подложке
+        const sponsorBgId = user.sponsor_background_id || '';
+        const bgItem = BACKGROUNDS_SHOP.find(b => b.id === sponsorBgId);
+        const textColor = bgItem ? bgItem.textColor : null;
+        let nameColor = '';
+        let statusTextColor = '';
+        let statusDefaultBg = '';
+        
+        if (textColor === 'light') {
+            nameColor = 'color: #ffffff;';
+            statusTextColor = 'color: #ffffff;';
+            statusDefaultBg = 'background: rgba(255,255,255,0.2);';
+        } else if (textColor === 'dark') {
+            nameColor = 'color: #1c1c1e;';
+            statusTextColor = 'color: #1c1c1e;';
+            statusDefaultBg = 'background: rgba(0,0,0,0.08);';
+        }
+        
         // Фон статуса
         const statusBg = user.status_background || '';
         const statusStyle = statusBg 
-            ? statusBg + ' padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block; color: var(--text);' 
-            : 'font-size: 13px; font-weight: 600;';
+            ? statusBg + ' padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block; ' + statusTextColor
+            : statusDefaultBg + ' padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block; ' + statusTextColor;
         
         // Обводка аватара
         const avatarBorder = user.avatar_border || '';
-       const avatarImgStyle = avatarBorder 
-    ? `width: 48px; height: 48px; border-radius: 50%; object-fit: cover; ${avatarBorder}` 
-    : 'width: 48px; height: 48px; border-radius: 50%; object-fit: cover;';
+        const avatarImgStyle = avatarBorder 
+            ? `width: 48px; height: 48px; border-radius: 50%; object-fit: cover; ${avatarBorder}` 
+            : 'width: 48px; height: 48px; border-radius: 50%; object-fit: cover;';
         
-        const sponsorBgId = user.sponsor_background_id || '';
         let bgStyle = '';
-        
         if (user.sponsor_background) {
             bgStyle = user.sponsor_background;
         }
-        
         if (!bgStyle) {
             bgStyle = `background: ${isMe ? 'color-mix(in srgb, var(--accent) 10%, transparent)' : 'var(--card-bg)'};`;
         }
@@ -15383,7 +15397,7 @@ function showLeagueLeaderboard(league) {
                 </div>
                 <img src="${avatarUrl}" style="${avatarImgStyle}" onerror="this.src='https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png'">
                 <div style="flex: 1; min-width: 0;">
-                   <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">${user.username || user.name}</div>
+                   <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px; ${nameColor}">${user.username || user.name}</div>
                     <span style="${statusStyle}">${user.status || 'Без статуса'}</span>
                 </div>
                 <div style="text-align: right;">
@@ -15396,7 +15410,7 @@ function showLeagueLeaderboard(league) {
     
     container.innerHTML = html;
     
-    // Применяем эмодзи-подложки через JS
+    // Применяем эмодзи-подложки и цвета текста через JS
     const cards = container.querySelectorAll('div[style*="display: flex"]');
     cards.forEach(card => {
         const onclick = card.getAttribute('onclick') || '';
@@ -15408,11 +15422,39 @@ function showLeagueLeaderboard(league) {
         if (!user) return;
         
         const sponsorBgId = user.sponsor_background_id || '';
+        
+        // Эмодзи-подложка
         if (sponsorBgId && sponsorBgId.startsWith('bg_emoji_')) {
             const emoji = EMOJI_BG_MAP[sponsorBgId] || '⭐';
             const hex = getAccentHex();
             card.style.backgroundImage = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='55' height='55' viewBox='0 0 55 55'%3E%3Ctext x='8' y='25' font-size='20' fill='%23${hex}' opacity='0.15'%3E${encodeURIComponent(emoji)}%3C/text%3E%3Ctext x='30' y='45' font-size='16' fill='%23${hex}' opacity='0.10'%3E${encodeURIComponent(emoji)}%3C/text%3E%3C/svg%3E")`;
             card.style.backgroundSize = '55px 55px';
+        }
+        
+        // GIF-подложка — цвет текста
+        const bgItem = BACKGROUNDS_SHOP.find(b => b.id === sponsorBgId);
+        if (bgItem && bgItem.textColor) {
+            const tc = bgItem.textColor;
+            const nameEl = card.querySelector('div[style*="font-weight: 600"]');
+            const statusEl = card.querySelector('span[style*="border-radius: 20px"]');
+            
+            if (tc === 'light') {
+                if (nameEl) nameEl.style.setProperty('color', '#ffffff', 'important');
+                if (statusEl) {
+                    statusEl.style.setProperty('color', '#ffffff', 'important');
+                    if (!user.status_background) {
+                        statusEl.style.setProperty('background', 'rgba(255,255,255,0.2)', 'important');
+                    }
+                }
+            } else if (tc === 'dark') {
+                if (nameEl) nameEl.style.setProperty('color', '#1c1c1e', 'important');
+                if (statusEl) {
+                    statusEl.style.setProperty('color', '#1c1c1e', 'important');
+                    if (!user.status_background) {
+                        statusEl.style.setProperty('background', 'rgba(0,0,0,0.08)', 'important');
+                    }
+                }
+            }
         }
     });
 }
@@ -15742,6 +15784,32 @@ function renderUserLevel() {
         </div>
         <div style="font-size: 10px; color: var(--text-gray); margin-top: 2px;">${levelInfo.xp} / ${levelInfo.nextXP} XP</div>
     `;
+    
+    // ✅ После рендера — применить цвет подложки
+    setTimeout(() => {
+        const stats = JSON.parse(localStorage.getItem('coloring_user') || '{}');
+        // Пробуем получить sponsor_background_id из userProgress
+        const bgId = (userProgress && userProgress.sponsor_background_id) || '';
+        if (bgId) {
+            const bgItem = BACKGROUNDS_SHOP.find(b => b.id === bgId);
+            if (bgItem && bgItem.textColor) {
+                const levelEl = document.getElementById('userLevelDisplay');
+                if (levelEl && bgItem.textColor === 'light') {
+                    levelEl.style.setProperty('color', '#ffffff', 'important');
+                    const children = levelEl.querySelectorAll('*');
+                    children.forEach(c => {
+                        if (c.style) c.style.setProperty('color', '#ffffff', 'important');
+                    });
+                } else if (levelEl && bgItem.textColor === 'dark') {
+                    levelEl.style.setProperty('color', '#8e8e93', 'important');
+                    const children = levelEl.querySelectorAll('*');
+                    children.forEach(c => {
+                        if (c.style) c.style.setProperty('color', '#8e8e93', 'important');
+                    });
+                }
+            }
+        }
+    }, 100);
 }
         function calculatePublicXP(profile) {
     let xp = 0;
@@ -15794,6 +15862,12 @@ const BACKGROUNDS_SHOP = [
     { id: 'bg_glass', name: 'Стекло', price: 200, css: 'background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--accent) 4%, transparent)); backdrop-filter: blur(10px); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);' },
     { id: 'bg_subtle_lines', name: 'Тонкие линии', price: 200, css: 'background: repeating-linear-gradient(45deg, transparent, transparent 5px, color-mix(in srgb, var(--accent) 5%, transparent) 5px, color-mix(in srgb, var(--accent) 5%, transparent) 10px); border: 1px solid var(--border-color);' },
   { id: 'bg_dots', name: 'Точечки', price: 200, css: 'background: radial-gradient(circle, color-mix(in srgb, var(--accent) 15%, transparent) 2.5px, transparent 2.5px); background-size: 14px 14px; border: 1px solid var(--border-color);' },
+
+    // GIF-подложки
+     { id: 'koster', name: 'Костер тест', price: 9999, textColor: 'light',
+  css: `background-image: url('https://218ea43893c4-hachette-artwork.s3.ru1.storage.beget.cloud/backgrounds/koster.gif'); background-size: cover;` },
+    { id: 'utka', name: 'Утка тест', price: 9999, textColor: 'light',
+  css: `background-image: url('https://218ea43893c4-hachette-artwork.s3.ru1.storage.beget.cloud/backgrounds/utka.gif'); background-size: cover;` },
     
     // ЭМОДЗИ-ПОДЛОЖКИ
    { id: 'bg_emoji_stars', name: '⭐ Звёздочки', price: 600, 
@@ -16249,18 +16323,77 @@ function applySponsorBackground(css, bgId) {
     const profileBlock = document.querySelector('.profile-header-block');
     if (!profileBlock) return;
     
-    let finalCss = css;
+    if (css) {
+        profileBlock.style.cssText = css + ' margin: 15px; padding: 20px; border-radius: 24px; display: flex; align-items: center; gap: 20px;';
+    }
     
-    // Для эмодзи-подложек пересоздаём SVG с актуальным цветом
-    if (bgId && bgId.startsWith('bg_emoji_')) {
-        const bgItem = BACKGROUNDS_SHOP.find(b => b.id === bgId);
-        if (bgItem) {
-            finalCss = bgItem.css; // getAccentHex() вызовется здесь с актуальным цветом
+    const bgItem = BACKGROUNDS_SHOP.find(b => b.id === bgId);
+    const textColor = bgItem ? bgItem.textColor : null;
+    
+    // Функция для принудительной установки цвета уровня
+    function forceLevelColor(color) {
+        const levelEl = document.getElementById('userLevelDisplay');
+        if (levelEl) {
+            levelEl.style.setProperty('color', color, 'important');
+            const allChildren = levelEl.querySelectorAll('*');
+            allChildren.forEach(child => {
+                child.style.setProperty('color', color, 'important');
+            });
+            // Прогресс-бар не трогаем
+            const bars = levelEl.querySelectorAll('.progress-bar-fill');
+            bars.forEach(b => { b.style.removeProperty('color'); });
         }
     }
     
-    if (finalCss) {
-        profileBlock.style.cssText = finalCss + ' margin: 15px; padding: 20px; border-radius: 24px; display: flex; align-items: center; gap: 20px;';
+    // Применяем с задержкой чтобы DOM точно обновился
+    setTimeout(() => {
+        const nameEl = document.getElementById('displayUsername');
+        const statusBadge = document.getElementById('currentStatus');
+        
+        if (textColor === 'light') {
+            if (nameEl) nameEl.style.setProperty('color', '#ffffff', 'important');
+            if (statusBadge) {
+                const hasStatusBg = statusBadge.style.background && 
+                                   !statusBadge.style.background.includes('rgba(255,255,255,0.2)') &&
+                                   statusBadge.style.background !== '';
+                statusBadge.style.setProperty('color', '#ffffff', 'important');
+                if (!hasStatusBg) {
+                    statusBadge.style.setProperty('background', 'rgba(255,255,255,0.2)', 'important');
+                    statusBadge.style.setProperty('border', 'none', 'important');
+                }
+            }
+            forceLevelColor('#ffffff');
+        } else if (textColor === 'dark') {
+            if (nameEl) nameEl.style.setProperty('color', '#1c1c1e', 'important');
+            if (statusBadge) {
+                const hasStatusBg = statusBadge.style.background && 
+                                   statusBadge.style.background !== '' &&
+                                   !statusBadge.style.background.includes('rgba(0,0,0,0.08)');
+                statusBadge.style.setProperty('color', '#1c1c1e', 'important');
+                if (!hasStatusBg) {
+                    statusBadge.style.setProperty('background', 'rgba(0,0,0,0.08)', 'important');
+                    statusBadge.style.setProperty('border', 'none', 'important');
+                }
+            }
+            forceLevelColor('#8e8e93');
+        }
+    }, 300);
+    
+    // Дополнительно — добиваем цвет уровня через 800мс (после renderUserLevel)
+    if (textColor) {
+        setTimeout(() => {
+            const color = textColor === 'light' ? '#ffffff' : '#8e8e93';
+            const levelEl = document.getElementById('userLevelDisplay');
+            if (levelEl) {
+                levelEl.style.setProperty('color', color, 'important');
+                const allChildren = levelEl.querySelectorAll('*');
+                allChildren.forEach(child => {
+                    child.style.setProperty('color', color, 'important');
+                });
+                const bars = levelEl.querySelectorAll('.progress-bar-fill');
+                bars.forEach(b => { b.style.removeProperty('color'); });
+            }
+        }, 800);
     }
 }
         function renderAvatarBorderShop() {
@@ -21209,6 +21342,17 @@ window.onload = async () => {
             document.getElementById('displayUsername').innerText = stats.name;
             localStorage.setItem('coloring_user', JSON.stringify(user));
         }
+        
+        // Повторно применяем подложки если они есть в stats
+        if (stats.sponsor_background && stats.sponsor_background_id) {
+            applySponsorBackground(stats.sponsor_background, stats.sponsor_background_id);
+        }
+        if (stats.status_background) {
+            applyStatusBackground(stats.status_background);
+        }
+        if (stats.avatar_border) {
+            applyAvatarBorder(stats.avatar_border);
+        }
     } catch (error) {
         console.error('❌ Ошибка загрузки аватара:', error);
     }
@@ -21267,7 +21411,7 @@ window.onload = async () => {
         });
     };
     
-    // Буст уже загружен через /api/init (с учётом localStorage)
+    // Буст — финальная проверка
     if (!userBoosts || !userBoosts.active) {
         const savedBoostsCheck = JSON.parse(localStorage.getItem(`user_boosts_${userId}`) || '{}');
         if (savedBoostsCheck.active && savedBoostsCheck.remaining > 0) {
@@ -24851,7 +24995,6 @@ window.onload = async () => {
             { book: "Les Grands Classiques tome 3", pages: [73]},
              { book: "Mechants", pages: [25, 48, 78, 81, 89]},
             { book: "Heros&Mechants la battle", pages: [95]}
-
         ]
     }, 
             {
@@ -31217,16 +31360,39 @@ function renderPublicProfile(profile) {
     const userName = profile.name || profile.username || 'Пользователь';
     const userStatus = profile.status || 'Без статуса';
     
-    // Подложка: обычная применяется сразу, эмодзи — после рендеринга
+    // Подложка и цвета текста
     const sponsorBgId = profile.sponsor_background_id || '';
+    const sponsorBg = profile.sponsor_background || '';
     let profileBgStyle = 'margin: 0; padding: 15px;';
     
-    if (profile.sponsor_background && !sponsorBgId.startsWith('bg_emoji_')) {
-        profileBgStyle = profile.sponsor_background + ' margin: 0; padding: 15px; border-radius: 24px; display: flex; align-items: center; gap: 20px;';
+    // Определяем цвет текста по подложке
+    const bgItem = BACKGROUNDS_SHOP.find(b => b.id === sponsorBgId);
+    const textColor = bgItem ? bgItem.textColor : null;
+    let nameColor = '';
+    let statusColor = '';
+    let statusBgStyle = '';
+    let levelColor = '';
+    
+    if (textColor === 'light') {
+        nameColor = 'color: #ffffff;';
+        statusColor = 'color: #ffffff;';
+        statusBgStyle = 'background: rgba(255,255,255,0.2);';
+        levelColor = 'color: #ffffff;';
+    } else if (textColor === 'dark') {
+        nameColor = 'color: #1c1c1e;';
+        statusColor = 'color: #1c1c1e;';
+        statusBgStyle = 'background: rgba(0,0,0,0.08);';
+        levelColor = 'color: #8e8e93;';
+    }
+    
+    if (sponsorBg && !sponsorBgId.startsWith('bg_emoji_')) {
+        profileBgStyle = sponsorBg + ' margin: 0; padding: 15px; border-radius: 24px; display: flex; align-items: center; gap: 20px;';
     }
     
     const statusBg = profile.status_background || '';
-    const statusStyle = statusBg ? statusBg + ' padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block; color: var(--text);' : '';
+    const statusStyle = statusBg 
+        ? statusBg + ' padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block; ' + statusColor
+        : statusBgStyle + ' padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block; ' + statusColor;
     
     const avatarBorder = profile.avatar_border || '';
     const avatarBorderStyle = avatarBorder ? avatarBorder + ' width: 90px; height: 90px; border-radius: 50%; padding: 3px; background: var(--bg);' : '';
@@ -31287,9 +31453,9 @@ function renderPublicProfile(profile) {
                 <img src="${avatarUrl}" onerror="this.src='https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png'">
             </div>
             <div class="profile-info">
-                <div class="name-row"><h2>${escapeHtml(userName)}</h2></div>
+                <div class="name-row"><h2 style="${nameColor}">${escapeHtml(userName)}</h2></div>
                 <span class="status-badge" style="${statusStyle}">${escapeHtml(userStatus)}</span>
-                <div id="publicUserLevel" style="margin-top: 8px;"></div>
+                <div id="publicUserLevel" style="margin-top: 8px; ${levelColor}"></div>
                 ${friendButtonHtml}
             </div>
         </div>
@@ -31364,6 +31530,48 @@ function renderPublicProfile(profile) {
         }, 150);
     }
     
+    // Применяем цвета текста для GIF-подложек
+    if (textColor) {
+        setTimeout(() => {
+            const block = container.querySelector('.profile-header-block');
+            if (block) {
+                if (textColor === 'light') {
+                    const nameEl = block.querySelector('h2');
+                    const statusEl = block.querySelector('.status-badge');
+                    const levelEl = block.querySelector('#publicUserLevel');
+                    if (nameEl) nameEl.style.color = '#ffffff';
+                    if (statusEl && !profile.status_background) {
+                        statusEl.style.color = '#ffffff';
+                        statusEl.style.background = 'rgba(255,255,255,0.2)';
+                    } else if (statusEl) {
+                        statusEl.style.color = '#ffffff';
+                    }
+                    if (levelEl) {
+                        levelEl.style.color = '#ffffff';
+                        const children = levelEl.querySelectorAll('*');
+                        children.forEach(c => { if (c.style) c.style.color = '#ffffff'; });
+                    }
+                } else if (textColor === 'dark') {
+                    const nameEl = block.querySelector('h2');
+                    const statusEl = block.querySelector('.status-badge');
+                    const levelEl = block.querySelector('#publicUserLevel');
+                    if (nameEl) nameEl.style.color = '#1c1c1e';
+                    if (statusEl && !profile.status_background) {
+                        statusEl.style.color = '#1c1c1e';
+                        statusEl.style.background = 'rgba(0,0,0,0.08)';
+                    } else if (statusEl) {
+                        statusEl.style.color = '#1c1c1e';
+                    }
+                    if (levelEl) {
+                        levelEl.style.color = '#8e8e93';
+                        const children = levelEl.querySelectorAll('*');
+                        children.forEach(c => { if (c.style) c.style.color = '#8e8e93'; });
+                    }
+                }
+            }
+        }, 200);
+    }
+    
     const booksStats = {};
     for (const bookKey in completedPages) {
         if (completedPages.hasOwnProperty(bookKey)) {
@@ -31410,11 +31618,11 @@ function renderPublicProfile(profile) {
         const levelEl = document.getElementById('publicUserLevel');
         if (levelEl) {
             levelEl.innerHTML = `
-                <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 4px;">${levelInfo.name}</div>
+                <div style="font-size: 12px; margin-bottom: 4px; ${levelColor}">${levelInfo.name}</div>
                 <div class="progress-bar-container" style="height: 4px;">
                     <div class="progress-bar-fill" style="width: ${levelInfo.progress}%;"></div>
                 </div>
-                <div style="font-size: 10px; color: var(--text-gray); margin-top: 2px;">${levelInfo.xp} / ${levelInfo.nextXP} XP</div>
+                <div style="font-size: 10px; margin-top: 2px; ${levelColor}">${levelInfo.xp} / ${levelInfo.nextXP} XP</div>
             `;
         }
         

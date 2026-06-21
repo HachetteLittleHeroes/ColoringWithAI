@@ -15380,7 +15380,6 @@ function showLeagueLeaderboard(league) {
         const avatarUrl = user.avatar || 'https://raw.githubusercontent.com/HachetteLittleHeroes/ColoringWithAI/main/assets/avatars/av1.png';
         const placeIcon = user.place <= 3 ? ['🥇','🥈','🥉'][user.place - 1] : `#${user.place}`;
         
-        // Определяем цвет текста по подложке
         const sponsorBgId = user.sponsor_background_id || '';
         const bgItem = BACKGROUNDS_SHOP.find(b => b.id === sponsorBgId);
         const textColor = bgItem ? bgItem.textColor : null;
@@ -15398,13 +15397,11 @@ function showLeagueLeaderboard(league) {
             statusDefaultBg = 'background: rgba(0,0,0,0.08);';
         }
         
-        // Фон статуса
         const statusBg = user.status_background || '';
         const statusStyle = statusBg 
             ? statusBg + ' padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block; ' + statusTextColor
             : statusDefaultBg + ' padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block; ' + statusTextColor;
         
-        // Обводка аватара
         const avatarBorder = user.avatar_border || '';
         const avatarImgStyle = avatarBorder 
             ? `width: 48px; height: 48px; border-radius: 50%; object-fit: cover; ${avatarBorder}` 
@@ -15413,7 +15410,6 @@ function showLeagueLeaderboard(league) {
         let bgStyle = '';
         if (user.sponsor_background) {
             bgStyle = user.sponsor_background;
-            // ✅ Утка — поднимаем фон только в испытании сообщества
             if (sponsorBgId === 'utka') {
                 bgStyle += ' background-position: center 25%;';
             }
@@ -15442,7 +15438,6 @@ function showLeagueLeaderboard(league) {
     
     container.innerHTML = html;
     
-    // Применяем эмодзи-подложки и цвета текста через JS
     const cards = container.querySelectorAll('div[style*="display: flex"]');
     cards.forEach(card => {
         const onclick = card.getAttribute('onclick') || '';
@@ -15455,7 +15450,6 @@ function showLeagueLeaderboard(league) {
         
         const sponsorBgId = user.sponsor_background_id || '';
         
-        // Эмодзи-подложка
         if (sponsorBgId && sponsorBgId.startsWith('bg_emoji_')) {
             const emoji = EMOJI_BG_MAP[sponsorBgId] || '⭐';
             const hex = getAccentHex();
@@ -15463,12 +15457,10 @@ function showLeagueLeaderboard(league) {
             card.style.backgroundSize = '55px 55px';
         }
         
-        // ✅ Утка — поднимаем фон только в испытании сообщества
         if (sponsorBgId === 'utka') {
             card.style.backgroundPosition = 'center 25%';
         }
         
-              // GIF-подложка — цвет текста
         const bgItem2 = BACKGROUNDS_SHOP.find(b => b.id === sponsorBgId);
         if (bgItem2 && bgItem2.textColor) {
             const tc = bgItem2.textColor;

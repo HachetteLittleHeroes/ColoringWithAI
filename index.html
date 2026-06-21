@@ -8967,6 +8967,7 @@ function checkTimeTasksReset() {
     const savedMonth = localStorage.getItem('time_tasks_month');
     
     if (savedWeek != weekNumber || savedMonth != monthIndex) {
+        // Полный сброс статуса
         localStorage.setItem('time_tasks_status', '{}');
         localStorage.setItem('time_tasks_week', weekNumber);
         localStorage.setItem('time_tasks_month', monthIndex);
@@ -8977,6 +8978,23 @@ function checkTimeTasksReset() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId })
         }).catch(e => console.error('Ошибка сброса:', e));
+    } else {
+        // ✅ Даже если неделя та же — проверяем, не завис ли weekly_task
+        const timeTasksStatus = JSON.parse(localStorage.getItem('time_tasks_status') || '{}');
+        const weeklyTask = getWeeklyTask();
+        if (timeTasksStatus[weeklyTask.id] && weeklyTask.id === 'weekly_task') {
+            // Проверяем, совпадает ли персонаж
+            const savedTitle = timeTasksStatus['_weekly_title'] || '';
+            if (savedTitle !== weeklyTask.title) {
+                // Персонаж сменился — сбрасываем weekly_task
+                delete timeTasksStatus['weekly_task'];
+                timeTasksStatus['_weekly_title'] = weeklyTask.title;
+                localStorage.setItem('time_tasks_status', JSON.stringify(timeTasksStatus));
+            }
+        } else {
+            timeTasksStatus['_weekly_title'] = weeklyTask.title;
+            localStorage.setItem('time_tasks_status', JSON.stringify(timeTasksStatus));
+        }
     }
 }
 
@@ -9005,6 +9023,16 @@ function renderTimeTasks() {
     const monthlyTask = getMonthlyTask();
     
     const timeTasksStatus = JSON.parse(localStorage.getItem('time_tasks_status') || '{}');
+    
+    // ✅ Проверяем, не сменился ли персонаж недели
+    const savedWeeklyTitle = timeTasksStatus['_weekly_title'] || '';
+    if (savedWeeklyTitle !== weeklyTask.title) {
+        // Персонаж сменился — сбрасываем статус
+        delete timeTasksStatus['weekly_task'];
+        timeTasksStatus['_weekly_title'] = weeklyTask.title;
+        localStorage.setItem('time_tasks_status', JSON.stringify(timeTasksStatus));
+    }
+    
     const weeklyCompleted = timeTasksStatus[weeklyTask.id] || false;
     const monthlyProgress = timeTasksStatus[monthlyTask.id] || {};
     
@@ -15864,10 +15892,15 @@ const BACKGROUNDS_SHOP = [
   { id: 'bg_dots', name: 'Точечки', price: 200, css: 'background: radial-gradient(circle, color-mix(in srgb, var(--accent) 15%, transparent) 2.5px, transparent 2.5px); background-size: 14px 14px; border: 1px solid var(--border-color);' },
 
     // GIF-подложки
-     { id: 'koster', name: 'Костер тест', price: 9999, textColor: 'light',
-  css: `background-image: url('https://218ea43893c4-hachette-artwork.s3.ru1.storage.beget.cloud/backgrounds/koster.gif'); background-size: cover;` },
+    
     { id: 'utka', name: 'Утка тест', price: 9999, textColor: 'light',
   css: `background-image: url('https://218ea43893c4-hachette-artwork.s3.ru1.storage.beget.cloud/backgrounds/utka.gif'); background-size: cover;` },
+        { id: 'koshka', name: 'Котик кушает тест', price: 9999, textColor: 'light',
+  css: `background-image: url('https://218ea43893c4-hachette-artwork.s3.ru1.storage.beget.cloud/backgrounds/koshka.gif'); background-size: cover;` },
+       { id: 'mishka', name: 'Мышка катит сыр тест', price: 9999, textColor: 'dark',
+  css: `background-image: url('https://218ea43893c4-hachette-artwork.s3.ru1.storage.beget.cloud/backgrounds/mishka.gif'); background-size: cover;` },
+           { id: 'zaikimuzika', name: 'Зайки-музыканты тест', price: 9999, textColor: 'dark',
+  css: `background-image: url('https://218ea43893c4-hachette-artwork.s3.ru1.storage.beget.cloud/backgrounds/zaikimuzika.gif'); background-size: cover;` },
     
     // ЭМОДЗИ-ПОДЛОЖКИ
    { id: 'bg_emoji_stars', name: '⭐ Звёздочки', price: 600, 

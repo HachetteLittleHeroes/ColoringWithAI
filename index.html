@@ -16352,8 +16352,9 @@ function applySponsorBackground(css, bgId) {
     const profileBlock = document.querySelector('.profile-header-block');
     if (!profileBlock) return;
     
+    const bgItem = BACKGROUNDS_SHOP.find(b => b.id === bgId);
+    const textColor = bgItem ? bgItem.textColor : null;
     
-    // Добавляем позицию фона если указана
     let fullCss = css;
     if (bgItem && bgItem.bgPosition) {
         fullCss += ' background-position: ' + bgItem.bgPosition + ';';
@@ -16363,10 +16364,6 @@ function applySponsorBackground(css, bgId) {
         profileBlock.style.cssText = fullCss + ' margin: 15px; padding: 20px; border-radius: 24px; display: flex; align-items: center; gap: 20px;';
     }
     
-    const bgItem = BACKGROUNDS_SHOP.find(b => b.id === bgId);
-    const textColor = bgItem ? bgItem.textColor : null;
-    
-    // Функция для принудительной установки цвета уровня
     function forceLevelColor(color) {
         const levelEl = document.getElementById('userLevelDisplay');
         if (levelEl) {
@@ -16375,13 +16372,11 @@ function applySponsorBackground(css, bgId) {
             allChildren.forEach(child => {
                 child.style.setProperty('color', color, 'important');
             });
-            // Прогресс-бар не трогаем
             const bars = levelEl.querySelectorAll('.progress-bar-fill');
             bars.forEach(b => { b.style.removeProperty('color'); });
         }
     }
     
-    // Применяем с задержкой чтобы DOM точно обновился
     setTimeout(() => {
         const nameEl = document.getElementById('displayUsername');
         const statusBadge = document.getElementById('currentStatus');
@@ -16415,7 +16410,6 @@ function applySponsorBackground(css, bgId) {
         }
     }, 300);
     
-    // Дополнительно — добиваем цвет уровня через 800мс (после renderUserLevel)
     if (textColor) {
         setTimeout(() => {
             const color = textColor === 'light' ? '#ffffff' : '#8e8e93';

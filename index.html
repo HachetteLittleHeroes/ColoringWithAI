@@ -15893,7 +15893,7 @@ const BACKGROUNDS_SHOP = [
 
     // GIF-подложки
     
-    { id: 'utka', name: 'Водные забавы', price: 2000, textColor: 'light',
+ { id: 'utka', name: 'Водные забавы', price: 2000, textColor: 'light', bgPosition: 'center 25%',
   css: `background-image: url('https://218ea43893c4-hachette-artwork.s3.ru1.storage.beget.cloud/backgrounds/utka.gif'); background-size: cover;` },
 
     
@@ -16351,8 +16351,16 @@ function applySponsorBackground(css, bgId) {
     const profileBlock = document.querySelector('.profile-header-block');
     if (!profileBlock) return;
     
-    if (css) {
-        profileBlock.style.cssText = css + ' margin: 15px; padding: 20px; border-radius: 24px; display: flex; align-items: center; gap: 20px;';
+    const bgItem = BACKGROUNDS_SHOP.find(b => b.id === bgId);
+    
+    // Добавляем позицию фона если указана
+    let fullCss = css;
+    if (bgItem && bgItem.bgPosition) {
+        fullCss += ' background-position: ' + bgItem.bgPosition + ';';
+    }
+    
+    if (fullCss) {
+        profileBlock.style.cssText = fullCss + ' margin: 15px; padding: 20px; border-radius: 24px; display: flex; align-items: center; gap: 20px;';
     }
     
     const bgItem = BACKGROUNDS_SHOP.find(b => b.id === bgId);
@@ -31393,9 +31401,10 @@ function renderPublicProfile(profile) {
     const sponsorBg = profile.sponsor_background || '';
     let profileBgStyle = 'margin: 0; padding: 15px;';
     
-    // Определяем цвет текста по подложке
+    // Определяем цвет текста и позицию по подложке
     const bgItem = BACKGROUNDS_SHOP.find(b => b.id === sponsorBgId);
     const textColor = bgItem ? bgItem.textColor : null;
+    const bgPosition = bgItem ? bgItem.bgPosition : null;
     let nameColor = '';
     let statusColor = '';
     let statusBgStyle = '';
@@ -31415,6 +31424,10 @@ function renderPublicProfile(profile) {
     
     if (sponsorBg && !sponsorBgId.startsWith('bg_emoji_')) {
         profileBgStyle = sponsorBg + ' margin: 0; padding: 15px; border-radius: 24px; display: flex; align-items: center; gap: 20px;';
+        // Добавляем позицию фона если указана
+        if (bgPosition) {
+            profileBgStyle += ' background-position: ' + bgPosition + ';';
+        }
     }
     
     const statusBg = profile.status_background || '';
@@ -31558,11 +31571,16 @@ function renderPublicProfile(profile) {
         }, 150);
     }
     
-    // Применяем цвета текста для GIF-подложек
-    if (textColor) {
+    // Применяем цвета текста и позицию для GIF-подложек
+    if (textColor || bgPosition) {
         setTimeout(() => {
             const block = container.querySelector('.profile-header-block');
             if (block) {
+                // Применяем позицию фона
+                if (bgPosition) {
+                    block.style.backgroundPosition = bgPosition;
+                }
+                // Применяем цвет текста
                 if (textColor === 'light') {
                     const nameEl = block.querySelector('h2');
                     const statusEl = block.querySelector('.status-badge');

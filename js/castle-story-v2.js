@@ -291,7 +291,7 @@ const CASTLE_CHARACTERS = {
 '4M_E_2': { stage: 4, character: 'mystic', chapter: 'Врата замка', text: 'Когда ты подошел к подножию Акриловых гор, ты увидел очертания замка, твой азарт разыгрывается все сильнее. Ты начинаешь подъем в замок за сокровищами, однако он занимает несколько часов. Узкая тропа петляет между скал и приводит тебя к стражу призраку. Он охраняет вход в замок и требует показать таинственный амулет короля. Ты понимаешь, что ты незваный гость, и принимаешь решение...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Пробиться силой', reward: { strength: 3, agility: 1 }, nextCard: '5M_A_1', task: 'Раскрась картинку с акулой (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Пробиться силой', reward: { strength: 3, agility: 1 }, nextCard: '5M_A_1', task: 'Раскрась картинку с Ли Шанг (ДО/ПОСЛЕ)' },
         { id: 2, text: 'Обойти стражника', reward: { agility: 3 }, nextCard: '5M_B_1', task: 'Раскрась картинку с зайцем (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Показать таинственную монету (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: '5M_V_1', task: null }
     ]
@@ -304,8 +304,8 @@ const CASTLE_CHARACTERS = {
 '4M_J_4': { stage: 4, character: 'mystic', chapter: 'Врата замка', text: 'Когда ты подошел к подножию Акриловых гор, ты увидел очертания замка, твой азарт разыгрывается все сильнее. Ты начинаешь подъем в замок за сокровищами, однако он занимает несколько часов. Узкая тропа петляет между скал и приводит тебя к стражу призраку. Он охраняет вход в замок и требует показать таинственный амулет короля. Ты понимаешь, что ты незваный гость, и принимаешь решение...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Пробиться силой', reward: { strength: 3, agility: 1 }, nextCard: '5M_A_1', task: 'Раскрась картинку с воином или битвой (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Обойти стражника', reward: { agility: 3 }, nextCard: '5M_B_1', task: 'Раскрась картинку с обходным путем (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Пробиться силой', reward: { strength: 3, agility: 1 }, nextCard: '5M_A_1', task: 'Раскрась картинку со слоном (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Обойти стражника', reward: { agility: 3 }, nextCard: '5M_B_1', task: 'Раскрась картинку с Джоанной (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Показать таинственную монету (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: '5M_V_1', task: null }
     ]
 },
@@ -317,8 +317,8 @@ const CASTLE_CHARACTERS = {
 '4M_Z_4': { stage: 4, character: 'mystic', chapter: 'Врата замка', text: 'Когда ты подошел к подножию Акриловых гор, ты увидел очертания замка, твой азарт разыгрывается все сильнее. Ты начинаешь подъем в замок за сокровищами, однако он занимает несколько часов. Узкая тропа петляет между скал и приводит тебя к стражу призраку. Он охраняет вход в замок и требует показать таинственный амулет короля. Ты понимаешь, что ты незваный гость, и принимаешь решение...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Пробиться силой', reward: { strength: 3, agility: 1 }, nextCard: '5M_A_1', task: 'Раскрась картинку с воином или битвой (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Обойти стражника', reward: { agility: 3 }, nextCard: '5M_B_1', task: 'Раскрась картинку с обходным путем (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Пробиться силой', reward: { strength: 3, agility: 1 }, nextCard: '5M_A_1', task: 'Раскрась картинку со львом (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Обойти стражника', reward: { agility: 3 }, nextCard: '5M_B_1', task: 'Раскрась картинку с Круэллой (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Показать таинственную монету (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: '5M_V_1', task: null }
     ]
 },
@@ -330,7 +330,7 @@ const CASTLE_CHARACTERS = {
 '4M_I_4': { stage: 4, character: 'mystic', chapter: 'Врата замка', text: 'Когда ты подошел к подножию Акриловых гор, ты увидел очертания замка, твой азарт разыгрывается все сильнее. Ты начинаешь подъем в замок за сокровищами, однако он занимает несколько часов. Узкая тропа петляет между скал и приводит тебя к стражу призраку. Он охраняет вход в замок и требует показать таинственный амулет короля. Ты понимаешь, что ты незваный гость, и принимаешь решение...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Пробиться силой', reward: { strength: 3, agility: 1 }, nextCard: '5M_A_1', task: 'Раскрась картинку с воином или битвой (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Пробиться силой', reward: { strength: 3, agility: 1 }, nextCard: '5M_A_1', task: 'Раскрась картинку с Аладдином (ДО/ПОСЛЕ)' },
         { id: 2, text: 'Обойти стражника', reward: { agility: 3 }, nextCard: '5M_B_1', task: 'Раскрась картинку с обходным путем (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Показать таинственную монету (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: '5M_V_1', task: null }
     ]
@@ -341,8 +341,8 @@ const CASTLE_CHARACTERS = {
 '5M_A_3': { stage: 5, character: 'mystic', chapter: 'Фонтан', text: 'Ты чувствуешь, как он сверлит тебя взглядом, хоть его глаза скрыты глубоко под капюшоном плаща. Советник: «Ты проявил себя храбро, и награда обязательно тебя найдет». Ты заворожен неожиданной встречей и хочешь узнать побольше об этом месте. Ты решаешь...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Расспросить советника', reward: { intelligence: 2, agility: 1 }, nextCard: '5M_G_1', task: 'Раскрась картинку с фонтаном или советником (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Самостоятельно разобраться', reward: { strength: 2, agility: 2 }, nextCard: '5M_D_1', task: 'Раскрась картинку с замком или двором (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Расспросить советника', reward: { intelligence: 2, agility: 1 }, nextCard: '5M_G_1', task: 'Раскрась картинку с Сэром Хисом (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Самостоятельно разобраться', reward: { strength: 2, agility: 2 }, nextCard: '5M_D_1', task: 'Раскрась картинку с Робин Гудом (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Пройти мимо (🎫1)', skipCost: 1, isPremium: true, reward: { agility: 2 }, nextCard: '5M_D_1', task: null }
     ]
 },
@@ -352,8 +352,8 @@ const CASTLE_CHARACTERS = {
 '5M_B_2': { stage: 5, character: 'mystic', chapter: 'Территория замка', text: 'Оглядываясь ты видишь вход в подземелье, конюшню и кузницу, ты выбираешь пойти в...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Подземелье', reward: { strength: 2, intelligence: 1 }, nextCard: '6M_A_1', task: 'Раскрась картинку с подземельем (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Конюшню', reward: { agility: 2, strength: 1 }, nextCard: '6M_B_1', task: 'Раскрась картинку с конюшней или лошадью (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Подземелье', reward: { strength: 2, intelligence: 1 }, nextCard: '6M_A_1', task: 'Раскрась картинку, где преобладают темные цвета (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Конюшню', reward: { agility: 2, strength: 1 }, nextCard: '6M_B_1', task: 'Раскрась картинку с Самсоном-конем (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Кузницу (🎫1)', skipCost: 1, isPremium: true, reward: { strength: 2, agility: 1 }, nextCard: '6M_V_1', task: null }
     ]
 },
@@ -364,8 +364,8 @@ const CASTLE_CHARACTERS = {
 '5M_V_3': { stage: 5, character: 'mystic', chapter: 'Фонтан', text: 'Советник: «Ты проявил себя храбро, и награда обязательно тебя найдет, но путь твой будет тяжел». Ты заворожен таинственной встречей и хочешь узнать побольше об этом месте. Ты решаешь...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Расспросить советника', reward: { intelligence: 2, agility: 1 }, nextCard: '5M_G_1', task: 'Раскрась картинку с фонтаном или советником (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Заявить советнику, что ты не боишься трудностей', reward: { strength: 2, agility: 2 }, nextCard: '5M_D_1', task: 'Раскрась картинку с замком или двором (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Расспросить советника', reward: { intelligence: 2, agility: 1 }, nextCard: '5M_G_1', task: 'Раскрась картинку с Мушу (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Заявить советнику, что ты не боишься трудностей', reward: { strength: 2, agility: 2 }, nextCard: '5M_D_1', task: 'Раскрась картинку не из Disney/Pixar (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Пройти мимо (🎫1)', skipCost: 1, isPremium: true, reward: { agility: 2 }, nextCard: '5M_D_1', task: null }
     ]
 },
@@ -375,8 +375,8 @@ const CASTLE_CHARACTERS = {
 '5M_G_2': { stage: 5, character: 'mystic', chapter: 'Территория замка', text: 'Оглядываясь ты видишь вход в подземелье, конюшню и кузницу, ты выбираешь пойти в...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Подземелье', reward: { strength: 2, intelligence: 1 }, nextCard: '6M_A_1', task: 'Раскрась картинку с подземельем (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Конюшню', reward: { agility: 2, strength: 1 }, nextCard: '6M_B_1', task: 'Раскрась картинку с конюшней или лошадью (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Подземелье', reward: { strength: 2, intelligence: 1 }, nextCard: '6M_A_1', task: 'Раскрась картинку с мифическим сущестом (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Конюшню', reward: { agility: 2, strength: 1 }, nextCard: '6M_B_1', task: 'Раскрась картинку с Ахиллом-конем (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Кузницу (🎫1)', skipCost: 1, isPremium: true, reward: { strength: 2, agility: 1 }, nextCard: '6M_V_1', task: null }
     ]
 },
@@ -385,8 +385,8 @@ const CASTLE_CHARACTERS = {
 '5M_D_1': { stage: 5, character: 'mystic', chapter: 'Территория замка', text: 'Полный уверенности и сил забрать сокровища, ты оглядываешься и видишь вход в подземелье, конюшню и кузницу, ты выбираешь пойти в...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Подземелье', reward: { strength: 2, intelligence: 1 }, nextCard: '6M_A_1', task: 'Раскрась картинку с подземельем (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Конюшню', reward: { agility: 2, strength: 1 }, nextCard: '6M_B_1', task: 'Раскрась картинку с конюшней или лошадью (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Подземелье', reward: { strength: 2, intelligence: 1 }, nextCard: '6M_A_1', task: 'Раскрась картинку, где изображен котел (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Конюшню', reward: { agility: 2, strength: 1 }, nextCard: '6M_B_1', task: 'Раскрась картинку с Ханом-конем(ДО/ПОСЛЕ)' },
         { id: 3, text: 'Кузницу (🎫1)', skipCost: 1, isPremium: true, reward: { strength: 2, agility: 1 }, nextCard: '6M_V_1', task: null }
     ]
 },
@@ -394,8 +394,8 @@ const CASTLE_CHARACTERS = {
 '6M_A_1': { stage: 6, character: 'mystic', chapter: 'Подземелье', text: 'Ты идешь в подземелье. Ты спускаешься все глубже и глубже, делаешь еще шаг и твой ботинок оказывается на половину в воде. Ты зажигаешь факел и видишь, что ты оказался в заброшенных катакомбах. Среди множества развилок ты отмечаешь для себя 3 пути, пойти...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'На мерцание вдалеке', reward: { intelligence: 2, agility: 1 }, nextCard: '6M_G_1', task: 'Раскрась картинку с подземным озером или катакомбами (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'В сокровищницу', reward: { strength: 2, agility: 1 }, nextCard: '6M_D_1', task: 'Раскрась картинку с сокровищами или драгоценностями (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'На мерцание вдалеке', reward: { intelligence: 2, agility: 1 }, nextCard: '6M_G_1', task: 'Раскрась картинку со светлячком или сверчком (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'В сокровищницу', reward: { strength: 2, agility: 1 }, nextCard: '6M_D_1', task: 'Раскрась картинку с пиратами (ДО/ПОСЛЕ)' },
         { id: 3, text: 'По лестнице обратно наверх (🎫1)', skipCost: 1, isPremium: true, reward: { agility: 1, strength: 1 }, nextCard: '6M_B_1', task: null }
     ]
 },
@@ -409,8 +409,8 @@ const CASTLE_CHARACTERS = {
 '6M_B_6': { stage: 6, character: 'mystic', chapter: 'Конюшня', text: 'Ты смотришь на призрачного единорога. Он прекрасен и величественен. В его глазах — вековая мудрость и надежда. Он ждет твоего решения. Загадок становится все больше.',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Принять дружбу коня', reward: { strength: 3, agility: 1 }, nextCard: '6M_E_1', task: 'Раскрась картинку с единорогом (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Почесать Лангоша за ухом', reward: { agility: 3, intelligence: 1 }, nextCard: '6M_E_1', task: 'Раскрась картинку с лошадью (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Принять дружбу коня', reward: { strength: 3, agility: 1 }, nextCard: '6M_E_1', task: 'Раскрась картинку, где Мулан на коне (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Почесать Лангоша за ухом', reward: { agility: 3, intelligence: 1 }, nextCard: '6M_E_1', task: 'Раскрась картинку с Рапунцель (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Дать коню яблоко (🎫1)', skipCost: 1, isPremium: true, reward: { all: 1 }, nextCard: '6M_E_1', task: null }
     ]
 },
@@ -421,8 +421,8 @@ const CASTLE_CHARACTERS = {
 '6M_V_3': { stage: 6, character: 'mystic', chapter: 'Кузница', text: 'Обойдя всю Кузницу ты натыкаешься на туннель, который определенно ведет в замок, зайдя в него, ты находишь лестницу. Поднявшись по ней ты оказываешься в небольшом зале, где перед тобой встает выбор из двух таинственных дверей. Набравшись смелости ты решаешь открыть одну из них. Тебя озаряет свет и ты оказываешься в...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Тронном зале', reward: { strength: 3, intelligence: 1 }, nextCard: '7M_A_1', task: 'Раскрась картинку с тронным залом (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Тайной комнате', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_B_1', task: 'Раскрась картинку с тайной комнатой (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Тронном зале', reward: { strength: 3, intelligence: 1 }, nextCard: '7M_A_1', task: 'Раскрась картинку, где есть корона (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Тайной комнате', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_B_1', task: 'Раскрась картинку с книгой (ДО/ПОСЛЕ)' },
         { id: 3, text: 'В одном из мест (решит случай) (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: null, isRandom: true, randomCards: ['7M_A_1', '7M_B_1'], task: null }
     ]
 },
@@ -432,8 +432,8 @@ const CASTLE_CHARACTERS = {
 '6M_G_2': { stage: 6, character: 'mystic', chapter: 'Подземное озеро', text: 'Таинственная фигура в плаще снова тут — он словно ждал тебя. Его лицо скрыто капюшоном, но ты чувствуешь его напряжение. «Я расскажу тебе всё, наемник. Король Таирус проклят уже триста лет. Его брат Малевичус предал его из зависти. Помоги ему — или займи его место. Выбор за тобой». Таинственная фигура исчезла после этих слов также неожиданно, как и появилась. Недолго думая, ты решаешь...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Сесть в лодку и грести руками', reward: { strength: 3, agility: 1 }, nextCard: '6M_J_1', task: 'Раскрась картинку с лодкой или озером (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Переплыть озеро вплавь', reward: { agility: 3, strength: 1 }, nextCard: '6M_J_1', task: 'Раскрась картинку с пловцом или водой (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Сесть в лодку и грести руками', reward: { strength: 3, agility: 1 }, nextCard: '6M_J_1', task: 'Раскрась картинку, где Моана без весла (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Переплыть озеро вплавь', reward: { agility: 3, strength: 1 }, nextCard: '6M_J_1', task: 'Раскрась картинку, где персонаж плывет (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Воспользоваться веревкой и раскачаться (🎫2)', skipCost: 2, isPremium: true, reward: { agility: 3 }, nextCard: '6M_K_1', task: null }
     ]
 },
@@ -443,8 +443,8 @@ const CASTLE_CHARACTERS = {
 '6M_D_2': { stage: 6, character: 'mystic', chapter: 'Сокровищница', text: 'Вдруг гора золота стала шевелиться, стены дрожать, а внутри тебя развиваться чувство тревоги. Перед тобой восстал грозный дракон-хранитель этого места. Ты решаешь...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Принять бой', reward: { strength: 4, agility: 1 }, nextCard: '7M_V_1', task: 'Раскрась картинку с драконом или битвой (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Отвлечь дракона', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_G_1', task: 'Раскрась картинку с драконом и едой (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Принять бой', reward: { strength: 4, agility: 1 }, nextCard: '7M_V_1', task: 'Раскрась картинку с драконом (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Отвлечь дракона', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_G_1', task: 'Раскрась картинку с огнем (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Убежать (🎫1)', skipCost: 1, isPremium: true, reward: { agility: 2 }, nextCard: '7M_D_1', task: null }
     ]
 },
@@ -454,8 +454,8 @@ const CASTLE_CHARACTERS = {
 '6M_E_2': { stage: 6, character: 'mystic', chapter: 'Зал с дверьми', text: 'Набравшись смелости ты решаешь открыть одну из них. Тебя озаряет свет и ты оказываешься в...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Тронном зале', reward: { strength: 3, intelligence: 1 }, nextCard: '7M_A_1', task: 'Раскрась картинку с тронным залом (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Тайной комнате', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_B_1', task: 'Раскрась картинку с тайной комнатой (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Тронном зале', reward: { strength: 3, intelligence: 1 }, nextCard: '7M_A_1', task: 'Раскрась картинку с королем (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Тайной комнате', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_B_1', task: 'Раскрась картинку с Когсвортом (ДО/ПОСЛЕ)' },
         { id: 3, text: 'В одном из мест (решит случай) (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: null, isRandom: true, randomCards: ['7M_A_1', '7M_B_1'], task: null }
     ]
 },
@@ -466,8 +466,8 @@ const CASTLE_CHARACTERS = {
     isChoice: true,
     choices: [
         { id: 1, text: 'Выставляешь меч вперед', reward: { strength: 4, agility: 1 }, nextCard: '6M_Z_1', task: 'Раскрась картинку с морским чудовищем (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Убегаешь к двери', reward: { agility: 3, strength: 1 }, nextCard: '6M_I_1', task: 'Раскрась картинку с дверью или побегом (ДО/ПОСЛЕ)' },
-        { id: 3, text: 'Призвать Лангоша (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: '6M_I_1', task: null }
+        { id: 2, text: 'Убегаешь к двери', reward: { agility: 3, strength: 1 }, nextCard: '6M_I_1', task: 'Раскрась картинку с крысой (ДО/ПОСЛЕ)' },
+        { id: 3, text: 'Бросаешь камень в сторону монстра и бежишь к двери (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: '6M_I_1', task: null }
     ]
 },
 
@@ -478,8 +478,8 @@ const CASTLE_CHARACTERS = {
 '6M_Z_4': { stage: 6, character: 'mystic', chapter: 'Зал с дверьми', text: 'Набравшись смелости ты решаешь открыть одну из них. Тебя озаряет свет и ты оказываешься в...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Тронном зале', reward: { strength: 3, intelligence: 1 }, nextCard: '7M_A_1', task: 'Раскрась картинку с тронным залом (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Тайной комнате', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_B_1', task: 'Раскрась картинку с тайной комнатой (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Тронном зале', reward: { strength: 3, intelligence: 1 }, nextCard: '7M_A_1', task: 'Раскрась картинку с принцессой (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Тайной комнате', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_B_1', task: 'Раскрась картинку с Клодом Фролло (ДО/ПОСЛЕ)' },
         { id: 3, text: 'В одном из мест (решит случай) (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: null, isRandom: true, randomCards: ['7M_A_1', '7M_B_1'], task: null }
     ]
 },
@@ -490,8 +490,8 @@ const CASTLE_CHARACTERS = {
 '6M_I_3': { stage: 6, character: 'mystic', chapter: 'Зал с дверьми', text: 'Набравшись смелости ты решаешь открыть одну из них. Тебя озаряет свет и ты оказываешься в...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Тронном зале', reward: { strength: 3, intelligence: 1 }, nextCard: '7M_A_1', task: 'Раскрась картинку с тронным залом (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Тайной комнате', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_B_1', task: 'Раскрась картинку с тайной комнатой (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Тронном зале', reward: { strength: 3, intelligence: 1 }, nextCard: '7M_A_1', task: 'Раскрась картинку с замком (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Тайной комнате', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_B_1', task: 'Раскрась картинку с хотябы 1 расколдованным слугой из Красавицы и чудовища (ДО/ПОСЛЕ)' },
         { id: 3, text: 'В одном из мест (решит случай) (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: null, isRandom: true, randomCards: ['7M_A_1', '7M_B_1'], task: null }
     ]
 },
@@ -503,8 +503,8 @@ const CASTLE_CHARACTERS = {
 '6M_K_4': { stage: 6, character: 'mystic', chapter: 'Зал с дверьми', text: 'Набравшись смелости ты решаешь открыть одну из них. Тебя озаряет свет и ты оказываешься в...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Тронном зале', reward: { strength: 3, intelligence: 1 }, nextCard: '7M_A_1', task: 'Раскрась картинку с тронным залом (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Тайной комнате', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_B_1', task: 'Раскрась картинку с тайной комнатой (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Тронном зале', reward: { strength: 3, intelligence: 1 }, nextCard: '7M_A_1', task: 'Раскрась картинку с королевой (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Тайной комнате', reward: { intelligence: 3, agility: 1 }, nextCard: '7M_B_1', task: 'Раскрась картинку с Аидом (ДО/ПОСЛЕ)' },
         { id: 3, text: 'В одном из мест (решит случай) (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: null, isRandom: true, randomCards: ['7M_A_1', '7M_B_1'], task: null }
     ]
 },
@@ -518,8 +518,8 @@ const CASTLE_CHARACTERS = {
 '7M_A_7': { stage: 7, character: 'mystic', chapter: 'Тронный зал', text: 'Закончив слушать рассказ короля, ты понимаешь, что фактически оказался в ловушке. Ты должен узнать, как разрушить проклятье всего за 2 дня и выбраться наружу. Ни секунды не медля, ты решаешь срочно искать хоть какие-то ответы. Ты выбегаешь из тронного зала и видишь библиотеку, ты решаешь зайти в нее, чтобы найти ответы. Среди множества книг и свитков твое внимание привлекает 3 книги. Ты берешь...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Древний свиток Земель Ашетвиль', reward: { intelligence: 2 }, nextCard: '8M_A_1', task: 'Раскрась картинку с древним свитком или книгой (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Замковый кодекс', reward: { intelligence: 2 }, nextCard: '8M_B_1', task: 'Раскрась картинку с книгой или кодексом (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Древний свиток Земель Ашетвиль', reward: { intelligence: 2 }, nextCard: '8M_A_1', task: 'Раскрась картинку с отцом Киды (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Замковый кодекс', reward: { intelligence: 2 }, nextCard: '8M_B_1', task: 'Раскрась картинку с грозой (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Журнал Daily Ashetvil (🎫1)', skipCost: 1, isPremium: true, reward: { intelligence: 1, agility: 1 }, nextCard: '8M_V_1', task: null }
     ]
 },
@@ -539,8 +539,8 @@ const CASTLE_CHARACTERS = {
 '7M_B_12': { stage: 7, character: 'mystic', chapter: 'Библиотека', text: 'Закончив слушать рассказ короля, ты понимаешь, что фактически оказался в ловушке. Ты должен узнать, как разрушить проклятье всего за 2 дня и выбраться наружу. Ни секунды не медля, ты решаешь срочно искать хоть какие-то ответы. Ты выбегаешь из тронного зала и видишь библиотеку, ты решаешь зайти в нее, чтобы найти ответы. Среди множества книг и свитков твое внимание привлекает 3 книги. Ты берешь...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Древний свиток Земель Ашетвиль', reward: { intelligence: 2 }, nextCard: '8M_A_1', task: 'Раскрась картинку с древним свитком или книгой (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Замковый кодекс', reward: { intelligence: 2 }, nextCard: '8M_B_1', task: 'Раскрась картинку с книгой или кодексом (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Древний свиток Земель Ашетвиль', reward: { intelligence: 2 }, nextCard: '8M_A_1', task: 'Раскрась картинку с совой (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Замковый кодекс', reward: { intelligence: 2 }, nextCard: '8M_B_1', task: 'Раскрась картинку с Артуром (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Журнал Daily Ashetvil (🎫1)', skipCost: 1, isPremium: true, reward: { intelligence: 1, agility: 1 }, nextCard: '8M_V_1', task: null }
     ]
 },
@@ -558,8 +558,8 @@ const CASTLE_CHARACTERS = {
 '7M_V_10': { stage: 7, character: 'mystic', chapter: 'Библиотека', text: 'Плюнув на все сокровища, которые тебя здесь окружают, ты решаешь помочь капитану спасти Земли Ашетвиль. Капитан рассказывает тебе, что заклятие можно снять при помощи зелья, рецепт которого хранится в библиотеке. Вы решаете незамедлительно отправиться на поиски рецепта. Попав в библиотеку, среди множества книг и свитков твое внимание привлекает 3 книги. Ты берешь...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Книгу рецептов', reward: { intelligence: 2 }, nextCard: '8M_G_1', task: 'Раскрась картинку с книгой рецептов (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Бестиарий Ашетвиля', reward: { intelligence: 3 }, nextCard: '8M_D_1', task: 'Раскрась картинку с бестиарием или существом (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Книгу рецептов', reward: { intelligence: 2 }, nextCard: '8M_G_1', task: 'Раскрась картинку, где персонажи готовят еду (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Бестиарий Ашетвиля', reward: { intelligence: 3 }, nextCard: '8M_D_1', task: 'Раскрась картинку из тома Бестиарий (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Обе книги (🎫2)', skipCost: 2, isPremium: true, reward: { intelligence: 3 }, nextCard: '8M_G_1', task: null }
     ]
 },
@@ -574,8 +574,8 @@ const CASTLE_CHARACTERS = {
 '7M_G_7': { stage: 7, character: 'mystic', chapter: 'Библиотека', text: 'Плюнув на все сокровища, которые тебя здесь окружают, ты решаешь помочь капитану спасти Земли Ашетвиль. Капитан рассказывает тебе, что заклятие можно снять, но нужно узнать как. Найти что-то можно в библиотеке. Вы решаете незамедлительно отправиться на поиски. Попав в библиотеку, среди множества книг и свитков твое внимание привлкает 3 книги. Ты берешь...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Древний свиток Земель Ашетвиль', reward: { intelligence: 2 }, nextCard: '8M_A_1', task: 'Раскрась картинку с древним свитком или книгой (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Замковый кодекс', reward: { intelligence: 2 }, nextCard: '8M_B_1', task: 'Раскрась картинку с книгой или кодексом (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Древний свиток Земель Ашетвиль', reward: { intelligence: 2 }, nextCard: '8M_A_1', task: 'Раскрась картинку с Муфасой (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Замковый кодекс', reward: { intelligence: 2 }, nextCard: '8M_B_1', task: 'Раскрась картинку, где персонажи танцуют (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Журнал Daily Ashetvil (🎫1)', skipCost: 1, isPremium: true, reward: { intelligence: 1, agility: 1 }, nextCard: '8M_V_1', task: null }
     ]
 },
@@ -591,8 +591,8 @@ const CASTLE_CHARACTERS = {
 '7M_D_8': { stage: 7, character: 'mystic', chapter: 'Библиотека', text: 'Закончив слушать рассказ короля, ты понимаешь, что фактически оказался в ловушке. Ты должен узнать, как разрушить проклятье всего за 2 дня и выбраться наружу. Ни секунды не медля, ты решаешь срочно искать хоть какие-то ответы. Ты выбегаешь из тронного зала и видишь библиотеку, ты решаешь зайти в нее, чтобы найти ответы. Среди множества книг и свитков твое внимание привлекает 3 книги. Ты берешь...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Древний свиток Земель Ашетвиль', reward: { intelligence: 2 }, nextCard: '8M_A_1', task: 'Раскрась картинку с древним свитком или книгой (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Замковый кодекс', reward: { intelligence: 2 }, nextCard: '8M_B_1', task: 'Раскрась картинку с книгой или кодексом (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Древний свиток Земель Ашетвиль', reward: { intelligence: 2 }, nextCard: '8M_A_1', task: 'Раскрась картинку с домом Белль (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Замковый кодекс', reward: { intelligence: 2 }, nextCard: '8M_B_1', task: 'Раскрась картинку с Люмьером (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Журнал Daily Ashetvil (🎫1)', skipCost: 1, isPremium: true, reward: { intelligence: 1, agility: 1 }, nextCard: '8M_V_1', task: null }
     ]
 },
@@ -606,8 +606,8 @@ const CASTLE_CHARACTERS = {
 '8M_A_7': { stage: 8, character: 'mystic', chapter: 'Кладбище', text: '"Я внушал Малевичусу, что его родители любят меньше, чем Таируса, я взращивал в нем злобу годами, пока в один из дней, он не наложил проклятие на Таируса и замок со всеми его обитателями. Заклятие, которое лежит на этом замке, позволяет мне уталять свою жажду по мертвым душам. Заманить тебя не составило никакого труда. Глупый наемник, который жаждет только одного - наживы. Ты станешь лишь очередным слугой в этом замке.". Советник замахивается своим посохом, а ты...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Бьешь по посоху мечом', reward: { strength: 3, agility: 1 }, nextCard: '9M_A_1', task: 'Раскрась картинку с битвой или мечом (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Уклоняешься (🏃16)', requireStat: { stat: 'agility', min: 16 }, reward: { agility: 4, strength: 1 }, nextCard: '9M_B_1', task: 'Раскрась картинку с уклонением или ловкостью (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Бьешь по посоху мечом', reward: { strength: 3, agility: 1 }, nextCard: '9M_A_1', task: 'Раскрась картинку со скелетом (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Уклоняешься (🏃16)', requireStat: { stat: 'agility', min: 16 }, reward: { agility: 4, strength: 1 }, nextCard: '9M_B_1', task: 'Раскрась картинку с обезьяной (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Призвать Лангоша (🎫3)', skipCost: 3, isPremium: true, reward: { all: 3 }, nextCard: '9M_V_1', task: null }
     ]
 },
@@ -616,8 +616,8 @@ const CASTLE_CHARACTERS = {
 '8M_B_1': { stage: 8, character: 'mystic', chapter: 'Библиотека', text: 'Взяв в руки Замковый кодекс, и прочитав все правила, ты находишь решение: ты можешь стать новым королем. Тебе лишь нужно завладеть короной Короля или сесть на его трон. Ты выбираешь...', 
     isChoice: true,
     choices: [
-        { id: 1, text: 'Завладеть короной (💪20)', requireStat: { stat: 'strength', min: 20 }, reward: { strength: 4, agility: 1 }, nextCard: '9M_G_1', task: 'Раскрась картинку с короной или троном (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Сесть на трон (🧠18)', requireStat: { stat: 'intelligence', min: 18 }, reward: { intelligence: 4, strength: 1 }, nextCard: '9M_D_1', task: 'Раскрась картинку с троном или тронным залом (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Завладеть короной (💪20)', requireStat: { stat: 'strength', min: 20 }, reward: { strength: 4, agility: 1 }, nextCard: '9M_G_1', task: 'Раскрась картинку со Шрамом (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Сесть на трон (🧠18)', requireStat: { stat: 'intelligence', min: 18 }, reward: { intelligence: 4, strength: 1 }, nextCard: '9M_D_1', task: 'Раскрась картинку с Измой (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Передумать и пойти в кладбище (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: '8M_A_1', task: null }
     ]
 },
@@ -629,9 +629,9 @@ const CASTLE_CHARACTERS = {
 '8M_V_4': { stage: 8, character: 'mystic', chapter: 'Рыцарская арена', text: 'Ты закрываешь глаза, делаешь вдох-выдох, выставляешь копье перед собой и начинаешь стремительно скакать на встречу противнику. Вы становитесь все ближе и ближе. Чтобы победить, тебе нужно направить копье...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Влево', reward: { agility: 2, strength: 1 }, nextCard: '9M_E_1', task: 'Раскрась картинку с рыцарским поединком (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Держать прямо (💪18)', requireStat: { stat: 'strength', min: 18 }, reward: { strength: 4, agility: 1 }, nextCard: '9M_J_1', task: 'Раскрась картинку с копьем или рыцарем (ДО/ПОСЛЕ)' },
-        { id: 3, text: 'В голову (🧠16)', requireStat: { stat: 'intelligence', min: 16 }, reward: { intelligence: 4, strength: 1 }, nextCard: '9M_Z_1', task: 'Раскрась картинку с победой или турниром (ДО/ПОСЛЕ)' }
+        { id: 1, text: 'Влево', reward: { agility: 2, strength: 1 }, nextCard: '9M_E_1', task: 'Раскрась картинку со стервятником (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Держать прямо (💪18)', requireStat: { stat: 'strength', min: 18 }, reward: { strength: 4, agility: 1 }, nextCard: '9M_J_1', task: 'Раскрась картинку с Зевсом (ДО/ПОСЛЕ)' },
+        { id: 3, text: 'В голову (🧠16)', requireStat: { stat: 'intelligence', min: 16 }, reward: { intelligence: 4, strength: 1 }, nextCard: '9M_Z_1', task: 'Раскрась картинку с тыквой (ДО/ПОСЛЕ)' }
     ]
 },
 
@@ -641,8 +641,8 @@ const CASTLE_CHARACTERS = {
 '8M_G_3': { stage: 8, character: 'mystic', chapter: 'Кабинет алхимика', text: 'Узнав от капитана, что кабинет находится совсем рядом с библиотекой, ты отправился туда. Зайдя в кабинет алхимика, ты видишь множество стеллажей с древними книгами и зельями. Обыскав все, ты находишь рецепт того самого зелья, главным ингредиентом которого является зуб дракона. Ты в спешке ощупываешь карман, и достаешь клык дракона. Все это время ответ к снятию заклятия лежал у тебя в кармане.', nextCard: '8M_G_4' },
 '8M_G_4': { stage: 8, character: 'mystic', chapter: 'Кабинет алхимика', text: 'Спустя несколько часов ты сварил то самое зелье, зелье, которое способно исправить многое. Выйдя из кабинета алхимика, ты...',     isChoice: true,
     choices: [
-        { id: 1, text: 'Спускаешься вниз по лестнице', reward: { strength: 2, agility: 1 }, nextCard: '9M_I_1', task: 'Раскрась картинку с лестницей или капитаном (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Идешь прямо (🏃16)', requireStat: { stat: 'agility', min: 16 }, reward: { agility: 3, strength: 1 }, nextCard: '9M_K_1', task: 'Раскрась картинку с коридором или советником (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Спускаешься вниз по лестнице', reward: { strength: 2, agility: 1 }, nextCard: '9M_I_1', task: 'Раскрась картинку с Эльзой (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Идешь прямо (🏃16)', requireStat: { stat: 'agility', min: 16 }, reward: { agility: 3, strength: 1 }, nextCard: '9M_K_1', task: 'Раскрась картинку с Ральфом (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Обнаруживаешь тайный ход (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: '9M_L_1', task: null }
     ]
 },
@@ -654,8 +654,8 @@ const CASTLE_CHARACTERS = {
 '8M_D_4': { stage: 8, character: 'mystic', chapter: 'Коридор', text: 'Выйдя из кабинета алхимика, ты...',
     isChoice: true,
     choices: [
-        { id: 1, text: 'Спускаешься вниз по лестнице', reward: { strength: 2, agility: 1 }, nextCard: '9M_I_1', task: 'Раскрась картинку с лестницей или капитаном (ДО/ПОСЛЕ)' },
-        { id: 2, text: 'Идешь прямо', reward: { strength: 2, agility: 1 }, nextCard: '9M_K_1', task: 'Раскрась картинку с коридором или советником (ДО/ПОСЛЕ)' },
+        { id: 1, text: 'Спускаешься вниз по лестнице', reward: { strength: 2, agility: 1 }, nextCard: '9M_I_1', task: 'Раскрась картинку с Анной и Холодного сердца (ДО/ПОСЛЕ)' },
+        { id: 2, text: 'Идешь прямо', reward: { strength: 2, agility: 1 }, nextCard: '9M_K_1', task: 'Раскрась картинку с Пумбой (ДО/ПОСЛЕ)' },
         { id: 3, text: 'Обнаруживаешь тайный ход (🎫2)', skipCost: 2, isPremium: true, reward: { all: 2 }, nextCard: '9M_L_1', task: null }
     ]
 },

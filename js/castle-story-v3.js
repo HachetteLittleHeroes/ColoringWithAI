@@ -2973,10 +2973,7 @@ function submitCastleChoiceInGame(cardId, choiceIdx) {
             return; 
         }
         
-        userSkips -= choice.skipCost;
-        localStorage.setItem(`user_skips_${userId}`, userSkips);
-        if (typeof updateSkipDisplay === 'function') updateSkipDisplay();
-        
+        // ✅ Списываем скипы на сервере и обновляем локально из ответа
         fetch(`${SERVER_URL}/api/use_skip`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -2984,7 +2981,21 @@ function submitCastleChoiceInGame(cardId, choiceIdx) {
                 user_id: userId, 
                 amount: choice.skipCost
             })
-        }).catch(e => console.error('Skip sync error:', e));
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                userSkips = data.skips_left;
+            } else {
+                userSkips -= choice.skipCost;
+            }
+            updateSkipDisplay();
+        })
+        .catch(e => {
+            console.error('Skip sync error:', e);
+            userSkips -= choice.skipCost;
+            updateSkipDisplay();
+        });
         
         const choiceKey = cardId + '_choice_' + idx;
         if (!castleCompletedChoices) castleCompletedChoices = {};

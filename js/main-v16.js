@@ -9950,7 +9950,7 @@ async function buyBoost(duration, price) {
         console.error('Ошибка загрузки буста:', error);
     }
 }
-        async function useSkipForTask(branchKey, levelIndex, subtaskIndex, currentProgress, required) {
+       async function useSkipForTask(branchKey, levelIndex, subtaskIndex, currentProgress, required) {
     // Проверка: Шок контент нельзя пропускать
     if (branchKey === 'shock') {
         alert('⚠️ Задания ветки "Шок контент" нельзя пропускать!');
@@ -9990,8 +9990,20 @@ async function buyBoost(duration, price) {
         const result = await response.json();
         
         if (result.status === 'ok') {
-            // Списываем пропуск
-            userSkips--;
+            // ✅ Списываем скип на сервере
+            const skipRes = await fetch(`${SERVER_URL}/api/use_skip`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, amount: 1 })
+            });
+            const skipData = await skipRes.json();
+            
+            // Обновляем из ответа сервера
+            if (skipData.status === 'ok') {
+                userSkips = skipData.skips_left;
+            } else {
+                userSkips--;
+            }
             saveSkipData();
             updateSkipDisplay();
             

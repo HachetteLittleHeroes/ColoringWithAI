@@ -2418,6 +2418,9 @@ function showCharacterSelectInGame() {
     kissedAdelaide = false;
     visitedZibeef = false;
     
+    // ✅ Очищаем историю карт при старте новой игры
+    window._castleCardHistory = [];
+    
     fetch(`${SERVER_URL}/api/castle/check_all_access?user_id=${userId}`)
         .then(r => r.json())
         .then(data => {
@@ -2819,7 +2822,6 @@ function renderCastleCardInGame(cardId) {
     
     currentCastleCard = cardId;
     
-    // ✅ Если игрок дошёл до мельницы Зибифа — запоминаем
     if (cardId === '4M_V_1') {
         visitedZibeef = true;
     }
@@ -2836,7 +2838,6 @@ function renderCastleCardInGame(cardId) {
     
     // КОНЦОВКА
     if (card.isEnding) {
-        // ✅ Если Мистий поцеловал Аделаиду — показываем романтическую концовку
         if (kissedAdelaide && 
             (cardId === '10M_GOOD_1' || cardId === '10M_HERO_1' || cardId === '10M_HERO_2')) {
             currentCastleCard = '10M_LOVE_ENDING';
@@ -2845,7 +2846,6 @@ function renderCastleCardInGame(cardId) {
             return;
         }
         
-        // ✅ Если Мистий посетил мельницу Зибифа — показываем концовку с мельницей
         if (visitedZibeef && 
             (cardId === '10M_GOOD_1' || cardId === '10M_HERO_1' || cardId === '10M_HERO_2')) {
             currentCastleCard = '10M_ZIBEEF_ENDING';
@@ -2867,7 +2867,6 @@ function renderCastleCardInGame(cardId) {
         return;
     }
     
-    // Статы для карточек с выбором
     const statsHtml = `
         <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 18px;">
             <span style="color: white; font-size: 13px;">💪${userCastleStats.strength||0}</span>
@@ -2879,16 +2878,31 @@ function renderCastleCardInGame(cardId) {
     
     // ВЫБОР
     if (card.isChoice) {
+        // Проверяем, есть ли уже одобренный выбор
+        let hasApproved = false;
+        for (let idx = 0; idx < card.choices.length; idx++) {
+            const choiceKey = cardId + '_choice_' + idx;
+            if (castleApprovedChoices && castleApprovedChoices[choiceKey]) {
+                hasApproved = true;
+                break;
+            }
+        }
+        
         let choicesHtml = '';
         card.choices.forEach((choice, idx) => {
             const choiceKey = cardId + '_choice_' + idx;
             const isApproved = castleApprovedChoices && castleApprovedChoices[choiceKey];
             const isCompleted = castleCompletedChoices && castleCompletedChoices[choiceKey];
             
+            // Если уже есть одобренный выбор — показываем только его
+            if (hasApproved && !isApproved) return;
+            
             if (isApproved) {
                 choicesHtml += `<button onclick="proceedAfterApprovalInGame('${cardId}',${idx})" style="width: 100%; text-align: left; padding: 14px 18px; background: linear-gradient(135deg, rgba(46,204,113,0.9), rgba(39,174,96,0.9)); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; margin-bottom: 8px; font-size: 15px; cursor: pointer;">✅ ${choice.text}</button>`;
                 return;
             }
+            
+            if (hasApproved) return; // Другие выборы не показываем
             
             if (isCompleted && !choice.isPremium) {
                 choicesHtml += `<button onclick="submitCastleChoiceInGame('${cardId}',${idx})" style="width: 100%; text-align: left; padding: 14px 18px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 8px; font-size: 15px; cursor: pointer;">📸 ${choice.text}<div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">Нажмите чтобы переотправить</div></button>`;
@@ -2934,6 +2948,12 @@ function renderCastleCardInGame(cardId) {
                     ${card.text ? `<p style="color: rgba(255,255,255,0.9); font-size: 16px; line-height: 1.7; margin-bottom: 15px;">${card.text}</p>` : ''}
                     ${statsHtml}
                     ${choicesHtml}
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button onclick="goToPreviousCastleCard()" 
+                                style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; font-size: 14px; cursor: pointer;">
+                            ← Назад
+                        </button>
+                    </div>
                 </div>
             </div>`;
         return;

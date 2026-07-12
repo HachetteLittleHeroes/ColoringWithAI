@@ -9950,7 +9950,7 @@ async function buyBoost(duration, price) {
         console.error('Ошибка загрузки буста:', error);
     }
 }
-       async function useSkipForTask(branchKey, levelIndex, subtaskIndex, currentProgress, required) {
+      async function useSkipForTask(branchKey, levelIndex, subtaskIndex, currentProgress, required) {
     // Проверка: Шок контент нельзя пропускать
     if (branchKey === 'shock') {
         alert('⚠️ Задания ветки "Шок контент" нельзя пропускать!');
@@ -9974,7 +9974,7 @@ async function buyBoost(duration, price) {
     }
     
     try {
-        // Отправляем запрос на добавление прогресса
+        // Отправляем запрос на добавление прогресса (сервер сам спишет скип)
         const response = await fetch(`${SERVER_URL}/api/add_progress`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -9991,21 +9991,8 @@ async function buyBoost(duration, price) {
         console.log('Ответ add_progress:', result);
         
         if (result.status === 'ok') {
-            // ✅ Списываем скип на сервере
-            const skipRes = await fetch(`${SERVER_URL}/api/use_skip`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId, amount: 1 })
-            });
-            const skipData = await skipRes.json();
-            console.log('Ответ use_skip:', skipData);
-            
-            // Обновляем из ответа сервера
-            if (skipData.status === 'ok') {
-                userSkips = skipData.skips_left;
-            } else {
-                userSkips--;
-            }
+            // ✅ Сервер сам списал скип и вернул skips_left
+            userSkips = result.skips_left;
             saveSkipData();
             updateSkipDisplay();
             

@@ -3162,6 +3162,11 @@ function proceedAfterApprovalInGame(cardId, choiceIdx) {
         applyCastleReward(choice);
         proceedToCard(randomCard);
         
+        // ✅ Добавляем новую карту в историю
+        if (window._castleCardHistory) {
+            window._castleCardHistory.push(randomCard);
+        }
+        
         setTimeout(() => {
             if (storyGameActive && currentCastleCard) {
                 renderCastleCardInGame(currentCastleCard);
@@ -3171,6 +3176,11 @@ function proceedAfterApprovalInGame(cardId, choiceIdx) {
     }
     
     proceedAfterApproval(cardId, choiceIdx);
+    
+    // ✅ Добавляем новую карту в историю
+    if (choice.nextCard && window._castleCardHistory) {
+        window._castleCardHistory.push(choice.nextCard);
+    }
     
     setTimeout(() => {
         if (storyGameActive && currentCastleCard) {

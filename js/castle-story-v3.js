@@ -3058,6 +3058,11 @@ function submitCastleChoiceInGame(cardId, choiceIdx) {
                 if (tg) tg.showAlert('✅ Фото отправлено на проверку!');
                 else alert('✅ Фото отправлено на проверку!');
                 renderCastleCardInGame(cardId);
+                
+                // ✅ Запускаем проверку одобрений
+                setTimeout(() => checkCastleApprovals(), 2000);
+                setTimeout(() => checkCastleApprovals(), 5000);
+                setTimeout(() => checkCastleApprovals(), 15000);
             } else {
                 throw new Error(result?.message || 'Ошибка сервера');
             }

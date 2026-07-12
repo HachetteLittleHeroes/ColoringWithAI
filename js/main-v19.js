@@ -9880,16 +9880,10 @@ async function buySkip(amount, price) {
             });
             let skipData = await skipRes.json();
             
-            // ✅ Обновляем локально из ответа сервера
+            // ✅ Обновляем ТОЛЬКО из ответа сервера
             if (skipData.status === 'ok' && typeof skipData.skips !== 'undefined') {
                 userSkips = skipData.skips;
-            } else {
-                // Если сервер не вернул — считаем сами
-                userSkips = (userSkips || 0) + amount;
             }
-            
-            // Сохраняем в localStorage
-            localStorage.setItem(`user_skips_${userId}`, userSkips);
             
             // Обновляем отображение
             updateSkipDisplay();
@@ -9950,7 +9944,7 @@ async function buyBoost(duration, price) {
         console.error('Ошибка загрузки буста:', error);
     }
 }
-      async function useSkipForTask(branchKey, levelIndex, subtaskIndex, currentProgress, required) {
+     async function useSkipForTask(branchKey, levelIndex, subtaskIndex, currentProgress, required) {
     // Проверка: Шок контент нельзя пропускать
     if (branchKey === 'shock') {
         alert('⚠️ Задания ветки "Шок контент" нельзя пропускать!');
@@ -9993,7 +9987,6 @@ async function buyBoost(duration, price) {
         if (result.status === 'ok') {
             // ✅ Сервер сам списал скип и вернул skips_left
             userSkips = result.skips_left;
-            saveSkipData();
             updateSkipDisplay();
             
             alert(`✅ Задание пропущено! +1 очко. Осталось пропусков: ${userSkips}`);
@@ -14356,17 +14349,8 @@ window.onload = async () => {
                 localStorage.setItem(`user_boosts_${userId}`, JSON.stringify({ active: apiBoost.active, remaining: apiBoost.remaining || 0 }));
             }
             
-            // ✅ СКИПЫ — ВСЕГДА БЕРЁМ С СЕРВЕРА
-            const apiSkips = initData.skips || 0;
-            userSkips = apiSkips;
-            
-            // Сохраняем в localStorage только если > 0, иначе удаляем
-            if (userSkips > 0) {
-                localStorage.setItem(`user_skips_${userId}`, userSkips);
-            } else {
-                localStorage.removeItem(`user_skips_${userId}`);
-            }
-            
+            // ✅ СКИПЫ — ТОЛЬКО С СЕРВЕРА, БЕЗ localStorage
+            userSkips = initData.skips || 0;
             console.log('🔄 Скипы загружены с сервера:', userSkips);
             
             // Season Pass
@@ -14575,7 +14559,6 @@ window.onload = async () => {
     
     // ✅ Скипы — финальная проверка (только если undefined)
     if (userSkips === undefined || userSkips === null) {
-        // Пробуем загрузить с сервера ещё раз
         try {
             const skipsRes = await fetch(`${SERVER_URL}/api/init?user_id=${userId}`);
             const skipsData = await skipsRes.json();

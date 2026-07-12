@@ -770,7 +770,7 @@ async function submitTaskPhoto(event) {
     }
 }
         
-      function closeTaskUploadModal() {
+    function closeTaskUploadModal() {
     console.log('🔒 Закрытие модального окна');
     
     const modal = document.getElementById('taskUploadModal');
@@ -789,6 +789,10 @@ async function submitTaskPhoto(event) {
     currentCommunitySubtask = null;
     tempPhotos = [];
     isUploading = false;
+    
+    // ✅ Обновляем прогресс с сервера
+    refreshUserProgress();
+    loadFriendProgressFromServer();
 }
         
         // ==========================================

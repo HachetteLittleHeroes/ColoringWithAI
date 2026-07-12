@@ -2811,6 +2811,12 @@ function renderCastleCardInGame(cardId) {
         return;
     }
     
+    // Сохраняем карту в историю для кнопки "Назад"
+    if (!window._castleCardHistory) window._castleCardHistory = [];
+    if (window._castleCardHistory.length === 0 || window._castleCardHistory[window._castleCardHistory.length - 1] !== cardId) {
+        window._castleCardHistory.push(cardId);
+    }
+    
     currentCastleCard = cardId;
     
     // ✅ Если игрок дошёл до мельницы Зибифа — запоминаем
@@ -2948,9 +2954,37 @@ function renderCastleCardInGame(cardId) {
             
             <div style="background: #1a1a2e; padding: 15px 20px 30px; margin-top: -1px;">
                 ${card.text ? `<p style="color: rgba(255,255,255,0.9); font-size: 16px; line-height: 1.7; margin-bottom: 20px;">${card.text}</p>` : ''}
-                <button onclick="renderCastleCardInGame('${card.nextCard}')" style="width: 100%; padding: 14px; background: rgba(212,175,55,0.2); color: #d4af37; border: 1px solid rgba(212,175,55,0.4); border-radius: 10px; font-size: 16px; cursor: pointer;">Далее ▶</button>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="goToPreviousCastleCard()" 
+                            style="flex: 1; padding: 14px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; font-size: 16px; cursor: pointer;">
+                        ← Назад
+                    </button>
+                    <button onclick="renderCastleCardInGame('${card.nextCard}')" 
+                            style="flex: 1; padding: 14px; background: rgba(212,175,55,0.2); color: #d4af37; border: 1px solid rgba(212,175,55,0.4); border-radius: 10px; font-size: 16px; cursor: pointer;">
+                        Далее ▶
+                    </button>
+                </div>
             </div>
         </div>`;
+}
+
+// Функция для кнопки "Назад"
+function goToPreviousCastleCard() {
+    if (!window._castleCardHistory || window._castleCardHistory.length < 2) {
+        alert('Нет предыдущей карты');
+        return;
+    }
+    
+    // Убираем текущую карту
+    window._castleCardHistory.pop();
+    // Берём предыдущую
+    const previousCard = window._castleCardHistory[window._castleCardHistory.length - 1];
+    
+    if (previousCard) {
+        currentCastleCard = previousCard;
+        saveCastleProgress();
+        renderCastleCardInGame(previousCard);
+    }
 }
 // Вспомогательная функция для показа уведомлений (в начало файла)
 function safeShowAlert(message) {

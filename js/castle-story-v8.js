@@ -2066,7 +2066,15 @@ function applyCastleReward(choice) {
     saveCastleProgress();
 }
 
-function proceedToCard(nextCardId) { if (nextCardId) renderCastleCard(nextCardId); }
+function proceedToCard(nextCardId) {
+    if (nextCardId) {
+        // ✅ Добавляем карту в историю перед переходом
+        if (window._castleCardHistory) {
+            window._castleCardHistory.push(nextCardId);
+        }
+        renderCastleCardInGame(nextCardId);
+    }
+}
 
 function claimCastleEnding(cardId) {
     const card = CASTLE_STORY.cards[cardId];
@@ -3160,27 +3168,22 @@ function proceedAfterApprovalInGame(cardId, choiceIdx) {
     if (choice.isRandom && choice.randomCards) {
         const randomCard = choice.randomCards[Math.floor(Math.random() * choice.randomCards.length)];
         applyCastleReward(choice);
-        proceedToCard(randomCard);
         
-        // ✅ Добавляем новую карту в историю
+        // ✅ Добавляем в историю
         if (window._castleCardHistory) {
             window._castleCardHistory.push(randomCard);
         }
         
-        setTimeout(() => {
-            if (storyGameActive && currentCastleCard) {
-                renderCastleCardInGame(currentCastleCard);
-            }
-        }, 300);
+        proceedToCard(randomCard);
         return;
     }
     
-    proceedAfterApproval(cardId, choiceIdx);
-    
-    // ✅ Добавляем новую карту в историю
+    // ✅ Добавляем в историю
     if (choice.nextCard && window._castleCardHistory) {
         window._castleCardHistory.push(choice.nextCard);
     }
+    
+    proceedAfterApproval(cardId, choiceIdx);
     
     setTimeout(() => {
         if (storyGameActive && currentCastleCard) {

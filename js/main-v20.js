@@ -1358,11 +1358,6 @@ function saveBoostData() {
     localStorage.setItem(`user_boosts_${userId}`, JSON.stringify(userBoosts));
 }
 
-// Сохранение пропусков
-function saveSkipData() {
-    localStorage.setItem(`user_skips_${userId}`, userSkips);
-}
-
 // Обновление отображения
 function updateSkipDisplay() {
     const display = document.getElementById('skipCountDisplay');
@@ -1687,7 +1682,7 @@ function renderBranchTasks() {
     applyAllFilters();
     console.log('✅ Задания отрисованы');
 }
-      async function useSkipForSubtask(branchKey, levelIndex, subtaskIndex, currentProgress, required, subtaskName) {
+    async function useSkipForSubtask(branchKey, levelIndex, subtaskIndex, currentProgress, required, subtaskName) {
     // Проверка: Шок контент нельзя пропускать
     if (branchKey === 'shock') {
         alert('⚠️ Задания ветки "Шок контент" нельзя пропускать!');
@@ -1695,8 +1690,7 @@ function renderBranchTasks() {
     }
     
     // Проверка наличия скипов
-    let skips = parseInt(localStorage.getItem(`user_skips_${userId}`) || '0');
-    if (skips <= 0) {
+    if (userSkips <= 0) {
         alert('❌ Нет скипов! Купите в магазине.');
         return false;
     }
@@ -1707,7 +1701,7 @@ function renderBranchTasks() {
         return false;
     }
     
-    if (!confirm(`Использовать скип для подзадания "${subtaskName}"? (1 скип = +1 очко). Осталось скипов: ${skips}`)) {
+    if (!confirm(`Использовать скип для подзадания "${subtaskName}"? (1 скип = +1 очко). Осталось скипов: ${userSkips}`)) {
         return false;
     }
     
@@ -1727,17 +1721,16 @@ function renderBranchTasks() {
         const result = await response.json();
         
         if (result.status === 'ok') {
-            // Списываем скип
-            skips--;
-            localStorage.setItem(`user_skips_${userId}`, skips);
-            if (typeof updateSkipDisplay === 'function') updateSkipDisplay();
+            // ✅ Сервер сам списал скип и вернул skips_left
+            userSkips = result.skips_left;
+            updateSkipDisplay();
             
             // Добавляем XP за скип (2 XP, с бустом 4 XP)
             if (typeof addXPWithBoost === 'function') {
                 await addXPWithBoost(2, `Скип подзадания "${subtaskName}" в ветке ${branchKey}`);
             }
             
-            alert(`✅ Подзадание пропущено! +1 очко. Осталось скипов: ${skips}`);
+            alert(`✅ Подзадание пропущено! +1 очко. Осталось скипов: ${userSkips}`);
             
             // Обновляем прогресс
             if (typeof refreshUserProgress === 'function') {

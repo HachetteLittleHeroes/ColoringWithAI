@@ -9989,6 +9989,7 @@ async function buyBoost(duration, price) {
         
         const result = await response.json();
         console.log('Ответ add_progress:', result);
+        
         if (result.status === 'ok') {
             // ✅ Списываем скип на сервере
             const skipRes = await fetch(`${SERVER_URL}/api/use_skip`, {
@@ -9997,6 +9998,7 @@ async function buyBoost(duration, price) {
                 body: JSON.stringify({ user_id: userId, amount: 1 })
             });
             const skipData = await skipRes.json();
+            console.log('Ответ use_skip:', skipData);
             
             // Обновляем из ответа сервера
             if (skipData.status === 'ok') {

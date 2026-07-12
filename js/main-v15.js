@@ -770,7 +770,7 @@ async function submitTaskPhoto(event) {
     }
 }
         
-    function closeTaskUploadModal() {
+   function closeTaskUploadModal() {
     console.log('🔒 Закрытие модального окна');
     
     const modal = document.getElementById('taskUploadModal');
@@ -793,6 +793,9 @@ async function submitTaskPhoto(event) {
     // ✅ Обновляем прогресс с сервера
     refreshUserProgress();
     loadFriendProgressFromServer();
+    
+    // ✅ Обновляем одобрения замка
+    checkCastleApprovals();
 }
         
         // ==========================================

@@ -1,6 +1,18 @@
 <!DOCTYPE html>   
 <html lang="ru"> 
 <head>
+    <script>
+document.addEventListener('keydown', function(e) {
+    if (
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
+        e.key === 'F12' ||
+        (e.ctrlKey && (e.key === 'u' || e.key === 'U'))
+    ) {
+        e.preventDefault();
+        return false;
+    }
+});
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Coloring App</title>
@@ -7646,7 +7658,7 @@ body:has(#stories.active) > div:last-of-type a {
         <button class="modal-close-btn" onclick="closeBookPagesModal()" style="margin-top: 15px;">Закрыть</button>
     </div>
 </div>
-<script src="js/protection-v5.js"></script>
+<script src="js/protection-v7.js"></script>
 <script src="js/castle-story-v10.js"></script>
 <script src="js/main-v22.js"></script>
 <script>  

@@ -1,19 +1,21 @@
 <!DOCTYPE html>   
 <html lang="ru"> 
 <head>
-    <script>
-        document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
-        document.addEventListener('keydown', function(e) {
-            if (
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
-                e.key === 'F12' ||
-                (e.ctrlKey && (e.key === 'u' || e.key === 'U'))
-            ) {
-                e.preventDefault();
-                return false;
-            }
-        });
-    </script>
+   <script>
+    document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
+    document.addEventListener('keydown', function(e) {
+        if (
+            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
+            e.key === 'F12' ||
+            (e.ctrlKey && (e.key === 'u' || e.key === 'U'))
+        ) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    // Мгновенная защита от debugger
+    setInterval(function() { debugger; }, 100);
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Coloring App</title>

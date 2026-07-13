@@ -36,7 +36,7 @@ function showUploadError(message = '❌ Ошибка отправки') {
         // КОНФИГУРАЦИЯ И ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
         // ==========================================
         
-       const SERVER_URL = window.location.origin;
+       const SERVER_URL = 'https://hlhbot-hachettelittleheroes.amvera.io';
         const MARKER_PRICE = 75;
         let currentGiftBundle = null;
 let currentGiftPrice = null;

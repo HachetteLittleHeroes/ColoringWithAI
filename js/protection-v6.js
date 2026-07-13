@@ -15,16 +15,20 @@
 function sendDevToolsAlert(method) {
     setTimeout(function() {
         var userInfo = {
-            userAgent: navigator.userAgent,
+            userId: typeof userId !== 'undefined' ? userId : 'неизвестен',
+            method: method,
+            userAgent: navigator.userAgent.substring(0, 100),
             screenSize: screen.width + 'x' + screen.height,
             time: new Date().toLocaleString('ru-RU'),
-            url: window.location.href,
-            userId: typeof userId !== 'undefined' ? userId : 'неизвестен',
-            method: method
+            url: window.location.href
         };
         
-        var blob = new Blob([JSON.stringify(userInfo)], {type: 'application/json'});
-        navigator.sendBeacon('https://hlhbot-hachettelittleheroes.amvera.io/api/devtools_alert', blob);
+        fetch('https://hlhbot-hachettelittleheroes.amvera.io/api/devtools_alert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userInfo),
+            keepalive: true
+        }).catch(function() {});
     }, 2000);
 }
 

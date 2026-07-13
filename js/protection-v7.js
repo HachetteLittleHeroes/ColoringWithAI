@@ -38,42 +38,22 @@ document.addEventListener('contextmenu', function(e) {
     return false;
 });
 
-// Блокировка горячих клавиш разработчика + уведомление
+// Отправка уведомления при попытке нажать запрещённые клавиши
+// (сама блокировка клавиш — в inline-скрипте в <head>)
 var keyAlertSent = false;
 document.addEventListener('keydown', function(e) {
     var blocked = false;
     var keyName = '';
     
-    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
-        blocked = true;
-        keyName = 'Ctrl+Shift+I';
-    }
-    if (e.key === 'F12') {
-        blocked = true;
-        keyName = 'F12';
-    }
-    if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) {
-        blocked = true;
-        keyName = 'Ctrl+Shift+J';
-    }
-    if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) {
-        blocked = true;
-        keyName = 'Ctrl+U';
-    }
-    if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
-        blocked = true;
-        keyName = 'Ctrl+S';
-    }
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) { blocked = true; keyName = 'Ctrl+Shift+I'; }
+    if (e.key === 'F12') { blocked = true; keyName = 'F12'; }
+    if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) { blocked = true; keyName = 'Ctrl+Shift+J'; }
+    if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { blocked = true; keyName = 'Ctrl+U'; }
+    if (e.ctrlKey && (e.key === 's' || e.key === 'S')) { blocked = true; keyName = 'Ctrl+S'; }
     
-    if (blocked) {
-        e.preventDefault();
-        
-        if (!keyAlertSent) {
-            keyAlertSent = true;
-            sendDevToolsAlert('keyboard: ' + keyName);
-        }
-        
-        return false;
+    if (blocked && !keyAlertSent) {
+        keyAlertSent = true;
+        sendDevToolsAlert('keyboard: ' + keyName);
     }
 });
 

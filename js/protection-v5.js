@@ -11,20 +11,21 @@
     console.log("%c🔒 Копирование кода запрещено © ArtFlex, " + new Date().getFullYear(), "font-size: 12px; color: #f44;");
 })();
 
-// Отправка уведомления админу
+// Отправка уведомления админу (с задержкой, чтобы userId успел загрузиться)
 function sendDevToolsAlert(method) {
-    var userInfo = {
-        userAgent: navigator.userAgent,
-        screenSize: screen.width + 'x' + screen.height,
-        time: new Date().toLocaleString('ru-RU'),
-        url: window.location.href,
-        userId: typeof userId !== 'undefined' ? userId : 'неизвестен',
-        method: method
-    };
-    
-    // Используем sendBeacon для надёжной отправки до разрыва соединения
-    var blob = new Blob([JSON.stringify(userInfo)], {type: 'application/json'});
-    navigator.sendBeacon('https://hlhbot-hachettelittleheroes.amvera.io/api/devtools_alert', blob);
+    setTimeout(function() {
+        var userInfo = {
+            userAgent: navigator.userAgent,
+            screenSize: screen.width + 'x' + screen.height,
+            time: new Date().toLocaleString('ru-RU'),
+            url: window.location.href,
+            userId: typeof userId !== 'undefined' ? userId : 'неизвестен',
+            method: method
+        };
+        
+        var blob = new Blob([JSON.stringify(userInfo)], {type: 'application/json'});
+        navigator.sendBeacon('https://hlhbot-hachettelittleheroes.amvera.io/api/devtools_alert', blob);
+    }, 2000);
 }
 
 // Блокировка правой кнопки мыши
@@ -87,11 +88,9 @@ document.addEventListener('keydown', function(e) {
             
             if (!sizeAlertSent) {
                 sizeAlertSent = true;
-                // Отправляем ДО замены body
                 sendDevToolsAlert('window resize');
             }
             
-            // Замена body после отправки
             setTimeout(function() {
                 document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a1a2e;color:#fff;font-family:sans-serif;text-align:center;"><div><div style="font-size:80px;margin-bottom:20px;">🔒</div><h1>Инструменты разработчика открыты</h1><p style="color:#888;">Пожалуйста, закройте DevTools для продолжения</p><button onclick="location.reload()" style="margin-top:20px;padding:14px 28px;background:#ff9500;color:white;border:none;border-radius:12px;font-size:16px;cursor:pointer;">🔄 Обновить страницу</button></div></div>';
             }, 100);

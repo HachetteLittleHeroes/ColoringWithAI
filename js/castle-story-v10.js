@@ -2195,16 +2195,17 @@ function showEndingScreen(message) {
 
 function saveCastleProgress() {
     const progress = {
-    currentCard: currentCastleCard,
-    stats: userCastleStats,
-    character: selectedCastleCharacter,
-    metEliza: metEliza,
-    kissedAdelaide: kissedAdelaide,
-    visitedZibeef: visitedZibeef,  // ✅ ДОБАВЛЕНО
-    completedChoices: castleCompletedChoices,
-    approvedChoices: castleApprovedChoices,
-    endingClaimed: currentEndingClaimed
-};
+        currentCard: currentCastleCard,
+        stats: userCastleStats,
+        character: selectedCastleCharacter,
+        metEliza: metEliza,
+        kissedAdelaide: kissedAdelaide,
+        visitedZibeef: visitedZibeef,
+        cardHistory: window._castleCardHistory || [],  // ✅ ДОБАВЛЕНО
+        completedChoices: castleCompletedChoices,
+        approvedChoices: castleApprovedChoices,
+        endingClaimed: currentEndingClaimed
+    };
     
     localStorage.setItem(`castle_progress_${userId}`, JSON.stringify(progress));
     
@@ -2241,12 +2242,12 @@ async function loadCastleProgress() {
             metEliza = data.metEliza || false;
             kissedAdelaide = data.kissedAdelaide || false;
             visitedZibeef = data.visitedZibeef || false;
+            window._castleCardHistory = data.cardHistory || [];  // ✅ ДОБАВЛЕНО
             castleCompletedChoices = data.completedChoices || {};
             castleApprovedChoices = data.approvedChoices || {};
             currentEndingClaimed = data.endingClaimed || false;
             localStorage.setItem(`castle_progress_${userId}`, JSON.stringify(data));
             
-            // ✅ Загружаем лут после прогресса
             await loadCastleLoot();
             
             return true;
@@ -2264,11 +2265,11 @@ async function loadCastleProgress() {
                 metEliza = data.metEliza || false;
                 kissedAdelaide = data.kissedAdelaide || false;
                 visitedZibeef = data.visitedZibeef || false;
+                window._castleCardHistory = data.cardHistory || [];  // ✅ ДОБАВЛЕНО
                 castleCompletedChoices = data.completedChoices || {};
                 castleApprovedChoices = data.approvedChoices || {};
                 currentEndingClaimed = data.endingClaimed || false;
                 
-                // ✅ Загружаем лут после локального прогресса
                 await loadCastleLoot();
                 
                 return true;

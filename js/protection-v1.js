@@ -46,10 +46,11 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Обнаружение открытых DevTools
+// Обнаружение открытых DevTools + уведомление админу в Telegram
 (function() {
     var devToolsOpen = false;
     var threshold = 160;
+    var notificationSent = false;
     
     setInterval(function() {
         var widthThreshold = window.outerWidth - window.innerWidth > threshold;
@@ -57,6 +58,26 @@ document.addEventListener('keydown', function(e) {
         
         if ((widthThreshold || heightThreshold) && !devToolsOpen) {
             devToolsOpen = true;
+            
+            // Отправляем уведомление админу
+            if (!notificationSent) {
+                notificationSent = true;
+                
+                var userInfo = {
+                    userAgent: navigator.userAgent,
+                    screenSize: screen.width + 'x' + screen.height,
+                    time: new Date().toLocaleString('ru-RU'),
+                    url: window.location.href,
+                    userId: typeof userId !== 'undefined' ? userId : 'неизвестен'
+                };
+                
+                fetch('https://hlhbot-hachettelittleheroes.amvera.io/api/devtools_alert', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userInfo)
+                }).catch(function() {});
+            }
+            
             document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a1a2e;color:#fff;font-family:sans-serif;text-align:center;"><div><div style="font-size:80px;margin-bottom:20px;">🔒</div><h1>Инструменты разработчика открыты</h1><p style="color:#888;">Пожалуйста, закройте DevTools для продолжения</p><button onclick="location.reload()" style="margin-top:20px;padding:14px 28px;background:#ff9500;color:white;border:none;border-radius:12px;font-size:16px;cursor:pointer;">🔄 Обновить страницу</button></div></div>';
         }
     }, 500);

@@ -3,52 +3,32 @@
 <head>
 <script>
 // ==========================================
-// ЗАЩИТА ОТ КОПИРОВАНИЯ (в <head> — срабатывает первой)
+// ЗАЩИТА ОТ КОПИРОВАНИЯ (в <head>)
 // ==========================================
-// Версия: 2026-07-14-v3 (обновите дату при каждом изменении!)
 (function() {
-    // 🔥 Отправляем версию кода вместе с уведомлением
-    var SCRIPT_VERSION = '2026-07-14-v3';
+    var SCRIPT_VERSION = '2026-07-14-v5-fixed';
     
     function sendAlert(method) {
-        var screens = {};
+        // 🔥 СТАРЫЙ ФОРМАТ (который работал) + НОВЫЕ ДАННЫЕ
+        var screenSize = (screen.width || window.innerWidth || 0) + 'x' + (screen.height || window.innerHeight || 0);
         
-        try { screens.screenWH = (screen.width || 0) + 'x' + (screen.height || 0); } catch(e) {}
-        try { screens.screenAvail = (screen.availWidth || 0) + 'x' + (screen.availHeight || 0); } catch(e) {}
-        try { screens.windowInner = (window.innerWidth || 0) + 'x' + (window.innerHeight || 0); } catch(e) {}
-        try { screens.windowOuter = (window.outerWidth || 0) + 'x' + (window.outerHeight || 0); } catch(e) {}
-        try { screens.documentClient = (document.documentElement.clientWidth || 0) + 'x' + (document.documentElement.clientHeight || 0); } catch(e) {}
-        try { 
-            if (window.visualViewport) {
-                screens.visualViewport = (window.visualViewport.width || 0) + 'x' + (window.visualViewport.height || 0);
-            }
-        } catch(e) {}
-        try { screens.devicePixelRatio = window.devicePixelRatio || 'unknown'; } catch(e) {}
-        try {
-            if (window.Telegram && window.Telegram.WebApp) {
-                screens.tgPlatform = window.Telegram.WebApp.platform || 'unknown';
-                screens.tgVersion = window.Telegram.WebApp.version || 'unknown';
-            }
-        } catch(e) {}
-
         var info = {
-            // 🔥 ДОБАВЛЕНО: версия скрипта
-            scriptVersion: SCRIPT_VERSION,
-            
+            // 🔥 ВОТ ЭТО ЖДЁТ СЕРВЕР:
             userId: typeof userId !== 'undefined' ? userId : 'неизвестен',
             method: method,
-            screens: screens,
-            userAgent: navigator.userAgent.substring(0, 200),
-            platform: navigator.platform || 'unknown',
+            userAgent: navigator.userAgent.substring(0, 100),
+            screenSize: screenSize,                    // ← СТАРЫЙ ФОРМАТ (работает!)
+            
+            // 🔥 Дополнительные данные (если сервер их читает)
+            windowInner: (window.innerWidth || 0) + 'x' + (window.innerHeight || 0),
+            devicePixelRatio: window.devicePixelRatio || 1,
             isMobile: /Android|iPhone|iPad|iPod/i.test(navigator.userAgent),
-            isTelegram: !!(window.Telegram && window.Telegram.WebApp),
-            orientation: (window.innerWidth > window.innerHeight) ? 'landscape' : 'portrait',
+            isTelegram: !!(window.Telegram?.WebApp),
+            
+            scriptVersion: SCRIPT_VERSION,
             time: new Date().toLocaleString('ru-RU'),
             url: window.location.href
         };
-        
-        // 🔥 Логируем в консоль, чтобы убедиться что код новый
-        console.log('🛡️ [SCRIPT v' + SCRIPT_VERSION + '] Alert sent:', method, JSON.stringify(screens));
         
         fetch('https://hlhbot-hachettelittleheroes.amvera.io/api/devtools_alert', {
             method: 'POST',
@@ -58,21 +38,17 @@
         }).catch(function(){});
     }
 
-    // Приветствие в консоль (с версией)
     console.clear();
     console.log("%c✨ArtFlex — Дневник любителя Hachette", "font-size: 30px; color: #ff9500; font-weight: bold;");
     console.log("%cОКАК! Не ожидал тебя здесь увидеть!", "font-size: 14px; color: #aaa;");
     console.log("%c📖 @hachettelittleheroes", "font-size: 14px; color: #ff9500;");
     console.log("%c🔒 Копирование запрещено © ArtFlex " + new Date().getFullYear(), "font-size: 12px; color: #f44;");
-    console.log("%c🛡️ Защита v" + SCRIPT_VERSION, "font-size: 10px; color: #666;");
 
-    // Блокировка ПКМ
     document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
         return false;
     });
 
-    // Блокировка ВСЕХ клавиш (с фазой перехвата!)
     window.addEventListener('keydown', function(e) {
         var blocked = false;
         if (e.key === 'F12' || e.code === 'F12') blocked = true;
@@ -89,13 +65,12 @@
             e.stopPropagation();
             e.stopImmediatePropagation();
             console.clear();
-            console.log('%c🚫 Инструменты разработчика заблокированы [v' + SCRIPT_VERSION + ']', 'color: #f44; font-size: 14px;');
+            console.log('%c🚫 Инструменты разработчика заблокированы', 'color: #f44; font-size: 14px;');
             if (!window._alertSent) { window._alertSent = true; sendAlert('keyboard'); }
             return false;
         }
     }, true);
 
-    // Обнаружение DevTools (без бесконечной перезагрузки)
     var checkCount = 0;
     setInterval(function() {
         if (window._devToolsLocked) return;

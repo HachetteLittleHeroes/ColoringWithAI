@@ -1,28 +1,118 @@
 <!DOCTYPE html>   
 <html lang="ru"> 
 <head>
-   <script>
-    document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
-    document.addEventListener('keydown', function(e) {
-        if (
-            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
-            e.key === 'F12' ||
-            (e.ctrlKey && (e.key === 'u' || e.key === 'U'))
-        ) {
+  <script>
+// ==========================================
+// САМАЯ РАННЯЯ ЗАЩИТА (inline в <head>)
+// Должна быть ПЕРВЫМ скриптом на странице
+// ==========================================
+(function() {
+    // Отправка уведомления админу
+    function sendHeadAlert(method) {
+        var info = {
+            method: method,
+            time: new Date().toLocaleString('ru-RU'),
+            url: window.location.href
+        };
+        fetch('https://hlhbot-hachettelittleheroes.amvera.io/api/devtools_alert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(info),
+            keepalive: true
+        }).catch(function(){});
+    }
+    
+    // Блокировка ПКМ
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    // 🔥 Блокировка ВСЕХ DevTools-комбинаций (с фазой перехвата!)
+    window.addEventListener('keydown', function(e) {
+        var blocked = false;
+        
+        // F12
+        if (e.key === 'F12' || e.code === 'F12') {
+            blocked = true;
+        }
+        
+        // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
+            if (e.key === 'I' || e.key === 'i' || e.code === 'KeyI') blocked = true;
+            if (e.key === 'J' || e.key === 'j' || e.code === 'KeyJ') blocked = true;
+            if (e.key === 'C' || e.key === 'c' || e.code === 'KeyC') blocked = true;
+        }
+        
+        // Ctrl+U
+        if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
+            if (e.key === 'U' || e.key === 'u' || e.code === 'KeyU') blocked = true;
+        }
+        
+        // Cmd+Option+I (Mac)
+        if (e.metaKey && e.altKey && (e.key === 'I' || e.key === 'i' || e.code === 'KeyI')) {
+            blocked = true;
+        }
+        
+        if (blocked) {
             e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            // Очищаем консоль
+            if (window.console) {
+                console.clear();
+                console.log('%c🚫 Инструменты разработчика заблокированы', 'color: #f44; font-size: 14px;');
+            }
+            
+            // Отправляем уведомление (один раз)
+            if (!window._headAlertSent) {
+                window._headAlertSent = true;
+                sendHeadAlert('keyboard_head');
+            }
+            
             return false;
         }
-    });
-    // Защита от DevTools: если открыта — перезагружаем страницу
+    }, true); // ← ВАЖНО: фаза перехвата!
+    
+    // 🔥 Обнаружение DevTools — БЕЗ перезагрузки!
+    var devToolsCheckCount = 0;
+    var devToolsDetected = false;
+    
     setInterval(function() {
+        if (devToolsDetected) return;
+        
         var start = performance.now();
         debugger;
         var end = performance.now();
+        
         if (end - start > 100) {
-            // Консоль открыта — перезагружаем
-            location.reload();
+            devToolsCheckCount++;
+            
+            // Только после 3 подтверждений подряд
+            if (devToolsCheckCount >= 3) {
+                devToolsDetected = true;
+                
+                // НЕ перезагружаем, а показываем заглушку
+                if (!window._headDevToolsSent) {
+                    window._headDevToolsSent = true;
+                    sendHeadAlert('devtools_head');
+                }
+                
+                document.body.innerHTML = 
+                    '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a1a2e;color:#fff;font-family:sans-serif;text-align:center;padding:20px;">' +
+                    '<div>' +
+                    '<div style="font-size:80px;margin-bottom:20px;">🔒</div>' +
+                    '<h1>Инструменты разработчика открыты</h1>' +
+                    '<p style="color:#aaa;margin-top:10px;">Закройте DevTools и обновите страницу</p>' +
+                    '<button onclick="location.reload()" style="margin-top:20px;padding:14px 28px;background:#ff9500;color:white;border:none;border-radius:12px;font-size:16px;cursor:pointer;">🔄 Обновить</button>' +
+                    '</div></div>';
+            }
+        } else {
+            devToolsCheckCount = 0;
         }
-    }, 500);
+    }, 1000);
+})();
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7669,7 +7759,7 @@ body:has(#stories.active) > div:last-of-type a {
         <button class="modal-close-btn" onclick="closeBookPagesModal()" style="margin-top: 15px;">Закрыть</button>
     </div>
 </div>
-<script src="js/protection-v10.js"></script>
+<script src="js/protection-v12.js"></script>
 <script src="js/payment-v10.js"></script>
 <script src="js/coloriages-v2.js"></script>
 <script src="js/castle-story-v10.js"></script>

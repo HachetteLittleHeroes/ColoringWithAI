@@ -1,20 +1,40 @@
 <!DOCTYPE html>   
 <html lang="ru"> 
 <head>
- <script>
+<script>
 // ==========================================
 // ЗАЩИТА ОТ КОПИРОВАНИЯ (в <head> — срабатывает первой)
 // ==========================================
 (function() {
     function sendAlert(method) {
+        // 🔥 Исправлено: правильное определение разрешения экрана
+        var realWidth = screen.width;
+        var realHeight = screen.height;
+        var cssWidth = window.innerWidth;
+        var cssHeight = window.innerHeight;
+        var devicePixelRatio = window.devicePixelRatio || 1;
+        var isLandscape = cssWidth > cssHeight;
+        
         var info = {
             userId: typeof userId !== 'undefined' ? userId : 'неизвестен',
             method: method,
-            userAgent: navigator.userAgent.substring(0, 100),
+            userAgent: navigator.userAgent.substring(0, 150),
+            
+            // 🔥 ТРИ разных способа получения размеров
+            screenPhysical: screen.width + 'x' + screen.height,                // Физическое разрешение
+            screenCSS: Math.round(screen.width / devicePixelRatio) + 'x' + Math.round(screen.height / devicePixelRatio),  // CSS-разрешение
+            windowSize: cssWidth + 'x' + cssHeight,                            // Реальный размер окна
+            
+            // Дополнительно
+            devicePixelRatio: devicePixelRatio,
+            orientation: isLandscape ? 'landscape' : 'portrait',
             isMobile: /Android|iPhone|iPad|iPod/i.test(navigator.userAgent),
+            platform: navigator.platform || 'unknown',
+            
             time: new Date().toLocaleString('ru-RU'),
             url: window.location.href
         };
+        
         fetch('https://hlhbot-hachettelittleheroes.amvera.io/api/devtools_alert', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -70,7 +90,7 @@
             if (checkCount >= 3) {
                 window._devToolsLocked = true;
                 sendAlert('devtools');
-                document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a1a2e;color:#fff;font-family:sans-serif;text-align:center;"><div><div style="font-size:80px;margin-bottom:20px;">🔒</div><h1>Инструменты разработчика открыты</h1><p style="color:#aaa;">Закройте DevTools и обновите страницу</p><button onclick="location.reload()" style="margin-top:20px;padding:14px 28px;background:#ff9500;color:white;border:none;border-radius:12px;font-size:16px;cursor:pointer;">🔄 Обновить</button></div></div>';
+                document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a1a2e;color:#fff;font-family:sans-serif;text-align:center;padding:20px;"><div><div style="font-size:80px;margin-bottom:20px;">🔒</div><h1>Инструменты разработчика открыты</h1><p style="color:#aaa;margin-top:10px;">Закройте DevTools и обновите страницу</p><button onclick="location.reload()" style="margin-top:20px;padding:14px 28px;background:#ff9500;color:white;border:none;border-radius:12px;font-size:16px;cursor:pointer;">🔄 Обновить</button></div></div>';
             }
         } else {
             checkCount = 0;

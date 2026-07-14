@@ -1,16 +1,17 @@
 <!DOCTYPE html>   
 <html lang="ru"> 
 <head>
-  <script>
+ <script>
 // ==========================================
-// САМАЯ РАННЯЯ ЗАЩИТА (inline в <head>)
-// Должна быть ПЕРВЫМ скриптом на странице
+// ЗАЩИТА ОТ КОПИРОВАНИЯ (в <head> — срабатывает первой)
 // ==========================================
 (function() {
-    // Отправка уведомления админу
-    function sendHeadAlert(method) {
+    function sendAlert(method) {
         var info = {
+            userId: typeof userId !== 'undefined' ? userId : 'неизвестен',
             method: method,
+            userAgent: navigator.userAgent.substring(0, 100),
+            isMobile: /Android|iPhone|iPad|iPod/i.test(navigator.userAgent),
             time: new Date().toLocaleString('ru-RU'),
             url: window.location.href
         };
@@ -21,95 +22,58 @@
             keepalive: true
         }).catch(function(){});
     }
-    
+
+    // Приветствие в консоль
+    console.clear();
+    console.log("%c✨ArtFlex — Дневник любителя Hachette", "font-size: 30px; color: #ff9500; font-weight: bold;");
+    console.log("%cОКАК! Не ожидал тебя здесь увидеть!", "font-size: 14px; color: #aaa;");
+    console.log("%c📖 @hachettelittleheroes", "font-size: 14px; color: #ff9500;");
+    console.log("%c🔒 Копирование запрещено © ArtFlex " + new Date().getFullYear(), "font-size: 12px; color: #f44;");
+
     // Блокировка ПКМ
     document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
         return false;
     });
-    
-    // 🔥 Блокировка ВСЕХ DevTools-комбинаций (с фазой перехвата!)
+
+    // Блокировка ВСЕХ клавиш (с фазой перехвата!)
     window.addEventListener('keydown', function(e) {
         var blocked = false;
-        
-        // F12
-        if (e.key === 'F12' || e.code === 'F12') {
-            blocked = true;
-        }
-        
-        // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C
+        if (e.key === 'F12' || e.code === 'F12') blocked = true;
         if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
-            if (e.key === 'I' || e.key === 'i' || e.code === 'KeyI') blocked = true;
-            if (e.key === 'J' || e.key === 'j' || e.code === 'KeyJ') blocked = true;
-            if (e.key === 'C' || e.key === 'c' || e.code === 'KeyC') blocked = true;
+            if (e.code === 'KeyI') blocked = true;
+            if (e.code === 'KeyJ') blocked = true;
+            if (e.code === 'KeyC') blocked = true;
         }
-        
-        // Ctrl+U
-        if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
-            if (e.key === 'U' || e.key === 'u' || e.code === 'KeyU') blocked = true;
-        }
-        
-        // Cmd+Option+I (Mac)
-        if (e.metaKey && e.altKey && (e.key === 'I' || e.key === 'i' || e.code === 'KeyI')) {
-            blocked = true;
-        }
-        
+        if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.code === 'KeyU') blocked = true;
+        if (e.metaKey && e.altKey && e.code === 'KeyI') blocked = true;
+
         if (blocked) {
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
-            
-            // Очищаем консоль
-            if (window.console) {
-                console.clear();
-                console.log('%c🚫 Инструменты разработчика заблокированы', 'color: #f44; font-size: 14px;');
-            }
-            
-            // Отправляем уведомление (один раз)
-            if (!window._headAlertSent) {
-                window._headAlertSent = true;
-                sendHeadAlert('keyboard_head');
-            }
-            
+            console.clear();
+            console.log('%c🚫 Инструменты разработчика заблокированы', 'color: #f44; font-size: 14px;');
+            if (!window._alertSent) { window._alertSent = true; sendAlert('keyboard'); }
             return false;
         }
-    }, true); // ← ВАЖНО: фаза перехвата!
-    
-    // 🔥 Обнаружение DevTools — БЕЗ перезагрузки!
-    var devToolsCheckCount = 0;
-    var devToolsDetected = false;
-    
+    }, true);
+
+    // Обнаружение DevTools (без бесконечной перезагрузки)
+    var checkCount = 0;
     setInterval(function() {
-        if (devToolsDetected) return;
-        
+        if (window._devToolsLocked) return;
         var start = performance.now();
         debugger;
-        var end = performance.now();
-        
-        if (end - start > 100) {
-            devToolsCheckCount++;
-            
-            // Только после 3 подтверждений подряд
-            if (devToolsCheckCount >= 3) {
-                devToolsDetected = true;
-                
-                // НЕ перезагружаем, а показываем заглушку
-                if (!window._headDevToolsSent) {
-                    window._headDevToolsSent = true;
-                    sendHeadAlert('devtools_head');
-                }
-                
-                document.body.innerHTML = 
-                    '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a1a2e;color:#fff;font-family:sans-serif;text-align:center;padding:20px;">' +
-                    '<div>' +
-                    '<div style="font-size:80px;margin-bottom:20px;">🔒</div>' +
-                    '<h1>Инструменты разработчика открыты</h1>' +
-                    '<p style="color:#aaa;margin-top:10px;">Закройте DevTools и обновите страницу</p>' +
-                    '<button onclick="location.reload()" style="margin-top:20px;padding:14px 28px;background:#ff9500;color:white;border:none;border-radius:12px;font-size:16px;cursor:pointer;">🔄 Обновить</button>' +
-                    '</div></div>';
+        if (performance.now() - start > 100) {
+            checkCount++;
+            if (checkCount >= 3) {
+                window._devToolsLocked = true;
+                sendAlert('devtools');
+                document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a1a2e;color:#fff;font-family:sans-serif;text-align:center;"><div><div style="font-size:80px;margin-bottom:20px;">🔒</div><h1>Инструменты разработчика открыты</h1><p style="color:#aaa;">Закройте DevTools и обновите страницу</p><button onclick="location.reload()" style="margin-top:20px;padding:14px 28px;background:#ff9500;color:white;border:none;border-radius:12px;font-size:16px;cursor:pointer;">🔄 Обновить</button></div></div>';
             }
         } else {
-            devToolsCheckCount = 0;
+            checkCount = 0;
         }
     }, 1000);
 })();

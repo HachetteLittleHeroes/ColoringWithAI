@@ -7,30 +7,51 @@
 // ==========================================
 (function() {
     function sendAlert(method) {
-        // 🔥 Исправлено: правильное определение разрешения экрана
-        var realWidth = screen.width;
-        var realHeight = screen.height;
-        var cssWidth = window.innerWidth;
-        var cssHeight = window.innerHeight;
-        var devicePixelRatio = window.devicePixelRatio || 1;
-        var isLandscape = cssWidth > cssHeight;
+        // 🔥 Пробуем ВСЕ способы получить размер экрана
+        var screens = {};
         
+        // Способ 1: screen.width/height
+        try { screens.screenWH = (screen.width || 0) + 'x' + (screen.height || 0); } catch(e) { screens.screenWH = 'error'; }
+        
+        // Способ 2: screen.availWidth/availHeight
+        try { screens.screenAvail = (screen.availWidth || 0) + 'x' + (screen.availHeight || 0); } catch(e) { screens.screenAvail = 'error'; }
+        
+        // Способ 3: window.innerWidth/innerHeight (самый надёжный)
+        try { screens.windowInner = (window.innerWidth || 0) + 'x' + (window.innerHeight || 0); } catch(e) { screens.windowInner = 'error'; }
+        
+        // Способ 4: window.outerWidth/outerHeight
+        try { screens.windowOuter = (window.outerWidth || 0) + 'x' + (window.outerHeight || 0); } catch(e) { screens.windowOuter = 'error'; }
+        
+        // Способ 5: document.clientWidth/clientHeight
+        try { screens.documentClient = (document.documentElement.clientWidth || 0) + 'x' + (document.documentElement.clientHeight || 0); } catch(e) { screens.documentClient = 'error'; }
+        
+        // Способ 6: visualViewport (мобильные)
+        try { 
+            if (window.visualViewport) {
+                screens.visualViewport = (window.visualViewport.width || 0) + 'x' + (window.visualViewport.height || 0);
+            }
+        } catch(e) {}
+        
+        // Способ 7: devicePixelRatio
+        try { screens.devicePixelRatio = window.devicePixelRatio || 'unknown'; } catch(e) { screens.devicePixelRatio = 'unknown'; }
+        
+        // Способ 8: Telegram WebView
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                screens.tgPlatform = window.Telegram.WebApp.platform || 'unknown';
+                screens.tgVersion = window.Telegram.WebApp.version || 'unknown';
+            }
+        } catch(e) {}
+
         var info = {
             userId: typeof userId !== 'undefined' ? userId : 'неизвестен',
             method: method,
-            userAgent: navigator.userAgent.substring(0, 150),
-            
-            // 🔥 ТРИ разных способа получения размеров
-            screenPhysical: screen.width + 'x' + screen.height,                // Физическое разрешение
-            screenCSS: Math.round(screen.width / devicePixelRatio) + 'x' + Math.round(screen.height / devicePixelRatio),  // CSS-разрешение
-            windowSize: cssWidth + 'x' + cssHeight,                            // Реальный размер окна
-            
-            // Дополнительно
-            devicePixelRatio: devicePixelRatio,
-            orientation: isLandscape ? 'landscape' : 'portrait',
-            isMobile: /Android|iPhone|iPad|iPod/i.test(navigator.userAgent),
+            screens: screens,
+            userAgent: navigator.userAgent.substring(0, 200),
             platform: navigator.platform || 'unknown',
-            
+            isMobile: /Android|iPhone|iPad|iPod/i.test(navigator.userAgent),
+            isTelegram: !!(window.Telegram && window.Telegram.WebApp),
+            orientation: (window.innerWidth > window.innerHeight) ? 'landscape' : 'portrait',
             time: new Date().toLocaleString('ru-RU'),
             url: window.location.href
         };

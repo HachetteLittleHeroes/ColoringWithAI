@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ArtFlex — Мобильный отбор цветов</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: #f0f2f5; color: #1e293b; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 15px; padding-bottom: 100px; }
+        main { max-width: 100%; margin: auto; padding: 10px; }
+        h1 { font-size: 18px; margin: 5px 0 10px; text-align: center; }
+        h2 { font-size: 15px; margin-top: 0; margin-bottom: 8px; color: #334155; }
+        section { background: white; border-radius: 12px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        button, .btn { display: inline-block; background: #3b82f6; color: white; border: 0; border-radius: 10px; padding: 12px 14px; font: inherit; font-size: 15px; cursor: pointer; transition: background 0.2s; text-align: center; min-height: 44px; }
+        button:active { background: #2563eb; }
+        button.secondary { background: #e2e8f0; color: #1e293b; }
+        button.secondary:active { background: #cbd5e1; }
+        button.danger { background: #ef4444; }
+        button.danger:active { background: #dc2626; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        input[type="number"], input[type="file"], input[type="text"], select { font: inherit; padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; min-height: 44px; }
+        .hint { font-size: 12px; color: #64748b; line-height: 1.4; margin: 5px 0 8px; }
+        .hidden { display: none; }
+        .step-badge { display: inline-block; background: #3b82f6; color: white; border-radius: 50%; width: 20px; height: 20px; text-align: center; line-height: 20px; font-size: 11px; margin-right: 6px; }
+        
+        /* Список файлов сверху (горизонтальный скролл) */
+        .file-scroller { display: flex; overflow-x: auto; gap: 8px; padding: 5px 0; -webkit-overflow-scrolling: touch; }
+        .file-chip { flex: 0 0 auto; padding: 8px 12px; background: #f1f5f9; border-radius: 20px; font-size: 12px; border: 1px solid #e2e8f0; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+        .file-chip.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .file-chip .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; }
+        .file-chip .status-dot.ok { background: #16a34a; }
+        .file-chip .status-dot.pending { background: #d97706; }
+
+        .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #f8fafc; padding: 8px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
+        .toolbar-group { display: flex; gap: 4px; align-items: center; }
+        .toolbar label { font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .toolbar input[type="range"] { width: 80px; }
+
+        /* Холст */
+        .canvas-wrapper { position: relative; width: 100%; background: #e2e8f0; border-radius: 10px; overflow: hidden; border: 2px solid #cbd5e1; user-select: none; touch-action: none; margin-bottom: 10px; }
+        canvas { display: block; width: 100%; height: auto; cursor: crosshair; }
+
+        /* Лупа для пальца */
+        #loupe { position: fixed; width: 150px; height: 150px; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 0 0 2px #000, 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; display: none; z-index: 9999; background: #000; overflow: hidden; }
+        #loupe canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+        #loupe .crosshair { position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border: 2px solid #ff0000; border-radius: 50%; pointer-events: none; box-shadow: 0 0 0 1px #fff; }
+
+        /* Статус-бар */
+        #status-bar { background: #1e293b; color: #e2e8f0; padding: 10px 12px; border-radius: 10px; font-weight: bold; text-align: center; font-size: 14px; position: sticky; top: 0; z-index: 50; margin-bottom: 10px; }
+        #status-text { display: block; }
+        #cal-info { font-size: 11px; color: #94a3b8; font-weight: normal; display: block; margin-top: 2px; }
+
+        /* Выбранные цвета */
+        .picked-colors { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; min-height: 50px; }
+        .color-chip { display: flex; flex-direction: column; align-items: center; font-size: 10px; }
+        .color-chip .swatch { width: 36px; height: 36px; border-radius: 8px; border: 1px solid #94a3b8; display: flex; justify-content: center; align-items: center; color: white; text-shadow: 0 1px 2px black; font-weight: bold; font-size: 14px; }
+        .color-chip .label { margin-top: 2px; font-weight: 600; color: #475569; }
+
+        /* Карточки результатов */
+        .cards-container { display: flex; flex-direction: column; gap: 12px; }
+        .result-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden; border: 1px solid #e2e8f0; }
+        .card-header { background: #f8fafc; padding: 10px 12px; border-bottom: 1px solid #e2e8f0; }
+        .card-title { font-size: 14px; font-weight: bold; margin: 0; }
+        .card-body { padding: 10px; }
+        .palette-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 6px; }
+        .palette-item { display: flex; flex-direction: column; align-items: center; }
+        .palette-rect { width: 100%; aspect-ratio: 1; border-radius: 6px; border: 1px solid #cbd5e1; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 14px; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+        .palette-code { font-size: 9px; font-family: monospace; margin-top: 2px; color: #475569; }
+
+        /* Python-код */
+        .python-output { background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 10px; font-family: 'Consolas', 'Monaco', monospace; font-size: 11px; overflow-x: auto; white-space: pre; max-height: 300px; position: relative; }
+        
+        /* Нижняя панель действий */
+        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 8px 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; gap: 6px; z-index: 100; }
+        .bottom-bar button { flex: 1; padding: 10px 6px; font-size: 13px; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>ArtFlex · Мобильный отбор</h1>
+    
+    <section id="step1">
+        <h2><span class="step-badge">1</span> Загрузка фото</h2>
+        <p class="hint">На iPhone папка не выбирается — выбирайте <b>все фото сразу</b> (нажмите «Обзор» → выделите все). Имя тома будет взято из префикса имени файла или введено вручную.</p>
+        <input type="file" id="folderInput" accept="image/*" multiple style="width:100%; margin-bottom:8px;">
+        <div id="fileList" class="hint"></div>
+    </section>
+
+    <section id="step2" class="hidden">
+        <div class="file-scroller" id="fileScroller"></div>
+        
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <button id="calWhiteBtn" class="secondary" style="padding:8px 10px; font-size:12px;">Белый</button>
+                <button id="calBlackBtn" class="secondary" style="padding:8px 10px; font-size:12px;">Чёрный</button>
+            </div>
+            <div class="toolbar-group" style="margin-left:auto;">
+                <label>EV: <span id="evVal">0.0</span></label>
+                <input type="range" id="evSlider" min="-2" max="2" step="0.1" value="0">
+            </div>
+            <div class="toolbar-group">
+                <label>Цветов: <input type="number" id="colorCount" min="1" max="200" value="10" style="width:55px; min-height:36px; padding:4px;"></label>
+            </div>
+        </div>
+
+        <div id="status-bar">
+            <span id="status-text">Загрузите изображение</span>
+            <span id="cal-info"></span>
+        </div>
+
+        <div class="canvas-wrapper" id="canvasWrapper">
+            <canvas id="mainCanvas"></canvas>
+        </div>
+
+        <div class="picked-colors" id="pickedColors"></div>
+
+        <div style="display:flex; gap:6px; margin-top:10px;">
+            <button id="undoBtn" class="secondary" style="flex:1; font-size:13px;" disabled>Отменить</button>
+            <button id="resetBtn" class="danger" style="flex:1; font-size:13px;">Сброс</button>
+        </div>
+    </section>
+
+    <section id="step4" class="hidden">
+        <h2><span class="step-badge">4</span> Результат</h2>
+        <div style="margin-bottom: 12px;">
+            <label style="font-weight: bold; display: block; margin-bottom: 5px; font-size:13px;">Название тома:</label>
+            <input type="text" id="volumeName" style="width: 100%; padding: 10px; font-size: 15px;" placeholder="Например: Love Stories">
+        </div>
+        <div class="cards-container" id="cardsContainer"></div>
+        <div style="margin-top: 15px;">
+            <h3 style="font-size:14px;">Python-код:</h3>
+            <div class="python-output" id="pythonOutput">
+                <span id="pythonCodeText">PAGE_PALETTES = { ... }</span>
+            </div>
+            <button id="downloadPyBtn" style="width:100%; margin-top:8px;">Скачать .py файл</button>
+        </div>
+    </section>
+</main>
+
+<!-- Лупа -->
+<div id="loupe">
+    <canvas id="loupeCanvas" width="150" height="150"></canvas>
+    <div class="crosshair"></div>
+</div>
+
+<!-- Нижняя панель (плавающая) -->
+<div class="bottom-bar" id="bottomBar">
+    <button id="processBtn" class="hidden">Следующее</button>
+    <button id="finishBtn" class="hidden">Завершить</button>
+    <button id="backToEditBtn" class="hidden secondary">← Назад</button>
+</div>
+
+<script>
+    let files = [];
+    let currentFileIndex = -1;
+    let imageDataCache = {}; 
+    let pageConfigs = {}; 
+    let calMode = 'none'; 
+    let currentVolumeName = "Раскраска";
+    
+    const mainCanvas = document.getElementById('mainCanvas');
+    const ctx = mainCanvas.getContext('2d', { willReadFrequently: true });
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const loupe = document.getElementById('loupe');
+    const loupeCanvas = document.getElementById('loupeCanvas');
+    const lCtx = loupeCanvas.getContext('2d');
+    
+    const fileScroller = document.getElementById('fileScroller');
+    const statusText = document.getElementById('status-text');
+    const calInfo = document.getElementById('cal-info');
+    const colorCountInput = document.getElementById('colorCount');
+    const evSlider = document.getElementById('evSlider');
+    const evVal = document.getElementById('evVal');
+    const pickedColorsDiv = document.getElementById('pickedColors');
+    
+    const calWhiteBtn = document.getElementById('calWhiteBtn');
+    const calBlackBtn = document.getElementById('calBlackBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const processBtn = document.getElementById('processBtn');
+    const finishBtn = document.getElementById('finishBtn');
+    const backToEditBtn = document.getElementById('backToEditBtn');
+
+    // --- 1. Загрузка файлов ---
+    document.getElementById('folderInput').addEventListener('change', async (e) => {
+        const fileList = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+        if (fileList.length === 0) return alert('Не найдено изображений.');
+        
+        // Пытаемся угадать имя тома из имени файла (до первого _ или цифры)
+        if (fileList.length > 0) {
+            const match = fileList[0].name.match(/^([a-zA-ZА-Яа-я]+)/);
+            if (match) {
+                currentVolumeName = match[1];
+                document.getElementById('volumeName').value = currentVolumeName;
+            }
+        }
+
+        fileList.sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'}));
+        
+        files = fileList;
+        document.getElementById('fileList').innerHTML = `Загружено: <b>${files.length}</b> фото.`;
+        
+        pageConfigs = {};
+        imageDataCache = {};
+        files.forEach(f => {
+            pageConfigs[f.name] = { white: null, black: null, ev: 0, count: 10, picks: [] };
+        });
+        
+        document.getElementById('step2').classList.remove('hidden');
+        document.getElementById('step4').classList.add('hidden');
+        document.getElementById('bottomBar').classList.remove('hidden');
+        processBtn.classList.remove('hidden');
+        finishBtn.classList.remove('hidden');
+        backToEditBtn.classList.add('hidden');
+        
+        renderFileScroller();
+        if (files.length > 0) await loadPage(0);
+    });
+
+    // --- 2. Список файлов ---
+    function renderFileScroller() {
+        fileScroller.innerHTML = '';
+        files.forEach((file, index) => {
+            const config = pageConfigs[file.name];
+            const isComplete = config.picks.length === config.count;
+            const div = document.createElement('div');
+            div.className = `file-chip ${index === currentFileIndex ? 'active' : ''}`;
+            div.innerHTML = `
+                <span class="status-dot ${isComplete ? 'ok' : 'pending'}"></span>
+                <span>${file.name}</span>
+            `;
+            div.onclick = () => loadPage(index);
+            fileScroller.appendChild(div);
+        });
+    }
+
+    // --- 3. Загрузка изображения ---
+    async function loadPage(index) {
+        currentFileIndex = index;
+        const file = files[index];
+        
+        renderFileScroller();
+        updateToolbar();
+        
+        if (!imageDataCache[file.name]) {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+                img.src = url;
+            });
+            const c = document.createElement('canvas');
+            c.width = img.width;
+            c.height = img.height;
+            c.getContext('2d').drawImage(img, 0, 0);
+            imageDataCache[file.name] = { img, canvas: c };
+            URL.revokeObjectURL(url);
+        }
+        
+        const img = imageDataCache[file.name].img;
+        // Для мобилки ограничим ширину до 600px для производительности
+        const maxW = 600;
+        const scale = Math.min(1, maxW / img.width);
+        mainCanvas.width = img.width * scale;
+        mainCanvas.height = img.height * scale;
+        
+        drawCanvas();
+        updateStatus();
+        renderPickedColors();
+    }
+
+    function drawCanvas() {
+        if (currentFileIndex < 0) return;
+        const file = files[currentFileIndex];
+        const img = imageDataCache[file.name].img;
+        
+        ctx.drawImage(img, 0, 0, mainCanvas.width, mainCanvas.height);
+        
+        const config = pageConfigs[file.name];
+        const scaleX = mainCanvas.width / img.width;
+        const scaleY = mainCanvas.height / img.height;
+        
+        // Маркеры калибровки
+        if (config.white) {
+            ctx.beginPath();
+            ctx.arc(config.white.x * scaleX, config.white.y * scaleY, 8, 0, Math.PI * 2);
+            ctx.strokeStyle = '#eab308';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+        if (config.black) {
+            ctx.beginPath();
+            ctx.arc(config.black.x * scaleX, config.black.y * scaleY, 8, 0, Math.PI * 2);
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+        
+        // Выбранные цвета
+        config.picks.forEach((p, i) => {
+            ctx.beginPath();
+            ctx.arc(p.x * scaleX, p.y * scaleY, 6, 0, Math.PI * 2);
+            ctx.fillStyle = (config.ev !== 0) ? p.hexWithEv : p.hexNoEv;
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.fillStyle = 'black';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText(i + 1, p.x * scaleX + 8, p.y * scaleY - 8);
+        });
+    }
+
+    // --- 4. Обновление UI ---
+    function updateToolbar() {
+        if (currentFileIndex < 0) return;
+        const config = pageConfigs[files[currentFileIndex].name];
+        colorCountInput.value = config.count;
+        evSlider.value = config.ev;
+        evVal.textContent = config.ev.toFixed(1);
+        undoBtn.disabled = config.picks.length === 0;
+        
+        const calW = config.white ? 'Б:✓' : 'Б:✗';
+        const calB = config.black ? 'Ч:✓' : 'Ч:✗';
+        calInfo.textContent = `${calW} | ${calB}`;
+    }
+
+    function updateStatus() {
+        if (currentFileIndex < 0) return;
+        const config = pageConfigs[files[currentFileIndex].name];
+        const picked = config.picks.length;
+        const total = config.count;
+        
+        if (calMode === 'white') {
+            statusText.textContent = '👆 Ткните по БЕЛОМУ участку';
+        } else if (calMode === 'black') {
+            statusText.textContent = '👆 Ткните по ЧЁРНОМУ участку';
+        } else if (picked < total) {
+            statusText.textContent = `Ткните цвет №${picked + 1} из ${total}`;
+        } else {
+            statusText.textContent = `✓ Готово! ${total} цветов`;
+        }
+    }
+
+    function renderPickedColors() {
+        if (currentFileIndex < 0) return;
+        const config = pageConfigs[files[currentFileIndex].name];
+        pickedColorsDiv.innerHTML = '';
+        
+        config.picks.forEach((p, i) => {
+            const finalHex = (config.ev !== 0) ? p.hexWithEv : p.hexNoEv;
+            const div = document.createElement('div');
+            div.className = 'color-chip';
+            div.innerHTML = `
+                <div class="swatch" style="background:${finalHex};">${i + 1}</div>
+                <div class="label">${finalHex}</div>
+            `;
+            pickedColorsDiv.appendChild(div);
+        });
+    }
+
+    // --- 5. Координаты и лупа ---
+    function getOriginalCoords(clientX, clientY) {
+        const rect = mainCanvas.getBoundingClientRect();
+        const scaleX = mainCanvas.width / rect.width;
+        const scaleY = mainCanvas.height / rect.height;
+        
+        const canvasX = (clientX - rect.left) * scaleX;
+        const canvasY = (clientY - rect.top) * scaleY;
+        
+        const file = files[currentFileIndex];
+        const img = imageDataCache[file.name].img;
+        
+        const origX = Math.floor(canvasX * (img.width / mainCanvas.width));
+        const origY = Math.floor(canvasY * (img.height / mainCanvas.height));
+        
+        return { 
+            x: Math.max(0, Math.min(img.width - 1, origX)), 
+            y: Math.max(0, Math.min(img.height - 1, origY))
+        };
+    }
+
+    function showLoupe(clientX, clientY) {
+        if (currentFileIndex < 0) return;
+        const coords = getOriginalCoords(clientX, clientY);
+        const file = files[currentFileIndex];
+        const img = imageDataCache[file.name].img;
+        
+        loupe.style.display = 'block';
+        
+        // Позиционируем лупу так, чтобы она была выше пальца
+        // (фиксированное позиционирование, относительно viewport)
+        let left = clientX - 75;
+        let top = clientY - 170; // выше пальца
+        
+        // Не выходим за границы экрана
+        if (left < 5) left = 5;
+        if (left + 150 > window.innerWidth - 5) left = window.innerWidth - 155;
+        if (top < 5) top = clientY + 30; // если сверху нет места, показываем снизу
+        
+        loupe.style.left = left + 'px';
+        loupe.style.top = top + 'px';
+        
+        lCtx.imageSmoothingEnabled = false;
+        lCtx.clearRect(0, 0, 150, 150);
+        
+        // Зум 6x (25 пикселей исходника в 150px лупы)
+        const zoom = 6;
+        const srcSize = 150 / zoom;
+        const srcX = coords.x - srcSize / 2;
+        const srcY = coords.y - srcSize / 2;
+        
+        lCtx.drawImage(img, srcX, srcY, srcSize, srcSize, 0, 0, 150, 150);
+    }
+
+    function hideLoupe() {
+        loupe.style.display = 'none';
+    }
+
+    // Тап/клик
+    mainCanvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (e.touches.length !== 1) return;
+        showLoupe(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+
+    mainCanvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (e.touches.length !== 1) return;
+        showLoupe(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+
+    mainCanvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        if (e.changedTouches.length !== 1) return;
+        const touch = e.changedTouches[0];
+        handleTap(touch.clientX, touch.clientY);
+        hideLoupe();
+    }, { passive: false });
+
+    // Поддержка мыши для десктопа
+    mainCanvas.addEventListener('mousemove', (e) => {
+        if (e.buttons === 0) showLoupe(e.clientX, e.clientY);
+    });
+    mainCanvas.addEventListener('mouseleave', hideLoupe);
+    mainCanvas.addEventListener('click', (e) => {
+        handleTap(e.clientX, e.clientY);
+    });
+
+    // Основная функция обработки тапа
+    function handleTap(clientX, clientY) {
+        if (currentFileIndex < 0) return;
+        const coords = getOriginalCoords(clientX, clientY);
+        const file = files[currentFileIndex];
+        const config = pageConfigs[file.name];
+        const img = imageDataCache[file.name].img;
+        
+        // Умный поиск центра квадратика: ищем локальный экстремум (максимальное отличие от соседей)
+        // в радиусе 3 пикселей, чтобы попасть в центр, а не на границу
+        let bestX = coords.x, bestY = coords.y;
+        let bestScore = -1;
+        const baseP = getPixel(img, coords.x, coords.y);
+        
+        for (let dy = -3; dy <= 3; dy++) {
+            for (let dx = -3; dx <= 3; dx++) {
+                const nx = coords.x + dx;
+                const ny = coords.y + dy;
+                if (nx < 0 || nx >= img.width || ny < 0 || ny >= img.height) continue;
+                const p = getPixel(img, nx, ny);
+                // Оцениваем "похожесть на центр": суммарное отклонение от соседей
+                let score = 0;
+                for (let ndy = -1; ndy <= 1; ndy++) {
+                    for (let ndx = -1; ndx <= 1; ndx++) {
+                        if (ndx === 0 && ndy === 0) continue;
+                        const npx = nx + ndx, npy = ny + ndy;
+                        if (npx < 0 || npx >= img.width || npy < 0 || npy >= img.height) continue;
+                        const np = getPixel(img, npx, npy);
+                        score += Math.abs(p[0]-np[0]) + Math.abs(p[1]-np[1]) + Math.abs(p[2]-np[2]);
+                    }
+                }
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestX = nx;
+                    bestY = ny;
+                }
+            }
+        }
+        
+        const finalCoords = { x: bestX, y: bestY };
+        const p = getPixel(img, finalCoords.x, finalCoords.y);
+        
+        if (calMode === 'white') {
+            config.white = { x: finalCoords.x, y: finalCoords.y };
+            calMode = 'none';
+            updateToolbar();
+            drawCanvas();
+            updateStatus();
+            recalculatePicks();
+            return;
+        }
+        
+        if (calMode === 'black') {
+            config.black = { x: finalCoords.x, y: finalCoords.y };
+            calMode = 'none';
+            updateToolbar();
+            drawCanvas();
+            updateStatus();
+            recalculatePicks();
+            return;
+        }
+        
+        if (config.picks.length < config.count) {
+            const variants = calculateColorVariants(p, config);
+            
+            config.picks.push({
+                x: finalCoords.x,
+                y: finalCoords.y,
+                hexNoEv: variants.hexNoEv,
+                hexWithEv: variants.hexWithEv,
+                rgbNoEv: variants.rgbNoEv,
+                rgbWithEv: variants.rgbWithEv
+            });
+            
+            renderFileScroller();
+            drawCanvas();
+            updateStatus();
+            renderPickedColors();
+            updateToolbar();
+        }
+    }
+
+    // Кэш пикселей для ускорения
+    const pixelCache = {};
+    function getPixel(img, x, y) {
+        const key = `${img.src || 'img'}_${x}_${y}`;
+        if (pixelCache[key]) return pixelCache[key];
+        
+        const c = document.createElement('canvas');
+        c.width = 1;
+        c.height = 1;
+        c.getContext('2d').drawImage(img, x, y, 1, 1, 0, 0, 1, 1);
+        const p = c.getContext('2d').getImageData(0, 0, 1, 1).data;
+        const result = [p[0], p[1], p[2]];
+        pixelCache[key] = result;
+        return result;
+    }
+
+    function calculateColorVariants(rgb, config) {
+        const img = imageDataCache[files[currentFileIndex].name].img;
+        
+        const white = config.white ? getPixel(img, config.white.x, config.white.y) : [255, 255, 255];
+        const black = config.black ? getPixel(img, config.black.x, config.black.y) : [0, 0, 0];
+        
+        let noEv = rgb.map((v, i) => {
+            const w = white[i] || 255;
+            const b = black[i] || 0;
+            const range = Math.max(1, w - b);
+            return Math.max(0, Math.min(255, (v - b) * (255 / range)));
+        });
+        
+        const evMultiplier = Math.pow(2, config.ev);
+        let withEv = noEv.map(v => Math.max(0, Math.min(255, v * evMultiplier)));
+        
+        const toHex = (arr) => '#' + arr.map(x => Math.round(x).toString(16).padStart(2, '0')).join('').toUpperCase();
+        
+        return {
+            rgbNoEv: noEv,
+            rgbWithEv: withEv,
+            hexNoEv: toHex(noEv),
+            hexWithEv: toHex(withEv)
+        };
+    }
+
+    // --- 6. Кнопки ---
+    calWhiteBtn.onclick = () => { calMode = 'white'; updateStatus(); };
+    calBlackBtn.onclick = () => { calMode = 'black'; updateStatus(); };
+    
+    undoBtn.onclick = () => {
+        if (currentFileIndex < 0) return;
+        const config = pageConfigs[files[currentFileIndex].name];
+        if (config.picks.length > 0) {
+            config.picks.pop();
+            renderFileScroller();
+            drawCanvas();
+            updateStatus();
+            renderPickedColors();
+            updateToolbar();
+        }
+    };
+    
+    resetBtn.onclick = () => {
+        if (currentFileIndex < 0) return;
+        if (!confirm('Сбросить все настройки для этой страницы?')) return;
+        const config = pageConfigs[files[currentFileIndex].name];
+        config.picks = [];
+        config.white = null;
+        config.black = null;
+        config.ev = 0;
+        updateToolbar();
+        drawCanvas();
+        updateStatus();
+        renderPickedColors();
+        renderFileScroller();
+    };
+
+    colorCountInput.onchange = (e) => {
+        if (currentFileIndex < 0) return;
+        const val = parseInt(e.target.value) || 1;
+        const config = pageConfigs[files[currentFileIndex].name];
+        config.count = val;
+        if (config.picks.length > val) {
+            config.picks = config.picks.slice(0, val);
+        }
+        updateStatus();
+        renderPickedColors();
+        renderFileScroller();
+    };
+
+    evSlider.oninput = (e) => {
+        if (currentFileIndex < 0) return;
+        const config = pageConfigs[files[currentFileIndex].name];
+        config.ev = parseFloat(e.target.value);
+        evVal.textContent = config.ev.toFixed(1);
+        recalculatePicks();
+    };
+
+    function recalculatePicks() {
+        if (currentFileIndex < 0) return;
+        const file = files[currentFileIndex];
+        const config = pageConfigs[file.name];
+        const img = imageDataCache[file.name].img;
+        
+        config.picks = config.picks.map(pick => {
+            const rgb = getPixel(img, pick.x, pick.y);
+            const variants = calculateColorVariants(rgb, config);
+            return {
+                ...pick,
+                hexNoEv: variants.hexNoEv,
+                hexWithEv: variants.hexWithEv,
+                rgbNoEv: variants.rgbNoEv,
+                rgbWithEv: variants.rgbWithEv
+            };
+        });
+        
+        drawCanvas();
+        renderPickedColors();
+    }
+
+    // --- 7. Завершение ---
+    processBtn.onclick = () => {
+        if (currentFileIndex < files.length - 1) {
+            loadPage(currentFileIndex + 1);
+        } else {
+            alert('Все страницы пройдены. Нажмите "Завершить".');
+        }
+    };
+
+    finishBtn.onclick = () => {
+        const incomplete = files.filter(f => pageConfigs[f.name].picks.length !== pageConfigs[f.name].count);
+        if (incomplete.length > 0) {
+            if (!confirm(`Не все страницы заполнены (${incomplete.length}). Завершить?`)) return;
+        }
+        
+        currentVolumeName = document.getElementById('volumeName').value.trim() || "Раскраска";
+        
+        renderCards();
+        generatePythonCode();
+        
+        document.getElementById('step2').classList.add('hidden');
+        document.getElementById('step4').classList.remove('hidden');
+        document.getElementById('bottomBar').classList.remove('hidden');
+        processBtn.classList.add('hidden');
+        finishBtn.classList.add('hidden');
+        backToEditBtn.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    };
+
+    function renderCards() {
+        const container = document.getElementById('cardsContainer');
+        container.innerHTML = '';
+        
+        files.forEach(file => {
+            const config = pageConfigs[file.name];
+            if (config.picks.length === 0) return;
+            
+            const card = document.createElement('div');
+            card.className = 'result-card';
+            
+            const evLabel = config.ev !== 0 ? `EV: ${config.ev > 0 ? '+' : ''}${config.ev.toFixed(1)}` : `Без EV`;
+            
+            const header = document.createElement('div');
+            header.className = 'card-header';
+            header.innerHTML = `
+                <h3 class="card-title">${file.name} <span style="font-weight:normal; color:#64748b; font-size:11px;">(${evLabel})</span></h3>
+            `;
+            card.appendChild(header);
+            
+            const body = document.createElement('div');
+            body.className = 'card-body';
+            
+            const grid = document.createElement('div');
+            grid.className = 'palette-grid';
+            
+            config.picks.forEach((p, i) => {
+                const finalHex = (config.ev !== 0) ? p.hexWithEv : p.hexNoEv;
+                const item = document.createElement('div');
+                item.className = 'palette-item';
+                item.innerHTML = `
+                    <div class="palette-rect" style="background:${finalHex};">${i + 1}</div>
+                    <div class="palette-code">${finalHex}</div>
+                `;
+                grid.appendChild(item);
+            });
+            
+            body.appendChild(grid);
+            card.appendChild(body);
+            container.appendChild(card);
+        });
+    }
+
+    function generatePythonCode() {
+        const volume = currentVolumeName;
+        let code = `PAGE_PALETTES = {\n`;
+        
+        files.forEach((file, fileIndex) => {
+            const config = pageConfigs[file.name];
+            if (config.picks.length === 0) return;
+            
+            const pageMatch = file.name.match(/^(\d+)(?:_(\d+))?/);
+            let pageKey = fileIndex + 1;
+            if (pageMatch) {
+                pageKey = pageMatch[2] ? `${pageMatch[1]}-${pageMatch[2]}` : pageMatch[1];
+            }
+            
+            const key = `${volume}|${pageKey}`;
+            
+            code += `    "${key}": [\n`;
+            
+            config.picks.forEach((p, i) => {
+                const finalHex = (config.ev !== 0) ? p.hexWithEv : p.hexNoEv;
+                const n = i + 1;
+                code += `        {"n": ${n}, "symbol": "", "hex": "${finalHex}"},\n`;
+            });
+            
+            code += `    ],\n`;
+        });
+        
+        code += `}\n`;
+        
+        document.getElementById('pythonCodeText').textContent = code;
+    }
+
+    // --- 8. Скачивание .py ---
+    document.getElementById('downloadPyBtn').onclick = () => {
+        const code = document.getElementById('pythonCodeText').textContent;
+        const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${currentVolumeName.replace(/[^a-zA-Z0-9_]/g, '_')}_palettes.py`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+
+    backToEditBtn.onclick = () => {
+        document.getElementById('step2').classList.remove('hidden');
+        document.getElementById('step4').classList.add('hidden');
+        processBtn.classList.remove('hidden');
+        finishBtn.classList.remove('hidden');
+        backToEditBtn.classList.add('hidden');
+    };
+
+</script>
+</body>
+</html>
